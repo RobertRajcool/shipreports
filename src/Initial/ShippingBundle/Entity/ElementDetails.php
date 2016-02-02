@@ -1,0 +1,304 @@
+<?php
+
+namespace Initial\ShippingBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ElementDetails
+ *
+ * @ORM\Table(name="element_details")
+ * @ORM\Entity(repositoryClass="Initial\ShippingBundle\Repository\ElementDetailsRepository")
+ */
+class ElementDetails
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\KpiDetails")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="KpiDetailsId", referencedColumnName="id")
+     * })
+     */
+    private $kpiDetailsId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ElementName", type="string", length=125)
+     */
+    private $elementName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="Description", type="string", length=75)
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="CellName", type="string", length=35)
+     */
+    private $cellName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="CellDetails", type="string", length=75)
+     */
+    private $cellDetails;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="ActivatedDate", type="date")
+     */
+    private $activatedDate;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="EndDate", type="date")
+     */
+    private $endDate;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="Weightage", type="string", length=50)
+     */
+    private $weightage;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set kpiDetailsId
+     *
+     * @param string $kpiDetailsId
+     * @return ElementDetails
+     */
+    public function setKpiDetailsId($kpiDetailsId)
+    {
+        $this->kpiDetailsId = $kpiDetailsId;
+
+        return $this;
+    }
+
+    /**
+     * Get kpiDetailsId
+     *
+     * @return string 
+     */
+    public function getKpiDetailsId()
+    {
+        return $this->kpiDetailsId;
+    }
+
+    /**
+     * Set elementName
+     *
+     * @param string $elementName
+     * @return ElementDetails
+     */
+    public function setElementName($elementName)
+    {
+        $this->elementName = $elementName;
+
+        return $this;
+    }
+
+    /**
+     * Get elementName
+     *
+     * @return string 
+     */
+    public function getElementName()
+    {
+        return $this->elementName;
+    }
+
+    public function __toString()
+    {
+        return $this->getElementName() ? $this->getElementName() : "";
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return ElementDetails
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set cellName
+     *
+     * @param string $cellName
+     * @return ElementDetails
+     */
+    public function setCellName($cellName)
+    {
+        $this->cellName = $cellName;
+
+        return $this;
+    }
+
+    /**
+     * Get cellName
+     *
+     * @return string 
+     */
+    public function getCellName()
+    {
+        return $this->cellName;
+    }
+
+    /**
+     * Set cellDetails
+     *
+     * @param string $cellDetails
+     * @return ElementDetails
+     */
+    public function setCellDetails($cellDetails)
+    {
+        $this->cellDetails = $cellDetails;
+
+        return $this;
+    }
+
+    /**
+     * Get cellDetails
+     *
+     * @return string 
+     */
+    public function getCellDetails()
+    {
+        return $this->cellDetails;
+    }
+
+    /**
+     * Set activeDate
+     *
+     * @param string $activeDate
+     * @return ElementDetails
+     */
+    public function setActiveDate($activeDate)
+    {
+        $this->activeDate = $activeDate;
+
+        return $this;
+    }
+
+    /**
+     * Get activeDate
+     *
+     * @return string
+     */
+    public function getActiveDate()
+    {
+        return $this->activeDate;
+    }
+
+    /**
+     * Set activatedDate
+     *
+     * @param \DateTime $activatedDate
+     * @return ElementDetails
+     */
+    public function setActivatedDate($activatedDate)
+    {
+        $this->activatedDate = $activatedDate;
+
+        return $this;
+    }
+
+    /**
+     * Get activatedDate
+     *
+     * @return \DateTime 
+     */
+    public function getActivatedDate()
+    {
+        return $this->activatedDate;
+    }
+
+    /**
+     * Set endDate
+     *
+     * @param \DateTime $endDate
+     * @return ElementDetails
+     */
+    public function setEndDate($endDate)
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    /**
+     * Get endDate
+     *
+     * @return \DateTime 
+     */
+    public function getEndDate()
+    {
+        return $this->endDate;
+    }
+
+    /**
+     * Set weightage
+     *
+     * @param string $weightage
+     * @return ElementDetails
+     */
+    public function setWeightage($weightage)
+    {
+        $this->weightage = $weightage;
+
+        return $this;
+    }
+
+    /**
+     * Get weightage
+     *
+     * @return string 
+     */
+    public function getWeightage()
+    {
+        return $this->weightage;
+    }
+}

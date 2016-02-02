@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CompanyUsers list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>CompanyName</th>
+                <th>UserName</th>
+                <th>Role</th>
+                <th>EmailId</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for companyUser in companyUsers %}
+            <tr>
+                <td><a href="{{ path('companyusers_show', { 'id': companyUser.id }) }}">{{ companyUser.id }}</a></td>
+                <td>{{ companyUser.companyName }}</td>
+                <td>{{ companyUser.userName }}</td>
+                <td>{{ companyUser.role }}</td>
+                <td>{{ companyUser.emailId }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('companyusers_show', { 'id': companyUser.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('companyusers_edit', { 'id': companyUser.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('companyusers_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

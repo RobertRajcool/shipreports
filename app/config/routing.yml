@@ -1,0 +1,49 @@
+initial_shipping_calculation_rules:
+    resource: "@InitialShippingBundle/Controller/CalculationRulesController.php"
+    type:     annotation
+
+initial_shipping_rules:
+    resource: "@InitialShippingBundle/Controller/RulesController.php"
+    type:     annotation
+
+initial_shipping_sub_element_details:
+    resource: "@InitialShippingBundle/Controller/SubElementDetailsController.php"
+    type:     annotation
+
+initial_shipping_company_users:
+    resource: "@InitialShippingBundle/Controller/CompanyUsersController.php"
+    type:     annotation
+
+initial_shipping_user_role:
+    resource: "@InitialShippingBundle/Controller/UserRoleController.php"
+    type:     annotation
+
+initial_shipping_element_details:
+    resource: "@InitialShippingBundle/Controller/ElementDetailsController.php"
+    type:     annotation
+
+initial_shipping_kpi_details:
+    resource: "@InitialShippingBundle/Controller/KpiDetailsController.php"
+    type:     annotation
+
+initial_shipping_ship_details:
+    resource: "@InitialShippingBundle/Controller/ShipDetailsController.php"
+    type:     annotation
+
+initial_shipping_company_details:
+    resource: "@InitialShippingBundle/Controller/CompanyDetailsController.php"
+    type:     annotation
+
+initial_shipping:
+    resource: "@InitialShippingBundle/Resources/config/routing.yml"
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+
+

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CalculationRules</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ calculationRule.id }}</td>
+            </tr>
+            <tr>
+                <th>Kpidetailsid</th>
+                <td>{{ calculationRule.kpiDetailsId }}</td>
+            </tr>
+            <tr>
+                <th>Elementdetailsid</th>
+                <td>{{ calculationRule.elementDetailsId }}</td>
+            </tr>
+            <tr>
+                <th>Rules</th>
+                <td>{{ calculationRule.rules }}</td>
+            </tr>
+            <tr>
+                <th>Ruleconditions</th>
+                <td>{{ calculationRule.ruleConditions }}</td>
+            </tr>
+            <tr>
+                <th>Ruleactions</th>
+                <td>{{ calculationRule.ruleActions }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('calculationrules_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('calculationrules_edit', { 'id': calculationRule.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

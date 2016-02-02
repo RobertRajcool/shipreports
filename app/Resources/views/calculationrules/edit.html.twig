@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% block javascripts %}
+        {% javascripts '@AppBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <h1>CalculationRules edit</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_row(edit_form) }}
+        {{ form_row(edit_form.rules,{'id' :'resultedit'}) }}
+        {{ form_row(edit_form.ruleConditions,{'id' :'ruleConditionsEdit'}) }}
+        {{ form_row(edit_form.ruleActions,{'id' :'ruleActionsEdit'}) }}
+        <div id="conditionsedit"></div>
+        <div id="actionsedit"></div>
+        <input type="submit" value="Edit" />
+        <input type="submit" value="Add" id="submitedit" />
+
+    {{ form_end(edit_form) }}
+
+    <ul>
+        <li>
+            <a href="{{ path('calculationrules_index') }}">Back to the list</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
+{% endblock %}

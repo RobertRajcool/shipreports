@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>KpiDetails</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ kpiDetail.id }}</td>
+            </tr>
+            <tr>
+                <th>Shipdetailsid</th>
+                <td>{{ kpiDetail.shipDetailsId }}</td>
+            </tr>
+            <tr>
+                <th>Kpiname</th>
+                <td>{{ kpiDetail.kpiName }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ kpiDetail.description }}</td>
+            </tr>
+            <tr>
+                <th>Activedate</th>
+                <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Enddate</th>
+                <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Cellname</th>
+                <td>{{ kpiDetail.cellName }}</td>
+            </tr>
+            <tr>
+                <th>Celldetails</th>
+                <td>{{ kpiDetail.cellDetails }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('kpidetails_edit', { 'id': kpiDetail.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>ElementDetails list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>KpiName</th>
+                <th>ElementName</th>
+                <th>Description</th>
+                <th>CellName</th>
+                <th>CellDetails</th>
+                <th>ActivatedDate</th>
+                <th>EndDate</th>
+                <th>Weightage</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for elementDetail in elementDetails %}
+            <tr>
+                <td><a href="{{ path('elementdetails_show', { 'id': elementDetail.id }) }}">{{ elementDetail.id }}</a></td>
+                <td>{{ elementDetail.kpiDetailsId }}</td>
+                <td>{{ elementDetail.elementName }}</td>
+                <td>{{ elementDetail.description }}</td>
+                <td>{{ elementDetail.cellName }}</td>
+                <td>{{ elementDetail.cellDetails }}</td>
+                <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
+                <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                <td>{{ elementDetail.weightage }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('elementdetails_show', { 'id': elementDetail.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('elementdetails_edit', { 'id': elementDetail.id }) }}">edit</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('subelementdetails_select', { 'id': elementDetail.id }) }}">Sub_Elements</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('elementdetails_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

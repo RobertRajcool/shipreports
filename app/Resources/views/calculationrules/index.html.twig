@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CalculationRules list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Kpidetailsid</th>
+                <th>Elementdetailsid</th>
+                <th>Rules</th>
+                <th>Ruleconditions</th>
+                <th>Ruleactions</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for calculationRule in calculationRules %}
+            <tr>
+                <td><a href="{{ path('calculationrules_show', { 'id': calculationRule.id }) }}">{{ calculationRule.id }}</a></td>
+                <td>{{ calculationRule.kpiDetailsId }}</td>
+                <td>{{ calculationRule.elementDetailsId }}</td>
+                <td>{{ calculationRule.rules }}</td>
+                <td>{{ calculationRule.ruleConditions }}</td>
+                <td>{{ calculationRule.ruleActions }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('calculationrules_show', { 'id': calculationRule.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('calculationrules_edit', { 'id': calculationRule.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('calculationrules_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CompanyDetails</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ companyDetail.id }}</td>
+            </tr>
+            <tr>
+                <th>Companyname</th>
+                <td>{{ companyDetail.companyName }}</td>
+            </tr>
+            <tr>
+                <th>Adminname</th>
+                <td>{{ companyDetail.adminName }}</td>
+            </tr>
+            <tr>
+                <th>Emailid</th>
+                <td>{{ companyDetail.emailId }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('companyusers_select') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('companydetails_edit', { 'id': companyDetail.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

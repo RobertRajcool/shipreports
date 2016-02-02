@@ -1,0 +1,223 @@
+<?php
+
+namespace Initial\ShippingBundle\Controller;
+
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Initial\ShippingBundle\Entity\CompanyUsers;
+use Initial\ShippingBundle\Form\CompanyUsersType;
+
+/**
+ * CompanyUsers controller.
+ *
+ * @Route("/companyusers")
+ */
+class CompanyUsersController extends Controller
+{
+    /**
+     * Lists all CompanyUsers entities.
+     *
+     * @Route("/", name="companyusers_index")
+     * @Method("GET")
+     */
+    public function indexAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $companyUsers = $em->getRepository('InitialShippingBundle:CompanyUsers')->findAll();
+
+        return $this->render('companyusers/index.html.twig', array(
+            'companyUsers' => $companyUsers,
+        ));
+    }
+
+
+
+    /**
+     * Lists all CompanyUsers entities.
+     *
+     * @Route("/select", name="companyusers_select")
+     * @Method("GET")
+     */
+    public function selectAction()
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a')
+            ->from('InitialShippingBundle:CompanyUsers','a')
+            ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyName')
+            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+            ->where('c.id = :userId')
+            ->setParameter('userId',$userId)
+            ->getQuery();
+        $companyUsers=$query->getResult();
+
+        return $this->render('companyusers/index.html.twig', array(
+            'companyUsers' => $companyUsers,
+        ));
+    }
+
+
+
+    /**
+     * Creates a new CompanyUsers entity.
+     *
+     * @Route("/new", name="companyusers_new")
+     * @Method({"GET", "POST"})
+     */
+    public function newAction(Request $request)
+    {
+        $companyUser = new CompanyUsers();
+        $form = $this->createForm('Initial\ShippingBundle\Form\CompanyUsersType', $companyUser);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($companyUser);
+            $em->flush();
+
+            return $this->redirectToRoute('companyusers_show', array('id' => $companyUser->getId()));
+        }
+
+        return $this->render('companyusers/new.html.twig', array(
+            'companyUser' => $companyUser,
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * Creates a new CompanyUsers entity.
+     *
+     * @Route("/new1", name="companyusers_new1")
+     * @Method({"GET", "POST"})
+     */
+    public function new1Action(Request $request)
+    {
+
+        $params = $request->request->get('company_users');
+        $userName = $params['userName'];
+        $role = $params['role'];
+        $emailId = $params['emailId'];
+
+        $user = $this->getUser();
+        $userId = $user->getId();
+
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','a.adminName = b.username')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery()
+                ->getResult();
+
+        //$companyName = 3;
+
+        $companyName=$query[0]['id'];
+        $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
+
+        $course1 = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:UserRole')->findOneBy(array('id'=>$role));
+
+        //print_r($course);die;
+
+        $companyUser = new CompanyUsers();
+        $companyUser->setCompanyName($course);
+        $companyUser->setUserName($userName);
+        $companyUser->setRole($course1);
+        $companyUser->setEmailId($emailId);
+
+            $em->persist($companyUser);
+            $em->flush();
+
+
+        return $this->redirectToRoute('companyusers_show', array('id' => $companyUser->getId()));
+    }
+
+
+
+    /**
+     * Finds and displays a CompanyUsers entity.
+     *
+     * @Route("/{id}", name="companyusers_show")
+     * @Method("GET")
+     */
+    public function showAction(CompanyUsers $companyUser)
+    {
+        $deleteForm = $this->createDeleteForm($companyUser);
+
+        return $this->render('companyusers/show.html.twig', array(
+            'companyUser' => $companyUser,
+            'delete_form' => $deleteForm->createView(),
+        ));
+    }
+
+    /**
+     * Displays a form to edit an existing CompanyUsers entity.
+     *
+     * @Route("/{id}/edit", name="companyusers_edit")
+     * @Method({"GET", "POST"})
+     */
+    public function editAction(Request $request, CompanyUsers $companyUser)
+    {
+        $deleteForm = $this->createDeleteForm($companyUser);
+        $editForm = $this->createForm('Initial\ShippingBundle\Form\CompanyUsersType', $companyUser);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($companyUser);
+            $em->flush();
+
+            return $this->redirectToRoute('companyusers_edit', array('id' => $companyUser->getId()));
+        }
+
+        return $this->render('companyusers/edit.html.twig', array(
+            'companyUser' => $companyUser,
+            'edit_form' => $editForm->createView(),
+            'delete_form' => $deleteForm->createView(),
+        ));
+    }
+
+    /**
+     * Deletes a CompanyUsers entity.
+     *
+     * @Route("/{id}", name="companyusers_delete")
+     * @Method("DELETE")
+     */
+    public function deleteAction(Request $request, CompanyUsers $companyUser)
+    {
+        $form = $this->createDeleteForm($companyUser);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($companyUser);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('companyusers_index');
+    }
+
+    /**
+     * Creates a form to delete a CompanyUsers entity.
+     *
+     * @param CompanyUsers $companyUser The CompanyUsers entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createDeleteForm(CompanyUsers $companyUser)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('companyusers_delete', array('id' => $companyUser->getId())))
+            ->setMethod('DELETE')
+            ->getForm()
+        ;
+    }
+}

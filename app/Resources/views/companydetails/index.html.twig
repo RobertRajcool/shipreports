@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CompanyDetails list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>CompanyName</th>
+                <th>AdminName</th>
+                <th>EmailId</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for companyDetail in companyDetails %}
+            <tr>
+                <td><a href="{{ path('companydetails_show', { 'id': companyDetail.id }) }}">{{ companyDetail.id }}</a></td>
+                <td>{{ companyDetail.companyName }}</td>
+                <td>{{ companyDetail.adminName }}</td>
+                <td>{{ companyDetail.emailId }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('companydetails_show', { 'id': companyDetail.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('companydetails_edit', { 'id': companyDetail.id }) }}">edit</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('shipdetails_select', { 'id': companyDetail.id }) }}">Ship Details</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('companydetails_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

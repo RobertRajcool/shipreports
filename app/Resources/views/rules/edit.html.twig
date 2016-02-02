@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% block javascripts %}
+        {% javascripts '@AppBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <h1>Rules edit</h1>
+
+        <form action="{{ path('rules_new1') }}" method="post">
+            {{ form_row(form.kpiDetailsId,{'id' :'jsid'},{ 'attr':{'disabled':'disabled'} })}}
+            {{ form_row(form.elementDetailsId,{'id' :'element'},{ 'attr':{'disabled':'disabled'} })}}
+            {{ form_row(form.rules,{'id' :'result'}) }}
+
+            <div id="conditions"></div>
+            <div id="actions"></div>
+
+            <input type="hidden" size="2" id="ageField">
+
+            <input type="submit" value="Create" />
+            <input type="submit" value="Add" id="submit" />
+        </form>
+
+
+        <ul>
+        <li>
+            <a href="{{ path('rules_select') }}">Back to the list</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
+{% endblock %}

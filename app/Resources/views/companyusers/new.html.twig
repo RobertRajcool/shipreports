@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>CompanyUsers creation</h1>
+
+    <form action="{{ path('companyusers_new1') }}" method="post">
+        {% if is_granted ("ROLE_SUPER_ADMIN") %}
+            {{ form_row(form.companyName) }}
+        {% endif %}
+        {{ form_row(form.userName) }}
+        {{ form_row(form.role) }}
+        {{ form_row(form.emailId) }}
+        <input type="submit" value="Create" />
+    </form>
+
+    <ul>
+        <li>
+            <a href="{{ path('companyusers_select') }}">Back to the list</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>SubElementDetails</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ subElementDetail.id }}</td>
+            </tr>
+            <tr>
+                <th>Elementdetailsid</th>
+                <td>{{ subElementDetail.elementDetailsId }}</td>
+            </tr>
+            <tr>
+                <th>Subelementname</th>
+                <td>{{ subElementDetail.subElementName }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ subElementDetail.description }}</td>
+            </tr>
+            <tr>
+                <th>Cellname</th>
+                <td>{{ subElementDetail.cellName }}</td>
+            </tr>
+            <tr>
+                <th>Celldetails</th>
+                <td>{{ subElementDetail.cellDetails }}</td>
+            </tr>
+            <tr>
+                <th>Activateddate</th>
+                <td>{% if subElementDetail.activatedDate %}{{ subElementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Enddate</th>
+                <td>{% if subElementDetail.endDate %}{{ subElementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Weightage</th>
+                <td>{{ subElementDetail.weightage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('subelementdetails_select1') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('subelementdetails_edit', { 'id': subElementDetail.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

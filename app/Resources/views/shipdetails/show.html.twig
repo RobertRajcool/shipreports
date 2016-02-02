@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>ShipDetails</h1>
+
+    <table>
+        <tbody>
+            {%  if is_granted("ROLE_ADMIN") %}
+                <tr>
+                    <th>Id</th>
+                    <td>{{ shipDetail.id }}</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Shipname</th>
+                <td>{{ shipDetail.shipName }}</td>
+            </tr>
+            <tr>
+                <th>Companydetailsid</th>
+                <td>{{ shipDetail.companyDetailsId }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ shipDetail.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('shipdetails_select1') }}">Back to the list</a>
+        </li>
+        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+            <li>
+                <a href="{{ path('shipdetails_edit', { 'id': shipDetail.id }) }}">Edit</a>
+            </li>
+            <li>
+                {{ form_start(delete_form) }}
+                    <input type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+        {% endif %}
+    </ul>
+{% endblock %}

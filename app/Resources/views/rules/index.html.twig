@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Rules list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Kpidetailsid</th>
+                <th>Elementdetailsid</th>
+                <th>Rules</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rule in rules %}
+            <tr>
+                <td><a href="{{ path('rules_show', { 'id': rule.id }) }}">{{ rule.id }}</a></td>
+                <td>{{ rule.kpiDetailsId }}</td>
+                <td>{{ rule.elementDetailsId }}</td>
+                <td>{{ rule.rules }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('rules_show', { 'id': rule.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('rules_edit', { 'id': rule.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('rules_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}
