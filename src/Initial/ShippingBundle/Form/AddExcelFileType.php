@@ -11,12 +11,12 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\File;
 
-class AddExcelFile extends AbstractType
+class AddExcelFileType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('file', FileType::class)
+            ->add('filename', FileType::class)
             ->add('dataofmonth',  DateType::class,array('data'=> new \DateTime()));
 
     }

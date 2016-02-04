@@ -1,3 +1,7 @@
+initial_shipping_reading_kpi_values:
+    resource: "@InitialShippingBundle/Controller/ReadingKpiValuesController.php"
+    type:     annotation
+
 initial_shipping_calculation_rules:
     resource: "@InitialShippingBundle/Controller/CalculationRulesController.php"
     type:     annotation
@@ -44,6 +48,7 @@ app:
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
 
 
 
