@@ -25,8 +25,6 @@ class CompanyUsersType extends AbstractType
                                 -> leftjoin('InitialShippingBundle:User','b','WITH','b.username = a.adminName')
                                 ->where('b.id = :userId')
                                 ->setParameter('userId',16);
-                                //->getDql();
-                                //->getResult();
                 },
                 'empty_value' =>false,
             ))

@@ -5,19 +5,9 @@
 
     <table>
         <tbody>
-            {%  if is_granted("ROLE_ADMIN") %}
-                <tr>
-                    <th>Id</th>
-                    <td>{{ shipDetail.id }}</td>
-                </tr>
-            {% endif %}
             <tr>
                 <th>Shipname</th>
                 <td>{{ shipDetail.shipName }}</td>
-            </tr>
-            <tr>
-                <th>Companydetailsid</th>
-                <td>{{ shipDetail.companyDetailsId }}</td>
             </tr>
             <tr>
                 <th>Description</th>

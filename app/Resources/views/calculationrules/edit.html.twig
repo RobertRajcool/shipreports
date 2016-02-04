@@ -3,7 +3,14 @@
 {% block body %}
 
     {% block javascripts %}
-        {% javascripts '@AppBundle/Resources/public/js/*' %}
+        {% javascripts
+            '@AppBundle/Resources/public/js/AAA.js'
+            '@AppBundle/Resources/public/js/EditDemo.js'
+            '@AppBundle/Resources/public/js/actions-builder.js'
+            '@AppBundle/Resources/public/js/conditions-builder.js'
+            '@AppBundle/Resources/public/js/rules.js'
+            '@AppBundle/Resources/public/js/sample.js'
+        %}
         <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
     <h1>CalculationRules edit</h1>
@@ -32,3 +39,6 @@
     </ul>
 {% endblock %}
 {% endblock %}
+
+
+

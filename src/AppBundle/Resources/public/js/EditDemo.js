@@ -1,4 +1,4 @@
-var conditions, actions, ageField, submit, result, result1, result2;
+var conditions, actions, ageField, submit, result, result1, result2, obj1, obj2, obj3;
 
 (function($) {
 
@@ -8,9 +8,12 @@ var conditions, actions, ageField, submit, result, result1, result2;
         actions = $("#actionsedit");
         ageField = $("#ageFieldEdit");
         submit = $("#submitedit");
-        result = $("#resultedit");
-        result1 = $("#calculation_rules_ruleConditions");
-        result2 = $("#calculation_rules_ruleActions");
+        result = $("#result");
+        //result1 = $("#calculation_rules_ruleConditions");
+        //result2 = $("#calculation_rules_ruleActions");
+        obj1 = JSON.parse(result.val());
+        obj2 = obj1.conditions;
+        obj3 = obj1.actions;
 
         initializeConditions();
         initializeActions();
@@ -31,9 +34,10 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 ]}
             ],
             data:
+                obj2
            // {"all":[{"name":"ageField","operator":"greaterThan","value":"10"}]}
             //{"all":[{"name":"ageField","operator":"equalTo","value":"5"}]}
-                result1.value
+                //JSON.parse(result1.val())
             //$(calculation_rules_ruleConditions).value
             //{"all":[{"name":"ageField","operator":"notEqualTo","value":"4"},{"all":[{"name":"ageField","operator":"greaterThan","value":"3"}]}]},
 
@@ -46,12 +50,13 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 {label: "Red", name: "Red"},
                 {label: "Yellow", name: "Yellow"}
             ],
-            data:[
+            data:
+                    obj3
                 //{"name":"action-select","value":"Red"}
-                {"name":"action-select","value":"Yellow"}
-                //result2.value
                 //{"name":"action-select","value":"Yellow"}
-            ]
+                //JSON.parse(result2.val())
+                //{"name":"action-select","value":"Yellow"}
+
         });
     }
     function initializeForm() {

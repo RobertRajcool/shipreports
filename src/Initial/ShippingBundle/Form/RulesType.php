@@ -54,7 +54,7 @@ class RulesType extends AbstractType
                 },
                 'empty_value' =>'--Select Element--',
             ))
-            ->add('rules')
+            ->add('rules','hidden')
         ;
     }
     

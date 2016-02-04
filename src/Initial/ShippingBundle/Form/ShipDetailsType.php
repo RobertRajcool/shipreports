@@ -16,16 +16,7 @@ class ShipDetailsType extends AbstractType
     {
         $builder
             ->add('shipName')
-            ->add('companyDetailsId', 'entity', array(
-                'required' => true,
-                'class' => 'Initial\ShippingBundle\Entity\CompanyDetails',
-                'property' => 'CompanyName',
-                'query_builder' => function($er){
-                    return $er -> createQueryBuilder('a');
-                },
-                //'em' => 'client',
-                'empty_value' =>false,
-            ))
+            ->add('companyDetailsId','hidden')
             ->add('description')
         ;
     }

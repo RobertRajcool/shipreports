@@ -1,3 +1,9 @@
+
+
+initial_shipping_user:
+    resource: "@InitialShippingBundle/Controller/UserController.php"
+    type:     annotation
+
 initial_shipping_calculation_rules:
     resource: "@InitialShippingBundle/Controller/CalculationRulesController.php"
     type:     annotation

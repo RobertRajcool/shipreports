@@ -6,8 +6,7 @@
     <table>
         <thead>
             <tr>
-                <th>Id</th>
-                <th>CompanyName</th>
+
                 <th>UserName</th>
                 <th>Role</th>
                 <th>EmailId</th>
@@ -17,8 +16,7 @@
         <tbody>
         {% for companyUser in companyUsers %}
             <tr>
-                <td><a href="{{ path('companyusers_show', { 'id': companyUser.id }) }}">{{ companyUser.id }}</a></td>
-                <td>{{ companyUser.companyName }}</td>
+
                 <td>{{ companyUser.userName }}</td>
                 <td>{{ companyUser.role }}</td>
                 <td>{{ companyUser.emailId }}</td>

@@ -3,6 +3,7 @@
 namespace Initial\ShippingBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,7 +25,7 @@ class KpiDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('shipDetailsId','entity', array(
+            ->add('shipDetailsId',ChoiceType::class,'entity', array(
         'required' => true,
         'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
         'property' => 'ShipName',
@@ -58,3 +59,14 @@ class KpiDetailsType extends AbstractType
         ));
     }
 }
+
+
+$builder->add('isAttending', ChoiceType::class, array(
+    'choices'  => array(
+        'Maybe' => null,
+        'Yes' => true,
+        'No' => false,
+    ),
+    // *this line is important*
+    'choices_as_values' => true,
+));

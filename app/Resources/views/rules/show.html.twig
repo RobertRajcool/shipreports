@@ -1,14 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Rules</h1>
+
+    {% block javascripts %}
+
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/ShowDemo.js'
+        '@AppBundle/Resources/public/js/actions-builder.js'
+        '@AppBundle/Resources/public/js/conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/disable.js'
+        %}
+
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+        <h1>Rules</h1>
 
     <table>
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ rule.id }}</td>
-            </tr>
             <tr>
                 <th>Kpidetailsid</th>
                 <td>{{ rule.kpiDetailsId }}</td>
@@ -17,12 +28,14 @@
                 <th>Elementdetailsid</th>
                 <td>{{ rule.elementDetailsId }}</td>
             </tr>
-            <tr>
-                <th>Rules</th>
-                <td>{{ rule.rules }}</td>
-            </tr>
+
         </tbody>
     </table>
+
+        <input type="hidden" id="result" value="{{ rule.rules }}">
+
+        <div id="conditionsedit" disabled="true"></div>
+        <div id="actionsedit"></div>
 
     <ul>
         <li>
@@ -37,4 +50,5 @@
             {{ form_end(delete_form) }}
         </li>
     </ul>
+{% endblock %}
 {% endblock %}
