@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}{% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+<div align="center"><h1>Welcome to Star Shipping</h1></div>
+<div align="center"><h3>Here you can easily manage your shipping details and etc..</h3></div>
+<div align="right" style="margin-right: 7%">
+    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <h4>{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</h4> |
+    <a href="{{ path('fos_user_security_logout') }}">
+        {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+    </a>
+</div>
+<div align="left">
+    <a href="{{ path('homepage') }}">Home</a>
+    <a href="{{ path('shipdetails_select1') }}">Add Ships</a>
+    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+        <a href="{{ path('kpidetails_select1') }}">Add KPI</a>
+        <a href="{{ path('elementdetails_select1') }}">Add Elements</a>
+        <a href="{{ path('subelementdetails_select1') }}">Add Sub_Elements</a>
+        <a href="{{ path('calculationrules_select') }}">Add Rules</a>
+    {% endif %}
+    {%  if is_granted("ROLE_ADMIN") %}
+        <a href="{{ path('companyusers_select') }}">Manage Users</a>
+        <a href="{{ path('fos_user_registration_register') }}">create Users</a>
+    {% endif %}
+    {%  if is_granted("ROLE_SUPER_ADMIN")  %}
+        <a href="{{ path('companydetails_index') }}">create Company </a>
+    {% endif %}
+    <a href="{{ path('fos_user_change_password') }}">change password</a>
+
+</div>
+<div style="margin-left: 1%">
+    {% block body %}
+
+    {% endblock %}
+    {% else %}
+        <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+    {% endif %}
+</div>
+
+{% for type, messages in app.session.flashBag.all %}
+    {% for message in messages %}
+        <div class="{{ type }}">
+            {{ message|trans({}, 'FOSUserBundle') }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div>
+    {% block fos_user_content %}
+    {% endblock fos_user_content %}
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+    <h1>ReadingKpiValues</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ readingKpiValue.id }}</td>
+            </tr>
+            <tr>
+                <th>Value</th>
+                <td>{{ readingKpiValue.value }}</td>
+            </tr>
+            <tr>
+                <th>Monthdetail</th>
+                <td>{% if readingKpiValue.monthdetail %}{{ readingKpiValue.monthdetail|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('readingkpivalues_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('readingkpivalues_edit', { 'id': readingKpiValue.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

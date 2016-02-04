@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+     {% block javascripts %}
+
+         {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+         <script src="{{ asset_url }}"></script>
+         {% endjavascripts %}
+
+
+
+     {% endblock %}
+
+      {% block stylesheets %}
+          {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+          <link rel="stylesheet" href="{{ asset_url }}" />
+          {% endstylesheets %}
+      {% endblock %}
+
+
+    <h1>All Reading Kpi Values List</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Value</th>
+                <th>Monthdetail</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for readingKpiValue in readingKpiValues %}
+            <tr>
+                <td><a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">{{ readingKpiValue.id }}</a></td>
+                <td>{{ readingKpiValue.value }}</td>
+                <td>{% if readingKpiValue.monthdetail %}{{ readingKpiValue.monthdetail|date('Y-m-d') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('readingkpivalues_edit', { 'id': readingKpiValue.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('readingkpivalues_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

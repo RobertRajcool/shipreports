@@ -1,0 +1,26 @@
+
+
+{% extends 'layout.html.twig' %}
+
+{% block title %}Demo Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block stylesheets %}
+        {% stylesheets '@AppBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+    <div id="mycontent" align="center">
+    <h1 align="center">Welcome to Shipping Application</h1>
+    <p> {{ creator }}</p>
+    {% if creator == "" %}
+        <p align=""><a style="margin-left:495px" id="linkid" href="{{ path('uploadfile') }}">Upload File</a></p>
+        <p style="">{{ msg }}</p>
+    {% endif %}
+
+</div>
+{% endblock %}
