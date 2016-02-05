@@ -17,13 +17,15 @@
     </a>
 </div>
 <div align="left">
-    <a href="{{ path('homepage') }}">Home</a>
-    <a href="{{ path('shipdetails_select1') }}">Add Ships</a>
+    <a href="{{ path('homepage') }}">Home</a>&nbsp;|&nbsp;
+    <a href="{{ path('shipdetails_select1') }}">Add Ships</a>&nbsp;|&nbsp;
     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-        <a href="{{ path('kpidetails_select1') }}">Add KPI</a>
-        <a href="{{ path('elementdetails_select1') }}">Add Elements</a>
-        <a href="{{ path('subelementdetails_select1') }}">Add Sub_Elements</a>
-        <a href="{{ path('calculationrules_select') }}">Add Rules</a>
+        <a href="{{ path('kpidetails_select1') }}">Add KPI</a>&nbsp;|&nbsp;
+        <a href="{{ path('elementdetails_select1') }}">Add Elements</a>&nbsp;|&nbsp;
+        <a href="{{ path('subelementdetails_select1') }}">Add Sub_Elements</a>&nbsp;|&nbsp;
+        <a href="{{ path('rules_select') }}">Add Rules</a>&nbsp;|&nbsp;
+        <a href="{{ path('fileadd') }}">Import File</a>&nbsp;|&nbsp;
+        <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a>
     {% endif %}
     {%  if is_granted("ROLE_ADMIN") %}
         <a href="{{ path('companyusers_select') }}">Manage Users</a>

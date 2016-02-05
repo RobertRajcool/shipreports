@@ -2,9 +2,37 @@
 
 {% block body %}
     <h1>KpiDetails creation</h1>
+    {% block javascripts %}
+
+
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/dropdownchecklist/assets/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/dropdownchecklist/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/js/dropdownchecklist/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+
+    {% endblock %}
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
+    <div class="form-group">
+    {{ form_row(form.shipDetailsId,{'id':'shipid','label': 'Select Ship'}) }}</div>
+    {{ form_row(form.kpiName,{'id':'kpiid','label': 'Kpi Name'})  }}
+    {{ form_row(form.description,{'id':'elementId','label': 'Description'}) }}
+    {{ form_row(form.activeDate,{'id':'month','label': 'Active Date'}) }}
+    {{ form_row(form.endDate,{'id':'valueid','label': 'End Date'}) }}
+    {{ form_row(form.cellName,{'id':'valueid','label': 'Cell Name'}) }}
+    {{ form_row(form.cellDetails,{'id':'valueid','label': 'Cell Detail'}) }}
         <input type="submit" value="Create" />
     {{ form_end(form) }}
 
