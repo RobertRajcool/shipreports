@@ -8,18 +8,74 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ReadingKpiValuesType extends AbstractType
 {
+
+            private $userId;
+
+            public function __construct($id)
+            {
+                $this->userId = $id;
+            }
+
+
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('value')
+
+
+
+
+            ->add('shipDetailsId','entity', array(
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
+                'property' => 'ShipName',
+                'query_builder' => function($er){
+                    return $er -> createQueryBuilder('a')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
+                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
+                        ->where('d.id = :userId')
+                        ->setParameter('userId',$this->userId);
+                },
+                    'empty_value'   => '-- Select Ship --','choices_as_values' => true,))
+            ->add('kpiDetailsId','entity', array(
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\KpiDetails',
+                'property' => 'KpiName',
+                'query_builder' => function($er){
+                    return $er  -> createQueryBuilder('a')
+                        ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
+                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
+                        ->where('d.id = :userId')
+                        ->setParameter('userId',$this->userId);
+                },
+                'empty_value' => '--Select KPI--', ))
+            ->add('elementDetailsId','entity', array(
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\ElementDetails',
+                'property' => 'ElementName',
+                'query_builder' => function($er){
+                    return $er  -> createQueryBuilder('a')
+                        ->leftjoin('InitialShippingBundle:KpiDetails','f','WITH','f.id = a.kpiDetailsId')
+                        ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = f.shipDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
+                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
+                        ->where('d.id = :userId')
+                        ->setParameter('userId',$this->userId);
+                },
+                'empty_value' =>'--Select Element--', ))
+
             ->add('monthdetail', 'date')
-            ->add('shipDetailsId')
-            ->add('kpiDetailsId')
-            ->add('elementDetailsId')
+            ->add('value')
         ;
     }
     

@@ -1,9 +1,14 @@
 /**
  * Created by lawrance on 30/1/16.
  */
-$(document).ready(function () {
-    $('#reading_kpi_values_month_day').hide();
-    $('#app_bundle_excel_type_dataofmonth_day').hide();
+$(document).ready(function ()
+{
+
+
+
+
+    $('#reading_kpi_values_monthdetail_day').hide();
+    $('#initial_shipping_bundle_add_excel_file_dataofmonth_day').hide();
 
     $('#shipid').change(function()
     {
@@ -16,14 +21,14 @@ $(document).ready(function () {
             $.ajax({
                 type: "post",
                 data: data,
-                url: "/Demo_app/web/app_dev.php/readingkpivalues/kpilist",
+                url: "/readingkpivalues/kpilist",
                 success: function(data)
                 {
 
                     $.each(data.kpiNameArray, function(i, listkpi) {
 
                         $('#kpiid').append($('<option>', {
-                            value: listkpi.id, text : listkpi.kpiname
+                            value: listkpi.id, text : listkpi.kpiName
                         }));
                     });
 
@@ -40,22 +45,24 @@ $(document).ready(function () {
     $('#kpiid').change(function()
     {
 
+
         $('#elementId option:gt(0)').remove();
         var mydata = {elementId : $('#kpiid').val()};
-           // alert(mydata.elementId);
+
         if($(this).val())
         {
+            //alert('call function');
             $.ajax({
                 type: "post",
                 data: mydata,
-                url: "/Demo_app/web/app_dev.php/readingkpivalues/elementlist",
+                url: "/readingkpivalues/elementlist",
                 success: function(data)
                 {
                     // alert(data);
                     $.each(data.ElementNameArray, function(i, listelemnt) {
 
                         $('#elementId').append($('<option>', {
-                            value: listelemnt.id, text : listelemnt.elementname
+                            value: listelemnt.id, text : listelemnt.elementName
                         }));
                     });
 

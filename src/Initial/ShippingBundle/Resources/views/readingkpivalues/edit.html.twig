@@ -21,12 +21,18 @@
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
+    <div align="center">
     <h1>ReadingKpiValues edit</h1>
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
+ <form action="{{ path('updatekpivalues') }}" method="post">
+    <input  name="reading_kpi_values[id]" type="hidden" value="{{ readingKpiValue.id }}"><br>
+    {{ form_row(edit_form.shipDetailsId,{'id':'shipid','label': 'Select Ship'}) }}
+    {{ form_row(edit_form.kpiDetailsId,{'id':'kpiid','label': 'Select Kpi'})  }}
+    {{ form_row(edit_form.elementDetailsId,{'id':'elementId','label': 'Select Element'}) }}
+    {{ form_row(edit_form.monthdetail,{'id':'month','label': 'Choose Month'}) }}
+    {{ form_row(edit_form.value,{'id':'valueid','label': 'Enter Value'}) }}
+        <input type="submit" value="Update" />
+ </form>
 
     <ul>
         <li>
@@ -38,4 +44,5 @@
             {{ form_end(delete_form) }}
         </li>
     </ul>
+    </div>
 {% endblock %}

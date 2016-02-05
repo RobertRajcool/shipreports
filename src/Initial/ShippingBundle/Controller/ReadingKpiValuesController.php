@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ReadingKpiValues;
 use Initial\ShippingBundle\Form\ReadingKpiValuesType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * ReadingKpiValues controller.
@@ -41,9 +42,13 @@ class ReadingKpiValuesController extends Controller
      */
     public function newAction(Request $request)
     {
+        $user = $this->getUser();
+        $id = $user->getId();
         $readingKpiValue = new ReadingKpiValues();
-        $form = $this->createForm('Initial\ShippingBundle\Form\ReadingKpiValuesType', $readingKpiValue);
+        //$form = $this->createForm('Initial\ShippingBundle\Form\ReadingKpiValuesType', $readingKpiValue);
+        $form = $this->createForm(new ReadingKpiValuesType($id), $readingKpiValue);
         $form->handleRequest($request);
+        /*
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -51,7 +56,7 @@ class ReadingKpiValuesController extends Controller
             $em->flush();
 
             return $this->redirectToRoute('readingkpivalues_show', array('id' => $readingKpiValue->getId()));
-        }
+        }*/
 
         return $this->render('InitialShippingBundle:readingkpivalues:new.html.twig', array(
             'readingKpiValue' => $readingKpiValue,
@@ -83,8 +88,10 @@ class ReadingKpiValuesController extends Controller
      */
     public function editAction(Request $request, ReadingKpiValues $readingKpiValue)
     {
+        $user = $this->getUser();
+        $id = $user->getId();
         $deleteForm = $this->createDeleteForm($readingKpiValue);
-        $editForm = $this->createForm('Initial\ShippingBundle\Form\ReadingKpiValuesType', $readingKpiValue);
+        $editForm = $this->createForm(new ReadingKpiValuesType($id), $readingKpiValue);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -137,4 +144,151 @@ class ReadingKpiValuesController extends Controller
             ->getForm()
         ;
     }
+
+    /**
+     * Refresh Kpi List.
+     *
+     * @Route("/kpilist", name="refreshkpilist")
+     * @Method("Post")
+     */
+    public function refreshkpilistAction(Request $request)
+
+    {
+
+        $data = $request->request->get('shipid');
+
+
+        $em=$this->getDoctrine()->getManager();
+        //echo 'id value: '.$data;
+
+        $query = $em->createQueryBuilder()
+            ->select('b.kpiName', 'b.id')
+            ->from('InitialShippingBundle:KpiDetails', 'b')
+            ->where('b.shipDetailsId = :shipdetailsid')
+            ->setParameter('shipdetailsid', $data)
+            ->add('orderBy', 'b.id  ASC ')
+            ->getQuery();
+        $ids = $query->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('kpiNameArray' => $ids));
+
+        return $response;
+
+
+
+    }
+    /**
+     * Refresh Kpi List.
+     *
+     * @Route("/elementlist", name="refreshelementcall")
+     * @Method("Post")
+     */
+    public function refreshelementlistAction(Request $request)
+
+    {
+
+        $kpidetailsid = $request->request->get('elementId');
+
+
+        $em=$this->getDoctrine()->getManager();
+        //echo 'id value: '.$data;
+
+        $query = $em->createQueryBuilder()
+            ->select('b.elementName', 'b.id')
+            ->from('InitialShippingBundle:ElementDetails', 'b')
+            ->where('b.kpiDetailsId = :kpidetailsid')
+            ->setParameter('kpidetailsid', $kpidetailsid)
+            ->add('orderBy', 'b.id  ASC ')
+            ->getQuery();
+        $elementids = $query->getResult();
+
+        $response = new JsonResponse();
+        $response->setData(array('ElementNameArray' => $elementids));
+
+        return $response;
+
+
+
+    }
+
+    /**
+     * Adding Kpi Values.
+     *
+     * @Route("/readingelementvalues", name="readingelementvalues")
+     * @Method("Post")
+     */
+    public function new1Action(Request $request)
+    {
+        $params = $request->request->get('reading_kpi_values');
+
+        $shipid = $params['shipDetailsId'];
+        $kpiid = $params['kpiDetailsId'];
+        $elementId = $params['elementDetailsId'];
+        $month = $params['monthdetail'];
+        $value = $params['value'];
+        $monthtostring=$month['year'].'-'.$month['month'].'-'.$month['day'];
+        $new_date=new \DateTime($monthtostring);
+
+
+        $em = $this->getDoctrine()->getManager();
+        $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiid));
+        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
+        $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$elementId));
+        $readingkpivalue=new ReadingKpiValues();
+        $readingkpivalue->setKpiDetailsId($newkpiid);
+        $readingkpivalue->setElementDetailsId($newelementid);
+        $readingkpivalue->setShipDetailsId($newshipid);
+        $readingkpivalue->setMonthdetail($new_date);
+        $readingkpivalue->setValue($value);
+
+
+        $em->persist($readingkpivalue);
+        $em->flush();
+
+        return $this->redirectToRoute('readingkpivalues_index');
+
+    }
+
+
+
+    /**
+     * Update kpi Values.
+     *
+     * @Route("/updatekpivalues", name="updatekpivalues")
+     * @Method("Post")
+     */
+    public function updateAction(Request $request)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $params = $request->request->get('reading_kpi_values');
+        $id = $params['id'];
+        $entity = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->find($id);
+
+
+        $shipid = $params['shipDetailsId'];
+        $kpiid = $params['kpiDetailsId'];
+        $elementId = $params['elementDetailsId'];
+        $month = $params['monthdetail'];
+        $value = $params['value'];
+        $monthtostring=$month['year'].'-'.$month['month'].'-'.$month['day'];
+        $new_date=new \DateTime($monthtostring);
+
+
+        $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiid));
+        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
+        $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$elementId));
+        $readingkpivalue=new ReadingKpiValues();
+        $entity->setKpiDetailsId($newkpiid);
+        $entity->setElementDetailsId($newelementid);
+        $entity->setShipDetailsId($newshipid);
+        $entity->setMonthdetail($new_date);
+        $entity->setValue($value);
+        $em->flush();
+
+        return $this->redirectToRoute('readingkpivalues_index');
+
+    }
+
+
 }

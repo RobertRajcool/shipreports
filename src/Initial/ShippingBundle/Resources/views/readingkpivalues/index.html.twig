@@ -25,10 +25,13 @@
 
     <h1>All Reading Kpi Values List</h1>
 
-    <table>
+    <table id="readingkpitable">
         <thead>
             <tr>
-                <th>Id</th>
+
+                <th>Ship Name</th>
+                <th>Kpi Name</th>
+                <th>Element Name</th>
                 <th>Value</th>
                 <th>Monthdetail</th>
                 <th>Actions</th>
@@ -37,27 +40,27 @@
         <tbody>
         {% for readingKpiValue in readingKpiValues %}
             <tr>
-                <td><a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">{{ readingKpiValue.id }}</a></td>
+
+                <td>{{ readingKpiValue.shipDetailsId }}</td>
+                <td>{{ readingKpiValue.kpiDetailsId }}</td>
+                <td>{{ readingKpiValue.elementDetailsId }}</td>
+
                 <td>{{ readingKpiValue.value }}</td>
+
                 <td>{% if readingKpiValue.monthdetail %}{{ readingKpiValue.monthdetail|date('Y-m-d') }}{% endif %}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">show</a>
-                        </li>
-                        <li>
+
+                            <a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">show</a>&nbsp;|&nbsp;
+
                             <a href="{{ path('readingkpivalues_edit', { 'id': readingKpiValue.id }) }}">edit</a>
-                        </li>
-                    </ul>
+
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('readingkpivalues_new') }}">Create a new entry</a>
-        </li>
-    </ul>
+
+            <a style="align-items: center;margin-left: 44%;margin-top: 5%" href="{{ path('readingkpivalues_new') }}">Create a new entry</a>
+
 {% endblock %}
