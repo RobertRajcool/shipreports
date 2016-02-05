@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+    <h1>ReadingKpiValues edit</h1>
+
+    {{ form_start(edit_form) }}
+        {{ form_widget(edit_form) }}
+        <input type="submit" value="Edit" />
+    {{ form_end(edit_form) }}
+
+    <ul>
+        <li>
+            <a href="{{ path('readingkpivalues_index') }}">Back to the list</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -36,7 +36,9 @@
 
 </div>
 <div style="margin-left: 1%">
-    {% block body %}{% endblock %}
+    {% block body %}
+
+    {% endblock %}
     {% else %}
         <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
     {% endif %}

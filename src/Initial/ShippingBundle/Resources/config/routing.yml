@@ -1,3 +1,4 @@
 initial_shipping_homepage:
     path:     /
     defaults: { _controller: InitialShippingBundle:Default:index }
+
