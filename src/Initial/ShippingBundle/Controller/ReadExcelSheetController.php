@@ -137,7 +137,7 @@ class ReadExcelSheetController extends Controller
 
 
                     $shipdetailsarray = $query->getResult();
-                    
+
 
 
                     for ($k = 0; $k < count($shipdetailsarray); $k++)
