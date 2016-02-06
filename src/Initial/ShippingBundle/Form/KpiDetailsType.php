@@ -17,7 +17,6 @@ class KpiDetailsType extends AbstractType
         $this->userId = $id;
     }
 
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -25,14 +24,12 @@ class KpiDetailsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-
         $builder
             ->add('shipDetailsId','entity', array(
         'required' => true,
         'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
         'property' => 'ShipName',
         'multiple' => true,
-                'expanded' => true,
         'query_builder' => function($er){
             return $er -> createQueryBuilder('a')
                         ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
@@ -41,7 +38,6 @@ class KpiDetailsType extends AbstractType
                         ->where('d.id = :userId')
                         ->setParameter('userId',$this->userId);
         },
-        //'em' => 'client',
         'empty_value' =>false,
     ))
 

@@ -22,15 +22,21 @@
         {% endstylesheets %}
     {% endblock %}
     <h1>ReadingKpiValues creation</h1>
+    <div align="center">
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
+        <form action="{{ path('readingelementvalues') }}" method="post">
+        {{ form_row(form.shipDetailsId,{'id':'shipid','label': 'Select Ship'}) }}
+        {{ form_row(form.kpiDetailsId,{'id':'kpiid','label': 'Select Kpi'})  }}
+        {{ form_row(form.elementDetailsId,{'id':'elementId','label': 'Select Element'}) }}
+        {{ form_row(form.monthdetail,{'id':'month','label': 'Choose Month'}) }}
+        {{ form_row(form.value,{'id':'valueid','label': 'Enter Value'}) }}
         <input type="submit" value="Create" />
-    {{ form_end(form) }}
+    </form>
 
     <ul>
         <li>
             <a href="{{ path('readingkpivalues_index') }}">Back to the list</a>
         </li>
     </ul>
+    </div>
 {% endblock %}

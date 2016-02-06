@@ -134,12 +134,9 @@ class ShipDetailsController extends Controller
             ->setParameter('userId',$userId)
             ->getQuery()
             ->getResult();
-
         $companyName=$query[0]['id'];
 
         $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
-
-       // print_r($course);die;
 
         $shipdetails = new ShipDetails();
         $shipdetails->setCompanyDetailsId($course);

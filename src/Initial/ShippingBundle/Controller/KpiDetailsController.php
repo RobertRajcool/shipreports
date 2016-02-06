@@ -97,8 +97,6 @@ class KpiDetailsController extends Controller
         $kpiDetail = new KpiDetails();
         $form = $this->createForm(new KpiDetailsType($id), $kpiDetail);
         $form->handleRequest($request);
-        //$form = $this->createForm(new KpiDetailsType($id));
-        //$form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -113,6 +111,55 @@ class KpiDetailsController extends Controller
             'form' => $form->createView(),
         ));
     }
+
+
+
+    /**
+     * Creates a new KpiDetails entity.
+     *
+     * @Route("/new1", name="kpidetails_new1")
+     * @Method({"GET", "POST"})
+     */
+    public function new1Action(Request $request)
+    {
+        $params = $request->request->get('kpi_details');
+        $kpiName = $params['kpiName'];
+        $shipDetailsId = $params['shipDetailsId'];
+        $val = count($shipDetailsId);
+        //print_r($j);die;
+        $description = $params['description'];
+        $activeDate = $params['activeDate'];
+        $endDate = $params['endDate'];
+        $cellName = $params['cellName'];
+        $cellDetails = $params['cellDetails'];
+
+        $monthtostring=$activeDate['year'].'-'.$activeDate['month'].'-'.$activeDate['day'];
+        $new_date=new \DateTime($monthtostring);
+        $monthtostring1=$endDate['year'].'-'.$endDate['month'].'-'.$endDate['day'];
+        $new_date1=new \DateTime($monthtostring1);
+
+        $em = $this->getDoctrine()->getManager();
+
+
+        for($i=0;$i<$val;$i++)
+        {
+            $kpidetails = new KpiDetails();
+            $kpidetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipDetailsId[$i])));
+            $kpidetails -> setKpiName($kpiName);
+            $kpidetails -> setDescription($description);
+            $kpidetails -> setActiveDate($new_date);
+            $kpidetails -> setEndDate($new_date1);
+            $kpidetails -> setCellName($cellName);
+            $kpidetails -> setCellDetails($cellDetails);
+            $em->persist($kpidetails);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('kpidetails_select1');
+
+    }
+
+
 
     /**
      * Finds and displays a KpiDetails entity.

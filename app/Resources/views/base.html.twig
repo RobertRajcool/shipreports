@@ -17,22 +17,24 @@
     </a>
 </div>
 <div align="left">
-    <a href="{{ path('homepage') }}">Home</a>
-    <a href="{{ path('shipdetails_select1') }}">Add Ships</a>
+    <a href="{{ path('homepage') }}">Home</a>&nbsp;|&nbsp;
+    <a href="{{ path('shipdetails_select1') }}">Add Ships</a>&nbsp;|&nbsp;
     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-        <a href="{{ path('kpidetails_select1') }}">Add KPI</a>
-        <a href="{{ path('elementdetails_select1') }}">Add Elements</a>
-        <a href="{{ path('subelementdetails_select1') }}">Add Sub_Elements</a>
-        <a href="{{ path('rules_select') }}">Add Rules</a>
+        <a href="{{ path('kpidetails_select1') }}">Add KPI</a>&nbsp;|&nbsp;
+        <a href="{{ path('elementdetails_select1') }}">Add Elements</a>&nbsp;|&nbsp;
+        <a href="{{ path('subelementdetails_select1') }}">Add Sub_Elements</a>&nbsp;|&nbsp;
+        <a href="{{ path('rules_select') }}">Add Rules</a>&nbsp;|&nbsp;
+        <a href="{{ path('fileadd') }}">Import File</a>&nbsp;|&nbsp;
+        <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a>&nbsp;|&nbsp;
     {% endif %}
     {%  if is_granted("ROLE_ADMIN") %}
-        <a href="{{ path('companyusers_select') }}">Manage Users</a>
-        <a href="{{ path('fos_user_registration_register') }}">create Users</a>
+        <a href="{{ path('companyusers_select') }}">Manage Users</a>&nbsp;|&nbsp;
+        <a href="{{ path('fos_user_registration_register') }}">create Users</a>&nbsp;|&nbsp;
     {% endif %}
     {%  if is_granted("ROLE_SUPER_ADMIN")  %}
-        <a href="{{ path('companydetails_index') }}">create Company </a>
+        <a href="{{ path('companydetails_index') }}">create Company </a>&nbsp;|&nbsp;
     {% endif %}
-    <a href="{{ path('fos_user_change_password') }}">change password</a>
+    <a href="{{ path('fos_user_change_password') }}">change password</a>&nbsp;|&nbsp;
 
 </div>
 <div style="margin-left: 1%">
