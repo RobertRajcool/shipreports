@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
-    <h1>ReadingKpiValues creation</h1>
+    <h1>Add     ReadingKpiValues </h1>
     <div align="center">
 
         <form action="{{ path('readingelementvalues') }}" method="post">
@@ -30,7 +30,7 @@
         {{ form_row(form.elementDetailsId,{'id':'elementId','label': 'Select Element'}) }}
         {{ form_row(form.monthdetail,{'id':'month','label': 'Choose Month'}) }}
         {{ form_row(form.value,{'id':'valueid','label': 'Enter Value'}) }}
-        <input type="submit" value="Create" />
+        <input type="submit" id="addsubmitid" value="Create" />
     </form>
 
     <ul>

@@ -19,6 +19,15 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\CompanyDetails")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="companyid", referencedColumnName="id")
+     * })
+     */
+    protected $companyid;
+
     public function __construct()
     {
         parent::__construct();

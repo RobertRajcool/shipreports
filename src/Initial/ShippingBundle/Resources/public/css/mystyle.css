@@ -77,5 +77,11 @@ h1{text-align: center;}
 #showtable
 {
 text-align: center;
+    border: dashed;
+}
+.listitem
+{
+    line-height: 163%;
+    text-align: center;
 }
 

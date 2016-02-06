@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+
+
+    <h1>Company Users List</h1>
+    <div align="center" class="listitem">
+        <table id="readingkpitable">
+            <thead>
+            <tr>
+
+                <th>Company Name</th>
+                <th>Username</th>
+                <th>Email id</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for listofuser in userdetails %}
+                <tr>
+                    <td>{{ listofuser.companyid }}</td>
+                    <td>{{ listofuser.username }}</td>
+                    <td>{{ listofuser.email }}</td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+        <a style="align-items: center;margin-left: 44%;margin-top: 5%" href="{{ path('fos_user_registration_register') }}">Add New User</a>
+    </div>
+
+{% endblock %}
