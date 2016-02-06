@@ -33,7 +33,7 @@ class KpiDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="KpiName", type="string", length=125, unique=true)
+     * @ORM\Column(name="KpiName", type="string", length=125)
      */
     private $kpiName;
 
