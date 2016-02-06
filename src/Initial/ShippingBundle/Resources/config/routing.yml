@@ -2,3 +2,12 @@ initial_shipping_homepage:
     path:     /
     defaults: { _controller: InitialShippingBundle:Default:index }
 
+readexcelcontroller:
+     path:    /readmy
+     defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:index" }
+fileadd:
+     path:    /add
+     defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:up" }
+upload:
+     path:    /upload
+     defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:upload" }

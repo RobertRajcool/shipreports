@@ -1,7 +1,10 @@
-
-
 initial_shipping_user:
     resource: "@InitialShippingBundle/Controller/UserController.php"
+    type:     annotation
+
+initial_shipping_reading_kpi_values:
+    resource: "@InitialShippingBundle/Controller/ReadingKpiValuesController.php"
+    type:     annotation
 
 initial_shipping_calculation_rules:
     resource: "@InitialShippingBundle/Controller/CalculationRulesController.php"
@@ -14,7 +17,7 @@ initial_shipping_rules:
 initial_shipping_sub_element_details:
     resource: "@InitialShippingBundle/Controller/SubElementDetailsController.php"
     type:     annotation
-s
+
 initial_shipping_company_users:
     resource: "@InitialShippingBundle/Controller/CompanyUsersController.php"
     type:     annotation

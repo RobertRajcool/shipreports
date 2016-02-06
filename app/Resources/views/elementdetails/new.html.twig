@@ -1,11 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>ElementDetails creation</h1>
+
+    {% block javascripts %}
+
+        {% javascripts
+                '@AppBundle/Resources/public/js/AAA.js'
+                '@AppBundle/Resources/public/js/sample.js'
+        %}
+
+        <script src="{{ asset_url }}"></script>
+
+    {% endjavascripts %}
+
+        <h1>ElementDetails creation</h1>
 
     {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type="submit" value="Create" />
+
+        {{ form_row(form.kpiDetailsId,{id:"kpiid"}) }}
+        {{ form_row(form.elementName) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.cellName) }}
+        {{ form_row(form.cellDetails) }}
+        {{ form_row(form.activatedDate) }}
+        {{ form_row(form.endDate) }}
+        {{ form_row(form.weightage, {id:"weightageid"}) }}
+
+        <input type="text" id="weightage_result">
+
+        <input type="submit" value="Create" id="weightage_submit"/>
+
     {{ form_end(form) }}
 
     <ul>
@@ -13,4 +37,5 @@
             <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
         </li>
     </ul>
+{% endblock %}
 {% endblock %}

@@ -2,12 +2,14 @@
 
 namespace Initial\ShippingBundle\Controller;
 
+use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ElementDetails;
 use Initial\ShippingBundle\Form\ElementDetailsType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * ElementDetails controller.
@@ -82,6 +84,47 @@ class ElementDetailsController extends Controller
     }
 
 
+
+    /**
+     * Lists all ElementDetails entities.
+     *
+     * @Route("/weightage", name="elementdetails_weightage")
+     */
+    public function weightageAction(Request $request)
+    {
+        $id = $request->request->get('kpiid');
+        $weight = $request->request->get('id');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.weightage')
+            ->from('InitialShippingBundle:ElementDetails','a')
+            ->where('a.kpiDetailsId = :userId')
+            ->setParameter('userId',$id)
+            ->getQuery();
+        $weightage = $query->getResult();
+        $add=$weight;
+        $len1 = count($weightage);
+        for ($i=0;$i<$len1; $i++)
+            {
+                $add= $add+$weightage[$i]['weightage'];
+            }
+        $result = 1;
+        $result1 = -1;
+        if($add <= 100)
+        {
+            $response = new JsonResponse();
+            $response->setData(array('test' => $result));
+            return $response;
+        }
+        else
+        {
+            $response = new JsonResponse();
+            $response->setData(array('test' => $result1));
+            return $response;
+        }
+
+    }
 
 
     /**

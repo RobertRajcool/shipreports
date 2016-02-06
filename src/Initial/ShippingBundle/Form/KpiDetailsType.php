@@ -24,11 +24,15 @@ class KpiDetailsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
+
         $builder
-            ->add('shipDetailsId',ChoiceType::class,'entity', array(
+            ->add('shipDetailsId','entity', array(
         'required' => true,
         'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
         'property' => 'ShipName',
+        'multiple' => true,
+                'expanded' => true,
         'query_builder' => function($er){
             return $er -> createQueryBuilder('a')
                         ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
@@ -40,6 +44,7 @@ class KpiDetailsType extends AbstractType
         //'em' => 'client',
         'empty_value' =>false,
     ))
+
             ->add('kpiName')
             ->add('description')
             ->add('activeDate', 'date')
@@ -61,12 +66,3 @@ class KpiDetailsType extends AbstractType
 }
 
 
-$builder->add('isAttending', ChoiceType::class, array(
-    'choices'  => array(
-        'Maybe' => null,
-        'Yes' => true,
-        'No' => false,
-    ),
-    // *this line is important*
-    'choices_as_values' => true,
-));
