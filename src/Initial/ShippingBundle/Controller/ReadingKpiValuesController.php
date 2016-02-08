@@ -95,6 +95,7 @@ class ReadingKpiValuesController extends Controller
         $deleteForm = $this->createDeleteForm($readingKpiValue);
         $editForm = $this->createForm(new ReadingKpiValuesType($id), $readingKpiValue);
         $editForm->handleRequest($request);
+        /*
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -103,6 +104,7 @@ class ReadingKpiValuesController extends Controller
 
             return $this->redirectToRoute('readingkpivalues_edit', array('id' => $readingKpiValue->getId()));
         }
+        */
 
         return $this->render('InitialShippingBundle:readingkpivalues:edit.html.twig', array(
             'readingKpiValue' => $readingKpiValue,
