@@ -26,6 +26,8 @@ class ReadingKpiValuesController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
+        $user1 = $this->getUser();
+        $userId = $user1->getId();
 
         $readingKpiValues = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findAll();
 

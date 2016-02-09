@@ -8,13 +8,21 @@
 
 {% endblock %}
 {% block body %}
-    {#
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+
     {% block stylesheets %}
-        {% stylesheets '@AppBundle/Resources/public/css/*' %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
-    #}
     <div id="mycontent" align="center">
     <h1 align="center">Welcome to Shipping Application</h1>
     <p> {{ creator }}</p>

@@ -34,6 +34,7 @@ class RulesType extends AbstractType
                         ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
                         ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
                         ->where('d.id = :userId')
+                        -> groupby('a.kpiName')
                         ->setParameter('userId',$this->userId);
                 },
                 'empty_value' => '--Select KPI--',

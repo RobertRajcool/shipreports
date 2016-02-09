@@ -38,7 +38,7 @@ class KpiDetailsType extends AbstractType
                         ->where('d.id = :userId')
                         ->setParameter('userId',$this->userId);
         },
-        'empty_value' =>false,
+        'empty_value' => '--Select Ship--',
     ))
 
             ->add('kpiName')

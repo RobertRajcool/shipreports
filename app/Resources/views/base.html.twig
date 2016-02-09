@@ -27,9 +27,13 @@
         <a href="{{ path('fileadd') }}">Import File</a>&nbsp;|&nbsp;
         <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a>&nbsp;|&nbsp;
     {% endif %}
-    {%  if is_granted("ROLE_ADMIN") %}
-        <a href="{{ path('companyusers_select') }}">Manage Users</a>&nbsp;|&nbsp;
+    {%  if is_granted("ROLE_ADMIN") or is_granted("ROLE_SUPER_ADMIN")%}
+
+
         <a href="{{ path('fos_user_registration_register') }}">create Users</a>&nbsp;|&nbsp;
+    {% endif %}
+    {%  if is_granted("ROLE_ADMIN")  %}
+        <a href="{{ path('fos_user_registration_show') }}">Manage Users</a>&nbsp;|&nbsp;
     {% endif %}
     {%  if is_granted("ROLE_SUPER_ADMIN")  %}
         <a href="{{ path('companydetails_index') }}">create Company </a>&nbsp;|&nbsp;

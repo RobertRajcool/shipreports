@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\CompanyDetails;
 use Initial\ShippingBundle\Form\CompanyDetailsType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * CompanyDetails controller.
@@ -58,6 +59,60 @@ class CompanyDetailsController extends Controller
             'form' => $form->createView(),
         ));
     }
+
+    /**
+     * Creates a new CompanyDetails entity.
+     *
+     * @Route("/newcompany", name="companydetails_newcompany")
+     */
+    public function newcompanyAction()
+    {
+        //echo "New companyy action";
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.companyName,a.id')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->getQuery();
+        $shipDetails = $query->getResult();
+
+        //print_r($shipDetails);die;
+
+        $response = new JsonResponse();
+        $response->setData(array('companyNameArray' => $shipDetails));
+
+        return $response;
+    }
+
+    /**
+     * Creates a new CompanyDetails entity.
+     *
+     * @Route("/newadmin", name="companydetails_newadmin")
+     */
+    public function newadminAction(Request $request)
+    {
+        $id = $request->request->get('selectid');
+        //echo "New companyy action";
+       // $id = $request->request->get(data);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.adminName,a.emailId')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->where('a.id = :userId')
+            ->setParameter('userId',$id)
+            ->getQuery();
+        $adminDetails = $query->getResult();
+
+       // print_r($adminDetails);die;
+
+        $response = new JsonResponse();
+        $response->setData(array('adminNameArray' => $adminDetails));
+
+        return $response;
+    }
+
 
     /**
      * Finds and displays a CompanyDetails entity.
@@ -137,4 +192,6 @@ class CompanyDetailsController extends Controller
             ->getForm()
         ;
     }
+
+
 }

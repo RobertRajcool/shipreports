@@ -84,10 +84,7 @@ class ReadExcelSheetController extends Controller
                 $mydatevalue= $excelobj->getDataofmonth();
 
 
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($excelobj);
-                $em->flush();
-                $filelastinsertid=$excelobj->getId();
+
                 $inputFileType="";
 
                 switch ($ext) {
@@ -208,11 +205,6 @@ class ReadExcelSheetController extends Controller
                                 {
                                     $cre = "";
                                     $excelobj->removeUpload($input);
-                                    $deletesql = "delete from excel_file_details where id='$filelastinsertid' ";
-
-                                    $deletesmt = $em->getConnection()->prepare($deletesql);
-
-                                    $deletesmt->execute();
 
                                     $this->addFlash(
                                         'notice',
@@ -305,11 +297,6 @@ class ReadExcelSheetController extends Controller
                                         $msg = 'In Cell ' . $elementcell . ' having that value:' . $elementname . ' Thats Mismatch Value So Correct!!!..';
                                         $cre = "";
                                         $excelobj->removeUpload($input);
-                                        $deletesql = "delete from excel_file_details where id='$filelastinsertid' ";
-
-                                        $deletesmt = $em->getConnection()->prepare($deletesql);
-
-                                        $deletesmt->execute();
 
                                         $this->addFlash(
                                             'notice',
@@ -330,11 +317,6 @@ class ReadExcelSheetController extends Controller
                                     $msg = 'In Cell ' . $elementcell . ' having that value:' . $elementname . ' Thats Mismatch Value So Correct!!!..';
                                     $cre = "";
                                     $excelobj->removeUpload($input);
-                                    $deletesql = "delete from excel_file_details where id='$filelastinsertid' ";
-
-                                    $deletesmt = $em->getConnection()->prepare($deletesql);
-
-                                    $deletesmt->execute();
 
                                     $this->addFlash(
                                         'notice',
@@ -355,11 +337,6 @@ class ReadExcelSheetController extends Controller
                                 $msg = 'In Cell ' . $cellname . ' having that value:' . $cellvalue . ' Thats Mismatch Value So Correct!!!..';
                                 $cre = "";
                                 $excelobj->removeUpload($input);
-                                $deletesql = "delete from excel_file_details where id='$filelastinsertid' ";
-
-                                $deletesmt = $em->getConnection()->prepare($deletesql);
-
-                                $deletesmt->execute();
 
                                 $this->addFlash(
                                     'notice',
@@ -480,6 +457,10 @@ class ReadExcelSheetController extends Controller
 
 
                             // Insertion Process Ends Here //
+                            $em = $this->getDoctrine()->getManager();
+                            $em->persist($excelobj);
+                            $em->flush();
+                            $filelastinsertid=$excelobj->getId();
 
                             $cre = "Your File Readed!!!";
 
@@ -499,11 +480,6 @@ class ReadExcelSheetController extends Controller
                         $msg='In Cell '.$cellname.' having that value:'.$cellvalue.' Thats Mismatch Value So Correct!!!1';
                         $cre = "";
                         $excelobj->removeUpload($input);
-                        $deletesql = "delete from excel_file_details where id='$filelastinsertid' ";
-
-                        $deletesmt = $em->getConnection()->prepare($deletesql);
-
-                        $deletesmt->execute();
 
                         $this->addFlash(
                             'notice',
@@ -521,14 +497,8 @@ class ReadExcelSheetController extends Controller
                 if ($sheetCount > 1)
                 {
                     $excelobj->removeUpload($input);
-                    $deletesql = "delete from excel_file_details where id='$filelastinsertid' ";
-
-                    $deletesmt = $em->getConnection()->prepare($deletesql);
-
-                    $deletesmt->execute();
                     $loadedSheetNames = $objPHPExcel->getSheetNames();
 
-                    //$excelobj->removeUpload();
                     $this->addFlash(
                         'notice',
                         'Your Document having more than One Sheets!!!!'
