@@ -53,7 +53,7 @@ class ReadExcelSheetController extends Controller
         $excelobj = new Excel_file_details();
         //$uploadsucess=false;
         $form = $this->createCreateForm($excelobj);
-
+        $em = $this->getDoctrine()->getManager();
 
 
         $form->handleRequest($request);
@@ -157,9 +157,11 @@ class ReadExcelSheetController extends Controller
                     $arrayLabel = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "w", "X", "Y", "z");
                     //$myArray=array();
                     $shipnameflag=true;
-                    for ($x = 1; $x <= 10; $x++) {
+                    for ($x = 1; $x <= 10; $x++)
+                    {
 
-                        for ($y = 1; $y < count($arrayLabel); $y++) {
+                        for ($y = 1; $y < count($arrayLabel); $y++)
+                        {
                             //== display each cell value
                             $pcellvale = $objWorksheet->getCell($arrayLabel[$y] . $x)->getValue();
                             $mystaticvalue=25;
@@ -230,51 +232,44 @@ class ReadExcelSheetController extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
                     //Validation For Kpi Details
 
-                    for($mn=0;$mn<count($shipdetailsarray);$mn++) {
-                        $query = $em->createQueryBuilder()
-                            ->select('a.cellName', 'a.kpiName', 'a.id', 'a.endDate')
-                            ->from('InitialShippingBundle:KpiDetails', 'a')
-                            ->where('a.shipDetailsId = :shipdetailsid')
-                            ->setParameter('shipdetailsid', $shipdetailsarray[$mn]['id'])
-                            ->add('orderBy', 'a.id  ASC ')
-                            ->getQuery();
-                        $kpidetailsarray = $query->getResult();
-
+                   $kpiquery= $em -> createQueryBuilder()
+                        ->select('a.cellName', 'a.kpiName', 'a.id', 'a.endDate')
+                        ->from('InitialShippingBundle:KpiDetails', 'a')
+                        ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
+                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
+                        ->where('d.id = :userId')
+                        ->groupby('a.kpiName')
+                        ->setParameter('userId',$userId)
+                        ->getQuery();
+                    $newkpidetailsarray=$kpiquery->getResult();
 
                         $mycount = 0;
                         //$flag=true;
-                        $j = count($kpidetailsarray);
+                        $j = count($newkpidetailsarray);
                         for ($i = 0; $i < $j; $i++) {
 
 
-                            $cellname = $kpidetailsarray[$i]['cellName'];
-                            $cellvalue = $kpidetailsarray[$i]['kpiName'];
+                            $cellname = $newkpidetailsarray[$i]['cellName'];
+                            $cellvalue = $newkpidetailsarray[$i]['kpiName'];
 
                             $columnvalue1 = $objPHPExcel->getActiveSheet()->getCell($cellname)->getValue();
                             // echo 'The Column value'.$columnvalue1;die;
-                            if ($cellvalue == $columnvalue1) {
+                            if ($cellvalue == $columnvalue1)
+                            {
                                 $mycount++;
 
                                 //Validation For Elements Starts Here...//
 
-                                $elementid = $kpidetailsarray[$i]['id'];
+                                $elementid = $newkpidetailsarray[$i]['id'];
                                 $query = $em->createQueryBuilder()
                                     ->select('b.cellName', 'b.elementName', 'b.id')
                                     ->from('InitialShippingBundle:ElementDetails', 'b')
                                     ->where('b.kpiDetailsId = :kpidetailsid')
                                     ->setParameter('kpidetailsid', $elementid)
-                                    ->add('orderBy', 'b.id  ASC ')
                                     ->getQuery();
                                 $elementarray = $query->getResult();
 
@@ -353,7 +348,7 @@ class ReadExcelSheetController extends Controller
 
 
                         }
-                    }
+
 
 
                         if ($j == $mycount)
@@ -375,29 +370,29 @@ class ReadExcelSheetController extends Controller
                             $usergivendata = date_format($excelobj->getDataofmonth(), "m-Y");
 
 
-                            for ($d = 0; $d < count($kpidetailsarray); $d++) {
+                            for ($d = 0; $d < count($newkpidetailsarray); $d++) {
 
 
-                                $cellname = $kpidetailsarray[$d]['cellName'];
-                                $kpiid = $kpidetailsarray[$d]['id'];
-                                $cellvalue = $kpidetailsarray[$d]['kpiName'];
-                                $cellenddate = $kpidetailsarray[$d]['endDate'];
-                                $databasedate = $kpidetailsarray($cellenddate, "m-Y");
+                                $cellname = $newkpidetailsarray[$d]['cellName'];
+                                $kpiid = $newkpidetailsarray[$d]['id'];
+                                $cellvalue = $newkpidetailsarray[$d]['kpiName'];
+                                $cellenddate = $newkpidetailsarray[$d]['endDate'];
+                                $databasedate = date_format($cellenddate, "m-Y");
 
 
                                 // echo $cellvalue.'<br>';
                                 // echo $cellname.'<br>';
-                                if ($usergivendata <= $databasedate) {
+
+                               /* if ($usergivendata <= $databasedate) { */
 
                                     $columnvalue1 = $objPHPExcel->getActiveSheet()->getCell($cellname)->getValue();
                                     if ($cellvalue == $columnvalue1) {
-                                        $elementid = $kpidetailsarray[$d]['id'];
+                                        $elementid = $newkpidetailsarray[$d]['id'];
                                         $query = $em->createQueryBuilder()
                                             ->select('b.cellName', 'b.elementName', 'b.id')
                                             ->from('InitialShippingBundle:ElementDetails', 'b')
                                             ->where('b.kpiDetailsId = :kpidetailsid')
                                             ->setParameter('kpidetailsid', $elementid)
-                                            ->add('orderBy', 'b.id  ASC ')
                                             ->getQuery();
                                         $elementarray = $query->getResult();
                                         // print_r($elementarray).'myelement array';
@@ -438,10 +433,10 @@ class ReadExcelSheetController extends Controller
                                                 $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementid));
 
                                                 $readingkpivalue = new ReadingKpiValues();
-                                                $readingkpivalue->setElementId($newelementid);
-                                                $readingkpivalue->setMonth($excelobj->getDataofmonth());
-                                                $readingkpivalue->setShipid($newshipid);
-                                                $readingkpivalue->setKpiid($newkpiid);
+                                                $readingkpivalue->setElementDetailsId($newelementid);
+                                                $readingkpivalue->setMonthdetail($excelobj->getDataofmonth());
+                                                $readingkpivalue->setShipDetailsId($newshipid);
+                                                $readingkpivalue->setKpiDetailsId($newkpiid);
                                                 $readingkpivalue->setValue($mysheetelementvalues[$ab]);
                                                 $em = $this->getDoctrine()->getManager();
                                                 $em->persist($readingkpivalue);
@@ -451,13 +446,13 @@ class ReadExcelSheetController extends Controller
                                             }
                                         }
                                     }
-                                }
+
 
                             }
 
 
                             // Insertion Process Ends Here //
-                            $em = $this->getDoctrine()->getManager();
+
                             $em->persist($excelobj);
                             $em->flush();
                             $filelastinsertid=$excelobj->getId();
