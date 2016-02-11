@@ -1,0 +1,87 @@
+#readingkpitable
+{
+    text-align: center ;
+}
+.notice
+{
+    text-align: center;
+    color: red;
+}
+#linkid
+{
+
+}
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+a:link {
+    color: red;
+}
+a:visited {
+    color: #d2373b;
+}
+#overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: #000;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+#loading {
+    width: 50px;
+    height: 57px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -28px 0 0 -25px;
+}
+body
+{
+    background-color: #5eb5e0;
+}
+td {width: 200px;}
+h1{text-align: center;}
+#shipid,#elementId,#kpiid,#month,#valueid
+{
+    width:178px;
+    height: 25px;
+}
+#submitid
+{
+    width:178px;
+    height: 25px;
+    background-color: #0000F0;
+    color: white;
+}
+.required
+{
+    margin-right: 20px;
+}
+#addsubmitid,#readingid
+{
+    width:130px;
+    height: 25px;
+    background-color: #0000F0;
+    color: white;
+    margin-top: 16px;
+    margin-bottom: 6px;
+
+}
+#showtable
+{
+text-align: center;
+    border: dashed;
+}
+.listitem
+{
+    line-height: 163%;
+    text-align: center;
+}
+

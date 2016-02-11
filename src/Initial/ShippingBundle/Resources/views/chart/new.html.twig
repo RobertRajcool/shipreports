@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+<div align="center">
+    <h1>Chart creation</h1>
+
+    <table>
+        {{ form_start(form, {'attr': {'id': 'form_excel'}}) }}
+        <tr><td>
+                {{ form_label(form.kpiname,'Choose Kpi') }}</td><td>
+                {{ form_widget(form.kpiname,{'id' :'kpiid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}</td></tr>
+        <tr><td>
+                {{ form_label(form.elementDetailsId,'Choose Element') }}</td><td>
+                {{ form_widget(form.elementDetailsId,{'id' :'elementId'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}</td></tr>
+        <tr><td>
+                {{ form_label(form.fromdate,'Choose Start Month') }}</td><td>
+                {{ form_widget(form.fromdate) }}</td></tr>
+        <tr><td>
+                {{ form_label(form.todate,'Choose End Month') }}</td><td>
+                {{ form_widget(form.todate) }}</td></tr>
+        <tr><td></td><td>
+                {{ form_widget(form.submit,{'id' :'submitid'}, { 'attr': {'class': 'submitclass'} }) }}
+                {{ form_widget(form.add,{'id' :'readingid'}, { 'attr': {'class': 'readingclass'} }) }}</td></tr>
+        {{ form_end(form) }}
+    </table>
+
+
+            <a href="{{ path('chart_index') }}">Back to the list</a>
+
+{% endblock %}
