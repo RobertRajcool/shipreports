@@ -437,6 +437,7 @@ class ReadExcelSheetController extends Controller
                                                 $readingkpivalue->setMonthdetail($excelobj->getDataofmonth());
                                                 $readingkpivalue->setShipDetailsId($newshipid);
                                                 $readingkpivalue->setKpiDetailsId($newkpiid);
+                                                if($mysheetelementvalues[$ab])
                                                 $readingkpivalue->setValue($mysheetelementvalues[$ab]);
                                                 $em = $this->getDoctrine()->getManager();
                                                 $em->persist($readingkpivalue);

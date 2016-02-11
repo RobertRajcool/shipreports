@@ -25,10 +25,12 @@
 
     <div id="formcontent" align="center">
         <h2>Upload File Here</h2>
-        {#
+
         <div id="overlay">
-            <img id="loading" src="http://bit.ly/pMtW1K">
-        </div>#}
+            {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
+            <img src="{{ asset_url }}" alt="Loader Image"/>
+            {% endimage %}
+        </div>
 
         <table>
             {{ form_start(form, {'attr': {'id': 'form_excel'}}) }}
