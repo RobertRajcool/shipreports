@@ -24,7 +24,8 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "willdurand/propel-typehintable-behavior": "^1.0",
         "symfony/assetic-bundle": "^2.7",
-        "phpoffice/phpexcel": "dev-master"
+        "phpoffice/phpexcel": "dev-master",
+        "ob/highcharts-bundle": "^1.4"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",
@@ -49,10 +50,7 @@
         ]
     },
     "config": {
-        "bin-dir": "bin",
-        "platform": {
-            "php": "5.3.9"
-        }
+        "bin-dir": "bin"
     },
     "extra": {
         "symfony-app-dir": "app",
