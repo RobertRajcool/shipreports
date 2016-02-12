@@ -1,14 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Rules</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ rule.id }}</td>
-            </tr>
+    {% block javascripts %}
+
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/ShowDemo.js'
+        '@AppBundle/Resources/public/js/actions-builder.js'
+        '@AppBundle/Resources/public/js/conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/showhide.js'
+        %}
+
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+        <h1>Rules</h1>
+
+        <table>
+            <tbody>
             <tr>
                 <th>Kpidetailsid</th>
                 <td>{{ rule.kpiDetailsId }}</td>
@@ -18,23 +29,34 @@
                 <td>{{ rule.elementDetailsId }}</td>
             </tr>
             <tr>
-                <th>Rules</th>
-                <td>{{ rule.rules }}</td>
+                <th>Condition</th>
+                <td> <div id="conditionsedit" ></div></td>
             </tr>
-        </tbody>
-    </table>
+            <tr>
+                <th>Action</th>
+                <td> <div id="actionsedit"></div></td>
+            </tr>
 
-    <ul>
-        <li>
-            <a href="{{ path('rules_select') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('rules_edit', { 'id': rule.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
+            </tbody>
+        </table>
+
+        <input type="hidden" id="result" value="{{ rule.rules }}">
+
+
+
+
+        <ul>
+            <li>
+                <a href="{{ path('rules_select') }}">Back to the list</a>
+            </li>
+            <li>
+                <a href="{{ path('rules_edit', { 'id': rule.id }) }}">Edit</a>
+            </li>
+            <li>
+                {{ form_start(delete_form) }}
                 <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+                {{ form_end(delete_form) }}
+            </li>
+        </ul>
+    {% endblock %}
 {% endblock %}

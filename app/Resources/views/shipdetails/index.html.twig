@@ -1,16 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+
     <h1>ShipDetails list</h1>
 
     <table>
         <thead>
             <tr>
-                {%  if is_granted("ROLE_ADMIN") %}
-                    <th>Id</th>
-                {% endif %}
                 <th>ShipName</th>
-                <th>CompanyName</th>
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
@@ -18,11 +21,7 @@
         <tbody>
         {% for shipDetail in shipDetails %}
             <tr>
-                {%if is_granted("ROLE_ADMIN") %}
-                    <td><a href="{{ path('shipdetails_show', { 'id': shipDetail.id }) }}">{{ shipDetail.id }}</a></td>
-                {% endif %}
                 <td>{{ shipDetail.shipName }}</td>
-                <td>{{ shipDetail.companyDetailsId }}</td>
                 <td>{{ shipDetail.description }}</td>
                 <td>
                     <ul>

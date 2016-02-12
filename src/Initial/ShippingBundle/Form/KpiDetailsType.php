@@ -28,7 +28,6 @@ class KpiDetailsType extends AbstractType
         'required' => true,
         'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
         'property' => 'ShipName',
-                'multiple'=>true,
         'query_builder' => function($er){
             return $er -> createQueryBuilder('a')
                         ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')

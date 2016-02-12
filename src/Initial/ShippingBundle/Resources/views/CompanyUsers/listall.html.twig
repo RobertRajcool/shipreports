@@ -7,13 +7,9 @@
 {% endblock %}
 {% block body %}
     {% block javascripts %}
-
         {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-
-
-
     {% endblock %}
 
     {% block stylesheets %}
@@ -28,19 +24,19 @@
         <table id="readingkpitable">
             <thead>
             <tr>
-
-                <th>Company Name</th>
                 <th>Username</th>
                 <th>Email id</th>
+                <th>Role</th>
 
             </tr>
             </thead>
             <tbody>
             {% for listofuser in userdetails %}
                 <tr>
-                    <td>{{ listofuser.companyid }}</td>
                     <td>{{ listofuser.username }}</td>
                     <td>{{ listofuser.email }}</td>
+                    <td>{{ listofuser.roles[0] }}</td>
+                    <td><a href="">Edit</a></a> </td>
 
                 </tr>
             {% endfor %}

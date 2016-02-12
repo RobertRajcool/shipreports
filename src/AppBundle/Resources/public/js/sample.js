@@ -11,7 +11,7 @@ $(document).ready(function(){
             $.ajax({
                 type: "POST",
                 data: data,
-                url: "/shipping_development/web/app_dev.php/rules/new_temp",
+                url: "new_temp",
                 success: function(data)
                 {
                     $.each(data.kpiNameArray, function(i, listkpi) {
