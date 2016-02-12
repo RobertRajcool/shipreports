@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+<div align="center">
+    <h1>Chart</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ chart.id }}</td>
+            </tr>
+            <tr>
+                <th>Kpiname</th>
+                <td>{{ chart.kpiname }}</td>
+            </tr>
+            <tr>
+                <th>Fromdate</th>
+                <td>{% if chart.fromdate %}{{ chart.fromdate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Todate</th>
+                <td>{% if chart.todate %}{{ chart.todate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('chart_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('chart_edit', { 'id': chart.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

@@ -28,6 +28,18 @@ class ReadingKpiValuesController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user1 = $this->getUser();
         $userId = $user1->getId();
+        /*
+        $dbshiparrayquery=$em -> createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:ShipDetails')
+            ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
+            ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
+            ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
+            ->where('d.id = :userId')
+            ->setParameter('userId',$userId)
+            ->getQuery();
+        $dbshipsid=$dbshiparrayquery->getResult();
+        */
 
         $readingKpiValues = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findAll();
 
