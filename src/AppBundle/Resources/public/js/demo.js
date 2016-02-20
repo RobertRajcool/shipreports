@@ -1,4 +1,4 @@
-var conditions, actions, ageField, submit, result, result1, result2;
+var conditions, actions, ageField, submit, result;
 
 (function($) {
 
@@ -9,12 +9,18 @@ var conditions, actions, ageField, submit, result, result1, result2;
         ageField = $("#ageField");
         submit = $("#submit");
         result = $("#result");
-        result1 = $("#ruleConditions");
-        result2 = $("#ruleActions");
 
+        exports.valueexcelsheet = function (r)
+        {
+           return r;
+        };
         initializeConditions();
         initializeActions();
         initializeForm();
+    }
+    function assignvalue()
+    {
+
     }
     function initializeConditions() {
         conditions.conditionsBuilder({
@@ -30,8 +36,6 @@ var conditions, actions, ageField, submit, result, result1, result2;
                     {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
                 ]}
             ]
-            //data:
-              //  {"all":[{"name":"ageField","operator":"notEqualTo","value":"4"},{"all":[{"name":"ageField","operator":"greaterThan","value":"3"}]}]},
         });
     }
     function initializeActions() {
@@ -41,9 +45,6 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 {label: "Red", name: "Red"},
                 {label: "Yellow", name: "Yellow"}
             ]
-            //data:[
-              //  {"name":"action-select","value":"Yellow"}
-           // ]
         });
     }
     function initializeForm() {
@@ -62,39 +63,15 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 //conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var conditionsAdapter = {
+            var conditionsAdapter =
+            {
                 ageField: ageField.val()
             };
-            /*var actionsAdapter = {
-                alert: function(data) { alert(data.find("message"));
-                },
-                updateField: function(data)
-                {
-                    alert(data);
-                    console.log("data", data);
-                    var fieldId = data.find("fieldId");
-                    console.log("fieldId", fieldId);
-                    var field = $("#" + fieldId);
-                    var val = data.find("fieldId", "newValue");
-                    field.val(val);
-                }
-                };*/
-            //alert(conditionsAdapter);
-            //alert(actionsAdapter);
-            //JSON.stringify(myObj)
-           //var temp = engine.run(conditionsAdapter);
-            //alert(temp);
+
             var sample = JSON.stringify(engine);
             result.val(sample);
-            var sample1 = JSON.stringify(engine1);
-            var len1 = sample1.length;
-            var condition = sample1.substring(42,len1-1);
-            result1.val(condition);
-            var sample2 = JSON.stringify(engine2);
-            var len2 = sample2.length;
-            var action = sample2.substring(27,len2-26);
-            result2.val(action);
         });
     }
+
     $(onReady);
 })(jQuery);

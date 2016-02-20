@@ -119,10 +119,10 @@ class RulesController extends Controller
         $rule->setKpiDetailsId($course1);
         $rule->setElementDetailsId($course2);
 
-            $em->persist($rule);
-            $em->flush();
+        $em->persist($rule);
+        $em->flush();
 
-            return $this->redirectToRoute('rules_show', array('id' => $rule->getId()));
+        return $this->redirectToRoute('rules_show', array('id' => $rule->getId()));
 
     }
 
@@ -235,6 +235,6 @@ class RulesController extends Controller
             ->setAction($this->generateUrl('rules_delete', array('id' => $rule->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
 }
