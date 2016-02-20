@@ -59,6 +59,7 @@ var conditions, actions, ageField, submit, result;
                 conditions: conditions.conditionsBuilder("data")
                 //actions: actions.actionsBuilder("data")
             });
+<<<<<<< HEAD
             var engine2 = new RuleEngine({
                 //conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
@@ -68,6 +69,19 @@ var conditions, actions, ageField, submit, result;
                 ageField: ageField.val()
             };
 
+=======
+           //alert(engine1);
+            var conditionsAdapter = {
+                ageField: ageField.val()
+            };
+
+            var res = engine1.run(conditionsAdapter);
+            alert(res);
+
+            var actionValue = engine.actions[0].value;
+            alert(actionValue);
+
+>>>>>>> 1937e84255868bd77df1d53fbda3017c8c7d0c23
             var sample = JSON.stringify(engine);
             result.val(sample);
         });

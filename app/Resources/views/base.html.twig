@@ -23,23 +23,31 @@
 </div>
 <div align="left">
     <a href="{{ path('homepage') }}">Home</a>&nbsp;|&nbsp;
-    <a href="{{ path('shipdetails_select1') }}">Add Ships</a>&nbsp;|&nbsp;
+
     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+        <a href="{{ path('shipdetails_select1') }}">Add Ships</a>&nbsp;|&nbsp;
         <a href="{{ path('kpidetails_select1') }}">Add KPI</a>&nbsp;|&nbsp;
         <a href="{{ path('elementdetails_select1') }}">Add Elements</a>&nbsp;|&nbsp;
         <a href="{{ path('rules_select') }}">Add Rules</a>&nbsp;|&nbsp;
         <a href="{{ path('fileadd') }}">Import File</a>&nbsp;|&nbsp;
         <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a>&nbsp;|&nbsp;
+<<<<<<< HEAD
     {% endif %}
     {%  if is_granted("ROLE_ADMIN") or is_granted("ROLE_SUPER_ADMIN")%}
 
 
         <a href="{{ path('fos_user_registration_register') }}">create Users</a>&nbsp;|&nbsp;
+=======
+>>>>>>> 1937e84255868bd77df1d53fbda3017c8c7d0c23
     {% endif %}
     {%  if is_granted("ROLE_ADMIN")  %}
         <a href="{{ path('fos_user_registration_show') }}">Manage Users</a>&nbsp;|&nbsp;
     {% endif %}
     {%  if is_granted("ROLE_SUPER_ADMIN")  %}
+<<<<<<< HEAD
+=======
+        <a href="{{ path('fos_user_registration_register') }}">create Admin</a>&nbsp;|&nbsp;
+>>>>>>> 1937e84255868bd77df1d53fbda3017c8c7d0c23
         <a href="{{ path('companydetails_index') }}">create Company </a>&nbsp;|&nbsp;
     {% endif %}
     <a href="{{ path('fos_user_change_password') }}">change password</a>&nbsp;|&nbsp;

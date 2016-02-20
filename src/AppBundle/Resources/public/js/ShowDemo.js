@@ -57,4 +57,8 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
         });
     }
     $(onReady);
+
 })(jQuery);
+
+
+

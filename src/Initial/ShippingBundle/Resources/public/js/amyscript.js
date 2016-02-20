@@ -7,6 +7,7 @@
 $(document).ready(function()
 
 {
+    //alert("hi")
     $('#readingid').hide();
     $('#overlay').hide();
     $("#form_excel").submit(function()
@@ -46,7 +47,9 @@ $(document).ready(function()
         {
             $('#submitid').hide();
             $('#readingid').show();
-            $('#overlay').show();
+            $('.modal').show();
+
+
         }
 
 

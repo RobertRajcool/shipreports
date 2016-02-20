@@ -15,6 +15,7 @@
                 <th>ActivatedDate</th>
                 <th>EndDate</th>
                 <th>Weightage</th>
+                <th>rules</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -30,6 +31,7 @@
                 <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
                 <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
                 <td>{{ elementDetail.weightage }}</td>
+                <td>{{ elementDetail.rules }}</td>
                 <td>
                     <ul>
                         <li>

@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+{% block javascripts %}
+
+    {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+    <script type="text/javascript">
+        {{ chart(chart) }}
+
+
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+        $('#export').click(function () {
+
+            var obj = {},
+                    chart;
+
+            chart = $('#linechart').highcharts();
+            obj.svg = chart.getSVG();
+            obj.type = 'image/png';
+            obj.width = 450;
+            obj.async = true;
+
+            var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
+
+
+
+
+           // alert(JSON.stringify(obj));
+            $.ajax({
+                type: 'post',
+                url: "/addchart",
+                data: data,
+                success: function (data) {
+                    alert(data)
+
+                }
+            });
+        });
+        });
+    </script>
+
+
+
+
+
+
+{% endblock %}
+
+      {% block stylesheets %}
+          {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+          <link rel="stylesheet" href="{{ asset_url }}" />
+          {% endstylesheets %}
+      {% endblock %}
+    <div id="linechart" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+    <button id="export">export</button>
+    <div id="imgContainer"></div>
+
+{% endblock %}

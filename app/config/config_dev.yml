@@ -33,3 +33,8 @@ monolog:
 
 #swiftmailer:
 #    delivery_address: me@example.com
+doctrine_cache:
+    providers:
+        gearman_cache:
+            type: array
+            namespace: doctrine_cache.ns.gearman

@@ -61,11 +61,13 @@ doctrine:
 
 # Swiftmailer Configuration
 swiftmailer:
-    transport: "%mailer_transport%"
-    host:      "%mailer_host%"
-    username:  "%mailer_user%"
-    password:  "%mailer_password%"
-    spool:     { type: memory }
+    transport:  %mailer_transport%
+    host:       %mailer_host%
+    username:   %mailer_user%
+    password:   %mailer_password%
+    port:       465
+    encryption: ssl
+    auth_mode:  login
 
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
@@ -77,4 +79,35 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+doctrine_cache:
+    providers:
+        gearman_cache:
+            type: file_system
+            namespace: doctrine_cache.ns.gearman
 
+gearman:
+   # Bundles will parsed searching workers
+   bundles:
+      # Name of bundle
+      AppBundle:
+
+         # Bundle name
+         name: InitialShippingBundle
+
+         # Bundle search can be enabled or disabled
+         active: true
+
+         # If any include is defined, Only these namespaces will be parsed
+         # Otherwise, full Bundle will be parsed
+         include:
+            - service
+           # - Workers
+           # - EventListener
+
+         # Namespaces this Bundle will ignore when parsing
+         ignore:
+            - DependencyInjection
+            - Resources
+# FopPdfBundle Configuration
+fop_pdf:
+    fop: /usr/local/bin/fop

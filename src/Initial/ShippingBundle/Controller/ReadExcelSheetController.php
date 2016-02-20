@@ -4,6 +4,7 @@ namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\ReadingKpiValues;
+use Initial\ShippingBundle\Entity\PHPNodeJs;
 use Initial\ShippingBundle\Form\AddExcelFileType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Reader_Excel2007;
@@ -78,7 +80,17 @@ class ReadExcelSheetController extends Controller
             if ( $file->move($uploaddir, $fileName))
             {
 
+                $user = $this->getUser();
+                $userId = $user->getUsername();
+                $userquery = $em->createQueryBuilder()
+                    ->select('a.emailId')
+                    ->from('InitialShippingBundle:CompanyDetails','a')
+                     ->where('a.adminName = :userId')
+                    ->setParameter('userId',$userId)
+                    ->getQuery();
+                $useremailid=$userquery->getSingleScalarResult();
                 $excelobj->setFilename($fileName);
+                $mailer = $this->container->get('mailer');
                 $input=$uploaddir.'/'.$excelobj->getFilename();
 
                 $mydatevalue= $excelobj->getDataofmonth();
@@ -118,8 +130,7 @@ class ReadExcelSheetController extends Controller
                     //Validation For Ship Details
 
                     $databaseshipsname=array();
-                    $user = $this->getUser();
-                    $userId = $user->getId();
+
 
                     $query = $em->createQueryBuilder()
                         ->select('a.id','a.shipName')
@@ -206,6 +217,15 @@ class ReadExcelSheetController extends Controller
                                 if($shipnameflag==false)
                                 {
                                     $cre = "";
+                                    $msg="Ships Are Mismatch";
+                                    $message = \Swift_Message::newInstance()
+                                        ->setFrom('lawrance@commusoft.co.uk')
+                                        ->setTo($useremailid)
+                                        ->setSubject("Your Document Has Mismatch Values!!!!")
+                                        ->setBody($msg)
+                                    ;
+                                    $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                    $mailer->send($message);
                                     $excelobj->removeUpload($input);
 
                                     $this->addFlash(
@@ -291,6 +311,14 @@ class ReadExcelSheetController extends Controller
 
                                         $msg = 'In Cell ' . $elementcell . ' having that value:' . $elementname . ' Thats Mismatch Value So Correct!!!..';
                                         $cre = "";
+                                        $message = \Swift_Message::newInstance()
+                                            ->setFrom('lawrance@commusoft.co.uk')
+                                            ->setTo($useremailid)
+                                            ->setSubject("Your Document Has Mismatch Values!!!!")
+                                            ->setBody($msg)
+                                        ;
+                                        $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                        $mailer->send($message);
                                         $excelobj->removeUpload($input);
 
                                         $this->addFlash(
@@ -311,6 +339,14 @@ class ReadExcelSheetController extends Controller
                                 {
                                     $msg = 'In Cell ' . $elementcell . ' having that value:' . $elementname . ' Thats Mismatch Value So Correct!!!..';
                                     $cre = "";
+                                    $message = \Swift_Message::newInstance()
+                                        ->setFrom('lawrance@commusoft.co.uk')
+                                        ->setTo($useremailid)
+                                        ->setSubject("Your Document Has Mismatch Values!!!!")
+                                        ->setBody($msg)
+                                    ;
+                                    $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                    $mailer->send($message);
                                     $excelobj->removeUpload($input);
 
                                     $this->addFlash(
@@ -331,6 +367,15 @@ class ReadExcelSheetController extends Controller
                                 $mycount--;
                                 $msg = 'In Cell ' . $cellname . ' having that value:' . $cellvalue . ' Thats Mismatch Value So Correct!!!..';
                                 $cre = "";
+                                $message = \Swift_Message::newInstance()
+                                    ->setFrom('lawrance@commusoft.co.uk')
+                                    ->setTo($useremailid)
+                                    ->setSubject("Your Document Has Mismatch Values!!!!")
+                                    ->setBody($msg)
+                                ;
+                                $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                $mailer->send($message);
+
                                 $excelobj->removeUpload($input);
 
                                 $this->addFlash(
@@ -426,6 +471,9 @@ class ReadExcelSheetController extends Controller
                                             {
 
 
+                                                $gearman = $this->get('gearman');
+                                                $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($sheetshipsname));
+
                                                 $shipid=$shipdetailsarray[$ab]['id'];
 
                                                 $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
@@ -438,6 +486,12 @@ class ReadExcelSheetController extends Controller
                                                 $readingkpivalue->setShipDetailsId($newshipid);
                                                 $readingkpivalue->setKpiDetailsId($newkpiid);
                                                 if($mysheetelementvalues[$ab])
+                                                $argu=5;
+                                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir').'/../web/js/87f1824_part_1_nodejs_3.js';
+                                                $jsfilename='node '.$jsfiledirectry;
+                                                $handle = popen($jsfilename, 'r');
+                                                $read = fread($handle, 2096);
+                                                $myvarable= $read;
                                                 $readingkpivalue->setValue($mysheetelementvalues[$ab]);
                                                 $em = $this->getDoctrine()->getManager();
                                                 $em->persist($readingkpivalue);
@@ -475,6 +529,14 @@ class ReadExcelSheetController extends Controller
                     {
                         $msg='In Cell '.$cellname.' having that value:'.$cellvalue.' Thats Mismatch Value So Correct!!!1';
                         $cre = "";
+                        $message = \Swift_Message::newInstance()
+                            ->setFrom('lawrance@commusoft.co.uk')
+                            ->setTo($useremailid)
+                            ->setSubject("Your Document Has Mismatch Values!!!!")
+                            ->setBody($msg)
+                        ;
+                        $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                        $mailer->send($message);
                         $excelobj->removeUpload($input);
 
                         $this->addFlash(
@@ -492,12 +554,21 @@ class ReadExcelSheetController extends Controller
 
                 if ($sheetCount > 1)
                 {
+
+                    $message = \Swift_Message::newInstance()
+                        ->setFrom('lawrance@commusoft.co.uk')
+                        ->setTo($useremailid)
+                        ->setSubject("Your Document having more than One Sheets!!!!")
+                        ->setBody("Your Document having more than One Sheets!!!!")
+                    ;
+                    $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                    $mailer->send($message);
                     $excelobj->removeUpload($input);
                     $loadedSheetNames = $objPHPExcel->getSheetNames();
 
                     $this->addFlash(
                         'notice',
-                        'Your Document having more than One Sheets!!!!'
+                        'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
                     );
 
                     return $this->render(

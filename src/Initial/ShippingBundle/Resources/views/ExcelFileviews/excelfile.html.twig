@@ -12,6 +12,10 @@
           <script src="{{ asset_url }}"></script>
           {% endjavascripts %}
 
+         {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
+         <script src="{{ asset_url }}"></script>
+         {% endjavascripts %}
+
 
 
       {% endblock %}
@@ -26,12 +30,21 @@
     <div id="formcontent" align="center">
         <h2>Upload File Here</h2>
 
+        <div class="modal" style="display: none">
+            <div class="center">
+                {% image '@InitialShippingBundle/Resources/public/img/loader5.gif' %}
+                <img src="{{ asset_url }}" alt="Loader Image"/>
+                {% endimage %}
+            </div>
+        </div>
+        {#
+
         <div id="overlay">
             {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
             <img src="{{ asset_url }}" alt="Loader Image"/>
             {% endimage %}
         </div>
-
+#}
         <table>
             {{ form_start(form, {'attr': {'id': 'form_excel'}}) }}
             <tr><td>

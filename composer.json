@@ -25,7 +25,14 @@
         "willdurand/propel-typehintable-behavior": "^1.0",
         "symfony/assetic-bundle": "^2.7",
         "phpoffice/phpexcel": "dev-master",
-        "ob/highcharts-bundle": "^1.4"
+        "ob/highcharts-bundle": "^1.4",
+        "dompdf/dompdf": "0.7.x@beta",
+        "tfox/mpdf-port-bundle": "1.2.*",
+        "mmoreram/gearman-bundle": "dev-master",
+        "m4t1t0/fop-pdf-bundle": "dev-master"
+
+
+
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

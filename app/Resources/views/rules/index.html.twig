@@ -5,18 +5,16 @@
 
     <table>
         <thead>
-            <tr>
-                <th>Id</th>
-                <th>Kpidetailsid</th>
-                <th>Elementdetailsid</th>
-                <th>Rules</th>
-                <th>Actions</th>
-            </tr>
+        <tr>
+            <th>Kpidetailsid</th>
+            <th>Elementdetailsid</th>
+            <th>Rules</th>
+            <th>Actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for rule in rules %}
             <tr>
-                <td><a href="{{ path('rules_show', { 'id': rule.id }) }}">{{ rule.id }}</a></td>
                 <td>{{ rule.kpiDetailsId }}</td>
                 <td>{{ rule.elementDetailsId }}</td>
                 <td>{{ rule.rules }}</td>

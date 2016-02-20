@@ -153,7 +153,7 @@ else a.removeAttribute&&a.removeAttribute(c.expando);delete f[d]}}}});c.fn.exten
         "pageXOffset"]:c.support.boxModel&&j.document.documentElement[d]||j.document.body[d]:e[d]}});c.each(["Height","Width"],function(a,b){var d=b.toLowerCase();c.fn["inner"+b]=function(){return this[0]?c.css(this[0],d,false,"padding"):null};c.fn["outer"+b]=function(f){return this[0]?c.css(this[0],d,false,f?"margin":"border"):null};c.fn[d]=function(f){var e=this[0];if(!e)return f==null?null:this;if(c.isFunction(f))return this.each(function(j){var i=c(this);i[d](f.call(this,j,i[d]()))});return"scrollTo"in
     e&&e.document?e.document.compatMode==="CSS1Compat"&&e.document.documentElement["client"+b]||e.document.body["client"+b]:e.nodeType===9?Math.max(e.documentElement["client"+b],e.body["scroll"+b],e.documentElement["scroll"+b],e.body["offset"+b],e.documentElement["offset"+b]):f===w?c.css(e,d):this.css(d,typeof f==="string"?f:f+"px")}});A.jQuery=A.$=c})(window);
 
-var conditions, actions, ageField, submit, result, result1, result2;
+var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
 
 (function($) {
 
@@ -163,9 +163,10 @@ var conditions, actions, ageField, submit, result, result1, result2;
         actions = $("#actionsedit");
         ageField = $("#ageFieldEdit");
         submit = $("#submitedit");
-        result = $("#resultedit");
-        result1 = $("#calculation_rules_ruleConditions");
-        result2 = $("#calculation_rules_ruleActions");
+        result = $("#result");
+        obj1 = JSON.parse(result.val());
+        obj2 = obj1.conditions;
+        obj3 = obj1.actions;
 
         initializeConditions();
         initializeActions();
@@ -185,13 +186,7 @@ var conditions, actions, ageField, submit, result, result1, result2;
                     {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
                 ]}
             ],
-            data:
-           // {"all":[{"name":"ageField","operator":"greaterThan","value":"10"}]}
-            //{"all":[{"name":"ageField","operator":"equalTo","value":"5"}]}
-                result1.value
-            //$(calculation_rules_ruleConditions).value
-            //{"all":[{"name":"ageField","operator":"notEqualTo","value":"4"},{"all":[{"name":"ageField","operator":"greaterThan","value":"3"}]}]},
-
+            data: obj2
         });
     }
     function initializeActions() {
@@ -201,12 +196,68 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 {label: "Red", name: "Red"},
                 {label: "Yellow", name: "Yellow"}
             ],
-            data:[
-                //{"name":"action-select","value":"Red"}
-                {"name":"action-select","value":"Yellow"}
-                //result2.value
-                //{"name":"action-select","value":"Yellow"}
-            ]
+            data: obj3
+        });
+    }
+    function initializeForm() {
+
+        submit.click(function(e) {
+            e.preventDefault();
+            var engine1=new RuleEngine({conditions: conditions.conditionsBuilder("data")});
+            alert(engine1)     ;
+            var engine = new RuleEngine({
+                conditions: conditions.conditionsBuilder("data"),
+                actions: actions.actionsBuilder("data")
+            });
+            var sample = JSON.stringify(engine);
+            result.val(sample);
+        });
+    }
+    $(onReady);
+})(jQuery);
+var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
+
+(function($) {
+
+    function onReady() {
+        conditions = $("#conditionsedit");
+        actions = $("#actionsedit");
+        ageField = $("#ageFieldEdit");
+        submit = $("#submitedit");
+        result = $("#result");
+        obj1 = JSON.parse(result.val());
+        obj2 = obj1.conditions;
+        obj3 = obj1.actions;
+
+        initializeConditions();
+        initializeActions();
+        initializeForm();
+    }
+    function initializeConditions() {
+        conditions.conditionsBuilder({
+            fields: [
+                {label: "Value", name: "ageField", operators: [
+                    {label: "is present", name: "present", fieldType: "none"},
+                    {label: "is blank", name: "blank", fieldType: "none"},
+                    {label: "is equal to", name: "equalTo", fieldType: "text"},
+                    {label: "is not equal to", name: "notEqualTo", fieldType: "text"},
+                    {label: "is greater than", name: "greaterThan", fieldType: "text"},
+                    {label: "is greater than or equal to", name: "greaterThanEqual", fieldType: "text"},
+                    {label: "is less than", name: "lessThan", fieldType: "text"},
+                    {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
+                ]}
+            ],
+            data: obj2
+        });
+    }
+    function initializeActions() {
+        actions.actionsBuilder({
+            fields: [
+                {label: "Green", name: "Green"},
+                {label: "Red", name: "Red"},
+                {label: "Yellow", name: "Yellow"}
+            ],
+            data: obj3
         });
     }
     function initializeForm() {
@@ -217,51 +268,13 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var engine1 = new RuleEngine({
-                conditions: conditions.conditionsBuilder("data")
-                //actions: actions.actionsBuilder("data")
-            });
-            var engine2 = new RuleEngine({
-                //conditions: conditions.conditionsBuilder("data"),
-                actions: actions.actionsBuilder("data")
-            });
-            var conditionsAdapter = {
-                ageField: ageField.val()
-            };
-            /*var actionsAdapter = {
-             alert: function(data) { alert(data.find("message"));
-             },
-             updateField: function(data)
-             {
-             alert(data);
-             console.log("data", data);
-             var fieldId = data.find("fieldId");
-             console.log("fieldId", fieldId);
-             var field = $("#" + fieldId);
-             var val = data.find("fieldId", "newValue");
-             field.val(val);
-             }
-             };*/
-            //alert(conditionsAdapter);
-            //alert(actionsAdapter);
-            //JSON.stringify(myObj)
-            //var temp = engine.run(conditionsAdapter);
-            //alert(temp);
             var sample = JSON.stringify(engine);
             result.val(sample);
-            var sample1 = JSON.stringify(engine1);
-            var len1 = sample1.length;
-            var condition = sample1.substring(42,len1-1);
-            result1.val(condition);
-            var sample2 = JSON.stringify(engine2);
-            var len2 = sample2.length;
-            var action = sample2.substring(27,len2-26);
-            result2.val(action);
+
         });
     }
     $(onReady);
 })(jQuery);
-
 (function($) {
     $.fn.actionsBuilder = function(options) {
         if(options == "data") {
@@ -606,7 +619,7 @@ var conditions, actions, ageField, submit, result, result1, result2;
 
 })(jQuery);
 
-var conditions, actions, ageField, submit, result, result1, result2;
+var conditions, actions, ageField, submit, result;
 
 (function($) {
 
@@ -617,12 +630,18 @@ var conditions, actions, ageField, submit, result, result1, result2;
         ageField = $("#ageField");
         submit = $("#submit");
         result = $("#result");
-        result1 = $("#ruleConditions");
-        result2 = $("#ruleActions");
 
+        exports.valueexcelsheet = function (r)
+        {
+           return r;
+        };
         initializeConditions();
         initializeActions();
         initializeForm();
+    }
+    function assignvalue()
+    {
+
     }
     function initializeConditions() {
         conditions.conditionsBuilder({
@@ -638,8 +657,6 @@ var conditions, actions, ageField, submit, result, result1, result2;
                     {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
                 ]}
             ]
-            //data:
-              //  {"all":[{"name":"ageField","operator":"notEqualTo","value":"4"},{"all":[{"name":"ageField","operator":"greaterThan","value":"3"}]}]},
         });
     }
     function initializeActions() {
@@ -649,9 +666,6 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 {label: "Red", name: "Red"},
                 {label: "Yellow", name: "Yellow"}
             ]
-            //data:[
-              //  {"name":"action-select","value":"Yellow"}
-           // ]
         });
     }
     function initializeForm() {
@@ -670,43 +684,18 @@ var conditions, actions, ageField, submit, result, result1, result2;
                 //conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var conditionsAdapter = {
+            var conditionsAdapter =
+            {
                 ageField: ageField.val()
             };
-            /*var actionsAdapter = {
-                alert: function(data) { alert(data.find("message"));
-                },
-                updateField: function(data)
-                {
-                    alert(data);
-                    console.log("data", data);
-                    var fieldId = data.find("fieldId");
-                    console.log("fieldId", fieldId);
-                    var field = $("#" + fieldId);
-                    var val = data.find("fieldId", "newValue");
-                    field.val(val);
-                }
-                };*/
-            //alert(conditionsAdapter);
-            //alert(actionsAdapter);
-            //JSON.stringify(myObj)
-           //var temp = engine.run(conditionsAdapter);
-            //alert(temp);
+
             var sample = JSON.stringify(engine);
             result.val(sample);
-            var sample1 = JSON.stringify(engine1);
-            var len1 = sample1.length;
-            var condition = sample1.substring(42,len1-1);
-            result1.val(condition);
-            var sample2 = JSON.stringify(engine2);
-            var len2 = sample2.length;
-            var action = sample2.substring(27,len2-26);
-            result2.val(action);
         });
     }
+
     $(onReady);
 })(jQuery);
-
 var global = this;
 
 (function() {
@@ -947,7 +936,7 @@ $(document).ready(function(){
             $.ajax({
                 type: "POST",
                 data: data,
-                url: "  new_temp",
+                url: "new_temp",
                 success: function(data)
                 {
                     $.each(data.kpiNameArray, function(i, listkpi) {
@@ -970,3 +959,14 @@ $(document).ready(function(){
 
 
 
+$(document).ready(function(){
+    $('.all-any-none-wrapper').hide();
+    $('.add-rule').hide();
+    $('.add-condition').hide();
+    $('.remove').hide();
+    $('.field').hide();
+    $('.add').hide();
+    $('.operator').attr('disabled', true);
+    $('.action-select').attr('disabled', true);
+    $('.value').attr('disabled', true);
+});

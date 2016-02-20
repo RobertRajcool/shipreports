@@ -1,6 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% block javascripts %}
+
+    {% javascripts
+    '@AppBundle/Resources/public/js/AAA.js'
+    '@AppBundle/Resources/public/js/ShowDemo.js'
+    '@AppBundle/Resources/public/js/actions-builder.js'
+    '@AppBundle/Resources/public/js/conditions-builder.js'
+    '@AppBundle/Resources/public/js/rules.js'
+    '@AppBundle/Resources/public/js/showhide.js'
+    %}
+
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
     <h1>ElementDetails</h1>
 
     <table>
@@ -41,8 +56,18 @@
                 <th>Weightage</th>
                 <td>{{ elementDetail.weightage }}</td>
             </tr>
+            <tr>
+                <th>Condition</th>
+                <td> <div id="conditionsedit" ></div></td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td> <div id="actionsedit"></div></td>
+            </tr>
         </tbody>
     </table>
+
+    <input type="hidden" id="result" value="{{ elementDetail.rules }}">
 
     <ul>
         <li>
@@ -58,3 +83,6 @@
         </li>
     </ul>
 {% endblock %}
+{% endblock %}
+
+

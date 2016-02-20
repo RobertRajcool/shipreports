@@ -9,3 +9,6 @@ services:
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
       fos_user.doctrine_registry:
           alias: doctrine
+services:
+     readexcel.worker:
+          class: Initial\ShippingBundle\Workers\ReadExcelWorker

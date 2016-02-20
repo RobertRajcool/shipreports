@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\CompanyDetails;
 use Initial\ShippingBundle\Form\CompanyDetailsType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * CompanyDetails controller.
@@ -58,6 +59,36 @@ class CompanyDetailsController extends Controller
             'form' => $form->createView(),
         ));
     }
+
+    /**
+     * Creates a new CompanyDetails entity.
+     *
+     * @Route("/newcompany", name="companydetails_newcompany")
+     */
+    public function newcompanyAction()
+    {
+        //echo "New companyy action";
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.companyName,a.id')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->getQuery();
+        $shipDetails = $query->getResult();
+
+        //print_r($shipDetails);die;
+
+        $response = new JsonResponse();
+        $response->setData(array('companyNameArray' => $shipDetails));
+
+        return $response;
+    }
+
+    /**
+     * Creates a new CompanyDetails entity.
+     *
+     * @Route("/newadmin", name="companydetails_newadmin")
+     */
 
     /**
      * Finds and displays a CompanyDetails entity.
@@ -135,6 +166,8 @@ class CompanyDetailsController extends Controller
             ->setAction($this->generateUrl('companydetails_delete', array('id' => $companyDetail->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
+
+
 }

@@ -20,6 +20,10 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Ob\HighchartsBundle\ObHighchartsBundle(),
+            new TFox\MpdfPortBundle\TFoxMpdfPortBundle(),
+            new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
+            new Mmoreram\GearmanBundle\GearmanBundle(),
+            new m4t1t0\FopPdfBundle\FopPdfBundle(),
 
         );
 

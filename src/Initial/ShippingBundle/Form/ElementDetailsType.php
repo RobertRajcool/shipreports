@@ -30,6 +30,7 @@ class ElementDetailsType extends AbstractType
                 'property' => 'KpiName',
                 'query_builder' => function($er){
                     return $er  -> createQueryBuilder('a')
+
                         ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
                         ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
                         ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
@@ -37,6 +38,8 @@ class ElementDetailsType extends AbstractType
                         ->where('d.id = :userId')
                         ->groupby('a.kpiName')
                         ->setParameter('userId',$this->userId);
+
+
                 },
                 //'em' => 'client',
                 'empty_value' =>false,

@@ -1,11 +1,30 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% block javascripts %}
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/EditDemo.js'
+        '@AppBundle/Resources/public/js/actions-builder.js'
+        '@AppBundle/Resources/public/js/conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
     <h1>ElementDetails edit</h1>
 
     {{ form_start(edit_form) }}
+        {{ form_widget(edit_form.rules,{'id' :'result'}) }}
         {{ form_widget(edit_form) }}
+
+        <div id="conditionsedit"></div>
+        <div id="actionsedit"></div>
+
         <input type="submit" value="Edit" />
+        <input type="submit" value="Add" id="submitedit" />
+
     {{ form_end(edit_form) }}
 
     <ul>
@@ -18,4 +37,5 @@
             {{ form_end(delete_form) }}
         </li>
     </ul>
+{% endblock %}
 {% endblock %}

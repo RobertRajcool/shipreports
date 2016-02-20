@@ -34,7 +34,11 @@ class RulesType extends AbstractType
                         ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
                         ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
                         ->where('d.id = :userId')
+<<<<<<< HEAD
                         ->groupby('a.kpiName')
+=======
+                        -> groupby('a.kpiName')
+>>>>>>> 1937e84255868bd77df1d53fbda3017c8c7d0c23
                         ->setParameter('userId',$this->userId);
                 },
                 'empty_value' => '--Select KPI--',
@@ -58,7 +62,7 @@ class RulesType extends AbstractType
             ->add('rules','hidden')
         ;
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */

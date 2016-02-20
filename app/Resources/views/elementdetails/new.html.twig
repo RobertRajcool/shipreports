@@ -1,16 +1,54 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% block javascripts %}
+
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/Element_demo.js'
+        '@AppBundle/Resources/public/js/Element_actions.js'
+        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/Element_rule_condition.js'
+        %}
+
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
     <h1>ElementDetails creation</h1>
 
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <input type="submit" value="Create" />
-    {{ form_end(form) }}
+    <form action="{{ path('elementdetails_new1') }}" method="post">
+        {{ form_row(form.kpiDetailsId) }}
+        {{ form_row(form.elementName) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.cellName) }}
+        {{ form_row(form.cellDetails) }}
+        {{ form_row(form.activatedDate) }}
+        {{ form_row(form.endDate) }}
+        {{ form_row(form.weightage) }}
+        {{ form_row(form.rules) }}
 
+        <table>
+            <tr>
+                <td>
+                    <div id="conditions"></div>
+                </td>
+                <td>
+                    <div id="actions"></div>
+                </td>
+            </tr>
+        </table>
+
+        <input type="hidden" size="2" id="ageField">
+        {#<input type="text" id="result">#}
+
+        <input type="submit" value="Create" id="get_value" />
+    </form>
     <ul>
         <li>
             <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
         </li>
     </ul>
+{% endblock %}
 {% endblock %}
