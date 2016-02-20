@@ -1,14 +1,16 @@
-var conditions, actions, ageField, submit, result;
+var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
 
 (function($) {
 
-
     function onReady() {
-        conditions = $("#conditions");
-        actions = $("#actions");
-        ageField = $("#ageField");
-        submit = $("#submit");
+        conditions = $("#conditionsedit");
+        actions = $("#actionsedit");
+        ageField = $("#ageFieldEdit");
+        submit = $("#submitedit");
         result = $("#result");
+        obj1 = JSON.parse(result.val());
+        obj2 = obj1.conditions;
+        obj3 = obj1.actions;
 
         initializeConditions();
         initializeActions();
@@ -27,7 +29,8 @@ var conditions, actions, ageField, submit, result;
                     {label: "is less than", name: "lessThan", fieldType: "text"},
                     {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
                 ]}
-            ]
+            ],
+            data: obj2
         });
     }
     function initializeActions() {
@@ -36,7 +39,8 @@ var conditions, actions, ageField, submit, result;
                 {label: "Green", name: "Green"},
                 {label: "Red", name: "Red"},
                 {label: "Yellow", name: "Yellow"}
-            ]
+            ],
+            data: obj3
         });
     }
     function initializeForm() {
@@ -47,23 +51,9 @@ var conditions, actions, ageField, submit, result;
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var engine1 = new RuleEngine({
-                conditions: conditions.conditionsBuilder("data")
-                //actions: actions.actionsBuilder("data")
-            });
-           //alert(engine1);
-            var conditionsAdapter = {
-                ageField: ageField.val()
-            };
-
-            var res = engine1.run(conditionsAdapter);
-            alert(res);
-
-            var actionValue = engine.actions[0].value;
-            alert(actionValue);
-
             var sample = JSON.stringify(engine);
             result.val(sample);
+
         });
     }
     $(onReady);

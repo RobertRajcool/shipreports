@@ -2,6 +2,8 @@
 
 namespace Initial\ShippingBundle\Controller;
 
+use Initial\ShippingBundle\Entity\ElementRules;
+use Initial\ShippingBundle\Tests\Controller\ElementRulesControllerTest;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -82,10 +84,8 @@ class ElementDetailsController extends Controller
     }
 
 
-
-
     /**
-     * Creates a new ElementDetails entity.
+     * Creates a new elementDetails entity.
      *
      * @Route("/new", name="elementdetails_new")
      * @Method({"GET", "POST"})
@@ -94,22 +94,83 @@ class ElementDetailsController extends Controller
     {
         $user = $this->getUser();
         $id = $user->getId();
-        $elementDetail = new ElementDetails();
-        $form = $this->createForm(new ElementDetailsType($id), $elementDetail);
+
+        $elementdetails = new ElementDetails();
+        $form = $this->createForm(new ElementDetailsType($id), $elementdetails);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($elementDetail);
+            $em->persist($elementdetails);
             $em->flush();
 
-            return $this->redirectToRoute('elementdetails_show', array('id' => $elementDetail->getId()));
+            return $this->redirectToRoute('elementdetails_show', array('id' => $elementdetails->getId()));
         }
 
         return $this->render('elementdetails/new.html.twig', array(
-            'elementDetail' => $elementDetail,
+            'elementDetail' => $elementdetails,
             'form' => $form->createView(),
         ));
+    }
+
+    /**
+     * Creates a new ElementDetails entity.
+     *
+     * @Route("/new1", name="elementdetails_new1")
+     * @Method({"GET", "POST"})
+     */
+    public function new1Action(Request $request)
+    {
+        $params = $request->request->get('element_details');
+        $kpiDetailsId  = $params['kpiDetailsId'];
+        $elementName   = $params['elementName'];
+        $description   = $params['description'];
+        $cellName      = $params['cellName'];
+        $cellDetails   = $params['cellDetails'];
+        $activatedDate = $params['activatedDate'];
+        $endDate       = $params['endDate'];
+
+        $monthtostring=$activatedDate['year'].'-'.$activatedDate['month'].'-'.$activatedDate['day'];
+        $new_date=new \DateTime($monthtostring);
+        $monthtostring1=$endDate['year'].'-'.$endDate['month'].'-'.$endDate['day'];
+        $new_date1=new \DateTime($monthtostring1);
+
+        $weightage     = $params['weightage'];
+        $rules         = $params['rules'];
+
+        $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiDetailsId));
+
+        $elementDetail = new ElementDetails();
+        $elementDetail->setkpiDetailsId($course);
+        $elementDetail->setelementName($elementName);
+        $elementDetail->setdescription($description);
+        $elementDetail->setcellName($cellName);
+        $elementDetail->setcellDetails($cellDetails);
+        $elementDetail->setactivatedDate($new_date);
+        $elementDetail->setendDate($new_date1);
+        $elementDetail->setweightage($weightage);
+        $elementDetail->setrules($rules);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($elementDetail);
+        $em->flush();
+
+        $id = $elementDetail->getId();
+
+
+        for ($i=1;$i<=$rules;$i++)
+        {
+            $elementRules = new ElementRules();
+            $elementRules->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id)));
+            $variable = "rules-$i";
+            $engine_rules = $params[$variable];
+            $elementRules->setRules($engine_rules);
+            $em->persist($elementRules);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('elementdetails_show', array('id' => $elementDetail->getId()));
+
     }
 
     /**

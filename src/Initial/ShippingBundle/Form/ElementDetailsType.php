@@ -35,6 +35,7 @@ class ElementDetailsType extends AbstractType
                                 ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
                                 ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
                                 ->where('d.id = :userId')
+                                ->groupby('a.kpiName')
                                 ->setParameter('userId',$this->userId);
                 },
                 //'em' => 'client',
@@ -47,6 +48,7 @@ class ElementDetailsType extends AbstractType
             ->add('activatedDate', 'date')
             ->add('endDate', 'date')
             ->add('weightage')
+            ->add('rules','hidden')
         ;
     }
     

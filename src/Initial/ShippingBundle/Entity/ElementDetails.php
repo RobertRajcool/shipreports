@@ -79,6 +79,13 @@ class ElementDetails
      */
     private $weightage;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="Rules", type="string", length=255)
+     */
+    private $rules;
+
 
     /**
      * Get id
@@ -210,28 +217,6 @@ class ElementDetails
         return $this->cellDetails;
     }
 
-    /**
-     * Set activeDate
-     *
-     * @param string $activeDate
-     * @return ElementDetails
-     */
-    public function setActiveDate($activeDate)
-    {
-        $this->activeDate = $activeDate;
-
-        return $this;
-    }
-
-    /**
-     * Get activeDate
-     *
-     * @return string
-     */
-    public function getActiveDate()
-    {
-        return $this->activeDate;
-    }
 
     /**
      * Set activatedDate
@@ -301,4 +286,29 @@ class ElementDetails
     {
         return $this->weightage;
     }
+
+
+    /**
+     * Get rules
+     *
+     * @return string
+     */
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    /**
+     * Set rules
+     *
+     * @param string $rules
+     * @return ElementDetails
+     */
+    public function setRules($rules)
+    {
+        $this->rules = $rules;
+
+        return $this;
+    }
+
 }
