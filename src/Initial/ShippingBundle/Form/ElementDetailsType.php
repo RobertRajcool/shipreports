@@ -30,12 +30,13 @@ class ElementDetailsType extends AbstractType
                 'property' => 'KpiName',
                 'query_builder' => function($er){
                     return $er  -> createQueryBuilder('a')
-                                ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
-                                ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
-                                ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
-                                ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
-                                ->where('d.id = :userId')
-                                ->setParameter('userId',$this->userId);
+                        ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
+                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
+                        ->where('d.id = :userId')
+                        ->groupby('a.kpiName')
+                        ->setParameter('userId',$this->userId);
                 },
                 //'em' => 'client',
                 'empty_value' =>false,
@@ -47,9 +48,10 @@ class ElementDetailsType extends AbstractType
             ->add('activatedDate', 'date')
             ->add('endDate', 'date')
             ->add('weightage')
+            ->add('rules','hidden')
         ;
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */
