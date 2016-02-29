@@ -4,12 +4,22 @@
 
 var engine=require('./rule-engine.js');
 //var user = new engine();
-
-var eng =new engine({
-    conditions: {all: [{name: "name", operator: "present", value: ""}, {name: "age", operator: "greaterThanEqual", value: "21"}]}
-
+var rule = process.argv[2];
+var value= process.argv[3];
+var obj=JSON.parse(rule);
+var conditionsAdapter = {
+    ageField: value
+};
+//var samp=new engine(obj.conditions);
+var samp = new engine({
+    conditions: obj.conditions
 });
-
-var conditionsAdapter = {name: "Joe", age: 20};
-var actionsAdapter = {giveDrink: function(data) { alert("Gave user a " + data.find("drinkType")); } };
-console.log(eng.run(conditionsAdapter));
+var res = samp.run(conditionsAdapter);
+if(res==true)
+{
+    console.log(obj.actions);
+}
+else
+{
+    console.log(res);
+}
