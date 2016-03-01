@@ -29,6 +29,12 @@ addchart:
 addcomment:
       path:     /addcomment
       defaults: { _controller: "InitialShippingBundle:Highchart:addcomment"}
+showcomment:
+      path:     /showcomment
+      defaults: { _controller: "InitialShippingBundle:Highchart:showcomment"}
+downloadchart:
+       path:    /{filename}/downloadchart
+       defaults: { _controller: "InitialShippingBundle:Highchart:downloadchart" }
 
 downloadPdf:
       path:     /downloadPdf

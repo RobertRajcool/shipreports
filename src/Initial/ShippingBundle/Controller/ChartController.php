@@ -218,7 +218,7 @@ class ChartController extends Controller
 
 
         return $this->render('InitialShippingBundle:HighChart:hightchart.html.twig', array(
-            'chart' => $ob
+            'chart' => $ob,'kpiid'=>$kpiid
         ));
 
     }

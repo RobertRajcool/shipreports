@@ -3,7 +3,7 @@
 namespace Initial\ShippingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\DateTime;
+
 
 /**
  * SendCommand
@@ -48,9 +48,17 @@ class SendCommand
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="datetime", type="date")
+     * @ORM\Column(name="datetime", type="datetime")
      */
     private $datetime;
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\KpiDetails")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="kpiid", referencedColumnName="id")
+     * })
+     */
+    private $kpiid;
 
 
     /**
@@ -142,6 +150,22 @@ class SendCommand
     public function setUseremialid($useremialid)
     {
         $this->useremialid = $useremialid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKpiid()
+    {
+        return $this->kpiid;
+    }
+
+    /**
+     * @param string $kpiid
+     */
+    public function setKpiid($kpiid)
+    {
+        $this->kpiid = $kpiid;
     }
 
 

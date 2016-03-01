@@ -136,6 +136,7 @@ class HighchartController extends Controller
         //get client Email Id
         $user = $this->getUser();
         $username = $user->getUsername();
+
         $userquery = $em->createQueryBuilder()
             ->select('a.emailId')
             ->from('InitialShippingBundle:CompanyDetails','a')
@@ -143,10 +144,13 @@ class HighchartController extends Controller
             ->setParameter('userId',$username)
             ->getQuery();
         $clientemailid=$userquery->getSingleScalarResult();
+
         //get Informaton From User
         $params = $request->request->get('send_command');
         $filename = $params['filename'];
         $useremaildid=$params['clientemail'];
+        $kpiid=$params['kpiid'];
+        $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
         $comment = $params['comment'];
         $today = date("Y-m-d H:i:s");
         $sendcommand=new SendCommand();
@@ -164,32 +168,52 @@ class HighchartController extends Controller
         //Mailing Ends....
         //Insertion Starts Here...
         $sendcommand->setFilename($filename);
-        $sendcommand->setClientemail($clientemailid);
+        $sendcommand->setClientemail("lawrance@commusoft.co.uk");
         $datetime = new \DateTime();
         $sendcommand->setUseremialid($useremaildid);
         $sendcommand->setComment($comment);
         $sendcommand->setDatetime($datetime);
+        $sendcommand->setKpiid($newkpiid);
         $em->persist($sendcommand);
         $em->flush();
-        //Insertion Ends Here....
-        $cre = "Your Comment Has Been Send!!!";
+        return $this->redirectToRoute('showcomment');
+    }
+    public function showcommentAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $clientemailid = $em->createQueryBuilder()
+            ->select('a.emailId')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->where('a.adminName = :userId')
+            ->setParameter('userId',$username)
+            ->getQuery()
+            ->getSingleScalarResult();
 
-        $this->addFlash(
-            'notice',
-            ''
-        );
-
-        return $this->render(
-            'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
-            array('creator' => $cre,'msg'=>'')
-        );
 
 
+        $userdetails= $em->getRepository('InitialShippingBundle:SendCommand')->findBy(array('clientemail' => $clientemailid));
 
-
+        return $this->render('InitialShippingBundle:ExcelFileviews:showcomment.html.twig', array(
+            'userdetails' => $userdetails,
+        ));
 
     }
+    public function downloadchartAction($filename,Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename;
+        $content = file_get_contents($uploaddir);
 
+        $response = new Response();
+
+        $response->headers->set('Content-Type', 'image/svg+xml');
+        $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename);
+
+        $response->setContent($content);
+        return $response;
+    }
     public function sendbackendAction(Request $request)
     {
         // Code to get that user triggered a bunch of notifications to an array of user ids.

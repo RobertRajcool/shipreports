@@ -124,6 +124,7 @@
     </div>
    <form id="chatform" action=" {{path('addcomment') }}" method="post">
        <input id="imagefilename" type="hidden" name="send_command[filename]" >
+       <input type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
        To <input id="toemail" type="email" name="send_command[clientemail]" required><br>
        Comment<textarea id="commentid" name="send_command[comment]" required></textarea><br>
        <input id="" type="submit" value="Send Comment">

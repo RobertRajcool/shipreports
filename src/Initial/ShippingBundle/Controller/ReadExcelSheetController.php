@@ -199,7 +199,7 @@ class ReadExcelSheetController extends Controller
 
                                 }
 
-                           //  print_r($sheetshipsname);die;
+
                                 if(!(count($sheetshipsname)>count($databaseshipsname)))
                                 {
 
@@ -215,7 +215,7 @@ class ReadExcelSheetController extends Controller
                                 {
                                     $shipnameflag = false;
                                 }
-                                // echo $shipnameflag;die;
+
                                 if($shipnameflag==false)
                                 {
                                     $cre = "";
