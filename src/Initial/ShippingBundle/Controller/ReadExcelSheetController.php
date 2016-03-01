@@ -81,12 +81,12 @@ class ReadExcelSheetController extends Controller
             {
 
                 $user = $this->getUser();
-                $userId = $user->getUsername();
+                $username = $user->getUsername();
                 $userquery = $em->createQueryBuilder()
                     ->select('a.emailId')
                     ->from('InitialShippingBundle:CompanyDetails','a')
                      ->where('a.adminName = :userId')
-                    ->setParameter('userId',$userId)
+                    ->setParameter('userId',$username)
                     ->getQuery();
                 $useremailid=$userquery->getSingleScalarResult();
                 $excelobj->setFilename($fileName);
@@ -128,6 +128,8 @@ class ReadExcelSheetController extends Controller
                 {
 
                     //Validation For Ship Details
+                    $user = $this->getUser();
+                    $userId = $user->getId();
 
                     $databaseshipsname=array();
 
@@ -224,7 +226,7 @@ class ReadExcelSheetController extends Controller
                                         ->setSubject("Your Document Has Mismatch Values!!!!")
                                         ->setBody($msg)
                                     ;
-                                    $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                    $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                                     $mailer->send($message);
                                     $excelobj->removeUpload($input);
 
@@ -317,7 +319,7 @@ class ReadExcelSheetController extends Controller
                                             ->setSubject("Your Document Has Mismatch Values!!!!")
                                             ->setBody($msg)
                                         ;
-                                        $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                        $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                                         $mailer->send($message);
                                         $excelobj->removeUpload($input);
 
@@ -345,7 +347,7 @@ class ReadExcelSheetController extends Controller
                                         ->setSubject("Your Document Has Mismatch Values!!!!")
                                         ->setBody($msg)
                                     ;
-                                    $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                    $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                                     $mailer->send($message);
                                     $excelobj->removeUpload($input);
 
@@ -373,7 +375,7 @@ class ReadExcelSheetController extends Controller
                                     ->setSubject("Your Document Has Mismatch Values!!!!")
                                     ->setBody($msg)
                                 ;
-                                $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                                $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                                 $mailer->send($message);
 
                                 $excelobj->removeUpload($input);
@@ -399,23 +401,24 @@ class ReadExcelSheetController extends Controller
                         if ($j == $mycount)
                         {
 
-                            // Insertion process Starts Here //
 
-                            //$worksheet  = $objPHPExcel->setActiveSheetIndexbyName('KPI');
-                            $highestRow = $objWorksheet->getHighestRow(); // e.g. 10
-                            $highestColumn = $objWorksheet->getHighestColumn(); // e.g 'F'
 
-                            //$highestColumn="Z";
+                           /* $highestRow = $objWorksheet->getHighestRow();
+                            $highestColumn = $objWorksheet->getHighestColumn();*/
+
                             $excelsheet_data_array = array();
-
+/*
                             $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
                             $nrColumns = ord($highestColumn) - 64;
-                            $worksheetTitle = $objWorksheet->getTitle();
+                            $worksheetTitle = $objWorksheet->getTitle();*/
+                            $kpielementvaluearray=array();
+                            $newkpielementvaluearray=array();
 
-                            $usergivendata = date_format($excelobj->getDataofmonth(), "m-Y");
+                            $usergivendata = date_format($excelobj->getDataofmonth(), "-m-Y");
+                            $elementid=0;
 
-
-                            for ($d = 0; $d < count($newkpidetailsarray); $d++) {
+                            for ($d = 0; $d < count($newkpidetailsarray); $d++)
+                            {
 
 
                                 $cellname = $newkpidetailsarray[$d]['cellName'];
@@ -424,14 +427,11 @@ class ReadExcelSheetController extends Controller
                                 $cellenddate = $newkpidetailsarray[$d]['endDate'];
                                 $databasedate = date_format($cellenddate, "m-Y");
 
-
-                                // echo $cellvalue.'<br>';
-                                // echo $cellname.'<br>';
-
                                /* if ($usergivendata <= $databasedate) { */
 
                                     $columnvalue1 = $objPHPExcel->getActiveSheet()->getCell($cellname)->getValue();
-                                    if ($cellvalue == $columnvalue1) {
+                                    if ($cellvalue == $columnvalue1)
+                                    {
                                         $elementid = $newkpidetailsarray[$d]['id'];
                                         $query = $em->createQueryBuilder()
                                             ->select('b.cellName', 'b.elementName', 'b.id')
@@ -440,9 +440,9 @@ class ReadExcelSheetController extends Controller
                                             ->setParameter('kpidetailsid', $elementid)
                                             ->getQuery();
                                         $elementarray = $query->getResult();
-                                        // print_r($elementarray).'myelement array';
                                         $o = count($elementarray);
-                                        for ($p = 0; $p < $o; $p++) {
+                                        for ($p = 0; $p < $o; $p++)
+                                        {
 
 
                                             $elementcell = $elementarray[$p]['cellName'];
@@ -450,67 +450,146 @@ class ReadExcelSheetController extends Controller
                                             $elementid = $elementarray[$p]['id'];
                                             $mysheetelementvalues = array();
                                             $numbers_array = $excelobj->extract_numbers($elementcell);
-                                            $elementexcesheetvalue = $objWorksheet->rangeToArray($elementcell . ':' . $highestColumn . $numbers_array[0]);
+                                            $totalshipcount = count($sheetshipsname) + 3;
+                                            $columnLetter = PHPExcel_Cell::stringFromColumnIndex($totalshipcount+1);
+                                            $elementexcesheetvalue = $objWorksheet->rangeToArray($elementcell . ':' . $columnLetter . $numbers_array[0]);
 
                                             foreach ($elementexcesheetvalue as $key1 => $value1) {
 
-                                                $totalshipcount = count($sheetshipsname) + 3;
+
 
                                                 for ($mb = 3; $mb < $totalshipcount; $mb++) {
 
-                                                    array_push($mysheetelementvalues, $value1[$mb]);
+                                                    $rulesresultarray = array();
+                                                    $read1 = "";
+                                                    //Finding rulues for Element
+                                                    $rulesarray = $em->createQueryBuilder()
+                                                        ->select('b.rules')
+                                                        ->from('InitialShippingBundle:ElementRules', 'b')
+                                                        ->where('b.elementDetailsId = :elementDetailsId')
+                                                        ->setParameter('elementDetailsId', $elementid)
+                                                        ->getQuery()
+                                                        ->getResult();
 
 
+                                                    $totalcountofrulesarry = count($rulesarray);
+                                                    //If element for rule is zero thats going take excel sheeet value that validation goes Starts Here..//
+                                                    if ($totalcountofrulesarry > 0)
+                                                    {
+
+                                                        for ($aaa = 0; $aaa < count($rulesarray); $aaa++)
+                                                        {
+                                                            $argu = $value1[$mb];
+                                                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_nodejs_3.js \'' . $rulesarray[$aaa]['rules'] . ' \' ' . $argu;
+                                                            $jsfilename = 'node ' . $jsfiledirectry;
+                                                            $handle = popen($jsfilename, 'r');
+                                                            $read = fread($handle, 2096);
+                                                            $read1 = str_replace("\n", '', $read);
+                                                            if ($read1 != "false")
+                                                            {
+                                                                break;
+                                                            }
+
+                                                        }
+                                                        //If Element rule return null answer that shows error message starts Here//
+                                                        if ($read1 == "false")
+                                                        {
+                                                            $elementnameforfule = $em->createQueryBuilder()
+                                                                ->select('a.elementName')
+                                                                ->from('InitialShippingBundle:ElementDetails', 'a')
+                                                                ->where('a.id = :userId')
+                                                                ->setParameter('userId', $elementid)
+                                                                ->getQuery()
+                                                                ->getSingleScalarResult();
+                                                            $msg = 'In Rule for Element  ' . $elementnameforfule . ' . Thats Mismatch Value So Correct!!!';
+                                                            $cre = "";
+                                                            $message = \Swift_Message::newInstance()
+                                                                ->setFrom('lawrance@commusoft.co.uk')
+                                                                ->setTo($useremailid)
+                                                                ->setSubject("Your Document Has Mismatch Values!!!!")
+                                                                ->setBody($msg);
+                                                            $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
+                                                            $mailer->send($message);
+
+                                                            //$excelobj->removeUpload($input);
+
+                                                            $this->addFlash(
+                                                                'notice',
+                                                                'Your File not Readed!!! Your Document Has Mismatch Value.so document resend to Your Mail. Check Your Mail!!!'
+                                                            );
+
+                                                            return $this->render(
+                                                                'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
+                                                                array('creator' => $cre, 'msg' => $msg)
+                                                            );
+
+                                                        }
+                                                        //If Element rule return null answer that shows error message Ends Here//
+                                                        else
+                                                        {
+                                                            $kpielementvaluearray[$kpiid][$elementid][$mb - 3] = $read1;
+
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        $kpielementvaluearray[$kpiid][$elementid][$mb - 3] = $value1[$mb];
+                                                    }
+                                                    //If element for rule is zero thats going take excel sheeet value that validation goes Ends  Here..//
                                                 }
-
-
-                                            }
-
-
-                                            for ($ab = 0; $ab < count($sheetshipsname); $ab++)
-                                            {
-
-
-                                                $gearman = $this->get('gearman');
-                                                $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($sheetshipsname));
-
-                                                $shipid=$shipdetailsarray[$ab]['id'];
-
-                                                $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-                                                $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
-                                                $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementid));
-
-                                                $readingkpivalue = new ReadingKpiValues();
-                                                $readingkpivalue->setElementDetailsId($newelementid);
-                                                $readingkpivalue->setMonthdetail($excelobj->getDataofmonth());
-                                                $readingkpivalue->setShipDetailsId($newshipid);
-                                                $readingkpivalue->setKpiDetailsId($newkpiid);
-                                                if($mysheetelementvalues[$ab])
-                                                $argu=5;
-                                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir').'/../web/js/87f1824_part_1_nodejs_3.js';
-                                                $jsfilename='node '.$jsfiledirectry;
-                                                $handle = popen($jsfilename, 'r');
-                                                $read = fread($handle, 2096);
-                                                $myvarable= $read;
-                                                $readingkpivalue->setValue($mysheetelementvalues[$ab]);
-                                                $em = $this->getDoctrine()->getManager();
-                                                $em->persist($readingkpivalue);
-                                                $em->flush();
-
-
                                             }
                                         }
                                     }
+                            }
+                            // Insertion process Starts Here //
+
+                            if(count($shipdetailsarray)==count($databaseshipsname))
+                            {   $abc = 0;
+                                foreach ($kpielementvaluearray as $kpikey => $kpipvalue)
+                                {
 
 
+                                    foreach($kpipvalue as $elementkey=>$elementvalue)
+                                    {
+
+                                        foreach($elementvalue as $valuekey=>$finalvalue)
+                                        {
+                                            $gearman = $this->get('gearman');
+                                            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($sheetshipsname));
+
+                                            $shipid=$shipdetailsarray[$abc]['id'];
+
+                                            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+                                            $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpikey));
+                                            $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementkey));
+                                            $readingkpivalue = new ReadingKpiValues();
+                                            $readingkpivalue->setElementDetailsId($newelementid);
+                                            $readingkpivalue->setMonthdetail($excelobj->getDataofmonth());
+                                            $readingkpivalue->setShipDetailsId($newshipid);
+                                            $readingkpivalue->setKpiDetailsId($newkpiid);
+                                            $readingkpivalue->setValue($finalvalue);
+                                            $em = $this->getDoctrine()->getManager();
+                                            $em->persist($readingkpivalue);
+                                            $em->flush();
+                                            $abc++;
+                                        }
+                                        $abc=0;
+                                    }
+
+                               }
                             }
 
-
-                            // Insertion Process Ends Here //
+                            $exceldataofmonth=$excelobj->getDataOfMonth();
+                            $exceldataofmonth->modify('first day of this month');
+                            $excelobj->setUserid($username)  ;
+                            $nowdate1 = date("Y-m-d H:i:s");
+                            $nowdatetime=new \DateTime($nowdate1);
+                            $excelobj->setDatetime($nowdatetime);
+                            $excelobj->setDataOfMonth($exceldataofmonth);
 
                             $em->persist($excelobj);
                             $em->flush();
-                            $filelastinsertid=$excelobj->getId();
+                            // Insertion process Starts Ends Here //
 
                             $cre = "Your File Readed!!!";
 
@@ -518,11 +597,8 @@ class ReadExcelSheetController extends Controller
                                 'notice',
                                 'Your Document Has Been Added!!!!'
                             );
+                            return $this->redirectToRoute('showfile');
 
-                            return $this->render(
-                                'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
-                                array('creator' => $cre,'msg'=>'')
-                            );
                         }
 
                     if ($j != $mycount)
@@ -535,9 +611,10 @@ class ReadExcelSheetController extends Controller
                             ->setSubject("Your Document Has Mismatch Values!!!!")
                             ->setBody($msg)
                         ;
-                        $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                        $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                         $mailer->send($message);
-                        $excelobj->removeUpload($input);
+
+                        //$excelobj->removeUpload($input);
 
                         $this->addFlash(
                             'notice',
@@ -561,9 +638,9 @@ class ReadExcelSheetController extends Controller
                         ->setSubject("Your Document having more than One Sheets!!!!")
                         ->setBody("Your Document having more than One Sheets!!!!")
                     ;
-                    $message->attach(\Swift_Attachment::fromPath($uploaddir.'/')->setFilename($excelobj->getFilename()));
+                    $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                     $mailer->send($message);
-                    $excelobj->removeUpload($input);
+                    //$excelobj->removeUpload($input);
                     $loadedSheetNames = $objPHPExcel->getSheetNames();
 
                     $this->addFlash(
@@ -582,32 +659,55 @@ class ReadExcelSheetController extends Controller
 
         }
 
-
+        $cre="Not Valid Document";
         return $this->render(
             'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
             array('creator' => $cre,'msg'=>'')
         );
     }
 
+    public function showfileAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $username = $user->getUsername();
 
-    public function newAction()
+
+        $userdetails= $em->getRepository('InitialShippingBundle:Excel_file_details')->findBy(array('userid' => $username));
+
+        return $this->render('InitialShippingBundle:ExcelFileviews:listall.html.twig', array(
+            'userdetails' => $userdetails,
+        ));
+
+    }
+    public function downloadexcelAction($filename,Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/excelfiles/'.$filename;
+        $content = file_get_contents($uploaddir);
+
+        $response = new Response();
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment;filename="'.$filename);
+
+        $response->setContent($content);
+        return $response;
+    }
+   /* public function newAction()
     {
         $inputFileType = 'Excel2007';
         $inputFileName = '/var/www/html/Demo_app/uploads/excelfiles/Pioneer monthly data Dec 10.xlsx';
 
-//echo $inputFileName.'<br>';
-        // echo $inputFileName1.$file;   die;
-        /**  Create a new Reader of the type defined in $inputFileType  **/
-
         $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-        /**  Load $inputFileName to a PHPExcel Object  **/
+
         $objReader->setLoadAllSheets();
         $objPHPExcel = $objReader->load($inputFileName);
         $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
         print_r($sheetData);
 
 
-    }
+    }*/
 
     private function readExcelForm(Excel $excelobj)
     {
@@ -651,7 +751,7 @@ class ReadExcelSheetController extends Controller
     }
 
 
-    public function index1Action()
+  /*  public function index1Action()
     {
         $objPHPExcel = new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("Lawrance")
@@ -723,6 +823,6 @@ class ReadExcelSheetController extends Controller
 
         return new Response($data);
         //echo $data;
-    }
+    }*/
 
 }

@@ -11,6 +11,12 @@ fileadd:
 upload:
      path:    /upload
      defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:upload" }
+showfile:
+     path:    /showfile
+     defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:showfile" }
+downloadexcel:
+       path:    /{filename}/downloadexcel
+       defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:downloadexcel" }
 highchart:
       path:     /highchart
       defaults: { _controller: "InitialShippingBundle:Highchart:chart"}
@@ -20,6 +26,9 @@ showchart:
 addchart:
       path:     /addchart
       defaults: { _controller: "InitialShippingBundle:Highchart:addchart"}
+addcomment:
+      path:     /addcomment
+      defaults: { _controller: "InitialShippingBundle:Highchart:addcomment"}
 
 downloadPdf:
       path:     /downloadPdf

@@ -244,6 +244,7 @@ class ReadingKpiValuesController extends Controller
         $value = $params['value'];
         $monthtostring=$month['year'].'-'.$month['month'].'-'.$month['day'];
         $new_date=new \DateTime($monthtostring);
+        $new_date->modify('first day of this month');
 
 
         $em = $this->getDoctrine()->getManager();
