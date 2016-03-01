@@ -12,7 +12,8 @@
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
     <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+   <script src="http://code.highcharts.com/modules/exporting.js"></script>
+   {# <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>#}
 
     <script type="text/javascript">
         {{ chart(chart) }}
@@ -20,36 +21,84 @@
 
     </script>
     <script type="text/javascript">
+
         $(document).ready(function () {
 
+              // alert('inital');
+            $('#export').click(function (e) {
+                alert('function call');
+                var obj = {},
+                        chart;
 
-        $('#export').click(function () {
+                chart = $('#linechart').highcharts();
+                obj.svg = chart.getSVG();
+                obj.type = 'image/png';
+                obj.width = 450;
+                obj.async = true;
+                var canvas = document.querySelector("canvas"),
+                        context = canvas.getContext("2d");
 
-            var obj = {},
-                    chart;
+                var image = new Image;
+                image.src = "fallback.svg";
+                image.onload = function() {
+                    context.drawImage(image, 0, 0);
 
-            chart = $('#linechart').highcharts();
-            obj.svg = chart.getSVG();
-            obj.type = 'image/png';
-            obj.width = 450;
-            obj.async = true;
-
-            var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
-
-
-
-
-           // alert(JSON.stringify(obj));
-            $.ajax({
-                type: 'post',
-                url: "/addchart",
-                data: data,
-                success: function (data) {
-                    alert(data)
-
-                }
+                    var a = document.createElement("a");
+                    a.download = "fallback.png";
+                    a.href = canvas.toDataURL("image/png");
+                    a.click();
+                };
             });
-        });
+
+             $('#chatform').submit(function(e)
+             {
+                 e.preventDefault();
+                 var self = this;
+
+             var obj = {},
+             chart;
+
+             chart = $('#linechart').highcharts();
+             obj.svg = chart.getSVG();
+             obj.type = 'image/png';
+             obj.width = 450;
+             obj.async = true;
+
+             var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
+
+             $.ajaxSetup({
+             global: false,
+             type: "post",
+             url: "/addchart",
+             beforeSend: function () {
+             $(".modal").show();
+             },
+             complete: function () {
+             $(".modal").hide();
+             }
+             });
+             $.ajax({
+             data: data,
+             success: function (data)
+             {
+
+             $('#imagefilename').val(data);
+                 self.submit();
+
+
+             }
+             ,
+             error: function()
+             {
+             alert('There has been an error, please alert us immediately');
+
+             }
+             });
+
+             });
+
+
+
         });
     </script>
 
@@ -66,7 +115,21 @@
           {% endstylesheets %}
       {% endblock %}
     <div id="linechart" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
-    <button id="export">export</button>
+    <div class="modal" style="display: none">
+        <div class="center">
+            {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
+            <img src="{{ asset_url }}" alt="Loader Image"/>
+            {% endimage %}
+        </div>
+    </div>
+   <form id="chatform" action=" {{path('addcomment') }}" method="post">
+       <input id="imagefilename" type="hidden" name="send_command[filename]" >
+       To <input id="toemail" type="email" name="send_command[clientemail]" required><br>
+       Comment<textarea id="commentid" name="send_command[comment]" required></textarea><br>
+       <input id="" type="submit" value="Send Comment">
+
+   </form>
     <div id="imgContainer"></div>
+    <canvas id="canvas" width="800" height="400"></canvas>
 
 {% endblock %}
