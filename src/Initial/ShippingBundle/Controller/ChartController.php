@@ -78,7 +78,7 @@ class ChartController extends Controller
         ));
     }
     /**
-     * Adding Kpi Values.
+     * Creating Charts Values.
      *
      * @Route("/createchart", name="createchart")
      * @Method("Post")
@@ -88,18 +88,28 @@ class ChartController extends Controller
         $user = $this->getUser();
         $id = $user->getId();
         $params = $request->request->get('chart');
-        $kpiname = $params['kpiname'];
-        $elementid=$params['elementDetailsId'];
+        $kpiid = $params['kpiname'];
         $fromdate = $params['fromdate'];
         $todate = $params['todate'];
         $em=$this->getDoctrine()->getManager();
+
+       // Finding Kpi Name //
         $findkpiname=$em -> createQueryBuilder()
             ->select('b.kpiName')
             ->from('InitialShippingBundle:KpiDetails','b')
             ->where('b.id = :userId')
-            ->setParameter('userId',$kpiname)
+            ->setParameter('userId',$kpiid)
             ->getQuery()
             ->getSingleScalarResult();
+      // Finding Elements and Element Weightage Based on Kpi Id //
+        $findelementidarray=$em -> createQueryBuilder()
+            ->select('c.id','c.weightage')
+            ->from('InitialShippingBundle:ElementDetails','c')
+            ->where('c.kpiDetailsId = :kpiid')
+            ->setParameter('kpiid',$kpiid)
+            ->getQuery()
+            ->getResult();
+     // Finding Numbr of Ships  //
         $dbshiparrayquery=$em -> createQueryBuilder()
             ->select('a.shipName','a.id')
             ->from('InitialShippingBundle:ShipDetails','a')
@@ -109,51 +119,92 @@ class ChartController extends Controller
             ->where('d.id = :userId')
             ->setParameter('userId',$id)
             ->getQuery();
+        $dbshipsname=$dbshiparrayquery->getResult();
 
         $charobj=new Chart();
 
+        $endday=31;
+        if($todate['month']==2)
+        {
+            $endday=29;
+        }
         $frommonthtostring=$fromdate['year'].'-'.$fromdate['month'].'-'.$fromdate['day'];
-        $tomonthtostring=$todate['year'].'-'.$todate['month'].'-'.$todate['day'];
+        $tomonthtostring=$todate['year'].'-'.$todate['month'].'-'.$endday;
+       /*
+        $new_from_date=new \DateTime($frommonthtostring);
+        $new_to_date=new \DateTime($tomonthtostring);
+        */
         $newcategories=$charobj->get_months($frommonthtostring,$tomonthtostring);
-
-
-
+        $datesarray=$charobj->get_months_and_year($frommonthtostring,$tomonthtostring);
         $ob = new Highchart();
 
-        $dbshipsname=$dbshiparrayquery->getResult();
-        //loop for assign name for series//
 
-        for($kj=0;$kj<count($dbshipsname);$kj++)
-        {
-            $newseries[$kj]['name']=$dbshipsname[$kj]['shipName'];
+        //loop for assign name for series Starts Here//
 
-            $getvalue=$em -> createQueryBuilder()
-                ->select('a.value')
-                ->from('InitialShippingBundle:ReadingKpiValues','a')
-                ->where('a.shipDetailsId = :userId')
-                ->andwhere('a.elementDetailsId = :elementid')
-                ->setParameter('userId',$dbshipsname[$kj]['id'])
-                ->setParameter('elementid',$elementid)
-                ->getQuery()
-                ->getResult();
-            for($l=0;$l<count($getvalue);$l++)
+         for($kj=0;$kj<count($dbshipsname);$kj++) {
+            $newseries[$kj]['name'] = $dbshipsname[$kj]['shipName'];
+            $mykpivaluearray=array();
+        //loop for sending dates//
+            for ($d=0;$d<count($datesarray);$d++)
             {
-                if(empty($getvalue[$l]['value']) && is_null($getvalue[$l]['value']))
-                {
-                    $newseries[$kj]['data'][$l]=0;
-                }
-                if(!(empty($getvalue[$l]['value']) && is_null($getvalue[$l]['value'])))
-                {
-                    $newseries[$kj]['data'][$l]=(float)$getvalue[$l]['value'];
-                }
+                $new_monthdetail_date=new \DateTime($datesarray[$d]);
+                $finalkpivalue = 0;
+        //loop for sending calculating weightage value for partucular Kpi     //
+            for ($jk = 0; $jk < count($findelementidarray); $jk++) {
+
+                $weightage = $findelementidarray[$jk]['weightage'];
+        //Finding value based on element id and dates from user//
+                $dbvalueforelement = $em->createQueryBuilder()
+                    ->select('a.value')
+                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                    ->where('a.shipDetailsId = :shipid')
+                    ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                    ->andWhere('a.elementDetailsId = :Elementid')
+                    ->andWhere('a.monthdetail =:dataofmonth')
+                    ->setParameter('shipid', $dbshipsname[$kj]['id'])
+                    ->setParameter('kpiDetailsId', $kpiid)
+                    ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                    ->setParameter('dataofmonth',$new_monthdetail_date)
+                    ->getQuery()
+                    ->getResult();
+            if(count($dbvalueforelement)==0)
+            {
+                $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                $finalkpivalue += $finddbvaluefomula;
+            }
+            else
+            {
+                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                $finalkpivalue += $finddbvaluefomula;
+            }
+
+
+
+
+
+
+            }
+       //Push the kpivalue values from weightage value//
+                $mykpivaluearray[$d]=$finalkpivalue;
+
+        }
+
+
+
+            for($l=0;$l<count($mykpivaluearray);$l++)
+            {
+
+                    $newseries[$kj]['data'][$l]=$mykpivaluearray;
+
 
             }
 
 
 
         }
+    //loop for assign name for series Ends Here //
 
-      //Adding data to javascript chart function starts Here.. //
+    // Adding data to javascript chart function starts Here.. //
 
         $ob->chart->renderTo('linechart');
         $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
@@ -163,7 +214,7 @@ class ChartController extends Controller
         //$ob->yAxis->title(array('text'  => $kpiname),array('style' => array('color' => '#221DBB')));
         $ob->series($newseries);
         $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
-        //Adding data to javascript chart function  Ends Here..//
+    // Adding data to javascript chart function  Ends Here.. //
 
 
         return $this->render('InitialShippingBundle:HighChart:hightchart.html.twig', array(

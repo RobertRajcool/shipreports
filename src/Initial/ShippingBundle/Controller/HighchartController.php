@@ -7,6 +7,7 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Initial\ShippingBundle\Entity\SendCommand;
 
 class HighchartController extends Controller
 {
@@ -116,8 +117,76 @@ class HighchartController extends Controller
 
 
         }
+        /*
+        $imagedir=$this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename. $fileext;
+        $image = new Imagick();
+        $image->readImageBlob(file_get_contents($imagedir));
+        $image->setImageFormat("png24");
+        $image->resizeImage(1024, 768, imagick::FILTER_LANCZOS, 1);
+        $image->writeImage('image.png');
+        */
 
         return new JsonResponse($filename . $fileext);
+
+    }
+
+    public function addcommentAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $userquery = $em->createQueryBuilder()
+            ->select('a.emailId')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->where('a.adminName = :userId')
+            ->setParameter('userId',$username)
+            ->getQuery();
+        $clientemailid=$userquery->getSingleScalarResult();
+        //get Informaton From User
+        $params = $request->request->get('send_command');
+        $filename = $params['filename'];
+        $useremaildid=$params['clientemail'];
+        $comment = $params['comment'];
+        $today = date("Y-m-d H:i:s");
+        $sendcommand=new SendCommand();
+        //assign file attachement for mail and Mailing Starts Here...
+        $imagedirect= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename;
+        $mailer = $this->container->get('mailer');
+        $message = \Swift_Message::newInstance()
+            ->setFrom('lawrance@commusoft.co.uk')
+            ->setTo($useremaildid)
+            ->setSubject($today."  Month Graph!!!!")
+            ->setBody($comment)
+        ;
+        $message->attach(\Swift_Attachment::fromPath($imagedirect)->setFilename($filename));
+        $mailer->send($message);
+        //Mailing Ends....
+        //Insertion Starts Here...
+        $sendcommand->setFilename($filename);
+        $sendcommand->setClientemail($clientemailid);
+        $datetime = new \DateTime();
+        $sendcommand->setUseremialid($useremaildid);
+        $sendcommand->setComment($comment);
+        $sendcommand->setDatetime($datetime);
+        $em->persist($sendcommand);
+        $em->flush();
+        //Insertion Ends Here....
+        $cre = "Your Comment Has Been Send!!!";
+
+        $this->addFlash(
+            'notice',
+            ''
+        );
+
+        return $this->render(
+            'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
+            array('creator' => $cre,'msg'=>'')
+        );
+
+
+
+
 
     }
 

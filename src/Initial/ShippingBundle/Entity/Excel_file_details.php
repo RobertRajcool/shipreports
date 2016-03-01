@@ -36,6 +36,18 @@ class Excel_file_details
      * @ORM\Column(name="data_of_month", type="date")
      */
     private $dataOfMonth;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="userid", type="string", length=255)
+     */
+    private $userid;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="datetime", type="datetime")
+     */
+    private $datetime;
 
 
 
@@ -103,6 +115,38 @@ class Excel_file_details
         unlink($filename);
         return true;
 
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserid()
+    {
+        return $this->userid;
+    }
+
+    /**
+     * @param string $userid
+     */
+    public function setUserid($userid)
+    {
+        $this->userid = $userid;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDatetime()
+    {
+        return $this->datetime;
+    }
+
+    /**
+     * @param \DateTime $datetime
+     */
+    public function setDatetime($datetime)
+    {
+        $this->datetime = $datetime;
     }
 
 

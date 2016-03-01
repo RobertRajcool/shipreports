@@ -23,8 +23,10 @@ class Chart
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="kpiname", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\KpiDetails")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="kpiname", referencedColumnName="id")
+     * })
      */
     private $kpiname;
 
@@ -153,6 +155,22 @@ class Chart
 
         $months[] = date('F', $time2);
         return $months;
+    }
+    function get_months_and_year($date1, $date2) {
+        $time1  = strtotime($date1);
+        $time2  = strtotime($date2);
+        $my     = date('mY', $time2);
+
+        $monthsyear = array(date('Y-m-d', $time1));
+
+        while($time1 < $time2) {
+            $time1 = strtotime(date('Y-m-d', $time1).' +1 month');
+            if(date('mY', $time1) != $my && ($time1 < $time2))
+                $monthsyear[] = date('Y-m-d', $time1);
+        }
+
+        $monthsyear[] = date('Y-m-d', $time2);
+        return $monthsyear;
     }
 
 }
