@@ -564,7 +564,9 @@ class ReadExcelSheetController extends Controller
                                             $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementkey));
                                             $readingkpivalue = new ReadingKpiValues();
                                             $readingkpivalue->setElementDetailsId($newelementid);
-                                            $readingkpivalue->setMonthdetail($excelobj->getDataofmonth());
+                                            $exceldataofmonth=$excelobj->getDataOfMonth();
+                                            $myexcelnewdatevalue= $exceldataofmonth->modify('last day of this month');
+                                            $readingkpivalue->setMonthdetail($myexcelnewdatevalue);
                                             $readingkpivalue->setShipDetailsId($newshipid);
                                             $readingkpivalue->setKpiDetailsId($newkpiid);
                                             $readingkpivalue->setValue($finalvalue);
@@ -580,12 +582,12 @@ class ReadExcelSheetController extends Controller
                             }
 
                             $exceldataofmonth=$excelobj->getDataOfMonth();
-                            $exceldataofmonth->modify('first day of this month');
+                           $myexcelnewdatevalue= $exceldataofmonth->modify('last day of this month');
                             $excelobj->setUserid($username)  ;
                             $nowdate1 = date("Y-m-d H:i:s");
                             $nowdatetime=new \DateTime($nowdate1);
                             $excelobj->setDatetime($nowdatetime);
-                            $excelobj->setDataOfMonth($exceldataofmonth);
+                            $excelobj->setDataOfMonth($myexcelnewdatevalue);
 
                             $em->persist($excelobj);
                             $em->flush();

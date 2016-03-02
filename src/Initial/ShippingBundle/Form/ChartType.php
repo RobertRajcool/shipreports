@@ -5,6 +5,7 @@ namespace Initial\ShippingBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class ChartType extends AbstractType
 {
@@ -43,8 +44,8 @@ class ChartType extends AbstractType
                 },
                 'empty_value' => '--Select KPI--', ))
 
-            ->add('fromdate', 'date')
-            ->add('todate', 'date')
+            ->add('fromdate',   DateType::class,array('data'=> new \DateTime()))
+            ->add('todate',   DateType::class,array('data'=> new \DateTime()))
         ;
     }
     
