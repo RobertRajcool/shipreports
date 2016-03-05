@@ -1,5 +1,6 @@
+
 (function($) {
-    $.fn.conditionsBuilder = function(options) {
+    $.fn.conditionsBuilder = function(options, answer) {
         if(options == "data") {
             var builder = $(this).eq(0).data("conditionsBuilder");
             return builder.collectData();
@@ -11,10 +12,21 @@
         }
     };
 
+    var count=0;
+
     function ConditionsBuilder(element, options) {
         this.element = $(element);
         this.options = options || {};
         this.init();
+    }
+
+    $('.dynamic-add').live("click",function() {
+        var currentId = $(this).attr('id');
+        id_value = splitfun(currentId);
+    });
+    function splitfun(data){
+        var num = data.split('_');
+        return num[1];
     }
 
     ConditionsBuilder.prototype = {
@@ -48,7 +60,7 @@
                 return {
                     name: element.find(".field").val(),
                     operator: element.find(".operator").val(),
-                    value: element.find(".value").val()
+                    value: element.find("#text-value-id_"+id_value).val()
                 };
             }
         },
@@ -57,6 +69,7 @@
             return this.buildConditional(ruleData) || this.buildRule(ruleData);
         },
 
+
         buildConditional: function(ruleData) {
             var kind;
             if(ruleData.all) { kind = "all"; }
@@ -64,19 +77,19 @@
             else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditional-id"});
-            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper", "id": "all-any-none-wrapper-id"});
+            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditionalid"});
+            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"},{"id": "all-any-none-wrapper-id"});
             var select = $("<select>", {"class": "all-any-none"},{"id":"all-any-none-id"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
             select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
             select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
             selectWrapper.append(select);
-            /*selectWrapper.append($("<span>", {text: "of the following rules:"}));*/
             div.append(selectWrapper);
 
             var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id", "text": "Add Rule"});
             var _this = this;
             addRuleLink.click(function(e) {
+                count++;
                 e.preventDefault();
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
@@ -93,7 +106,7 @@
             });
             div.append(addConditionLink);
 
-            var removeLink = $("<a>", {"class": "remove","id":"remove-id", "href": "#", "text": "Remove This Sub-Condition"});
+            var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
             removeLink.click(function(e) {
                 e.preventDefault();
                 div.remove();
@@ -108,7 +121,7 @@
         },
 
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "rule"},{"id": "rule-id"});
+            var ruleDiv = $("<div>", {"class": "rule", "id": "rule-id"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
@@ -133,8 +146,10 @@
         }
     };
 
+
+
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field"},{"id": "field-id"});
+        var select = $("<select>",  {"class": "field", "id":"field-id_"+count});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -148,14 +163,15 @@
         return select;
     }
 
+
     function getOperatorSelect() {
-        var select = $("<select>", {"class": "operator"},{"id":"operator-id"});
+        var select = $("<select>",  {"class": "operator","id":"operator-id_"+count});
         select.change(onOperatorSelectChange);
         return select;
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove","id":"remove1-id", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }
@@ -191,18 +207,19 @@
         var fieldSelect = container.find(".field");
         var currentValue = container.find(".value");
         var val = currentValue.val();
-
-        switch(option.data("fieldType")) {
+       var j=count;
+        switch(option.data("fieldType"))
+        {
             case "none":
-                $this.after($("<input>", {"type": "hidden", "class": "value"}));
+                $this.after($("<input>", {"type": "hidden", "class": "value", "id":"none-value-id"}));
                 break;
             case "text":
-                $this.after($("<input>", {"type": "text", "class": "value"}));
+                $this.after($("<input>", {"type": "text", "class": "value", "id":"text-value-id_" +j}));
                 break;
             case "textarea":
-                $this.after($("<textarea>", {"class": "value"}));
+                $this.after($("<textarea>", {"class": "value", "id":"textarea-value-id"}));
             case "select":
-                var select = $("<select>", {"class": "value"});
+                var select = $("<select>", {"class": "value", "id":"select-value-id"});
                 var options = fieldSelect.find("> :selected").data("options");
                 for(var i=0; i < options.length; i++) {
                     var opt = options[i];

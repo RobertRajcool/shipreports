@@ -28,7 +28,7 @@ class ReadExcelSheetController extends Controller
     private function createCreateForm(Excel_file_details $excelobj)
     {
         $form = $this->createForm(new AddExcelFileType(), $excelobj, array(
-            'action' => $this->generateUrl('upload'),
+            'action' => $this->generateUrl('newupload'),
             'method' => 'POST',
         ));
 
@@ -48,6 +48,134 @@ class ReadExcelSheetController extends Controller
         return $this->render('InitialShippingBundle:ExcelFileviews:excelfile.html.twig', array(
             'form' => $form->createView(),
         ));
+    }
+    public function newuploadAction(Request $request)
+    {
+        $excelobj = new Excel_file_details();
+        //$uploadsucess=false;
+        $form = $this->createCreateForm($excelobj);
+        $em = $this->getDoctrine()->getManager();
+
+
+        $form->handleRequest($request);
+
+        if ($form->isValid())
+        {
+            $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/excelfiles';
+            $file= $excelobj->getFilename();
+
+            $fileName = $excelobj->getFilename()->getClientOriginalName();
+
+            $ext= pathinfo($uploaddir.$fileName, PATHINFO_EXTENSION);
+
+            $name = substr($fileName, 0, - (strlen($ext)+1));
+            //  echo $name.'<br>';
+            $i = 1;
+
+            $fileName = $name . date('Y-m-d H-i-s') .'.'. $ext;
+
+
+
+            if ( $file->move($uploaddir, $fileName))
+            {
+
+
+                $user = $this->getUser();
+                $username = $user->getUsername();
+                $userquery = $em->createQueryBuilder()
+                    ->select('a.emailId')
+                    ->from('InitialShippingBundle:CompanyDetails','a')
+                    ->where('a.adminName = :userId')
+                    ->setParameter('userId',$username)
+                    ->getQuery();
+                $useremailid=$userquery->getSingleScalarResult();
+                $excelobj->setFilename($fileName);
+                $mailer = $this->container->get('mailer');
+                $input=$uploaddir.'/'.$excelobj->getFilename();
+
+                $mydatevalue= $excelobj->getDataofmonth();
+
+
+
+                $inputFileType="";
+
+                switch ($ext) {
+                    case "xls":
+                        $inputFileType = 'Excel5';
+                        break;
+                    case "xlsx":
+                        $inputFileType = 'Excel2007';
+                        break;
+
+                }
+
+
+
+                // Creating Excel Sheet Objects....//
+
+                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                $objReader->setLoadAllSheets();
+                $objPHPExcel = $objReader->load($input);
+
+                $objWorksheet = $objPHPExcel->getActiveSheet();
+                $sheetCount = $objPHPExcel->getSheetCount();
+                $cre = "";
+
+
+
+
+                if ($sheetCount == 1)
+                {
+                    $user = $this->getUser();
+                    $userId = $user->getId();
+                    $dataofmonthstring= $mydatevalue->format('Y-m-d');
+                    $gearmandataarray=array('filename'=>$fileName,'dataofmonth'=>$dataofmonthstring,'userid'=>$userId,'filetype'=>$inputFileType);
+                    $gearman = $this->get('gearman');       //$datafromuser=array();
+                    $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($gearmandataarray));
+                    $msg="Your Document Has Been verfication.After Verfication Your File Data Has been Reading.";
+
+
+                    return $this->render(
+                        'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
+                        array('creator' => $cre,'msg'=>$msg)
+                    );
+
+                }
+                if ($sheetCount > 1)
+                {
+
+                    $message = \Swift_Message::newInstance()
+                        ->setFrom('lawrance@commusoft.co.uk')
+                        ->setTo($useremailid)
+                        ->setSubject("Your Document having more than One Sheets!!!!")
+                        ->setBody("Your Document having more than One Sheets!!!!")
+                    ;
+                    $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
+                    $mailer->send($message);
+                    $loadedSheetNames = $objPHPExcel->getSheetNames();
+                    $excelobj->removeUpload($input);
+
+                    $this->addFlash(
+                        'notice',
+                        'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
+                    );
+
+                    return $this->render(
+                        'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
+                        array('creator' => $cre,'msg'=>'Number of Sheets: '.$sheetCount)
+                    );
+                }
+
+            }
+
+
+        }
+
+        $cre="Not Valid Document";
+        return $this->render(
+            'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
+            array('creator' => $cre,'msg'=>'')
+        );
     }
 
     public function uploadAction(Request $request)
@@ -207,6 +335,27 @@ class ReadExcelSheetController extends Controller
                                     {
                                         if (!(in_array($sheetshipsname[$b], $databaseshipsname))) {
                                             $shipnameflag = false;
+                                            $cre = "";
+                                            $msg="Ships Names Are Mismatch.Mismatch Shipnae: ".$sheetshipsname[$b];
+                                            $message = \Swift_Message::newInstance()
+                                                ->setFrom('lawrance@commusoft.co.uk')
+                                                ->setTo($useremailid)
+                                                ->setSubject("Your Document Has Mismatch Values!!!!")
+                                                ->setBody($msg)
+                                            ;
+                                            $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
+                                            $mailer->send($message);
+                                            $excelobj->removeUpload($input);
+
+                                            $this->addFlash(
+                                                'notice',
+                                                'Your File not Readed. Because, Ship Names are Mismatch !!!. Your Document Has Mismatch Value.so document resend to Your Mail. Check Your Mail!!!'
+                                            );
+
+                                            return $this->render(
+                                                'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
+                                                array('creator' => $cre,'msg'=>'')
+                                            );
                                         }
                                     }
 
@@ -511,7 +660,7 @@ class ReadExcelSheetController extends Controller
                                                             $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                                                             $mailer->send($message);
 
-                                                            //$excelobj->removeUpload($input);
+                                                            $excelobj->removeUpload($input);
 
                                                             $this->addFlash(
                                                                 'notice',
@@ -544,7 +693,12 @@ class ReadExcelSheetController extends Controller
                             // Insertion process Starts Here //
 
                             if(count($shipdetailsarray)==count($databaseshipsname))
-                            {   $abc = 0;
+                            {
+
+                               // $arrayexcelsheetvalues=array('shipideatilsarray'=>$shipdetailsarray,'kpielementvaluearray'=>$kpielementvaluearray,'dataofmonth'=>$excelobj->getDataOfMonth());
+
+
+                                $abc = 0;
                                 foreach ($kpielementvaluearray as $kpikey => $kpipvalue)
                                 {
 
@@ -554,8 +708,6 @@ class ReadExcelSheetController extends Controller
 
                                         foreach($elementvalue as $valuekey=>$finalvalue)
                                         {
-                                            $gearman = $this->get('gearman');
-                                            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($sheetshipsname));
 
                                             $shipid=$shipdetailsarray[$abc]['id'];
 
@@ -616,7 +768,7 @@ class ReadExcelSheetController extends Controller
                         $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                         $mailer->send($message);
 
-                        //$excelobj->removeUpload($input);
+                        $excelobj->removeUpload($input);
 
                         $this->addFlash(
                             'notice',
@@ -642,8 +794,8 @@ class ReadExcelSheetController extends Controller
                     ;
                     $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
                     $mailer->send($message);
-                    //$excelobj->removeUpload($input);
                     $loadedSheetNames = $objPHPExcel->getSheetNames();
+                    $excelobj->removeUpload($input);
 
                     $this->addFlash(
                         'notice',
@@ -696,20 +848,7 @@ class ReadExcelSheetController extends Controller
         $response->setContent($content);
         return $response;
     }
-   /* public function newAction()
-    {
-        $inputFileType = 'Excel2007';
-        $inputFileName = '/var/www/html/Demo_app/uploads/excelfiles/Pioneer monthly data Dec 10.xlsx';
 
-        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-
-        $objReader->setLoadAllSheets();
-        $objPHPExcel = $objReader->load($inputFileName);
-        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null, true, true, true);
-        print_r($sheetData);
-
-
-    }*/
 
     private function readExcelForm(Excel $excelobj)
     {
@@ -751,80 +890,5 @@ class ReadExcelSheetController extends Controller
         ));
 
     }
-
-
-  /*  public function index1Action()
-    {
-        $objPHPExcel = new PHPExcel();
-        $objPHPExcel->getProperties()->setCreator("Lawrance")
-            ->setLastModifiedBy("Robert")
-            ->setTitle("Office 2007 XLSX Test Document")
-            ->setSubject("Office 2007 XLSX Test Document")
-            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-            ->setKeywords("office 2007 openxml php")
-            ->setCategory("Test result file");
-// Add some data
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A1', 'Hello')
-            ->setCellValue('B2', 'Lawrance!')
-            ->setCellValue('C1', 'Hello')
-            ->setCellValue('D2', 'Robert!');
-// Miscellaneous glyphs, UTF-8
-        $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A4', 'Hi Welcome')
-            ->setCellValue('A5', 'Symfony2');
-// Rename worksheet
-        $objPHPExcel->getActiveSheet()->setTitle('Simple');
-// Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $objPHPExcel->setActiveSheetIndex(0);
-        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-        $objWriter->save(str_replace('.php', '.xls', __FILE__));
-        echo date('H:i:s'), " File written to ", str_replace('.php', '.xls', __FILE__), PHP_EOL;
-
-
-        echo date('H:i:s'), " Reload workbook from saved file", PHP_EOL;
-        $objPHPExcel = PHPExcel_IOFactory::load(str_replace('.php', '.xls', __FILE__));
-        $creator = $objPHPExcel->getProperties()->getCreator();
-        echo '<b>Document Creator: </b>', $creator, '<br />';
-        // var_dump($objPHPExcel->getActiveSheet()->toArray());
-
-    }
-
-    public function createAction()
-    {
-        $objPHPExcel = new PHPExcel();
-
-        $objPHPExcel->getProperties()->setCreator("Lawrance")
-            ->setLastModifiedBy("Robert")
-            ->setTitle("Office 2007 XLSX Test Document")
-            ->setSubject("Office 2007 XLSX Test Document")
-            ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-            ->setKeywords("office 2007 openxml php")
-            ->setCategory("Test result file")
-// Add some data
-
-            ->setCellValue('A1', 'Hello')
-            ->setCellValue('B2', 'Lawrance!')
-            ->setCellValue('C1', 'Hello')
-            ->setCellValue('D2', 'Robert!')
-// Miscellaneous glyphs, UTF-8
-
-            ->setCellValue('A4', 'Hi Welcome')
-            ->setCellValue('A5', 'Symfony2');
-// Rename worksheet
-        $objPHPExcel->getActiveSheet()->setTitle('Simple');
-// Set active sheet index to the first sheet, so Excel opens this as the first sheet
-        $objPHPExcel->setActiveSheetIndex(0);
-
-    }
-
-    public function ajaxAction(Request $request)
-    {
-        $data = $request->request->get('request');
-
-
-        return new Response($data);
-        //echo $data;
-    }*/
 
 }

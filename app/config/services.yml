@@ -11,4 +11,4 @@ services:
           alias: doctrine
 services:
      readexcel.worker:
-          class: Initial\ShippingBundle\Workers\ReadExcelWorker
+          class: Initial\ShippingBundle\service\ReadExcelWorker

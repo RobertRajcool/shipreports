@@ -64,16 +64,30 @@ class KpiDetailsController extends Controller
         $userId = $user->getId();
         $em = $this->getDoctrine()->getManager();
 
-        $query = $em->createQueryBuilder()
-            ->select('a')
-            ->from('InitialShippingBundle:KpiDetails','a')
-            ->leftjoin('InitialShippingBundle:ShipDetails','e', 'WITH', 'e.id = a.shipDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = e.companyDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyUsers','d', 'WITH', 'b.id = d.companyName')
-            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName or c.username = d.userName')
-            ->where('c.id = :userId')
-            ->setParameter('userId',$userId)
-            ->getQuery();
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:KpiDetails','a')
+                ->leftjoin('InitialShippingBundle:ShipDetails','d', 'WITH', 'd.id = a.shipDetailsId')
+                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = d.companyDetailsId')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:KpiDetails','a')
+                ->leftjoin('InitialShippingBundle:ShipDetails','c', 'WITH', 'c.id = a.shipDetailsId')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = c.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+
         $kpiDetails = $query->getResult();
 
 
@@ -93,9 +107,10 @@ class KpiDetailsController extends Controller
     {
         $user = $this->getUser();
         $id = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
 
         $kpiDetail = new KpiDetails();
-        $form = $this->createForm(new KpiDetailsType($id), $kpiDetail);
+        $form = $this->createForm(new KpiDetailsType($id,$role), $kpiDetail);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -112,8 +127,6 @@ class KpiDetailsController extends Controller
         ));
     }
 
-
-
     /**
      * Creates a new KpiDetails entity.
      *
@@ -126,7 +139,7 @@ class KpiDetailsController extends Controller
         $kpiName = $params['kpiName'];
         $shipDetailsId = $params['shipDetailsId'];
         $val = count($shipDetailsId);
-        //print_r($j);die;
+//print_r($j);die;
         $description = $params['description'];
         $activeDate = $params['activeDate'];
         $endDate = $params['endDate'];
@@ -159,8 +172,6 @@ class KpiDetailsController extends Controller
 
     }
 
-
-
     /**
      * Finds and displays a KpiDetails entity.
      *
@@ -187,9 +198,10 @@ class KpiDetailsController extends Controller
     {
         $user = $this->getUser();
         $id = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
 
         $deleteForm = $this->createDeleteForm($kpiDetail);
-        $editForm = $this->createForm(new KpiDetailsType($id), $kpiDetail);
+        $editForm = $this->createForm(new KpiDetailsType($id,$role), $kpiDetail);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

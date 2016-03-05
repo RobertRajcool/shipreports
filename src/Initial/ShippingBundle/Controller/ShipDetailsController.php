@@ -64,15 +64,27 @@ class ShipDetailsController extends Controller
         $userId = $user->getId();
         $em = $this->getDoctrine()->getManager();
 
-        $query = $em->createQueryBuilder()
-            ->select('a')
-            ->from('InitialShippingBundle:ShipDetails','a')
-            ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyUsers','d', 'WITH', 'b.id = d.companyName')
-            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName or c.username = d.userName')
-            ->where('c.id = :userId')
-            ->setParameter('userId',$userId)
-            ->getQuery();
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = a.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
         $shipDetails = $query->getResult();
 
         return $this->render('shipdetails/index.html.twig', array(
@@ -123,23 +135,32 @@ class ShipDetailsController extends Controller
 
         $user = $this->getUser();
         $userId = $user->getId();
-
         $em = $this->getDoctrine()->getManager();
 
-        $query = $em->createQueryBuilder()
-            ->select('a.id')
-            ->from('InitialShippingBundle:CompanyDetails','a')
-            ->leftjoin('InitialShippingBundle:User','b','WITH','a.adminName = b.username')
-            ->where('b.id = :userId')
-            ->setParameter('userId',$userId)
-            ->getQuery()
-            ->getResult();
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = a.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select ('identity(a.companyid)')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
 
-        $companyName=$query[0]['id'];
+        $ans = $query->getResult();
+        $companyName=$ans[0]['id'];
 
         $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
-
-       // print_r($course);die;
 
         $shipdetails = new ShipDetails();
         $shipdetails->setCompanyDetailsId($course);
@@ -230,6 +251,6 @@ class ShipDetailsController extends Controller
             ->setAction($this->generateUrl('shipdetails_delete', array('id' => $shipDetail->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
 }

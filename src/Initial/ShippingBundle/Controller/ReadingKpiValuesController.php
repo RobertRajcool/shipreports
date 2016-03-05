@@ -207,8 +207,6 @@ class ReadingKpiValuesController extends Controller
 
 
         $em=$this->getDoctrine()->getManager();
-        //echo 'id value: '.$data;
-
         $query = $em->createQueryBuilder()
             ->select('b.elementName', 'b.id')
             ->from('InitialShippingBundle:ElementDetails', 'b')
@@ -237,30 +235,18 @@ class ReadingKpiValuesController extends Controller
     {
         $params = $request->request->get('reading_kpi_values');
 
+        $em = $this->getDoctrine()->getManager();
         $shipid = $params['shipDetailsId'];
         $kpiid = $params['kpiDetailsId'];
         $elementId = $params['elementDetailsId'];
         $month = $params['monthdetail'];
         $value = $params['value'];
         $monthtostring=$month['year'].'-'.$month['month'].'-'.$month['day'];
-        $new_date=new \DateTime($monthtostring);
-        $new_date->modify('first day of this month');
 
+        $datafromuser=array('shipid'=>$shipid,'kpiid'=>$kpiid,'elementId'=>$elementId,'value'=>$value,'dataofmonth'=>$monthtostring);
+        $gearman = $this->get('gearman');       //$datafromuser=array();
+        $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~kpivalues', json_encode($datafromuser));
 
-        $em = $this->getDoctrine()->getManager();
-        $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiid));
-        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
-        $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$elementId));
-        $readingkpivalue=new ReadingKpiValues();
-        $readingkpivalue->setKpiDetailsId($newkpiid);
-        $readingkpivalue->setElementDetailsId($newelementid);
-        $readingkpivalue->setShipDetailsId($newshipid);
-        $readingkpivalue->setMonthdetail($new_date);
-        $readingkpivalue->setValue($value);
-
-
-        $em->persist($readingkpivalue);
-        $em->flush();
 
         return $this->redirectToRoute('readingkpivalues_index');
 

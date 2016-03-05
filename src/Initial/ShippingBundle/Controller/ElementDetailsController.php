@@ -5,6 +5,7 @@ namespace Initial\ShippingBundle\Controller;
 use Initial\ShippingBundle\Entity\ElementRules;
 use Initial\ShippingBundle\Tests\Controller\ElementRulesControllerTest;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -65,17 +66,32 @@ class ElementDetailsController extends Controller
         $userId = $user->getId();
         $em = $this->getDoctrine()->getManager();
 
-        $query = $em->createQueryBuilder()
-            ->select('a')
-            ->from('InitialShippingBundle:ElementDetails','a')
-            ->leftjoin('InitialShippingBundle:KpiDetails','f', 'WITH', 'f.id = a.kpiDetailsId')
-            ->leftjoin('InitialShippingBundle:ShipDetails','e', 'WITH', 'e.id = f.shipDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = e.companyDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyUsers','d', 'WITH', 'b.id = d.companyName')
-            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName or c.username = d.userName')
-            ->where('c.id = :userId')
-            ->setParameter('userId',$userId)
-            ->getQuery();
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:ElementDetails','a')
+                ->leftjoin('InitialShippingBundle:KpiDetails','f', 'WITH', 'f.id = a.kpiDetailsId')
+                ->leftjoin('InitialShippingBundle:ShipDetails','d', 'WITH', 'd.id = f.shipDetailsId')
+                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = d.companyDetailsId')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:ElementDetails','a')
+                ->leftjoin('InitialShippingBundle:KpiDetails','f', 'WITH', 'f.id = a.kpiDetailsId')
+                ->leftjoin('InitialShippingBundle:ShipDetails','c', 'WITH', 'c.id = f.shipDetailsId')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = c.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+
         $elementDetails = $query->getResult();
 
         return $this->render('elementdetails/index.html.twig', array(
@@ -94,9 +110,10 @@ class ElementDetailsController extends Controller
     {
         $user = $this->getUser();
         $id = $user->getId();
+        $role=$this->container->get('security.context')->isGranted('ROLE_ADMIN');
 
         $elementdetails = new ElementDetails();
-        $form = $this->createForm(new ElementDetailsType($id), $elementdetails);
+        $form = $this->createForm(new ElementDetailsType($id,$role), $elementdetails);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -173,6 +190,55 @@ class ElementDetailsController extends Controller
 
     }
 
+
+    /**
+     * Creates a new elementDetails entity.
+     *
+     * @Route("/element_rule", name="elementdetails_element_rule")
+     */
+    public function elementruleAction(Request $request)
+    {
+        $id = $request->request->get('element_Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.rules')
+            ->from('InitialShippingBundle:ElementRules','a')
+            ->where('a.elementDetailsId = :element_Id')
+            ->setParameter('element_Id',$id)
+            ->getQuery();
+
+        $element_rules = $query->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('Element_Rule_Array' => $element_rules));
+
+        return $response;
+    }
+
+    /**
+     * Creates a new elementDetails entity.
+     *
+     * @Route("/element_rule_edit", name="elementdetails_element_rule_edit")
+     */
+    public function elementruleeditAction(Request $request)
+    {
+        $id = $request->request->get('element_Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.rules')
+            ->from('InitialShippingBundle:ElementRules','a')
+            ->where('a.elementDetailsId = :element_Id')
+            ->setParameter('element_Id',$id)
+            ->getQuery();
+
+        $element_rules = $query->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('Element_Rule_Array' => $element_rules));
+
+        return $response;
+    }
+
     /**
      * Finds and displays a ElementDetails entity.
      *
@@ -197,12 +263,12 @@ class ElementDetailsController extends Controller
      */
     public function editAction(Request $request, ElementDetails $elementDetail)
     {
-
         $user = $this->getUser();
         $id = $user->getId();
+        $role=$this->container->get('security.context')->isGranted('ROLE_ADMIN');
 
         $deleteForm = $this->createDeleteForm($elementDetail);
-        $editForm = $this->createForm(new ElementDetailsType($id), $elementDetail);
+        $editForm = $this->createForm(new ElementDetailsType($id,$role), $elementDetail);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -253,6 +319,6 @@ class ElementDetailsController extends Controller
             ->setAction($this->generateUrl('elementdetails_delete', array('id' => $elementDetail->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
 }

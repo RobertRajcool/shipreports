@@ -153,29 +153,24 @@ else a.removeAttribute&&a.removeAttribute(c.expando);delete f[d]}}}});c.fn.exten
         "pageXOffset"]:c.support.boxModel&&j.document.documentElement[d]||j.document.body[d]:e[d]}});c.each(["Height","Width"],function(a,b){var d=b.toLowerCase();c.fn["inner"+b]=function(){return this[0]?c.css(this[0],d,false,"padding"):null};c.fn["outer"+b]=function(f){return this[0]?c.css(this[0],d,false,f?"margin":"border"):null};c.fn[d]=function(f){var e=this[0];if(!e)return f==null?null:this;if(c.isFunction(f))return this.each(function(j){var i=c(this);i[d](f.call(this,j,i[d]()))});return"scrollTo"in
     e&&e.document?e.document.compatMode==="CSS1Compat"&&e.document.documentElement["client"+b]||e.document.body["client"+b]:e.nodeType===9?Math.max(e.documentElement["client"+b],e.body["scroll"+b],e.documentElement["scroll"+b],e.body["offset"+b],e.documentElement["offset"+b]):f===w?c.css(e,d):this.css(d,typeof f==="string"?f:f+"px")}});A.jQuery=A.$=c})(window);
 
-var conditions, actions, ageField, submit, result;
+var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
 
 (function($) {
 
 
     function onReady() {
-        conditions = $("#conditions");
-        actions = $("#actions");
-        ageField = $("#ageField");
-        submit = $("#submit");
+        conditions = $("#conditionsedit");
+        actions = $("#actionsedit");
+        ageField = $("#ageFieldEdit");
+        submit = $("#submitedit");
         result = $("#result");
+        obj1 = JSON.parse(result.val());
+        obj2 = obj1.conditions;
+        obj3 = obj1.actions;
 
-        exports.valueexcelsheet = function (r)
-        {
-           return r;
-        };
         initializeConditions();
         initializeActions();
         initializeForm();
-    }
-    function assignvalue()
-    {
-
     }
     function initializeConditions() {
         conditions.conditionsBuilder({
@@ -190,7 +185,8 @@ var conditions, actions, ageField, submit, result;
                     {label: "is less than", name: "lessThan", fieldType: "text"},
                     {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
                 ]}
-            ]
+            ],
+            data: obj2
         });
     }
     function initializeActions() {
@@ -199,52 +195,26 @@ var conditions, actions, ageField, submit, result;
                 {label: "Green", name: "Green"},
                 {label: "Red", name: "Red"},
                 {label: "Yellow", name: "Yellow"}
-            ]
+            ],
+            data: obj3
         });
     }
     function initializeForm() {
 
         submit.click(function(e) {
             e.preventDefault();
+            var engine1=new RuleEngine({conditions: conditions.conditionsBuilder("data")});
+            alert(engine1)     ;
             var engine = new RuleEngine({
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var engine1 = new RuleEngine({
-                conditions: conditions.conditionsBuilder("data")
-                //actions: actions.actionsBuilder("data")
-            });
-
-            var engine2 = new RuleEngine({
-                //conditions: conditions.conditionsBuilder("data"),
-                actions: actions.actionsBuilder("data")
-            });
-            var conditionsAdapter =
-            {
-                ageField: ageField.val()
-            };
-
-
-           //alert(engine1);
-            var conditionsAdapter = {
-                ageField: ageField.val()
-            };
-
-            var res = engine1.run(conditionsAdapter);
-            alert(res);
-
-            var actionValue = engine.actions[0].value;
-            alert(actionValue);
-
-
             var sample = JSON.stringify(engine);
             result.val(sample);
         });
     }
-
     $(onReady);
 })(jQuery);
-
 (function($) {
     $.fn.actionsBuilder = function(options) {
         if(options == "data") {
@@ -815,39 +785,3 @@ var global = this;
         delete global.RuleEngine;
     }
 })();
-
-$(document).ready(function(){
-    $('#jsid').change(function()
-    {
-        var id = $('#jsid').val();
-        $('#element option:gt(0)').remove();
-        var data = {jsid : $('#jsid').val()};
-        //alert(data.jsid);
-        if($(this).val())
-        {
-
-            $.ajax({
-                type: "POST",
-                data: data,
-                url: "new_temp",
-                success: function(data)
-                {
-                    $.each(data.kpiNameArray, function(i, listkpi) {
-
-                        $('#element').append($('<option>', {
-                            value: listkpi.id, text : listkpi.elementName
-                        }));
-                    });
-
-
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown)
-                {
-                    alert('Error : ' + errorThrown);
-                }
-            });
-        }
-    });
-});
-
-

@@ -12,6 +12,7 @@ $(document).ready(function()
     $('#overlay').hide();
     $("#form_excel").submit(function()
     {
+
         var uploadedFile = document.getElementById('fileid');
         var mimetype = uploadedFile.files[0].type;
         var match= ["application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];

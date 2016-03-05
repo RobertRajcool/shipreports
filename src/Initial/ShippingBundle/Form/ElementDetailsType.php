@@ -11,9 +11,10 @@ class ElementDetailsType extends AbstractType
 
     private $userId;
 
-    public function __construct($id)
+    public function __construct($id,$role)
     {
         $this->userId = $id;
+        $this->role = $role;
     }
 
 
@@ -28,20 +29,28 @@ class ElementDetailsType extends AbstractType
                 'required' => true,
                 'class' => 'Initial\ShippingBundle\Entity\KpiDetails',
                 'property' => 'KpiName',
-                'query_builder' => function($er){
-                    return $er  -> createQueryBuilder('a')
-
-                        ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
-                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
-                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
-                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
-                        ->where('d.id = :userId')
-                        ->groupby('a.kpiName')
-                        ->setParameter('userId',$this->userId);
-
-
+                'query_builder' => function($er)
+                {
+                    if ($this->role == true)
+                    {
+                        return $er -> createQueryBuilder('a')
+                            ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
+                            ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
+                            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                            ->where('c.id = :userId')
+                            ->groupby('a.kpiName')
+                            ->setParameter('userId',$this->userId);
+                    }
+                    else
+                    {
+                        return $er -> createQueryBuilder('a')
+                            ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
+                            ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = e.companyDetailsId')
+                            ->where('b.id = :userId')
+                            ->groupby('a.kpiName')
+                            ->setParameter('userId',$this->userId);
+                    }
                 },
-                //'em' => 'client',
                 'empty_value' =>false,
             ))
             ->add('elementName')

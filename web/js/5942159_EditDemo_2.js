@@ -2,6 +2,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
 
 (function($) {
 
+
     function onReady() {
         conditions = $("#conditionsedit");
         actions = $("#actionsedit");
@@ -47,18 +48,15 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
 
         submit.click(function(e) {
             e.preventDefault();
+            var engine1=new RuleEngine({conditions: conditions.conditionsBuilder("data")});
+            alert(engine1)     ;
             var engine = new RuleEngine({
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
             var sample = JSON.stringify(engine);
             result.val(sample);
-
         });
     }
     $(onReady);
-
 })(jQuery);
-
-
-

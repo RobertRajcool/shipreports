@@ -8,7 +8,7 @@
         '@AppBundle/Resources/public/js/AAA.js'
         '@AppBundle/Resources/public/js/demo.js'
         '@AppBundle/Resources/public/js/actions-builder.js'
-        '@AppBundle/Resources/public/js/conditions-builder.js'
+        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
         '@AppBundle/Resources/public/js/rules.js'
         '@AppBundle/Resources/public/js/sample.js'
         %}
@@ -23,13 +23,17 @@
             {{ form_row(form.elementDetailsId,{'id' :'element'}) }}
             {{ form_row(form.rules,{'id' :'result'}) }}
 
+            <table id="rule-table">
+
+            </table>
+
             <div id="conditions"></div>
             <div id="actions"></div>
+            <p id="text_box"></p>
 
             <input type="hidden" size="2" id="ageField">
 
-            <input type="submit" value="Create" />
-            <input type="submit" value="Add" id="submit" />
+            <input type="submit" value="Create" id="submit_id" />
         </form>
 
 
@@ -39,8 +43,4 @@
             </li>
         </ul>
     {% endblock %}
-<<<<<<< HEAD
 {% endblock %}
-=======
-{% endblock %}
->>>>>>> 1937e84255868bd77df1d53fbda3017c8c7d0c23

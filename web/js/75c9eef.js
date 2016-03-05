@@ -153,7 +153,9 @@ else a.removeAttribute&&a.removeAttribute(c.expando);delete f[d]}}}});c.fn.exten
         "pageXOffset"]:c.support.boxModel&&j.document.documentElement[d]||j.document.body[d]:e[d]}});c.each(["Height","Width"],function(a,b){var d=b.toLowerCase();c.fn["inner"+b]=function(){return this[0]?c.css(this[0],d,false,"padding"):null};c.fn["outer"+b]=function(f){return this[0]?c.css(this[0],d,false,f?"margin":"border"):null};c.fn[d]=function(f){var e=this[0];if(!e)return f==null?null:this;if(c.isFunction(f))return this.each(function(j){var i=c(this);i[d](f.call(this,j,i[d]()))});return"scrollTo"in
     e&&e.document?e.document.compatMode==="CSS1Compat"&&e.document.documentElement["client"+b]||e.document.body["client"+b]:e.nodeType===9?Math.max(e.documentElement["client"+b],e.body["scroll"+b],e.documentElement["scroll"+b],e.body["offset"+b],e.documentElement["offset"+b]):f===w?c.css(e,d):this.css(d,typeof f==="string"?f:f+"px")}});A.jQuery=A.$=c})(window);
 
-var conditions, actions, ageField, submit, result;
+var global = this;
+var conditions, actions, ageField, submit, result, ans;
+
 
 (function($) {
 
@@ -163,216 +165,88 @@ var conditions, actions, ageField, submit, result;
         actions = $("#actions");
         ageField = $("#ageField");
         submit = $("#submit");
-        result = $("#result");
+        result = $("#element_details_rules");
 
-        exports.valueexcelsheet = function (r)
-        {
-           return r;
-        };
         initializeConditions();
         initializeActions();
         initializeForm();
-    }
-    function assignvalue()
-    {
-
     }
     function initializeConditions() {
         conditions.conditionsBuilder({
             fields: [
                 {label: "Value", name: "ageField", operators: [
-                    {label: "is present", name: "present", fieldType: "none"},
-                    {label: "is blank", name: "blank", fieldType: "none"},
-                    {label: "is equal to", name: "equalTo", fieldType: "text"},
-                    {label: "is not equal to", name: "notEqualTo", fieldType: "text"},
-                    {label: "is greater than", name: "greaterThan", fieldType: "text"},
-                    {label: "is greater than or equal to", name: "greaterThanEqual", fieldType: "text"},
-                    {label: "is less than", name: "lessThan", fieldType: "text"},
-                    {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
+                    {label: "is equal to", name: "equalTo", fieldType: "text"}
+
                 ]}
             ]
         });
     }
     function initializeActions() {
         actions.actionsBuilder({
-            fields: [
-                {label: "Green", name: "Green"},
-                {label: "Red", name: "Red"},
-                {label: "Yellow", name: "Yellow"}
-            ]
+            fields: []
         });
     }
     function initializeForm() {
 
-        submit.click(function(e) {
+        $('.dynamic-add').live("click",function(e) {
             e.preventDefault();
+            var currentId = $(this).attr('id');
+            ans = splitfun(currentId);
             var engine = new RuleEngine({
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var engine1 = new RuleEngine({
-                conditions: conditions.conditionsBuilder("data")
-                //actions: actions.actionsBuilder("data")
-            });
-
-            var engine2 = new RuleEngine({
-                //conditions: conditions.conditionsBuilder("data"),
-                actions: actions.actionsBuilder("data")
-            });
-            var conditionsAdapter =
-            {
-                ageField: ageField.val()
-            };
-
-
-           //alert(engine1);
-            var conditionsAdapter = {
-                ageField: ageField.val()
-            };
-
-            var res = engine1.run(conditionsAdapter);
-            alert(res);
-
-            var actionValue = engine.actions[0].value;
-            alert(actionValue);
-
-
             var sample = JSON.stringify(engine);
-            result.val(sample);
-        });
-    }
 
+            $('#result_'+ans).val(sample);
+        });
+
+        $('.del-remove').live("click",function(){
+            var currentId = $(this).attr('id');
+            ans = splitfun(currentId);
+            $('#field-id_'+ans).remove();
+            $('#operator-id_'+ans).remove();
+            $('#text-value-id_'+ans).remove();
+            $('#submit_'+ans).remove();
+            $(this).remove();
+            $('#textbox_'+ans).remove();
+            $('#result_'+ans).remove();
+            /*var dummy = $('#element_details_rules').val()-1;
+            $('#element_details_rules').val(dummy);*/
+
+        });
+
+        function splitfun(data){
+            var num = data.split('_');
+            return num[1];
+        }
+
+    }
     $(onReady);
 })(jQuery);
 
+
 (function($) {
-    $.fn.actionsBuilder = function(options) {
-        if(options == "data") {
-            var builder = $(this).eq(0).data("actionsBuilder");
-            return builder.collectData();
-        } else {
-            return $(this).each(function() {
-                var builder = new ActionsBuilder(this, options);
-                $(this).data("actionsBuilder", builder);
-            });
-        }
-    };
-
-    function ActionsBuilder(element, options) {
-        this.element = $(element);
-        this.options = options || {};
-        this.init();
+    var a=0;
+    $('.dynamic-add').live("click",function() {
+        var currentId = $(this).attr('id');
+        a = splitfun(currentId);
+    });
+    function splitfun(data){
+        var num = data.split('_');
+        return num[1];
     }
-
-    ActionsBuilder.prototype = {
-        init: function() {
-            this.fields = this.options.fields;
-            this.fields.unshift({label: "Choose an Action...", name: ""});
-            this.data = this.options.data || [];
-            var actions = this.buildActions(this.data);
-            this.element.html(actions);
-        },
-
-        buildActions: function(data) {
-            var container = $("<div>", {"class": "actions"});
-            var buttons = $("<div>", {"class": "action-buttons"});
-            var addButton = $("<a>", {"href": "#", "class": "add", "text": "Add Action"});
-            var _this = this;
-
-            addButton.click(function(e) {
-                e.preventDefault();
-                container.append(_this.buildAction({}));
-            });
-
-            buttons.append(addButton);
-            container.append(buttons);
-
-            for(var i=0; i < data.length; i++) {
-                var actionObj = data[i];
-                var actionDiv = this.buildAction(actionObj);
-
-                // Add values to fields
-                var fields = [actionObj];
-                var field;
-                while(field = fields.shift()) {
-                    actionDiv.find(":input[name='" + field.name + "']").val(field.value).change();
-                    if(field.fields) fields = fields.concat(field.fields);
-                }
-                container.append(actionDiv);
-            }
-            return container;
-        },
-
-        buildAction: function(data) {
-            var field = this._findField(data.name);
-            var div = $("<div>", {"class": "action"});
-            var fieldsDiv = $("<div>", {"class": "subfields"});
-            var select = $("<select>", {"class": "action-select", "name": "action-select"});
-
-            for(var i=0; i < this.fields.length; i++) {
-                var possibleField = this.fields[i];
-                var option = $("<option>", {"text": possibleField.label, "value": possibleField.name});
-                select.append(option);
-            }
-
-            var _this = this;
-            select.change(function() {
-                var val = $(this).val();
-                var newField = _this._findField(val);
-                fieldsDiv.empty();
-
-                if(newField.fields) {
-                    for(var i=0; i < newField.fields.length; i++) {
-                        fieldsDiv.append(_this.buildField(newField.fields[i]));
-                    }
-                }
-
-                div.attr("class", "action " + val);
-            });
-
-            var removeLink = $("<a>", {"href": "#", "class": "remove", "text": "Remove Action"});
-            removeLink.click(function(e) {
-                e.preventDefault();
-                div.remove();
-            });
-
-            div.append(select);
-            div.append(fieldsDiv);
-            div.append(removeLink);
-            return div;
-        },
-
-
-
-
-        collectData: function(fields) {
-            var _this = this;
-            fields = fields || this.element.find(".action");
-            var out = [];
-            fields.each(function() {
-                var input = $(this).find("> :input, > .jstEditor > :input");
-                var subfields = $(this).find("> .subfields > .field");
-                var action = {name: input.attr("name"), value: input.val()};
-                if(subfields.length > 0) {
-                    action.fields = _this.collectData(subfields);
-                }
-                out.push(action);
-            });
-            return out;
-        },
-
-        _findField: function(fieldName) {
-            for(var i=0; i < this.fields.length; i++) {
-                var field = this.fields[i];
-                if(field.name == fieldName) return field;
-            }
-        }
-    };
-
+    $.fn.actionsBuilder = function(options) {
+        var ans = $("#textbox_"+a).val();
+        //console.log(ans);
+        return ans;
+    }
 })(jQuery);
 
+
+
 (function($) {
-    $.fn.conditionsBuilder = function(options) {
+    $.fn.conditionsBuilder = function(options, answer) {
         if(options == "data") {
             var builder = $(this).eq(0).data("conditionsBuilder");
             return builder.collectData();
@@ -384,10 +258,21 @@ var conditions, actions, ageField, submit, result;
         }
     };
 
+    var count=0;
+
     function ConditionsBuilder(element, options) {
         this.element = $(element);
         this.options = options || {};
         this.init();
+    }
+
+    $('.dynamic-add').live("click",function() {
+        var currentId = $(this).attr('id');
+        id_value = splitfun(currentId);
+    });
+    function splitfun(data){
+        var num = data.split('_');
+        return num[1];
     }
 
     ConditionsBuilder.prototype = {
@@ -421,7 +306,7 @@ var conditions, actions, ageField, submit, result;
                 return {
                     name: element.find(".field").val(),
                     operator: element.find(".operator").val(),
-                    value: element.find(".value").val()
+                    value: element.find("#text-value-id_"+id_value).val()
                 };
             }
         },
@@ -430,6 +315,7 @@ var conditions, actions, ageField, submit, result;
             return this.buildConditional(ruleData) || this.buildRule(ruleData);
         },
 
+
         buildConditional: function(ruleData) {
             var kind;
             if(ruleData.all) { kind = "all"; }
@@ -437,19 +323,19 @@ var conditions, actions, ageField, submit, result;
             else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind});
-            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
-            var select = $("<select>", {"class": "all-any-none"});
+            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditionalid"});
+            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"},{"id": "all-any-none-wrapper-id"});
+            var select = $("<select>", {"class": "all-any-none"},{"id":"all-any-none-id"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
             select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
             select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
             selectWrapper.append(select);
-            selectWrapper.append($("<span>", {text: "of the following rules:"}));
             div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id", "text": "Add Rule"});
             var _this = this;
             addRuleLink.click(function(e) {
+                count++;
                 e.preventDefault();
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
@@ -457,7 +343,7 @@ var conditions, actions, ageField, submit, result;
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 var f = _this.fields[0];
@@ -481,7 +367,7 @@ var conditions, actions, ageField, submit, result;
         },
 
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "rule"});
+            var ruleDiv = $("<div>", {"class": "rule", "id": "rule-id"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
@@ -506,8 +392,10 @@ var conditions, actions, ageField, submit, result;
         }
     };
 
+
+
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field"});
+        var select = $("<select>",  {"class": "field", "id":"field-id_"+count});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -521,8 +409,9 @@ var conditions, actions, ageField, submit, result;
         return select;
     }
 
+
     function getOperatorSelect() {
-        var select = $("<select>", {"class": "operator"});
+        var select = $("<select>",  {"class": "operator","id":"operator-id_"+count});
         select.change(onOperatorSelectChange);
         return select;
     }
@@ -564,18 +453,19 @@ var conditions, actions, ageField, submit, result;
         var fieldSelect = container.find(".field");
         var currentValue = container.find(".value");
         var val = currentValue.val();
-
-        switch(option.data("fieldType")) {
+       var j=count;
+        switch(option.data("fieldType"))
+        {
             case "none":
-                $this.after($("<input>", {"type": "hidden", "class": "value"}));
+                $this.after($("<input>", {"type": "hidden", "class": "value", "id":"none-value-id"}));
                 break;
             case "text":
-                $this.after($("<input>", {"type": "text", "class": "value"}));
+                $this.after($("<input>", {"type": "text", "class": "value", "id":"text-value-id_" +j}));
                 break;
             case "textarea":
-                $this.after($("<textarea>", {"class": "value"}));
+                $this.after($("<textarea>", {"class": "value", "id":"textarea-value-id"}));
             case "select":
-                var select = $("<select>", {"class": "value"});
+                var select = $("<select>", {"class": "value", "id":"select-value-id"});
                 var options = fieldSelect.find("> :selected").data("options");
                 for(var i=0; i < options.length; i++) {
                     var opt = options[i];
@@ -817,37 +707,38 @@ var global = this;
 })();
 
 $(document).ready(function(){
-    $('#jsid').change(function()
-    {
-        var id = $('#jsid').val();
-        $('#element option:gt(0)').remove();
-        var data = {jsid : $('#jsid').val()};
-        //alert(data.jsid);
-        if($(this).val())
-        {
+    $('.add-condition').remove();
+    $('.all-any-none').remove();
+    $('.remove').remove();
 
-            $.ajax({
-                type: "POST",
-                data: data,
-                url: "new_temp",
-                success: function(data)
-                {
-                    $.each(data.kpiNameArray, function(i, listkpi) {
-
-                        $('#element').append($('<option>', {
-                            value: listkpi.id, text : listkpi.elementName
-                        }));
-                    });
-
-
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown)
-                {
-                    alert('Error : ' + errorThrown);
-                }
-            });
-        }
+    $('#add-rule-id').live('click',function(){
+       $('.remove').remove();
     });
+
+    var j = 0;
+    $('.add-rule').bind('click',function(){
+        var div = $('<div>');
+        j++;
+        div.html(DynamicBox(""));
+        $('#actions').append(div);
+
+    });
+
+    function DynamicBox(value){
+        return '<input type = "text" name="DynamicBox" id="textbox_'+j+'">'+
+                '<input type="button" name="DynamicButton" id="del-remove_'+j+'" class = "del-remove" value ="Remove">'+
+                '<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+
+                '<input type = "hidden" name="element_details[rules-'+j+']" id="result_'+j+'">'
+    }
+
+    $('.del-remove').live("click",function(){
+        j--;
+    });
+    $('#get_value').live("click",function(){
+        $('#element_details_rules').val(j);
+    });
+
+
 });
 
 

@@ -1,4 +1,4 @@
-var conditions, actions, ageField, submit, result;
+var conditions, actions, ageField, submit;
 
 (function($) {
 
@@ -7,20 +7,11 @@ var conditions, actions, ageField, submit, result;
         conditions = $("#conditions");
         actions = $("#actions");
         ageField = $("#ageField");
-        submit = $("#submit");
-        result = $("#result");
+        submit = $('.dynamic-add');
 
-        exports.valueexcelsheet = function (r)
-        {
-           return r;
-        };
         initializeConditions();
         initializeActions();
         initializeForm();
-    }
-    function assignvalue()
-    {
-
     }
     function initializeConditions() {
         conditions.conditionsBuilder({
@@ -49,43 +40,26 @@ var conditions, actions, ageField, submit, result;
     }
     function initializeForm() {
 
-        submit.click(function(e) {
+        submit.live("click",function(e) {
+            var currentId = $(this).attr('id');
+            id_value = splitfun(currentId);
+            /*$('.action-select').val('Red');*/
+            //alert(id_value);
             e.preventDefault();
             var engine = new RuleEngine({
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-            var engine1 = new RuleEngine({
-                conditions: conditions.conditionsBuilder("data")
-                //actions: actions.actionsBuilder("data")
-            });
-<<<<<<< HEAD
-            var engine2 = new RuleEngine({
-                //conditions: conditions.conditionsBuilder("data"),
-                actions: actions.actionsBuilder("data")
-            });
-            var conditionsAdapter =
-            {
-                ageField: ageField.val()
-            };
 
-=======
-           //alert(engine1);
-            var conditionsAdapter = {
-                ageField: ageField.val()
-            };
-
-            var res = engine1.run(conditionsAdapter);
-            alert(res);
-
-            var actionValue = engine.actions[0].value;
-            alert(actionValue);
-
->>>>>>> 1937e84255868bd77df1d53fbda3017c8c7d0c23
             var sample = JSON.stringify(engine);
-            result.val(sample);
+            $('#rules-id_'+id_value).val(sample);
+            $('#result').val(id_value);
         });
-    }
 
+        function splitfun(data){
+            var num = data.split('_');
+            return num[1];
+        }
+    }
     $(onReady);
 })(jQuery);

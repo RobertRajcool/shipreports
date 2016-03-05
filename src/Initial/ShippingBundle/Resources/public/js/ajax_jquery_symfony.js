@@ -27,7 +27,8 @@ $(document).ready(function ()
                 success: function(data)
                 {
 
-                    $.each(data.kpiNameArray, function(i, listkpi) {
+                    $.each(data.kpiNameArray, function(i, listkpi)
+                    {
 
                         $('#kpiid').append($('<option>', {
                             value: listkpi.id, text : listkpi.kpiName

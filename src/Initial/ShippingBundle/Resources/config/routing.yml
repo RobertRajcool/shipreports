@@ -11,6 +11,9 @@ fileadd:
 upload:
      path:    /upload
      defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:upload" }
+newupload:
+     path:    /newupload
+     defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:newupload" }
 showfile:
      path:    /showfile
      defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:showfile" }

@@ -257,7 +257,8 @@ class ChartController extends Controller
 
     // Adding data to javascript chart function starts Here.. //
 
-        $ob->chart->renderTo('linechart');
+        $ob->chart->renderTo('area');
+        $ob->chart->type('area');
         $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
         $ob->subtitle->text($findkpiname);
         $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
@@ -266,6 +267,7 @@ class ChartController extends Controller
         //$ob->yAxis->title(array('text'  => $kpiname),array('style' => array('color' => '#221DBB')));
         $ob->series($newseries);
         $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
+        $ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
     // Adding data to javascript chart function  Ends Here.. //
 
 

@@ -1,4 +1,4 @@
 services:
-#    initial_shipping.example:
-#        class: Initial\ShippingBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+     readexcel.worker:
+          class: Initial\ShippingBundle\service\ReadExcelWorker
+          arguments: ["@doctrine",@service_container]

@@ -48,17 +48,31 @@ class RulesController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $query = $em->createQueryBuilder()
-            ->select('a')
-            ->from('InitialShippingBundle:Rules','a')
-            ->leftjoin('InitialShippingBundle:KpiDetails','f', 'WITH', 'f.id = a.kpiDetailsId')
-            ->leftjoin('InitialShippingBundle:ShipDetails','e', 'WITH', 'e.id = f.shipDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = e.companyDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyUsers','d', 'WITH', 'b.id = d.companyName')
-            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName or c.username = d.userName')
-            ->where('c.id = :userId')
-            ->setParameter('userId',$userId)
-            ->getQuery();
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:Rules','a')
+                ->leftjoin('InitialShippingBundle:KpiDetails','f', 'WITH', 'f.id = a.kpiDetailsId')
+                ->leftjoin('InitialShippingBundle:ShipDetails','d', 'WITH', 'd.id = f.shipDetailsId')
+                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = d.companyDetailsId')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:Rules','a')
+                ->leftjoin('InitialShippingBundle:KpiDetails','f', 'WITH', 'f.id = a.kpiDetailsId')
+                ->leftjoin('InitialShippingBundle:ShipDetails','c', 'WITH', 'c.id = f.shipDetailsId')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = c.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
 
         $rules = $query->getResult();
 
@@ -77,9 +91,10 @@ class RulesController extends Controller
     {
         $user = $this->getUser();
         $id = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
 
         $rule = new Rules();
-        $form = $this->createForm(new RulesType($id), $rule);
+        $form = $this->createForm(new RulesType($id,$role), $rule);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -108,19 +123,25 @@ class RulesController extends Controller
         $params = $request->request->get('rules');
         $kpiDetailsId = $params['kpiDetailsId'];
         $elementDetailsId = $params['elementDetailsId'];
-        $rules = $params['rules'];
+        $value = $params['rules'];
+        $rul=$request->request->get('rules-1');
 
         $em = $this->getDoctrine()->getManager();
         $course1 = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiDetailsId));
         $course2 = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$elementDetailsId));
 
-        $rule = new Rules();
-        $rule->setRules($rules);
-        $rule->setKpiDetailsId($course1);
-        $rule->setElementDetailsId($course2);
+        for($i=1;$i<=$value;$i++)
+        {
+            $rule = new Rules();
+            $rule->setKpiDetailsId($course1);
+            $rule->setElementDetailsId($course2);
+            $variable = "rules-$i";
+            $rules=$request->request->get($variable);
+            $rule->setRules($rules);
+            $em->persist($rule);
+            $em->flush();
+        }
 
-        $em->persist($rule);
-        $em->flush();
 
         return $this->redirectToRoute('rules_show', array('id' => $rule->getId()));
 
@@ -135,7 +156,6 @@ class RulesController extends Controller
     public function newtempAction(Request $request)
     {
         $id = $request->request->get('jsid');
-        //echo 'khkfdshkjhsdfs';
         $em = $this->getDoctrine()->getManager();
 
         $query = $em->createQueryBuilder()
@@ -146,7 +166,6 @@ class RulesController extends Controller
             ->setParameter('userId',$id)
             ->getQuery();
         $shipDetails = $query->getResult();
-        //print_r($shipDetails);die;
 
         $response = new JsonResponse();
         $response->setData(array('kpiNameArray' => $shipDetails));
@@ -182,9 +201,10 @@ class RulesController extends Controller
     {
         $user = $this->getUser();
         $id = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
 
         $deleteForm = $this->createDeleteForm($rule);
-        $editForm = $this->createForm(new RulesType($id), $rule);
+        $editForm = $this->createForm(new RulesType($id,$role), $rule);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

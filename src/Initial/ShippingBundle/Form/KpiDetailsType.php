@@ -11,9 +11,10 @@ class KpiDetailsType extends AbstractType
 
     private $userId;
 
-    public function __construct($id)
+    public function __construct($id,$role)
     {
         $this->userId = $id;
+        $this->role = $role;
     }
 
 
@@ -25,20 +26,29 @@ class KpiDetailsType extends AbstractType
     {
         $builder
             ->add('shipDetailsId','entity', array(
-        'required' => true,
-        'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
-        'property' => 'ShipName',
-        'query_builder' => function($er){
-            return $er -> createQueryBuilder('a')
-                        ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
-                        ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
-                        ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
-                        ->where('d.id = :userId')
-                        ->setParameter('userId',$this->userId);
-        },
-        //'em' => 'client',
-        'empty_value' =>false,
-    ))
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
+                'property' => 'ShipName',
+                'multiple' =>true,
+                'query_builder' => function($er)
+                {
+                    if ($this->role == true)
+                    {
+                        return $er -> createQueryBuilder('a')
+                            ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
+                            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                            ->where('c.id = :userId')
+                            ->setParameter('userId',$this->userId);
+                    }
+                    else
+                    {
+                        return $er -> createQueryBuilder('a')
+                            ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = a.companyDetailsId')
+                            ->where('b.id = :userId')
+                            ->setParameter('userId',$this->userId);
+                    }
+                },
+            ))
             ->add('kpiName')
             ->add('description')
             ->add('activeDate', 'date')
@@ -47,7 +57,7 @@ class KpiDetailsType extends AbstractType
             ->add('cellDetails')
         ;
     }
-    
+
     /**
      * @param OptionsResolver $resolver
      */
