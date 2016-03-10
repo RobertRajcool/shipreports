@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>KpiRules list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Rules</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for kpiRule in kpiRules %}
+            <tr>
+                <td><a href="{{ path('kpirules_show', { 'id': kpiRule.id }) }}">{{ kpiRule.id }}</a></td>
+                <td>{{ kpiRule.rules }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('kpirules_show', { 'id': kpiRule.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('kpirules_edit', { 'id': kpiRule.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('kpirules_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

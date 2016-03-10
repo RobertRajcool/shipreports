@@ -1,22 +1,96 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>KpiDetails edit</h1>
+    <h1>KpiDetails</h1>
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
+    {% block javascripts %}
+
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/demo.js'
+        '@AppBundle/Resources/public/js/actions-builder.js'
+        '@AppBundle/Resources/public/js/conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/Element_rule_show_condition.js'
+
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+    {% endblock %}
+
+    <form action="{{ path('kpidetails_edit2') }}" method="post">
+
+        <table>
+            <tbody>
+            <tr>
+                <th>Ships</th>
+                <td>
+                    {% set i = 0 %}
+                    {% set j = 0 %}
+                    {% for ships in ship_name %}
+                        {% for ships1 in ships %}
+                            <input type="checkbox" checked name="ships[]" value="{{ ship_id[i][1] }}">{{ ships1['shipName'] }}<br>
+                            {% set i = i+1 %}
+                        {% endfor %}
+                        {% set j = j+1 %}
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>Kpiname</th>
+                <td><input type="text" name="kpiName" value="{{ kpiDetail.kpiName }}"></td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td><input type="text" name="description" value="{{ kpiDetail.description }}"></td>
+            </tr>
+            <tr>
+                <th>Weightage</th>
+                <td><input type="text" name="weightage" value="{{ kpiDetail.weightage }}"></td>
+            </tr>
+            <tr>
+                <th>Activedate</th>
+                <td><input type="date" name="activeDate" value="{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}"></td>
+            </tr>
+            <tr>
+                <th>Enddate</th>
+                <td><input type="date" name="endDate" value="{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}"></td>
+            </tr>
+            <tr>
+                <th>Cellname</th>
+                <td><input type="text" name="cellName" value="{{ kpiDetail.cellName }}"></td>
+            </tr>
+            <tr>
+                <th>Celldetails</th>
+                <td><input type="text" name="cellDetails" value="{{ kpiDetail.cellDetails }}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div id="conditions"></div>
+        <div id="actions"></div>
+        <input type="hidden" name="id" id="id" value="{{ kpiDetail.id }}">
+        <div id="rule_edit_button"></div>
+
+        <table id="rule-table">
+            <tr id="row_id">
+                <th>Operator</th>
+                <th>Value</th>
+                <th>Action</th>
+            </tr>
+        </table>
+
+        <div id="rule_obj_text"></div>
+        <input type="submit" value="edit" id="edit_submit">
+
+    </form>
+
 
 
     <ul>
         <li>
             <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
         </li>
     </ul>
 {% endblock %}

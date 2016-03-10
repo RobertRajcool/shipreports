@@ -16,6 +16,40 @@
     {% endblock %}
 
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <style>
+        .red
+        {
+            background-color: red;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+        .green
+        {
+            background-color: green;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+        .yellow
+        {
+            background-color: yellow;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+        .nocolor
+        {
+            background-color:#0c3055;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 </head>
 <body>
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}

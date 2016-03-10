@@ -50,7 +50,7 @@ class KpiRulesController extends Controller
             $em->persist($kpiRule);
             $em->flush();
 
-            return $this->redirectToRoute('kpirules_show', array('id' => $kpiRule->getId()));
+            return $this->redirectToRoute('kpirules_show', array('id' => $kpirules->getId()));
         }
 
         return $this->render('kpirules/new.html.twig', array(

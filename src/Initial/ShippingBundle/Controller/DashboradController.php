@@ -4,6 +4,7 @@ namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\ShipDetails;
+use Initial\ShippingBundle\Entity\KpiRules;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -99,6 +100,9 @@ class DashboradController extends Controller
             ->getResult();
         $newcategories=array();
         $finalkpielementvaluearray=array();
+        $datescolorarray=array();
+
+        $kpiweightagearray=array();
         //loop for sending dates//
         for ($d = 0; $d < count($lastfivedatearray); $d++)
         {
@@ -108,6 +112,7 @@ class DashboradController extends Controller
             $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
             $finalkpielementvalue=0;
+            $findingcolorarray=array();
 
             for($element=0;$element<count($listallkpi);$element++)
             {
@@ -154,9 +159,42 @@ class DashboradController extends Controller
 
 
                 }
+                // Kpi color Finding starts Here//
+
+                $kpi_rules = $em->createQueryBuilder()
+                    ->select('a.rules')
+                    ->from('InitialShippingBundle:KpiRules','a')
+                    ->where('a.kpiDetailsId = :kpi_id')
+                    ->setParameter('kpi_id',$kpiidvalue)
+                    ->getQuery()
+                    ->getResult();
+                $read1="";
+
+                    //Find the color based on kpi rules
+                for($kpi_rules_count=0;$kpi_rules_count<count($kpi_rules);$kpi_rules_count++)
+                {
+                    $rule = $kpi_rules[$kpi_rules_count];
+/*
+                    $rule_obj = json_encode($rule);*/
+                    $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                    $jsfilename = 'node ' . $jsfiledirectry;
+                    $handle = popen($jsfilename, 'r');
+                    $read = fread($handle, 2096);
+                    $read1 = str_replace("\n", '', $read);
+
+                    if ($read1 != "false")
+                    {
+                        break;
+                    }
+
+                }
+                array_push($findingcolorarray,$read1);
+                array_push($kpiweightagearray,$kpiweightage);
+                // Kpi color Finding Ends Here//
                 $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
                 $finalkpielementvalue += $findkpivalue;
             }
+            array_push($datescolorarray,$findingcolorarray);
             array_push($finalkpielementvaluearray,$finalkpielementvalue);
 
         }
@@ -184,11 +222,21 @@ class DashboradController extends Controller
 
 
 
-
+       /* $countarray=array();
+        array_push($countarray,count($datescolorarray));*/
 
         return $this->render(
             'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
-            array('listofkpi'=>$listallkpi,'shipname'=>$shipid,'chart' => $ob)
+            array(
+                'listofkpi'=>$listallkpi,
+                'kpicolorarray'=>$datescolorarray,
+                'kpiweightage'=>$kpiweightagearray,
+                'montharray'=>$newcategories,
+                'shipname'=>$shipid,
+                'chart' => $ob,
+                'countmonth'=>count($datescolorarray),
+                'avgscore'=>$finalkpielementvaluearray
+            )
         );
     }
     /**
@@ -253,6 +301,8 @@ class DashboradController extends Controller
             ->getResult();
         $shipid=$shipidarray[0][1];
         $elementdetailvaluearray=array();
+        $elementweightagearray=array();
+        $findelementcolorarray=array();
 
         if(count($listelement)==0)
         {
@@ -288,6 +338,7 @@ class DashboradController extends Controller
             array_push($newcategories, $monthinletter);
             $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
             $finalkpivalue = 0;
+            $findingcolorarray=array();
 
             for ($jk = 0; $jk < count($listelement); $jk++)
             {
@@ -308,14 +359,54 @@ class DashboradController extends Controller
                     ->getQuery()
                     ->getResult();
 
-                if (count($dbvalueforelement) == 0) {
+                array_push($elementweightagearray,$weightage);
+                $kpi_rules = $em->createQueryBuilder()
+                    ->select('a.rules')
+                    ->from('InitialShippingBundle:ElementRules','a')
+                    ->where('a.elementDetailsId = :elementid')
+                    ->setParameter('elementid',$listelement[$jk]['id'])
+                    ->getQuery()
+                    ->getResult();
+                $read1="";
+
+                //Find the color based on kpi rules
+
+
+
+                if (count($dbvalueforelement) == 0)
+                {
                     $finddbvaluefomula = 0 * (((int)$weightage) / 100);
                     $finalkpivalue += $finddbvaluefomula;
-                } else {
+                } else
+                {
                     $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
                     $finalkpivalue += $finddbvaluefomula;
                 }
+
+                for($kpi_rules_count=0;$kpi_rules_count<count($kpi_rules);$kpi_rules_count++)
+                {
+                    $rule = $kpi_rules[$kpi_rules_count];
+                    /*
+                                        $rule_obj = json_encode($rule);*/
+                    $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                    $jsfilename = 'node ' . $jsfiledirectry;
+                    $handle = popen($jsfilename, 'r');
+                    $read = fread($handle, 2096);
+                    $read1 = str_replace("\n", '', $read);
+
+                    if ($read1 != "false")
+                    {
+                        break;
+                    }
+
+                }
+                array_push($findingcolorarray,$read1);
+
             }
+
+            array_push($findelementcolorarray,$findingcolorarray);
+
+
             array_push($elementdetailvaluearray,$finalkpivalue);
         }
 
@@ -343,7 +434,17 @@ class DashboradController extends Controller
 
         return $this->render(
             'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
-            array('listofelement'=>$listelement,'kpiname'=>$kpiname,'chart'=>$ob,'shipname'=>$shipname)
+            array(
+                'listofelement'=>$listelement,
+                'kpiname'=>$kpiname,
+                'chart'=>$ob,
+                'shipname'=>$shipname,
+                'elementweightage'=>$elementweightagearray,
+                'montharray'=>$newcategories,
+                'elementcolorarray'=>$findelementcolorarray,
+                'countmonth'=>count($findelementcolorarray),
+                'avgscore'=>$elementdetailvaluearray
+                )
         );
     }
 }

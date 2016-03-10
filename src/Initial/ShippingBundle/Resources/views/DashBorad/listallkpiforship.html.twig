@@ -33,7 +33,7 @@
     {% endblock %}#}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
-            <h2>Dashboard</h2>
+            <h2>{{ shipname.shipName }}</h2>
             <a href="{{ path('dashboradhome') }}">Back</a>
         </div>
         <div class="bs-example">
@@ -47,23 +47,59 @@
         </div>
 #}
             <div class="table-responsive">
-           ShipName: <span style="color: #000099">{{ shipname.shipName }}</span>
-            <table class="table table-striped" style="" id="readingkpitable">
+
+                <table class="table table-striped" style="" id="readingkpitable">
                 <thead>
                 <tr>
 
                     <th>Kpi Name</th>
+                    <th>Weightage</th>
+                    {% for monthname in montharray %}
+                        <th>{{ monthname }}</th>
+                        {#<th></th>#}
+                    {% endfor %}
 
                 </tr>
+
+
+
                 </thead>
                 <tbody>
+                {% set countmonth1= countmonth-1 %}
+                  {% set i=0 %}
+                {#  {% set j=0 %}#}
                 {% for kpi in listofkpi %}
                     <tr>
 
                         <td><a    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true&margin-left=213px&width=800px"  title="{{ kpi.kpiName }}"> {{ kpi.kpiName }}</a></td>
+                        <td>{{ kpiweightage[i] }}%</td>
+                        {% for j in 0..countmonth1 %}
+                            <td>
+                                {% if kpicolorarray[j][i]=="Green" %}
+                                <div class="green"></div>
+                                {% elseif kpicolorarray[j][i]=="Red" %}
+                                <div class="red"></div>
+                                {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                <div class="yellow"></div>
+                                {% else %}
+                                <div class="nocolor"></div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+
 
                     </tr>
+                    {% set i=i+1 %}
                 {% endfor %}
+              {#  <tr><td>Total</td></tr>#}
+                <tr>
+                    <th>Avg Score</th>
+                    <td>100%</td>
+                    {% for avg in avgscore %}
+                        <td>{{ avg }}</td>
+                    {% endfor %}
+
+                </tr>
                 </tbody>
             </table>
                 </div>

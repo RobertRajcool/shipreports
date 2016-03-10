@@ -1,56 +1,90 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+
+    {% block javascripts %}
+
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/demo.js'
+        '@AppBundle/Resources/public/js/actions-builder.js'
+        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/Element_rule_show_condition.js'
+
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+    {% endblock %}
     <h1>KpiDetails</h1>
 
     <table>
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ kpiDetail.id }}</td>
-            </tr>
-            <tr>
-                <th>Shipdetailsid</th>
-                <td>{{ kpiDetail.shipDetailsId }}</td>
-            </tr>
-            <tr>
-                <th>Kpiname</th>
-                <td>{{ kpiDetail.kpiName }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ kpiDetail.description }}</td>
-            </tr>
-            <tr>
-                <th>Activedate</th>
-                <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Enddate</th>
-                <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Cellname</th>
-                <td>{{ kpiDetail.cellName }}</td>
-            </tr>
-            <tr>
-                <th>Celldetails</th>
-                <td>{{ kpiDetail.cellDetails }}</td>
-            </tr>
+        <tr>
+            <th>Ships</th>
+            <td>
+                <select>
+                    <option>--Available Ships--</option>
+                    {% for ships in ship_name %}
+                        {% for ships1 in ships %}
+                            <option value={{ ships1['shipName'] }}>{{ ships1['shipName'] }}</option>
+                        {% endfor %}
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Kpiname</th>
+            <td>{{ kpiDetail.kpiName }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ kpiDetail.description }}</td>
+        </tr>
+        <tr>
+            <th>Weightage</th>
+            <td>{{ kpiDetail.weightage }}</td>
+        </tr>
+        <tr>
+            <th>Activedate</th>
+            <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Enddate</th>
+            <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th>Cellname</th>
+            <td>{{ kpiDetail.cellName }}</td>
+        </tr>
+        <tr>
+            <th>Celldetails</th>
+            <td>{{ kpiDetail.cellDetails }}</td>
+        </tr>
         </tbody>
     </table>
+
+    <div id="conditions"></div>
+    <div id="actions"></div>
+
+    <table id="rule-table">
+        <tr id="row_id">
+            <th>Operator</th>
+            <th>Value</th>
+            <th>Action</th>
+        </tr>
+
+    </table>
+    <input type="hidden" name="id" id="id" value="{{ kpiDetail.id }}">
+    <p id="text_box"></p>
 
     <ul>
         <li>
             <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
         </li>
         <li>
-            <a href="{{ path('kpidetails_edit', { 'id': kpiDetail.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
+            <a href="{{ path('kpidetails_edit1', { 'id': kpiDetail.id }) }}">Edit</a>
         </li>
     </ul>
 {% endblock %}
