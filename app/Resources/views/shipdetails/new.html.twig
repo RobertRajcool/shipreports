@@ -1,17 +1,32 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>ShipDetails creation</h1>
 
-    <form action="{{ path('shipdetails_new1') }}" method="post">
-        {{ form_row(form.shipName) }}
-        {{ form_row(form.description) }}
-        <input type="submit" value="Create" />
-    </form>
-
-    <ul>
-        <li>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Create ship</h2>
             <a href="{{ path('shipdetails_select1') }}">Back to the list</a>
-        </li>
-    </ul>
+        </div>
+        <div class="bs-example">
+
+            <form class="form-horizontal no-style" action="{{ path('shipdetails_new1') }}" method="post">
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Ship Name</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.shipName) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Description</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.description) }}
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <input type="submit" class="btn btn-primary" value="Create" />
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

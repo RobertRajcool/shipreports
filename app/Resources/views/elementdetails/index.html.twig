@@ -1,12 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>ElementDetails list</h1>
-
-    <table>
-        <thead>
+    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Element Details</h2>
+            <a href="{{ path('elementdetails_new') }}">Create Element</a>
+        </div>
+    {% endif %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <th>Id</th>
                 <th>KpiName</th>
                 <th>ElementName</th>
                 <th>Description</th>
@@ -18,41 +23,31 @@
                 <th>rules</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for elementDetail in elementDetails %}
-            <tr>
-                <td><a href="{{ path('elementdetails_show', { 'id': elementDetail.id }) }}">{{ elementDetail.id }}</a></td>
-                <td>{{ elementDetail.kpiDetailsId }}</td>
-                <td>{{ elementDetail.elementName }}</td>
-                <td>{{ elementDetail.description }}</td>
-                <td>{{ elementDetail.cellName }}</td>
-                <td>{{ elementDetail.cellDetails }}</td>
-                <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
-                <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
-                <td>{{ elementDetail.weightage }}</td>
-                <td>{{ elementDetail.rules }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('elementdetails_show', { 'id': elementDetail.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('elementdetails_edit', { 'id': elementDetail.id }) }}">edit</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('subelementdetails_select', { 'id': elementDetail.id }) }}">Sub_Elements</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for elementDetail in elementDetails %}
+                <tr>
+                    <td>{{ elementDetail.kpiDetailsId }}</td>
+                    <td>{{ elementDetail.elementName }}</td>
+                    <td>{{ elementDetail.description }}</td>
+                    <td>{{ elementDetail.cellName }}</td>
+                    <td>{{ elementDetail.cellDetails }}</td>
+                    <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
+                    <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                    <td>{{ elementDetail.weightage }}</td>
+                    <td>{{ elementDetail.rules }}</td>
+                    <td>
+                        <a href="{{ path('elementdetails_show', { 'id': elementDetail.id }) }}">show</a><br>
 
-    <ul>
-        <li>
-            <a href="{{ path('elementdetails_new') }}">Create a new entry</a>
-        </li>
-    </ul>
+                        <a href="{{ path('elementdetails_edit', { 'id': elementDetail.id }) }}">edit</a>
+
+                        <a href="{{ path('subelementdetails_select', { 'id': elementDetail.id }) }}">Sub_Elements</a>
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
 {% endblock %}

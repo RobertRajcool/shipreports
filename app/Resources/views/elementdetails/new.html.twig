@@ -16,39 +16,86 @@
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
-    <h1>ElementDetails creation</h1>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="page-header">
+                <h2>ElementDetails creation</h2>
+                <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
+            </div>
+            <div class="bs-example">
+                <form form class="form-horizontal no-style" action="{{ path('elementdetails_new1') }}" method="post">
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">KpiName</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.kpiDetailsId) }}
+                        </div>
+                    </div>
 
-    <form action="{{ path('elementdetails_new1') }}" method="post">
-        {{ form_row(form.kpiDetailsId) }}
-        {{ form_row(form.elementName) }}
-        {{ form_row(form.description) }}
-        {{ form_row(form.cellName) }}
-        {{ form_row(form.cellDetails) }}
-        {{ form_row(form.activatedDate) }}
-        {{ form_row(form.endDate) }}
-        {{ form_row(form.weightage) }}
-        {{ form_row(form.rules) }}
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">ElementName</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.elementName) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Description</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.description) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">CellName</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.cellName) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">CellDetails</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.cellDetails) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">ActivateDate</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.activatedDate) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Endate</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.endDate) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Wightage</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.weightage) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Rules</label>
+                        <div class="col-xs-10">
+                            {{ form_row(form.rules) }}
+                        </div>
+                    </div>
 
-        <table>
-            <tr>
-                <td>
-                    <div id="conditions"></div>
-                </td>
-                <td>
-                    <div id="actions"></div>
-                </td>
-            </tr>
-        </table>
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="conditions"></div>
+                            </td>
+                            <td>
+                                <div id="actions"></div>
+                            </td>
+                        </tr>
+                    </table>
 
-        <input type="hidden" size="2" id="ageField">
-        {#<input type="text" id="result">#}
+                    <input type="hidden" size="2" id="ageField">
+                    {#<input type="text" id="result">#}
 
-        <input type="submit" value="Create" id="get_value" />
-    </form>
-    <ul>
-        <li>
-            <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
-        </li>
-    </ul>
-{% endblock %}
+                    <input type="submit" value="Create" id="get_value" />
+                </form>
+            </div>
+        </div>
+    {% endblock %}
 {% endblock %}

@@ -1,10 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>ShipDetails</h1>
 
-    <table>
-        <tbody>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h1>ShipDetails</h1>
+            <a href="{{ path('shipdetails_select1') }}">Back to the list</a>
+        </div>
+        <table>
+            <tbody>
 
             <tr>
                 <th>Shipname</th>
@@ -14,22 +18,23 @@
                 <th>Description</th>
                 <td>{{ shipDetail.description }}</td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('shipdetails_select1') }}">Back to the list</a>
-        </li>
-        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-            <li>
-                <a href="{{ path('shipdetails_edit', { 'id': shipDetail.id }) }}">Edit</a>
-            </li>
-            <li>
-                {{ form_start(delete_form) }}
-                    <input type="submit" value="Delete">
-                {{ form_end(delete_form) }}
-            </li>
-        {% endif %}
-    </ul>
+
+
+
+
+        {# {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+
+                 <a href="{{ path('shipdetails_edit', { 'id': shipDetail.id }) }}">Edit</a>
+
+            {# <li>
+                 {{ form_start(delete_form) }}
+                     <input type="submit" value="Delete">
+                 {{ form_end(delete_form) }}
+             </li>#}
+
+
+    </div>
 {% endblock %}

@@ -5,37 +5,99 @@
     {% block javascripts %}
         {% javascripts
         '@AppBundle/Resources/public/js/AAA.js'
-        '@AppBundle/Resources/public/js/EditDemo.js'
-        '@AppBundle/Resources/public/js/actions-builder.js'
-        '@AppBundle/Resources/public/js/conditions-builder.js'
+        '@AppBundle/Resources/public/js/Element_Edit_Demo.js'
+        '@AppBundle/Resources/public/js/Element_actions.js'
+        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
         '@AppBundle/Resources/public/js/rules.js'
+
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
-    <h1>ElementDetails edit</h1>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="page-header">
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form.rules,{'id' :'result'}) }}
-        {{ form_widget(edit_form) }}
+                <h1>ElementDetails edit</h1>
+                <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
+            </div>
+            <div class="bs-example">
+                {{ form_start(edit_form,{ 'attr': {'class': 'form-horizontal no-style'} }) }}
 
-        <div id="conditionsedit"></div>
-        <div id="actionsedit"></div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">KpiName</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.kpiDetailsId) }}
+                    </div>
+                </div>
 
-        <input type="submit" value="Edit" />
-        <input type="submit" value="Add" id="submitedit" />
+                <div class="form-group">
+                    <label class="control-label col-xs-2">ElementName</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.elementName) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Description</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.description) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">CellName</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.cellName) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">CellDetails</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.cellDetails) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">ActivateDate</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.activatedDate) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Endate</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.endDate) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Wightage</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.weightage) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Rules</label>
+                    <div class="col-xs-10">
+                        {{ form_widget(edit_form.rules) }}
+                    </div>
+                </div>
 
-    {{ form_end(edit_form) }}
+                <div id="conditions"></div>
+                <div id="actions">
 
-    <ul>
-        <li>
-            <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
-{% endblock %}
+
+                    <input type="submit" class="btn btn-primary" value="Edit" />
+                </div>
+
+                {{ form_end(edit_form) }}
+
+                {#<ul>
+
+                    <li>
+                        {{ form_start(delete_form) }}
+                            <input type="submit" value="Delete">
+                        {{ form_end(delete_form) }}
+                    </li>
+                </ul>#}
+            </div>
+        </div>
+
+    {% endblock %}
 {% endblock %}

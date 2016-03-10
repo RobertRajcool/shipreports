@@ -71,18 +71,18 @@ class KpiDetails
      * @ORM\Column(name="CellDetails", type="string", length=75)
      */
     private $cellDetails;
+
     /**
-     * @var int
+     * @var string
      *
-     * @ORM\Column(name="weightage", type="integer")
+     * @ORM\Column(name="Weightage", type="integer", length=30)
      */
     private $weightage;
-
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -105,7 +105,7 @@ class KpiDetails
     /**
      * Get shipDetailsId
      *
-     * @return string 
+     * @return string
      */
     public function getShipDetailsId()
     {
@@ -128,7 +128,7 @@ class KpiDetails
     /**
      * Get kpiName
      *
-     * @return string 
+     * @return string
      */
     public function getKpiName()
     {
@@ -154,7 +154,7 @@ class KpiDetails
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -177,7 +177,7 @@ class KpiDetails
     /**
      * Get activeDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getActiveDate()
     {
@@ -200,7 +200,7 @@ class KpiDetails
     /**
      * Get endDate
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEndDate()
     {
@@ -223,7 +223,7 @@ class KpiDetails
     /**
      * Get cellName
      *
-     * @return string 
+     * @return string
      */
     public function getCellName()
     {
@@ -246,7 +246,7 @@ class KpiDetails
     /**
      * Get cellDetails
      *
-     * @return string 
+     * @return string
      */
     public function getCellDetails()
     {
@@ -254,7 +254,7 @@ class KpiDetails
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getWeightage()
     {
@@ -262,11 +262,12 @@ class KpiDetails
     }
 
     /**
-     * @param int $weightage
+     * @param string $weightage
      */
     public function setWeightage($weightage)
     {
         $this->weightage = $weightage;
     }
+
 
 }

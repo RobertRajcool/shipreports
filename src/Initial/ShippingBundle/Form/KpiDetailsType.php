@@ -55,6 +55,7 @@ class KpiDetailsType extends AbstractType
             ->add('endDate', 'date')
             ->add('cellName')
             ->add('cellDetails')
+            ->add('weightage')
         ;
     }
 

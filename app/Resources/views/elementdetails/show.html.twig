@@ -4,85 +4,95 @@
 
     {% block javascripts %}
 
-    {% javascripts
-    '@AppBundle/Resources/public/js/AAA.js'
-    '@AppBundle/Resources/public/js/ShowDemo.js'
-    '@AppBundle/Resources/public/js/actions-builder.js'
-    '@AppBundle/Resources/public/js/conditions-builder.js'
-    '@AppBundle/Resources/public/js/rules.js'
-    '@AppBundle/Resources/public/js/showhide.js'
-    %}
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/Element_demo.js'
+        '@AppBundle/Resources/public/js/Element_actions.js'
+        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/Element_rule_show_condition.js'
+        %}
 
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
 
-    <h1>ElementDetails</h1>
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="page-header">
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ elementDetail.id }}</td>
-            </tr>
-            <tr>
-                <th>Kpidetailsid</th>
-                <td>{{ elementDetail.kpiDetailsId }}</td>
-            </tr>
-            <tr>
-                <th>Elementname</th>
-                <td>{{ elementDetail.elementName }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ elementDetail.description }}</td>
-            </tr>
-            <tr>
-                <th>Cellname</th>
-                <td>{{ elementDetail.cellName }}</td>
-            </tr>
-            <tr>
-                <th>Celldetails</th>
-                <td>{{ elementDetail.cellDetails }}</td>
-            </tr>
-            <tr>
-                <th>Activateddate</th>
-                <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Enddate</th>
-                <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
-            </tr>
-            <tr>
-                <th>Weightage</th>
-                <td>{{ elementDetail.weightage }}</td>
-            </tr>
-            <tr>
-                <th>Condition</th>
-                <td> <div id="conditionsedit" ></div></td>
-            </tr>
-            <tr>
-                <th>Action</th>
-                <td> <div id="actionsedit"></div></td>
-            </tr>
-        </tbody>
-    </table>
+                <h1>ElementDetails</h1>
+                <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
+            </div>
 
-    <input type="hidden" id="result" value="{{ elementDetail.rules }}">
+            <input type="hidden" id="element_Id" value={{ elementDetail.id }}>
+            <table>
+                <tbody>
+                <tr>
+                    <th>Kpi-Name</th>
+                    <td>{{ elementDetail.kpiDetailsId }}</td>
+                </tr>
+                <tr>
+                    <th>Element-Name</th>
+                    <td>{{ elementDetail.elementName }}</td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>{{ elementDetail.description }}</td>
+                </tr>
+                <tr>
+                    <th>Cell-Name</th>
+                    <td>{{ elementDetail.cellName }}</td>
+                </tr>
+                <tr>
+                    <th>Cell-Details</th>
+                    <td>{{ elementDetail.cellDetails }}</td>
+                </tr>
+                <tr>
+                    <th>Activated-Date</th>
+                    <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>End-Date</th>
+                    <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Weightage</th>
+                    <td>{{ elementDetail.weightage }}</td>
+                </tr>
+                </tbody>
+            </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('elementdetails_select1') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('elementdetails_edit', { 'id': elementDetail.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
+            <div id="conditions" ></div>
+            <div id="actions"></div>
+
+            <table id="rule-table">
+                <tr id="row_id">
+                    <th>
+                        Operator
+                    </th>
+                    <th>
+                        Value
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+
+            </table>
+
+            <input type="hidden" id="result" value="{{ elementDetail.rules }}">
+
+            {#  <ul>
+
+                  <li>
+                      <a href="{{ path('elementdetails_edit', { 'id': elementDetail.id }) }}">Edit</a>
+                  </li>
+                  <li>
+                      {{ form_start(delete_form) }}
+                          <input type="submit" value="Delete">
+                      {{ form_end(delete_form) }}
+                  </li>
+              </ul>#}
+        </div>
+    {% endblock %}
 {% endblock %}
-{% endblock %}
-
 
