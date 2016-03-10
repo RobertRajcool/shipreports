@@ -2,11 +2,6 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Shipping Application{% endblock %}
-
-{% block content %}
-
-{% endblock %}
 {% block body %}
     {% block javascripts %}
 
@@ -17,20 +12,24 @@
 
 
     {% endblock %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-    {% block stylesheets %}
-        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-    {% endblock %}
-    <div id="mycontent" align="center">
-    <h1 align="center">Welcome to Shipping Application</h1>
+    <div class="page-header">
+        <h2>Upload File Details</h2>
+    </div>
+
+
+        <div class="bs-example">
+            <form class="form-horizontal no-style">
     <p> {{ creator }}</p>
     {% if creator == "" %}
-        <p align=""><a style="margin-left:495px" id="linkid" href="{{ path('fileadd') }}">Upload File</a></p>
-        <p style="">{{ msg }}</p>
+                <div class="actions">
+       <a style="margin-left:495px" id="linkid"  class="btn btn-primary"  href="{{ path('fileadd') }}">Upload File</a>
+                    </div>
+       {{ msg }}
     {% endif %}
-
+                </form>
+</div>
 </div>
 
 {% endblock %}

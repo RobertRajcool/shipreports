@@ -1,67 +1,58 @@
 {% extends 'base.html.twig' %}
-{% block title %}Star Shipping Application{% endblock %}
+{#{% block title %}Star Shipping Application{% endblock %}#}
 
-{% block content %}
-    <h1 align="center">Shipping Application</h1>
-
-{% endblock %}
 {% block body %}
-     {% block javascripts %}
+    {% block javascripts %}
 
-         {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
-         <script src="{{ asset_url }}"></script>
-         {% endjavascripts %}
-
-
-
-     {% endblock %}
-
-      {% block stylesheets %}
-          {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
-          <link rel="stylesheet" href="{{ asset_url }}" />
-          {% endstylesheets %}
-      {% endblock %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
 
 
-    <h1>All Reading Kpi Values List</h1>
-<div class="listitem">
-    <table id="readingkpitable">
-        <thead>
-            <tr>
 
-                <th>Ship Name</th>
-                <th>Kpi Name</th>
-                <th>Element Name</th>
-                <th>Value</th>
-                <th>Monthdetail</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for readingKpiValue in readingKpiValues %}
-            <tr>
+    {% endblock %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Ship Details</h2>
+            <a href="{{ path('readingkpivalues_new') }}">Add Kpi Value</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped" >
+                <thead>
+                <tr>
 
-                <td>{{ readingKpiValue.shipDetailsId }}</td>
-                <td>{{ readingKpiValue.kpiDetailsId }}</td>
-                <td>{{ readingKpiValue.elementDetailsId }}</td>
+                    <th>Ship Name</th>
+                    <th>Kpi Name</th>
+                    <th>Element Name</th>
+                    <th>Value</th>
+                    <th>Monthdetail</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for readingKpiValue in readingKpiValues %}
+                    <tr>
 
-                <td>{{ readingKpiValue.value }}</td>
+                        <td>{{ readingKpiValue.shipDetailsId }}</td>
+                        <td>{{ readingKpiValue.kpiDetailsId }}</td>
+                        <td>{{ readingKpiValue.elementDetailsId }}</td>
+                        <td>{{ readingKpiValue.value }}</td>
+                        <td>
+                            {#{% if readingKpiValue.monthdetail %}#}
+                                {{ readingKpiValue.monthdetail|date('Y-m-d') }}
+                            {#{% endif %}#}</td>
+                        <td>
 
-                <td>{% if readingKpiValue.monthdetail %}{{ readingKpiValue.monthdetail|date('Y-m-d') }}{% endif %}</td>
-                <td>
+                            <a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">show</a>
 
-                            <a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">show</a>&nbsp;|&nbsp;
-
-                            <a href="{{ path('readingkpivalues_edit', { 'id': readingKpiValue.id }) }}">edit</a>
-
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
 
-            <a style="align-items: center;margin-left: 44%;margin-top: 5%" href="{{ path('readingkpivalues_new') }}">Add Kpi Value</a>
-</div>
+    </div>
 
 {% endblock %}

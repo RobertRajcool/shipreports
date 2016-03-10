@@ -227,6 +227,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
             });
         }
     };
+    var count = 0;
 
     function ActionsBuilder(element, options) {
         this.element = $(element);
@@ -251,6 +252,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
 
             addButton.click(function(e) {
                 e.preventDefault();
+                count++;
                 container.append(_this.buildAction({}));
             });
 
@@ -276,8 +278,8 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
         buildAction: function(data) {
             var field = this._findField(data.name);
             var div = $("<div>", {"class": "action"});
-            var fieldsDiv = $("<div>", {"class": "subfields"});
-            var select = $("<select>", {"class": "action-select", "name": "action-select"});
+            var fieldsDiv = $("<div>", {"class": "subfields","id":"subfields-id"});
+            var select = $("<select>", {"class": "action-select","id":"action-select-id"+count, "name": "action-select"});
 
             for(var i=0; i < this.fields.length; i++) {
                 var possibleField = this.fields[i];
@@ -300,7 +302,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
                 div.attr("class", "action " + val);
             });
 
-            var removeLink = $("<a>", {"href": "#", "class": "remove", "text": "Remove Action"});
+            var removeLink = $("<a>", {"href": "#", "class": "remove-action","id":"action_remove", "text": "Remove Action"});
             removeLink.click(function(e) {
                 e.preventDefault();
                 div.remove();
@@ -321,14 +323,17 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
             var out = [];
             fields.each(function() {
                 var input = $(this).find("> :input, > .jstEditor > :input");
-                var subfields = $(this).find("> .subfields > .field");
+                var subfields = $(this).find("> #subfields-id > .field");
                 var action = {name: input.attr("name"), value: input.val()};
                 if(subfields.length > 0) {
                     action.fields = _this.collectData(subfields);
                 }
                 out.push(action);
             });
-            return out;
+            return {
+                name:'action-select',
+                value: fields.find("#action-select-id"+count).val()
+            };
         },
 
         _findField: function(fieldName) {
@@ -340,7 +345,6 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
     };
 
 })(jQuery);
-
 (function($) {
     $.fn.conditionsBuilder = function(options) {
         if(options == "data") {
@@ -407,17 +411,17 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
             else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind});
-            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
-            var select = $("<select>", {"class": "all-any-none"});
+            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditional-id"});
+            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper", "id": "all-any-none-wrapper-id"});
+            var select = $("<select>", {"class": "all-any-none"},{"id":"all-any-none-id"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
             select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
             select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
             selectWrapper.append(select);
-            selectWrapper.append($("<span>", {text: "of the following rules:"}));
+            /*selectWrapper.append($("<span>", {text: "of the following rules:"}));*/
             div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id", "text": "Add Rule"});
             var _this = this;
             addRuleLink.click(function(e) {
                 e.preventDefault();
@@ -427,7 +431,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 var f = _this.fields[0];
@@ -436,7 +440,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
             });
             div.append(addConditionLink);
 
-            var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
+            var removeLink = $("<a>", {"class": "remove","id":"remove-id", "href": "#", "text": "Remove This Sub-Condition"});
             removeLink.click(function(e) {
                 e.preventDefault();
                 div.remove();
@@ -451,7 +455,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
         },
 
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "rule"});
+            var ruleDiv = $("<div>", {"class": "rule"},{"id": "rule-id"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
@@ -477,7 +481,7 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
     };
 
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field"});
+        var select = $("<select>", {"class": "field"},{"id": "field-id"});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -492,13 +496,13 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
     }
 
     function getOperatorSelect() {
-        var select = $("<select>", {"class": "operator"});
+        var select = $("<select>", {"class": "operator"},{"id":"operator-id"});
         select.change(onOperatorSelectChange);
         return select;
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove","id":"remove1-id", "href": "#", "text": "Remove"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }
@@ -558,7 +562,6 @@ var conditions, actions, ageField, submit, result, obj1, obj2, obj3;
     }
 
 })(jQuery);
-
 var global = this;
 
 (function() {
@@ -818,6 +821,72 @@ $(document).ready(function(){
             });
         }
     });
-});
+    var j=0;
 
+    $('.add').hide();
+    $('.add-condition').hide();
+    $('.remove').hide();
+    $('.all-any-none').hide();
+
+    $('.add-rule').bind('click',function(){
+        $('.add').show();
+        $('.add-condition').show();
+        //$('.remove').show();
+        var div = $('<div>');
+        j++;
+        div.html(DynamicBox(""));
+        $('#text_box').append(div);
+
+    });
+
+    function DynamicBox(value){
+        return '<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+
+            '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'/*+
+         '<select name="sub-action-select" id="sud-action-select-id_'+j+'"> <option>--Choose color--</option> <option value="Green">Green</option> <option value="Red">Red</option> <option value="Yellow">Yellow</option> </select>'*/
+    }
+
+
+    var k =1;
+    $('.add-condition').live("click", function () {
+        $('.all-any-none').hide();
+        $('#add-rule-id'+k).hide();
+        k++;
+    });
+    $('.add').live("click",function(){
+        $('.remove-action').remove();
+    });
+
+    var i =0;
+    $('.dynamic-add').live("click",function() {
+        var currentId = $(this).attr('id');
+        id_value = splitfun(currentId);
+        $('.add').hide();
+        $('.add-condition').hide();
+        $('.remove').remove();
+        $('.remove-condition').hide();
+        $('.value').remove();
+        $('.field').remove();
+        $('.operator').remove();
+        $('.action-select').hide();
+        $(this).remove();
+        var rule = $('#rules-id_'+id_value).val();
+        var rule_obj = JSON.parse(rule);
+        var con = rule_obj.conditions.all;
+        //alert(con.length);
+        var $tr = $('<tr>').append(
+            $('<td>').text(con[i].operator),
+            $('<td>').text(con[i].value),
+            $('<td>').text(rule_obj.actions.value)
+        ).appendTo('#rule-table');
+        i++;
+    });
+    /*$('#submit_id').live("click",function(){
+     $('#result').val(i);
+     });*/
+
+    function splitfun(data){
+        var num = data.split('_');
+        return num[1];
+    }
+});
 

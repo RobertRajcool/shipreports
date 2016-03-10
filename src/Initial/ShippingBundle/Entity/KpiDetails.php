@@ -71,6 +71,12 @@ class KpiDetails
      * @ORM\Column(name="CellDetails", type="string", length=75)
      */
     private $cellDetails;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="weightage", type="integer")
+     */
+    private $weightage;
 
 
     /**
@@ -246,4 +252,21 @@ class KpiDetails
     {
         return $this->cellDetails;
     }
+
+    /**
+     * @return int
+     */
+    public function getWeightage()
+    {
+        return $this->weightage;
+    }
+
+    /**
+     * @param int $weightage
+     */
+    public function setWeightage($weightage)
+    {
+        $this->weightage = $weightage;
+    }
+
 }

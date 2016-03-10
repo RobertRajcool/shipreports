@@ -244,7 +244,6 @@ var conditions, actions, ageField, submit, result, ans;
 })(jQuery);
 
 
-
 (function($) {
     $.fn.conditionsBuilder = function(options, answer) {
         if(options == "data") {
@@ -259,6 +258,7 @@ var conditions, actions, ageField, submit, result, ans;
     };
 
     var count=0;
+    var k =0;
 
     function ConditionsBuilder(element, options) {
         this.element = $(element);
@@ -270,6 +270,13 @@ var conditions, actions, ageField, submit, result, ans;
         var currentId = $(this).attr('id');
         id_value = splitfun(currentId);
     });
+
+    $('.con-add').live("click",function() {
+        var currentId = $(this).attr('id');
+        id_value = splitfun(currentId);
+        count++;
+    });
+
     function splitfun(data){
         var num = data.split('_');
         return num[1];
@@ -304,8 +311,8 @@ var conditions, actions, ageField, submit, result, ans;
             }
             else {
                 return {
-                    name: element.find(".field").val(),
-                    operator: element.find(".operator").val(),
+                    name: element.find("#field-id_"+id_value).val(),
+                    operator: element.find("#operator-id_"+id_value).val(),
                     value: element.find("#text-value-id_"+id_value).val()
                 };
             }
@@ -332,7 +339,7 @@ var conditions, actions, ageField, submit, result, ans;
             selectWrapper.append(select);
             div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id", "text": "Add Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id"+k, "text": "Add Rule"});
             var _this = this;
             addRuleLink.click(function(e) {
                 count++;
@@ -346,6 +353,7 @@ var conditions, actions, ageField, submit, result, ans;
             var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
+                k++;
                 var f = _this.fields[0];
                 var newField = {"all": [{ operator: f.operators[0], value: null}]};
                 div.append(_this.buildConditional(newField));
@@ -417,7 +425,7 @@ var conditions, actions, ageField, submit, result, ans;
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove-condition", "href": "#", "text": "Remove"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }
@@ -453,7 +461,7 @@ var conditions, actions, ageField, submit, result, ans;
         var fieldSelect = container.find(".field");
         var currentValue = container.find(".value");
         var val = currentValue.val();
-       var j=count;
+        var j=count;
         switch(option.data("fieldType"))
         {
             case "none":
@@ -478,7 +486,6 @@ var conditions, actions, ageField, submit, result, ans;
     }
 
 })(jQuery);
-
 var global = this;
 
 (function() {

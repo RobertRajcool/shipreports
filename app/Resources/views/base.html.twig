@@ -1,66 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Star Systems Shipping Application{% endblock %}</title>
+
     {% block stylesheets %}
-        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/design/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.css' %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
+
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 </head>
 <body>
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Shipping</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="welcome">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</li>
+                    <li><a href="{{ path('fos_user_security_logout') }}">Log out</a></li>
+                    <li><a href={{ path('fos_user_change_password') }}>Change Password</a></li>
+                    <li><a href="#">Help</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<div align="center"><h1>Welcome to Star Shipping</h1></div>
-<div align="center"><h3>Here you can easily manage your shipping details and etc..</h3></div>
-<div align="right" style="margin-right: 7%">
-    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    <h4>{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</h4> |
-    <a href="{{ path('fos_user_security_logout') }}">
-        {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-    </a>
-</div>
-<div align="left">
-    <a href="{{ path('homepage') }}">Home</a>&nbsp;|&nbsp;
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                  {#  <li><a href="{{ path('shipdetails_dashboard') }}">Home</a></li>#}
 
-    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-        <a href="{{ path('shipdetails_select1') }}">Add Ships</a>&nbsp;|&nbsp;
-        <a href="{{ path('kpidetails_select1') }}">Add KPI</a>&nbsp;|&nbsp;
-        <a href="{{ path('elementdetails_select1') }}">Add Elements</a>&nbsp;|&nbsp;
-        <a href="{{ path('rules_select') }}">Add Rules</a>&nbsp;|&nbsp;
-        <a href="{{ path('fileadd') }}">Import File</a>&nbsp;|&nbsp;
-        <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a>&nbsp;|&nbsp;
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
 
-    {% endif %}
-    <a href="{{ path('chart_new') }}">Graph</a>&nbsp;|&nbsp;
+                        <li><a href="{{ path('shipdetails_select1') }}">Add Ships</a></li>
+                        <li><a href="{{ path('kpidetails_select1') }}">Add KPI</a></li>
+                        <li> <a href="{{ path('elementdetails_select1') }}">Add Elements</a></li>
+                        <li><a href="{{ path('rules_select') }}">Add Rules</a></li>
+                        <li> <a href="{{ path('fileadd') }}">Import File</a></li>
+                        <li> <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a></li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_ADMIN")  %}
+                        <li><a href="{{ path('fos_user_registration_show') }}">Manage Users</a></li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_SUPER_ADMIN")  %}
+                        <li><a href="{{ path('fos_user_registration_register') }}">create Admin</a></li>
+                        <li> <a href="{{ path('companydetails_index') }}">create Company </a></li>
+                    {% endif %}
 
-    {%  if is_granted("ROLE_ADMIN") or is_granted("ROLE_SUPER_ADMIN")%}
+                </ul>
 
+            </div>
+            {% block body %}
+            {% endblock %}
 
-        <a href="{{ path('fos_user_registration_register') }}">create Users</a>&nbsp;|&nbsp;
+        </div>
+    </div>
 
-    {% endif %}
-    {%  if is_granted("ROLE_ADMIN")  %}
-        <a href="{{ path('fos_user_registration_show') }}">Manage Users</a>&nbsp;|&nbsp;
-    {% endif %}
-    {%  if is_granted("ROLE_SUPER_ADMIN")  %}
-
-        <a href="{{ path('fos_user_registration_register') }}">create Admin</a>&nbsp;|&nbsp;
-
-        <a href="{{ path('companydetails_index') }}">create Company </a>&nbsp;|&nbsp;
-    {% endif %}
-    <a href="{{ path('fos_user_change_password') }}">change password</a>&nbsp;|&nbsp;
-
-</div>
-<div style="margin-left: 1%">
-    {% block body %}
-
-    {% endblock %}
-    {% else %}
-        <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
-    {% endif %}
-</div>
+{% endif %}
 
 {% for type, messages in app.session.flashBag.all %}
     {% for message in messages %}

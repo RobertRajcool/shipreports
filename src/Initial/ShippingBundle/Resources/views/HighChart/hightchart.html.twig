@@ -6,114 +6,114 @@
 
 {% endblock %}
 {% block body %}
-{% block javascripts %}
+    {% block javascripts %}
 
-    {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-   <script src="http://code.highcharts.com/modules/exporting.js"></script>
-   {# <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>#}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script src="http://code.highcharts.com/modules/exporting.js"></script>
+        {# <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>#}
 
-    <script type="text/javascript">
-        {{ chart(chart) }}
+        <script type="text/javascript">
+            {{ chart(chart) }}
 
 
-    </script>
-    <script type="text/javascript">
+        </script>
+        <script type="text/javascript">
 
-        $(document).ready(function () {
+            $(document).ready(function () {
 
-              // alert('inital');
-            $('#export').click(function (e) {
-                alert('function call');
-                var obj = {},
-                        chart;
+                // alert('inital');
+                $('#export').click(function (e) {
+                    alert('function call');
+                    var obj = {},
+                            chart;
 
-                chart = $('#linechart').highcharts();
-                obj.svg = chart.getSVG();
-                obj.type = 'image/png';
-                obj.width = 450;
-                obj.async = true;
-                var canvas = document.querySelector("canvas"),
-                        context = canvas.getContext("2d");
+                    chart = $('#linechart').highcharts();
+                    obj.svg = chart.getSVG();
+                    obj.type = 'image/png';
+                    obj.width = 450;
+                    obj.async = true;
+                    var canvas = document.querySelector("canvas"),
+                            context = canvas.getContext("2d");
 
-                var image = new Image;
-                image.src = "fallback.svg";
-                image.onload = function() {
-                    context.drawImage(image, 0, 0);
+                    var image = new Image;
+                    image.src = "fallback.svg";
+                    image.onload = function() {
+                        context.drawImage(image, 0, 0);
 
-                    var a = document.createElement("a");
-                    a.download = "fallback.png";
-                    a.href = canvas.toDataURL("image/png");
-                    a.click();
-                };
+                        var a = document.createElement("a");
+                        a.download = "fallback.png";
+                        a.href = canvas.toDataURL("image/png");
+                        a.click();
+                    };
+                });
+
+                $('#chatform').submit(function(e)
+                {
+                    e.preventDefault();
+                    var self = this;
+
+                    var obj = {},
+                            chart;
+
+                    chart = $('#linechart').highcharts();
+                    obj.svg = chart.getSVG();
+                    obj.type = 'image/png';
+                    obj.width = 450;
+                    obj.async = true;
+
+                    var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
+
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: "/addchart",
+                        beforeSend: function () {
+                            $(".modal").show();
+                        },
+                        complete: function () {
+                            $(".modal").hide();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            $('#imagefilename').val(data);
+                            self.submit();
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('There has been an error, please alert us immediately');
+
+                        }
+                    });
+
+                });
+
+
+
             });
-
-             $('#chatform').submit(function(e)
-             {
-                 e.preventDefault();
-                 var self = this;
-
-             var obj = {},
-             chart;
-
-             chart = $('#linechart').highcharts();
-             obj.svg = chart.getSVG();
-             obj.type = 'image/png';
-             obj.width = 450;
-             obj.async = true;
-
-             var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
-
-             $.ajaxSetup({
-             global: false,
-             type: "post",
-             url: "/addchart",
-             beforeSend: function () {
-             $(".modal").show();
-             },
-             complete: function () {
-             $(".modal").hide();
-             }
-             });
-             $.ajax({
-             data: data,
-             success: function (data)
-             {
-
-             $('#imagefilename').val(data);
-                 self.submit();
-
-
-             }
-             ,
-             error: function()
-             {
-             alert('There has been an error, please alert us immediately');
-
-             }
-             });
-
-             });
-
-
-
-        });
-    </script>
+        </script>
 
 
 
 
 
 
-{% endblock %}
+    {% endblock %}
 
-      {% block stylesheets %}
-          {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
-          <link rel="stylesheet" href="{{ asset_url }}" />
-          {% endstylesheets %}
-      {% endblock %}
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
     <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
     <div class="modal" style="display: none">
         <div class="center">
@@ -122,14 +122,14 @@
             {% endimage %}
         </div>
     </div>
-   <form id="chatform" action=" {{path('addcomment') }}" method="post">
-       <input id="imagefilename" type="hidden" name="send_command[filename]" >
-       <input type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
-       To <input id="toemail" type="email" name="send_command[clientemail]" required><br>
-       Comment<textarea id="commentid" name="send_command[comment]" required></textarea><br>
-       <input id="" type="submit" value="Send Comment">
+    <form id="chatform" action=" {{path('addcomment') }}" method="post">
+        <input id="imagefilename" type="hidden" name="send_command[filename]" >
+        <input type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+        To <input id="toemail" type="email" name="send_command[clientemail]" required><br>
+        Comment<textarea id="commentid" name="send_command[comment]" required></textarea><br>
+        <input id="" type="submit" value="Send Comment">
 
-   </form>
+    </form>
     <div id="imgContainer"></div>
     <canvas id="canvas" width="800" height="400"></canvas>
 

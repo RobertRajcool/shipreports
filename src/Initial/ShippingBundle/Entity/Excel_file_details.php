@@ -48,6 +48,13 @@ class Excel_file_details
      * @ORM\Column(name="datetime", type="datetime")
      */
     private $datetime;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="company_id", type="integer")
+     */
+    private $company_id;
+
 
 
 
@@ -147,6 +154,22 @@ class Excel_file_details
     public function setDatetime($datetime)
     {
         $this->datetime = $datetime;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCompanyId()
+    {
+        return $this->company_id;
+    }
+
+    /**
+     * @param int $company_id
+     */
+    public function setCompanyId($company_id)
+    {
+        $this->company_id = $company_id;
     }
 
 

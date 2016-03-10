@@ -42,8 +42,6 @@ downloadchart:
 downloadPdf:
       path:     /downloadPdf
       defaults: { _controller: "InitialShippingBundle:Highchart:downloadPdf"}
-
-
 hello:
     path:     /hello
     defaults: { _controller: "InitialShippingBundle:Highchart:sendbackend" }

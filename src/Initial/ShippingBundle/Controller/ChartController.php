@@ -94,7 +94,7 @@ class ChartController extends Controller
         $em=$this->getDoctrine()->getManager();
 
 
-       // Finding Kpi Name //
+        // Finding Kpi Name //
         $findkpiname=$em -> createQueryBuilder()
             ->select('b.kpiName')
             ->from('InitialShippingBundle:KpiDetails','b')
@@ -102,7 +102,7 @@ class ChartController extends Controller
             ->setParameter('userId',$kpiid)
             ->getQuery()
             ->getSingleScalarResult();
-      // Finding Elements and Element Weightage Based on Kpi Id //
+        // Finding Elements and Element Weightage Based on Kpi Id //
         $findelementidarray=$em -> createQueryBuilder()
             ->select('c.id','c.weightage')
             ->from('InitialShippingBundle:ElementDetails','c')
@@ -110,7 +110,7 @@ class ChartController extends Controller
             ->setParameter('kpiid',$kpiid)
             ->getQuery()
             ->getResult();
-     // Finding Numbr of Ships  //
+        // Finding Numbr of Ships  //
         $dbshiparrayquery=$em -> createQueryBuilder()
             ->select('a.shipName','a.id')
             ->from('InitialShippingBundle:ShipDetails','a')
@@ -134,128 +134,128 @@ class ChartController extends Controller
         $tomonthtostring=$todate['year'].'-'.$todate['month'].'-'.$endday;
         $ob = new Highchart();
         //loop for assign name for series Starts Here//
-         if($fromdate==$todate)
-             {
-                 $d=0;
-                 $new_monthdetail_date = new \DateTime($frommonthtostring);
-                 $new_monthdetail_date->modify('last day of this month');
-                 $time2 = strtotime($frommonthtostring);
-                 $my = date('F', $time2);
-                 $newcategories =array($my) ;
+        if($fromdate==$todate)
+        {
+            $d=0;
+            $new_monthdetail_date = new \DateTime($frommonthtostring);
+            $new_monthdetail_date->modify('last day of this month');
+            $time2 = strtotime($frommonthtostring);
+            $my = date('F', $time2);
+            $newcategories =array($my) ;
 
-                 for($kj=0;$kj<count($dbshipsname);$kj++)
-                 {
-                     $newseries[$kj]['name'] = $dbshipsname[$kj]['shipName'];
-                     $mykpivaluearray = array();
-                     $finalkpivalue = 0;
-                     //loop for sending calculating weightage value for partucular Kpi     //
-                     for ($jk = 0; $jk < count($findelementidarray); $jk++) {
+            for($kj=0;$kj<count($dbshipsname);$kj++)
+            {
+                $newseries[$kj]['name'] = $dbshipsname[$kj]['shipName'];
+                $mykpivaluearray = array();
+                $finalkpivalue = 0;
+                //loop for sending calculating weightage value for partucular Kpi     //
+                for ($jk = 0; $jk < count($findelementidarray); $jk++) {
 
-                         $weightage = $findelementidarray[$jk]['weightage'];
-                         //Finding value based on element id and dates from user//
-                         $dbvalueforelement = $em->createQueryBuilder()
-                             ->select('a.value')
-                             ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                             ->where('a.shipDetailsId = :shipid')
-                             ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                             ->andWhere('a.elementDetailsId = :Elementid')
-                             ->andWhere('a.monthdetail =:dataofmonth')
-                             ->setParameter('shipid', $dbshipsname[$kj]['id'])
-                             ->setParameter('kpiDetailsId', $kpiid)
-                             ->setParameter('Elementid', $findelementidarray[$jk]['id'])
-                             ->setParameter('dataofmonth', $new_monthdetail_date)
-                             ->getQuery()
-                             ->getResult();
+                    $weightage = $findelementidarray[$jk]['weightage'];
+                    //Finding value based on element id and dates from user//
+                    $dbvalueforelement = $em->createQueryBuilder()
+                        ->select('a.value')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.shipDetailsId = :shipid')
+                        ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                        ->andWhere('a.elementDetailsId = :Elementid')
+                        ->andWhere('a.monthdetail =:dataofmonth')
+                        ->setParameter('shipid', $dbshipsname[$kj]['id'])
+                        ->setParameter('kpiDetailsId', $kpiid)
+                        ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                        ->setParameter('dataofmonth', $new_monthdetail_date)
+                        ->getQuery()
+                        ->getResult();
 
-                         if (count($dbvalueforelement) == 0) {
-                             $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                             $finalkpivalue += $finddbvaluefomula;
-                         } else {
-                             $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                             $finalkpivalue += $finddbvaluefomula;
-                         }
-
-
-                     }
-                     //Push the kpivalue values from weightage value//
-                     $mykpivaluearray[$d] = $finalkpivalue;
+                    if (count($dbvalueforelement) == 0) {
+                        $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                        $finalkpivalue += $finddbvaluefomula;
+                    } else {
+                        $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                        $finalkpivalue += $finddbvaluefomula;
+                    }
 
 
-                     for ($l = 0; $l < count($mykpivaluearray); $l++)
-                     {
-
-                         $newseries[$kj]['data'] = $mykpivaluearray;
-
-
-                     }
-                 }
-             }
-
-             if($fromdate!=$todate)
-             {
-                 $newcategories = $charobj->get_months($frommonthtostring, $tomonthtostring);
-                 $datesarray = $charobj->get_months_and_year($frommonthtostring, $tomonthtostring);
-                 for($kj=0;$kj<count($dbshipsname);$kj++)
-                 {
-                     $newseries[$kj]['name'] = $dbshipsname[$kj]['shipName'];
-                     $mykpivaluearray = array();
+                }
+                //Push the kpivalue values from weightage value//
+                $mykpivaluearray[$d] = $finalkpivalue;
 
 
+                for ($l = 0; $l < count($mykpivaluearray); $l++)
+                {
 
-                 //loop for sending dates//
-                 for ($d = 0; $d < count($datesarray); $d++)
-                 {
-                     $new_monthdetail_date = new \DateTime($datesarray[$d]);
-                     $myexcelnewdatevalue = $new_monthdetail_date->modify('last day of this month');
-                     $finalkpivalue = 0;
-                     //loop for sending calculating weightage value for partucular Kpi     //
-                     for ($jk = 0; $jk < count($findelementidarray); $jk++) {
-
-                         $weightage = $findelementidarray[$jk]['weightage'];
-                         //Finding value based on element id and dates from user//
-                         $dbvalueforelement = $em->createQueryBuilder()
-                             ->select('a.value')
-                             ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                             ->where('a.shipDetailsId = :shipid')
-                             ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                             ->andWhere('a.elementDetailsId = :Elementid')
-                             ->andWhere('a.monthdetail =:dataofmonth')
-                             ->setParameter('shipid', $dbshipsname[$kj]['id'])
-                             ->setParameter('kpiDetailsId', $kpiid)
-                             ->setParameter('Elementid', $findelementidarray[$jk]['id'])
-                             ->setParameter('dataofmonth', $myexcelnewdatevalue)
-                             ->getQuery()
-                             ->getResult();
-
-                         if (count($dbvalueforelement) == 0) {
-                             $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                             $finalkpivalue += $finddbvaluefomula;
-                         } else {
-                             $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                             $finalkpivalue += $finddbvaluefomula;
-                         }
+                    $newseries[$kj]['data'] = $mykpivaluearray;
 
 
-                     }
-                     //Push the kpivalue values from weightage value//
-                     $mykpivaluearray[$d] = $finalkpivalue;
+                }
+            }
+        }
 
-                 }
+        if($fromdate!=$todate)
+        {
+            $newcategories = $charobj->get_months($frommonthtostring, $tomonthtostring);
+            $datesarray = $charobj->get_months_and_year($frommonthtostring, $tomonthtostring);
+            for($kj=0;$kj<count($dbshipsname);$kj++)
+            {
+                $newseries[$kj]['name'] = $dbshipsname[$kj]['shipName'];
+                $mykpivaluearray = array();
 
 
-                 for ($l = 0; $l < count($mykpivaluearray); $l++) {
 
-                     $newseries[$kj]['data'] = $mykpivaluearray;
+                //loop for sending dates//
+                for ($d = 0; $d < count($datesarray); $d++)
+                {
+                    $new_monthdetail_date = new \DateTime($datesarray[$d]);
+                    $myexcelnewdatevalue = $new_monthdetail_date->modify('last day of this month');
+                    $finalkpivalue = 0;
+                    //loop for sending calculating weightage value for partucular Kpi     //
+                    for ($jk = 0; $jk < count($findelementidarray); $jk++) {
+
+                        $weightage = $findelementidarray[$jk]['weightage'];
+                        //Finding value based on element id and dates from user//
+                        $dbvalueforelement = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                            ->where('a.shipDetailsId = :shipid')
+                            ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                            ->andWhere('a.elementDetailsId = :Elementid')
+                            ->andWhere('a.monthdetail =:dataofmonth')
+                            ->setParameter('shipid', $dbshipsname[$kj]['id'])
+                            ->setParameter('kpiDetailsId', $kpiid)
+                            ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                            ->setParameter('dataofmonth', $myexcelnewdatevalue)
+                            ->getQuery()
+                            ->getResult();
+
+                        if (count($dbvalueforelement) == 0) {
+                            $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        } else {
+                            $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
 
 
-                 }
-             }
+                    }
+                    //Push the kpivalue values from weightage value//
+                    $mykpivaluearray[$d] = $finalkpivalue;
+
+                }
+
+
+                for ($l = 0; $l < count($mykpivaluearray); $l++) {
+
+                    $newseries[$kj]['data'] = $mykpivaluearray;
+
+
+                }
+            }
 
 
         }
-    //loop for assign name for series Ends Here //
+        //loop for assign name for series Ends Here //
 
-    // Adding data to javascript chart function starts Here.. //
+        // Adding data to javascript chart function starts Here.. //
 
         $ob->chart->renderTo('area');
         $ob->chart->type('area');
@@ -268,7 +268,7 @@ class ChartController extends Controller
         $ob->series($newseries);
         $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
         $ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
-    // Adding data to javascript chart function  Ends Here.. //
+        // Adding data to javascript chart function  Ends Here.. //
 
 
         return $this->render('InitialShippingBundle:HighChart:hightchart.html.twig', array(
@@ -353,6 +353,6 @@ class ChartController extends Controller
             ->setAction($this->generateUrl('chart_delete', array('id' => $chart->getId())))
             ->setMethod('DELETE')
             ->getForm()
-        ;
+            ;
     }
 }

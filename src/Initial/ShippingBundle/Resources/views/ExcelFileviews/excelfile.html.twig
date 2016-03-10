@@ -1,10 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}Star Shipping Application{% endblock %}
 
-{% block content %}
-    <h1 align="center">Shipping Application</h1>
-
-{% endblock %}
 {% block body %}
      {% block javascripts %}
 
@@ -19,16 +14,10 @@
 
 
       {% endblock %}
-
-      {% block stylesheets %}
-          {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
-          <link rel="stylesheet" href="{{ asset_url }}" />
-          {% endstylesheets %}
-      {% endblock %}
-
-
-    <div id="formcontent" align="center">
-        <h2>Upload File Here</h2>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Upload File Here</h2>
+        </div>
 
         <div class="modal" style="display: none">
             <div class="center">
@@ -37,24 +26,28 @@
                 {% endimage %}
             </div>
         </div>
-        {#
 
-        <div id="overlay">
-            {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
-            <img src="{{ asset_url }}" alt="Loader Image"/>
-            {% endimage %}
-        </div>
-#}
-        <table>
-            {{ form_start(form, {'attr': {'id': 'form_excel'}}) }}
-            <tr><td>
-                    {{ form_label(form.filename,'Choose File') }}</td><td>
-                    {{ form_widget(form.filename,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}</td></tr><tr><td>
-                    {{ form_label(form.dataofmonth,'Choose Month') }}</td><td>
-                    {{ form_widget(form.dataofmonth) }}</td></tr><tr><td></td><td>
-                    {{ form_widget(form.submit,{'id' :'submitid'}, { 'attr': {'class': 'submitclass'} }) }}
-                    {{ form_widget(form.add,{'id' :'readingid'}, { 'attr': {'class': 'readingclass'} }) }}</td></tr>
+        <div class="bs-example">
+            {{ form_start(form, {'attr': {'id': 'form_excel','class':'form-horizontal no-style'}}) }}
+            <div class="form-group">
+                <label class="control-label col-xs-2">Choose File</label>
+                <div class="col-xs-10">
+                    {{ form_widget(form.filename,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">    Choose Month</label>
+                <div class="col-xs-10">
+                    {{ form_widget(form.dataofmonth) }}
+                </div>
+            </div>
+
+            <div class="actions">
+                <input type="submit" class="btn btn-primary" id="addsubmitid" value="Upload" />
+
+            </div>
             {{ form_end(form) }}
-        </table>
-    </div>
+       </div>
+        <div>
+
 {% endblock %}

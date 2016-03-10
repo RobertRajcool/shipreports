@@ -28,12 +28,12 @@ class ReadExcelSheetController extends Controller
     private function createCreateForm(Excel_file_details $excelobj)
     {
         $form = $this->createForm(new AddExcelFileType(), $excelobj, array(
-            'action' => $this->generateUrl('newupload'),
+            'action' => $this->generateUrl('upload'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Upload'));
-        $form->add('add', 'submit', array('label' => 'Reading.....'));
+       /* $form->add('submit', 'submit', array('label' => 'Upload'));
+        $form->add('add', 'submit', array('label' => 'Reading.....'));*/
 
         return $form;
     }
@@ -211,12 +211,12 @@ class ReadExcelSheetController extends Controller
                 $user = $this->getUser();
                 $username = $user->getUsername();
                 $userquery = $em->createQueryBuilder()
-                    ->select('a.emailId')
+                    ->select('a.emailId','a.id')
                     ->from('InitialShippingBundle:CompanyDetails','a')
                      ->where('a.adminName = :userId')
                     ->setParameter('userId',$username)
                     ->getQuery();
-                $useremailid=$userquery->getSingleScalarResult();
+                $useremailid=$userquery->getResult();
                 $excelobj->setFilename($fileName);
                 $mailer = $this->container->get('mailer');
                 $input=$uploaddir.'/'.$excelobj->getFilename();
@@ -339,7 +339,7 @@ class ReadExcelSheetController extends Controller
                                             $msg="Ships Names Are Mismatch.Mismatch Shipnae: ".$sheetshipsname[$b];
                                             $message = \Swift_Message::newInstance()
                                                 ->setFrom('lawrance@commusoft.co.uk')
-                                                ->setTo($useremailid)
+                                                ->setTo($useremailid[0]['emailId'])
                                                 ->setSubject("Your Document Has Mismatch Values!!!!")
                                                 ->setBody($msg)
                                             ;
@@ -371,7 +371,7 @@ class ReadExcelSheetController extends Controller
                                     $msg="Ships Are Mismatch";
                                     $message = \Swift_Message::newInstance()
                                         ->setFrom('lawrance@commusoft.co.uk')
-                                        ->setTo($useremailid)
+                                        ->setTo($useremailid[0]['emailId'])
                                         ->setSubject("Your Document Has Mismatch Values!!!!")
                                         ->setBody($msg)
                                     ;
@@ -464,7 +464,7 @@ class ReadExcelSheetController extends Controller
                                         $cre = "";
                                         $message = \Swift_Message::newInstance()
                                             ->setFrom('lawrance@commusoft.co.uk')
-                                            ->setTo($useremailid)
+                                            ->setTo($useremailid[0]['emailId'])
                                             ->setSubject("Your Document Has Mismatch Values!!!!")
                                             ->setBody($msg)
                                         ;
@@ -492,7 +492,7 @@ class ReadExcelSheetController extends Controller
                                     $cre = "";
                                     $message = \Swift_Message::newInstance()
                                         ->setFrom('lawrance@commusoft.co.uk')
-                                        ->setTo($useremailid)
+                                        ->setTo($useremailid[0]['emailId'])
                                         ->setSubject("Your Document Has Mismatch Values!!!!")
                                         ->setBody($msg)
                                     ;
@@ -520,7 +520,7 @@ class ReadExcelSheetController extends Controller
                                 $cre = "";
                                 $message = \Swift_Message::newInstance()
                                     ->setFrom('lawrance@commusoft.co.uk')
-                                    ->setTo($useremailid)
+                                    ->setTo($useremailid[0]['emailId'])
                                     ->setSubject("Your Document Has Mismatch Values!!!!")
                                     ->setBody($msg)
                                 ;
@@ -654,7 +654,7 @@ class ReadExcelSheetController extends Controller
                                                             $cre = "";
                                                             $message = \Swift_Message::newInstance()
                                                                 ->setFrom('lawrance@commusoft.co.uk')
-                                                                ->setTo($useremailid)
+                                                                ->setTo($useremailid[0]['emailId'])
                                                                 ->setSubject("Your Document Has Mismatch Values!!!!")
                                                                 ->setBody($msg);
                                                             $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
@@ -736,6 +736,7 @@ class ReadExcelSheetController extends Controller
                             $exceldataofmonth=$excelobj->getDataOfMonth();
                            $myexcelnewdatevalue= $exceldataofmonth->modify('last day of this month');
                             $excelobj->setUserid($username)  ;
+                            $excelobj->setCompanyId($useremailid[0]['id']);
                             $nowdate1 = date("Y-m-d H:i:s");
                             $nowdatetime=new \DateTime($nowdate1);
                             $excelobj->setDatetime($nowdatetime);
@@ -761,7 +762,7 @@ class ReadExcelSheetController extends Controller
                         $cre = "";
                         $message = \Swift_Message::newInstance()
                             ->setFrom('lawrance@commusoft.co.uk')
-                            ->setTo($useremailid)
+                            ->setTo($useremailid[0]['emailId'])
                             ->setSubject("Your Document Has Mismatch Values!!!!")
                             ->setBody($msg)
                         ;
@@ -788,7 +789,7 @@ class ReadExcelSheetController extends Controller
 
                     $message = \Swift_Message::newInstance()
                         ->setFrom('lawrance@commusoft.co.uk')
-                        ->setTo($useremailid)
+                        ->setTo($useremailid[0]['emailId'])
                         ->setSubject("Your Document having more than One Sheets!!!!")
                         ->setBody("Your Document having more than One Sheets!!!!")
                     ;

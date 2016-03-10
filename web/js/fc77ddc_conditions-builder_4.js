@@ -64,17 +64,17 @@
             else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind});
-            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
-            var select = $("<select>", {"class": "all-any-none"});
+            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditional-id"});
+            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper", "id": "all-any-none-wrapper-id"});
+            var select = $("<select>", {"class": "all-any-none"},{"id":"all-any-none-id"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
             select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
             select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
             selectWrapper.append(select);
-            selectWrapper.append($("<span>", {text: "of the following rules:"}));
+            /*selectWrapper.append($("<span>", {text: "of the following rules:"}));*/
             div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id", "text": "Add Rule"});
             var _this = this;
             addRuleLink.click(function(e) {
                 e.preventDefault();
@@ -84,7 +84,7 @@
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 var f = _this.fields[0];
@@ -93,7 +93,7 @@
             });
             div.append(addConditionLink);
 
-            var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
+            var removeLink = $("<a>", {"class": "remove","id":"remove-id", "href": "#", "text": "Remove This Sub-Condition"});
             removeLink.click(function(e) {
                 e.preventDefault();
                 div.remove();
@@ -108,7 +108,7 @@
         },
 
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "rule"});
+            var ruleDiv = $("<div>", {"class": "rule"},{"id": "rule-id"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
@@ -134,7 +134,7 @@
     };
 
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field"});
+        var select = $("<select>", {"class": "field"},{"id": "field-id"});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -149,13 +149,13 @@
     }
 
     function getOperatorSelect() {
-        var select = $("<select>", {"class": "operator"});
+        var select = $("<select>", {"class": "operator"},{"id":"operator-id"});
         select.change(onOperatorSelectChange);
         return select;
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove","id":"remove1-id", "href": "#", "text": "Remove"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }

@@ -14,8 +14,11 @@ $(document).ready(function ()
 
     $('#shipid').change(function()
     {
+        var addDiv = $('#TextBoxesGroup');
+        $('.hiddenclass').remove();
+        $('.dyaminc').remove();
 
-        $('#kpiid option:gt(0)').remove();
+
         var data = {shipid : $('#shipid').val()};
 
         if($(this).val())
@@ -26,12 +29,35 @@ $(document).ready(function ()
                 url: "/readingkpivalues/kpilist",
                 success: function(data)
                 {
+                  // alert(data);
+                    var j=1;
+                    $.each(data.kpiNameArray, function(i, listkpi)
+                    {
 
-                    $.each(data.kpiNameArray, function(i, listkpi) {
+                        var k=$.isNumeric(i);
+                        if(k)
+                        {
+                           /* $('<p class="hiddenclass"><input class="hiddenfield" type="hidden" id="kpids"  name="kpiids[]" value="'+i+'"  />').appendTo(addDiv);
+                            $.each(listkpi,function(mykey,myvalue)
+                            {
+                                $('<p class="hiddenclass"><input type="hidden" id="elementid"  name="elementid[]" value="'+myvalue+'"  />').appendTo(addDiv);
+                            });
+*/
+                        }
+                        if(!k)
+                        {
+                            $(' <section class="data-section-new clearfix"> <h3>'+i+'</h3> <hr class="section-separator"><div id="la'+j+'"></div>').appendTo(addDiv);
+                            $.each(listkpi,function(mykey,myvalue)
+                            {
+                                $('div class="form-group"><label class="control-label col-xs-2" >'+myvalue+'</label> <div class="col-xs-10"><input type="text" id="'+j+'" class="showhiddenclass"  name="'+myvalue+'" required/></div></div> <div class="form-group"><label class="control-label col-xs-2" ></label><div class="col-xs-10"><input class="hiddenfield" type="hidden" id="h_'+j+'"  name="newelemetvalues[]"  /></div></div>').appendTo("#la"+j);
+                            });
+                            $(' </section>').appendTo(addDiv);
 
-                        $('#kpiid').append($('<option>', {
-                            value: listkpi.id, text : listkpi.kpiName
-                        }));
+
+                        }
+                        j++;
+
+
                     });
 
 
@@ -44,29 +70,32 @@ $(document).ready(function ()
         }
     });
 
-    $('#kpiid').change(function()
+    $('.showhiddenclass').live('focusout',function()
     {
-
-
-        $('#elementId option:gt(0)').remove();
-        var mydata = {elementId : $('#kpiid').val()};
-
+       var test = $(this).attr('id');
+       var mydata=$('#'+test).val();
+       var elementname=$(this).attr('name');
+        var datavalue = {myvalue : mydata,myelement:elementname};
         if($(this).val())
         {
-            //alert('call function');
+
             $.ajax({
                 type: "post",
-                data: mydata,
+                data: datavalue,
                 url: "/readingkpivalues/elementlist",
                 success: function(data)
                 {
-                    // alert(data);
-                    $.each(data.ElementNameArray, function(i, listelemnt) {
-
-                        $('#elementId').append($('<option>', {
-                            value: listelemnt.id, text : listelemnt.elementName
-                        }));
-                    });
+                    var returnvalue=data.ElementNameArray;
+                    var m=$.isNumeric(returnvalue);
+                    alert(m);
+                   if(m)
+                   {
+                       $('#h_'+test).val(returnvalue);
+                   }
+                   if(!m)
+                   {
+                       alert(returnvalue);
+                   }
 
 
                 },

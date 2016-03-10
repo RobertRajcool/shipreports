@@ -2,51 +2,45 @@
 
 {% block body %}
 
-    {% block stylesheets %}
-        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-    {% endblock %}
 
-    <h1>ShipDetails list</h1>
+    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Ship Details</h2>
+            <a href="{{ path('shipdetails_new') }}">Create ships</a>
+        </div>
+    {% endif %}
 
-    <table>
-        <thead>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <th>ShipName</th>
+                <th>Ship Name</th>
+
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-        {% for shipDetail in shipDetails %}
-            <tr>
-                <td>{{ shipDetail.shipName }}</td>
-                <td>{{ shipDetail.description }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('shipdetails_show', { 'id': shipDetail.id }) }}">show</a>
-                        </li>
+            </thead>
+            <tbody>
+            {% for shipDetail in shipDetails %}
+                <tr>
+                    <td>{{ shipDetail.shipName }}</td>
+                    <td>{{ shipDetail.description }}</td>
+                    <td>
+                        <a href="{{ path('shipdetails_show', { 'id': shipDetail.id }) }}">show</a>
                         {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                        <li>
                             <a href="{{ path('shipdetails_edit', { 'id': shipDetail.id }) }}">edit</a>
-                        </li>
                         {% endif %}
-                        <li>
-                            <a href="{{ path('kpidetails_select', { 'id': shipDetail.id }) }}">Available kpi's</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-        <ul>
-            <li>
-                <a href="{{ path('shipdetails_new') }}">Create a new entry</a>
-            </li>
-        </ul>
-    {% endif %}
+
+                        <a href="{{ path('kpidetails_select', { 'id': shipDetail.id }) }}">Available kpi's</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
 {% endblock %}
+
+
+

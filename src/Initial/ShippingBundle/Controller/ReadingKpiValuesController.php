@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ReadingKpiValues;
 use Initial\ShippingBundle\Form\ReadingKpiValuesType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 /**
  * ReadingKpiValues controller.
@@ -168,10 +169,11 @@ class ReadingKpiValuesController extends Controller
      * @Method("Post")
      */
     public function refreshkpilistAction(Request $request)
-
     {
-
         $data = $request->request->get('shipid');
+        $session = new Session();
+       // $session->start();
+
 
 
         $em=$this->getDoctrine()->getManager();
@@ -184,10 +186,75 @@ class ReadingKpiValuesController extends Controller
             ->setParameter('shipdetailsid', $data)
             ->add('orderBy', 'b.id  ASC ')
             ->getQuery();
-        $ids = $query->getResult();
-        $response = new JsonResponse();
-        $response->setData(array('kpiNameArray' => $ids));
 
+        $ids = $query->getResult();
+
+
+        $returnarray=array();
+        $sessionkpielementid=array();
+        $k=0;
+        for($i=0;$i<count($ids);$i++)
+        {
+            $kpiid=$ids[$i]['id'];
+            $kpiname=$ids[$i]['kpiName'];
+
+            $query = $em->createQueryBuilder()
+                ->select('b.elementName', 'b.id')
+                ->from('InitialShippingBundle:ElementDetails', 'b')
+                ->where('b.kpiDetailsId = :kpidetailsid')
+                ->setParameter('kpidetailsid', $kpiid)
+                ->add('orderBy', 'b.id  ASC ')
+                ->getQuery();
+            $elementids = $query->getResult();
+            if(count($elementids)==0)
+            {
+                $query1 = $em->createQueryBuilder()
+                    ->select('b.kpiName', 'b.id')
+                    ->from('InitialShippingBundle:KpiDetails', 'b')
+                    ->where('b.kpiName = :kpiName')
+                    ->setParameter('kpiName', $kpiname)
+                    ->add('orderBy', 'b.id  ASC ')
+                    ->groupby('b.kpiName')
+                    ->getQuery();
+
+                $ids1 = $query1->getResult();
+                $newkpiid=$ids1[0]['id'];
+                $newkpiname=$ids1[0]['kpiName'];
+                $query = $em->createQueryBuilder()
+                    ->select('b.elementName', 'b.id')
+                    ->from('InitialShippingBundle:ElementDetails', 'b')
+                    ->where('b.kpiDetailsId = :kpidetailsid')
+                    ->setParameter('kpidetailsid', $newkpiid)
+                    ->add('orderBy', 'b.id  ASC ')
+                    ->getQuery();
+                $elementids = $query->getResult();
+                for($j=0;$j<count($elementids);$j++)
+                {
+                    $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
+                    $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+
+
+                }
+            }
+            else
+            {
+
+                for($j=0;$j<count($elementids);$j++)
+                {
+                    $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
+                    $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+
+                }
+            }
+
+
+
+
+        }
+
+        $session->set('sessionkpielementid', $sessionkpielementid);
+        $response = new JsonResponse();
+        $response->setData(array('kpiNameArray' => $returnarray));
         return $response;
 
 
@@ -203,21 +270,67 @@ class ReadingKpiValuesController extends Controller
 
     {
 
-        $kpidetailsid = $request->request->get('elementId');
-
-
+        $elementvalue = $request->request->get('myvalue');
+        $elementidkpiid = $request->request->get('myelement');
         $em=$this->getDoctrine()->getManager();
         $query = $em->createQueryBuilder()
-            ->select('b.elementName', 'b.id')
+            ->select('b.id')
             ->from('InitialShippingBundle:ElementDetails', 'b')
-            ->where('b.kpiDetailsId = :kpidetailsid')
-            ->setParameter('kpidetailsid', $kpidetailsid)
-            ->add('orderBy', 'b.id  ASC ')
+            ->where('b.elementName = :elementName')
+            ->setParameter('elementName', $elementidkpiid)
             ->getQuery();
-        $elementids = $query->getResult();
+        $elementids = $query->getOneOrNullResult();
+        $read1 = "";
+        $result="";
+        $rulesarray = $em->createQueryBuilder()
+            ->select('b.rules')
+            ->from('InitialShippingBundle:ElementRules', 'b')
+            ->where('b.elementDetailsId = :elementDetailsId')
+            ->setParameter('elementDetailsId', $elementids['id'])
+            ->getQuery()
+            ->getResult();
+        $totalcountofrulesarry=count($rulesarray);
+        if ($totalcountofrulesarry > 0)
+        {
+
+            for ($aaa = 0; $aaa < count($rulesarray); $aaa++)
+            {
+
+                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_nodejs_3.js \'' . $rulesarray[$aaa]['rules'] . ' \' ' . $elementvalue;
+                $jsfilename = 'node ' . $jsfiledirectry;
+                $handle = popen($jsfilename, 'r');
+                $read = fread($handle, 2096);
+                $read1 = str_replace("\n", '', $read);
+                if ($read1 != "false")
+                {
+                    break;
+                }
+
+            }
+            if ($read1 == "false")
+            {
+                $result="Please Enter correct value";
+
+            }
+            //If Element rule return null answer that shows error message Ends Here//
+            else
+            {
+                $result=$read1;
+
+            }
+        }
+        else
+        {
+            $result=$elementvalue;
+
+        }
+
+
+
+
 
         $response = new JsonResponse();
-        $response->setData(array('ElementNameArray' => $elementids));
+        $response->setData(array('ElementNameArray' => $result));
 
         return $response;
 
@@ -233,20 +346,46 @@ class ReadingKpiValuesController extends Controller
      */
     public function new1Action(Request $request)
     {
+        $session = new Session();
+        $kpiandelementids= $session->get('sessionkpielementid');
         $params = $request->request->get('reading_kpi_values');
+        $elementvalues=$request->request->get('newelemetvalues');
 
         $em = $this->getDoctrine()->getManager();
         $shipid = $params['shipDetailsId'];
-        $kpiid = $params['kpiDetailsId'];
-        $elementId = $params['elementDetailsId'];
         $month = $params['monthdetail'];
-        $value = $params['value'];
         $monthtostring=$month['year'].'-'.$month['month'].'-'.$month['day'];
+        $new_date=new \DateTime($monthtostring);
+        $new_date->modify('first day of this month');
+        $k=0;
+        foreach($kpiandelementids as $kpikey => $kpipvalue)
+        {
 
-        $datafromuser=array('shipid'=>$shipid,'kpiid'=>$kpiid,'elementId'=>$elementId,'value'=>$value,'dataofmonth'=>$monthtostring);
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
+            $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpikey));
+            foreach($kpipvalue as $elementkey => $elementvalue)
+            {
+                $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$elementvalue));
+
+                    $readingkpivalue=new ReadingKpiValues();
+                    $readingkpivalue->setKpiDetailsId($newkpiid);
+                    $readingkpivalue->setElementDetailsId($newelementid);
+                    $readingkpivalue->setShipDetailsId($newshipid);
+                    $readingkpivalue->setMonthdetail($new_date);
+                    $readingkpivalue->setValue($elementvalues[$k]);
+                    $em->persist($readingkpivalue);
+                    $em->flush();
+               $k++;
+
+            }
+
+        }
+
+        /*$datafromuser=array('shipid'=>$shipid,'kpiid'=>$kpiids,'elementId'=>$elementid,'value'=>$elementvalue,'dataofmonth'=>$monthtostring);
         $gearman = $this->get('gearman');       //$datafromuser=array();
-        $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~kpivalues', json_encode($datafromuser));
-
+        $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~kpivalues', json_encode($datafromuser));*/
+        $session->remove('sessionkpielementid');
+        $againsessionvalue=$session->get('sessionkpielementid');
 
         return $this->redirectToRoute('readingkpivalues_index');
 

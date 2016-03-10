@@ -393,19 +393,6 @@
 })(jQuery);
 
 /**
- * Created by lawrance on 29/2/16.
- */
-var engine=require('./rule-engine.js');
-//var rule = process.argv[2];
-//var value= process.argv[3];
-var rule={
-conditions: {all: [{name: "name", operator: "present", value: ""}, {name: "age", operator: "greaterThanEqual", value: "21"}]}
-
-}
-//var obj=JSON.parse(rule);
-var eng =new engine(rule.conditions);
-console.log(eng);
-/**
  * Created by lawrance on 17/2/16.
  */
 

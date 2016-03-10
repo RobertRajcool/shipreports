@@ -17,21 +17,9 @@ var samp = new engine({
 var res = samp.run(conditionsAdapter);
 if(res==true)
 {
-console.log(obj.actions);
+    console.log(obj.actions);
 }
 else
 {
     console.log(res);
 }
-
-/*
-
-var eng =new engine({
-    conditions: {all: [{name: "name", operator: "present", value: ""}, {name: "age", operator: "greaterThanEqual", value: "21"}]}
-
-});
-
-var conditionsAdapter = {name: "Joe", age: 20};
-var actionsAdapter = {giveDrink: function(data) { alert("Gave user a " + data.find("drinkType")); } };
-console.log(eng.run(conditionsAdapter));
-*/

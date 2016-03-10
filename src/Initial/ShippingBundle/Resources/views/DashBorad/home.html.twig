@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Dashboard</h2>
+            <a href="{{ path('shipdetails_new') }}">Back</a>
+        </div>
+        <div class="bs-example">
+        <div class="modal" style="display: none">
+            <div class="center">
+                {% image '@InitialShippingBundle/Resources/public/img/loader5.gif' %}
+                <img src="{{ asset_url }}" alt="Loader Image"/>
+                {% endimage %}
+            </div>
+        </div>
+            <div class="table-responsive">
+            <table class="table table-striped" style="float: left" id="readingkpitable">
+                <thead>
+                <tr>
+
+                    <th>Ship Name</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for ship in allships %}
+                    <tr>
+
+
+                        <td><a   href="{{ path('listallkpiforship', { 'shipid': ship.id }) }}" title="All Kpi List"> {{ ship.shipName }}</a></td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+                </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,3 +1,6 @@
+initial_shipping_dashborad:
+    resource: "@InitialShippingBundle/Controller/DashboradController.php"
+    type:     annotation
 initial_shipping_chart:
     resource: "@InitialShippingBundle/Controller/ChartController.php"
     type:     annotation
@@ -25,6 +28,7 @@ initial_shipping_company_users:
 initial_shipping_user_role:
     resource: "@InitialShippingBundle/Controller/UserRoleController.php"
     type:     annotation
+
 
 initial_shipping_element_details:
     resource: "@InitialShippingBundle/Controller/ElementDetailsController.php"

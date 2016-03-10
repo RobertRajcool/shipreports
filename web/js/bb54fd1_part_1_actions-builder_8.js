@@ -10,6 +10,7 @@
             });
         }
     };
+    var count = 0;
 
     function ActionsBuilder(element, options) {
         this.element = $(element);
@@ -34,6 +35,7 @@
 
             addButton.click(function(e) {
                 e.preventDefault();
+                count++;
                 container.append(_this.buildAction({}));
             });
 
@@ -59,8 +61,8 @@
         buildAction: function(data) {
             var field = this._findField(data.name);
             var div = $("<div>", {"class": "action"});
-            var fieldsDiv = $("<div>", {"class": "subfields"});
-            var select = $("<select>", {"class": "action-select", "name": "action-select"});
+            var fieldsDiv = $("<div>", {"class": "subfields","id":"subfields-id"});
+            var select = $("<select>", {"class": "action-select","id":"action-select-id"+count, "name": "action-select"});
 
             for(var i=0; i < this.fields.length; i++) {
                 var possibleField = this.fields[i];
@@ -83,7 +85,7 @@
                 div.attr("class", "action " + val);
             });
 
-            var removeLink = $("<a>", {"href": "#", "class": "remove", "text": "Remove Action"});
+            var removeLink = $("<a>", {"href": "#", "class": "remove-action","id":"action_remove", "text": "Remove Action"});
             removeLink.click(function(e) {
                 e.preventDefault();
                 div.remove();
@@ -104,14 +106,17 @@
             var out = [];
             fields.each(function() {
                 var input = $(this).find("> :input, > .jstEditor > :input");
-                var subfields = $(this).find("> .subfields > .field");
+                var subfields = $(this).find("> #subfields-id > .field");
                 var action = {name: input.attr("name"), value: input.val()};
                 if(subfields.length > 0) {
                     action.fields = _this.collectData(subfields);
                 }
                 out.push(action);
             });
-            return out;
+            return {
+                name:'action-select',
+                value: fields.find("#action-select-id"+count).val()
+            };
         },
 
         _findField: function(fieldName) {
