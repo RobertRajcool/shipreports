@@ -1,10 +1,6 @@
 {% extends 'base.html.twig' %}
-{% block title %}Star Shipping Application{% endblock %}
 
-{% block content %}
-    <h1 align="center">Shipping Application</h1>
 
-{% endblock %}
 {% block body %}
     {% block javascripts %}
         {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
@@ -12,39 +8,52 @@
         {% endjavascripts %}
     {% endblock %}
 
-    {% block stylesheets %}
-        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-    {% endblock %}
+    {# {% block stylesheets %}
+         {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+         <link rel="stylesheet" href="{{ asset_url }}"
+         {% endstylesheets %}
+     {% endblock %}#}
+    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Company Users List</h2>
+            <a href="{{ path('fos_user_registration_register') }}">Add newuser</a>
+        </div>
+        {% endif %}
 
 
-    <h1>Company Users List</h1>
-    <div align="center" class="listitem">
         <table id="readingkpitable">
             <thead>
             <tr>
+
+
                 <th>Username</th>
                 <th>Email id</th>
-                <th>Role</th>
+                <th> Roles</th>
+                <th> Actions</th>
 
             </tr>
             </thead>
             <tbody>
             {% for listofuser in userdetails %}
-                <tr>
-                    <td>{{ listofuser.username }}</td>
-                    <td>{{ listofuser.email }}</td>
-                    <td>{{ listofuser.roles[0] }}</td>
-                    <td><a href="">Edit</a></a> </td>
+            <tr>
 
-                </tr>
-            {% endfor %}
+                <td>{{ listofuser.username }}</td>
+                <td>{{ listofuser.email }}</td>
+                <td>{{ listofuser.roles[0] }}</td>
+                <td>
+                    <a {#href="{{ path('mycontroller', { 'id': listofuser.id }) }}"#}>Edit</a>
+                    <a{# href="{{ path('delete_user',{ 'id': listofuser.id })  }}"#}>Delete</a>
+                </td>
+                {% endfor %}
+
+            </tr>
             </tbody>
-        </table>
+        </table><br><br>
 
 
-        <a style="align-items: center;margin-left: 44%;margin-top: 5%" href="{{ path('fos_user_registration_register') }}">Add New User</a>
+
     </div>
+
 
 {% endblock %}
