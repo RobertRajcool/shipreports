@@ -16,12 +16,13 @@
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>List of files upload</h2>
+            <a href="{{ path('fileadd') }}">Import File</a>
         </div>
         <div class="table-responsive">
         <table id="readingkpitable" class="table table-striped">
             <thead>
             <tr>
-                <th>Username</th>
+                {#<th>Username</th>#}
                 <th>Data of Month</th>
                 <th>Upload DateTime</th>
                 <th>Filename</th>
@@ -33,7 +34,7 @@
             {% for listofuser in userdetails %}
                 <tr>
 
-                    <td>{{ listofuser.userid }}</td>
+                    {#<td>{{ listofuser.userid }}</td>#}
                     <td>{{ listofuser.dataOfMonth|date('F-Y') }}</td>
                     <td>{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
                     <td>{{ listofuser.filename }}</td>

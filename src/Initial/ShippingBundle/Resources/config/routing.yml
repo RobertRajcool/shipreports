@@ -45,3 +45,16 @@ downloadPdf:
 hello:
     path:     /hello
     defaults: { _controller: "InitialShippingBundle:Highchart:sendbackend" }
+user_index:
+    path: register/show
+    defaults: { _controller: "InitialShippingBundle:UserActivitiy:index1" }
+mycontroller:
+        path: /{id}/mycontroller
+        defaults: { _controller: "InitialShippingBundle:UserActivitiy:edit1" }
+delete_user:
+        path: /{id}/userdelete
+        defaults: { _controller: "InitialShippingBundle:UserActivitiy:delete"}
+company_edit:
+        path: /useredit
+        defaults: { _controller: "InitialShippingBundle:UserActivitiy:update"}
+

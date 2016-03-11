@@ -42,8 +42,8 @@
                 <td>{{ listofuser.email }}</td>
                 <td>{{ listofuser.roles[0] }}</td>
                 <td>
-                    <a {#href="{{ path('mycontroller', { 'id': listofuser.id }) }}"#}>Edit</a>
-                    <a{# href="{{ path('delete_user',{ 'id': listofuser.id })  }}"#}>Delete</a>
+                    <a href="{{ path('mycontroller', { 'id': listofuser.id }) }}">Edit</a>
+                    <a href="{{ path('delete_user',{ 'id': listofuser.id })  }}">Delete</a>
                 </td>
                 {% endfor %}
 

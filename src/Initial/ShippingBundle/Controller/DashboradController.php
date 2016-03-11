@@ -362,9 +362,11 @@ class DashboradController extends Controller
                 array_push($elementweightagearray,$weightage);
                 $kpi_rules = $em->createQueryBuilder()
                     ->select('a.rules')
-                    ->from('InitialShippingBundle:ElementRules','a')
+                    ->from('InitialShippingBundle:Rules','a')
                     ->where('a.elementDetailsId = :elementid')
+                    ->andwhere('a.kpiDetailsId = :kpiid')
                     ->setParameter('elementid',$listelement[$jk]['id'])
+                    ->setParameter('kpiid',$kpiid)
                     ->getQuery()
                     ->getResult();
                 $read1="";

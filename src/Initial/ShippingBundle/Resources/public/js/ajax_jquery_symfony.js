@@ -46,11 +46,13 @@ $(document).ready(function ()
                         }
                         if(!k)
                         {
-                            $('<p class="dyaminc"><label style="float: left"><b>'+i+'</b></label>').appendTo(addDiv);
+                            $(' <section class="data-section-new clearfix"> <h3>'+i+'</h3> <hr class="section-separator"><div id="la'+j+'"></div>').appendTo(addDiv);
                             $.each(listkpi,function(mykey,myvalue)
                             {
-                                $('<p class="dyaminc"><tr><td><label style="margin-left: 50px">'+myvalue+'</label></td><td><input type="text" id="'+j+'" class="showhiddenclass"  name="'+myvalue+'" required/><input class="hiddenfield" type="hidden" id="h_'+j+'"  name="newelemetvalues[]" value=" "  /></td></tr>').appendTo(addDiv);
+                                $('div class="form-group"><label class="control-label col-xs-2" >'+myvalue+'</label> <div class="col-xs-10"><input type="text" id="'+j+'" class="showhiddenclass"  name="'+myvalue+'" required/></div></div> <div class="form-group"><label class="control-label col-xs-2" ></label><div class="col-xs-10"><input class="hiddenfield" type="hidden" id="h_'+j+'"  name="newelemetvalues[]"  /></div></div>').appendTo("#la"+j);
                             });
+                            $(' </section>').appendTo(addDiv);
+
 
                         }
                         j++;

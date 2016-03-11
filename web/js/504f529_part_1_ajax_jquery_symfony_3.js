@@ -37,12 +37,12 @@ $(document).ready(function ()
                         var k=$.isNumeric(i);
                         if(k)
                         {
-                           /* $('<p class="hiddenclass"><input class="hiddenfield" type="hidden" id="kpids"  name="kpiids[]" value="'+i+'"  />').appendTo(addDiv);
+                            $('<p class="hiddenclass"><input class="hiddenfield" type="hidden" id="kpids"  name="kpiids[]" value="'+i+'"  />').appendTo(addDiv);
                             $.each(listkpi,function(mykey,myvalue)
                             {
                                 $('<p class="hiddenclass"><input type="hidden" id="elementid"  name="elementid[]" value="'+myvalue+'"  />').appendTo(addDiv);
                             });
-*/
+
                         }
                         if(!k)
                         {
@@ -85,17 +85,15 @@ $(document).ready(function ()
                 url: "/readingkpivalues/elementlist",
                 success: function(data)
                 {
-                    var returnvalue=data.ElementNameArray;
-                    var m=$.isNumeric(returnvalue);
-                    alert(m);
-                   if(m)
-                   {
-                       $('#h_'+test).val(returnvalue);
-                   }
-                   if(!m)
-                   {
-                       alert(returnvalue);
-                   }
+                     alert(data);
+                    $.each(data.ElementNameArray, function(i, listelemnt)
+                    {
+                        $('<p class="dyaminc"><label></label></label><input type="text" id="p_new"  name="' + listelemnt.id +'" value="" placeholder="'+listelemnt.elementName+'" />').appendTo(addDiv);
+
+                     /*   $('#elementId').append($('<option>', {
+                            value: listelemnt.id, text : listelemnt.elementName
+                        }));*/
+                    });
 
 
                 },

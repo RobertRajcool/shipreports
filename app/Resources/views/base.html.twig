@@ -87,15 +87,15 @@
                         <li><a href="{{ path('kpidetails_select1') }}">Add KPI</a></li>
                         <li> <a href="{{ path('elementdetails_select1') }}">Add Elements</a></li>
                         <li><a href="{{ path('rules_select') }}">Add Rules</a></li>
-                        <li> <a href="{{ path('fileadd') }}">Import File</a></li>
+                        <li> <a href="{{ path('showfile') }}">Import File</a></li>
                         <li> <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a></li>
                     {% endif %}
                     {%  if is_granted("ROLE_ADMIN")  %}
                         <li><a href="{{ path('fos_user_registration_show') }}">Manage Users</a></li>
                     {% endif %}
                     {%  if is_granted("ROLE_SUPER_ADMIN")  %}
-                        <li><a href="{{ path('fos_user_registration_register') }}">create Admin</a></li>
-                        <li> <a href="{{ path('companydetails_index') }}">create Company </a></li>
+                        {#<li><a href="{{ path('fos_user_registration_register') }}">create Admin</a></li>#}
+                        <li> <a href="{{ path('user_index') }}">Create Company </a></li>
                     {% endif %}
 
                 </ul>
