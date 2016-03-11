@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Company Details</h2>
+            <a href="{{ path('fos_user_registration_register') }}">create Admin</a>
+        </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Company name</th>
+                <th>Admin name</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for shipDetail in shipDetails %}
+                <tr>
+                    <td>{{ shipDetail.companyName }}</td>
+                    <td>{{ shipDetail.adminName }}</td>
+                    <td>{{ shipDetail.emailId }}</td>
+                    <td>
+                        {%  if is_granted("ROLE_SUPER_ADMIN")  %}
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+                                <label class="onoffswitch-label" for="myonoffswitch">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        {% endif %}
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+{% endblock %}
+    {% endblock %}
+
+
+
