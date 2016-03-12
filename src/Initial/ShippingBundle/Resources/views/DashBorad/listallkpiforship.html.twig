@@ -11,6 +11,9 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/bootstrap.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
         <script src="http://code.highcharts.com/highcharts.js"></script>
         <script src="http://code.highcharts.com/modules/exporting.js"></script>
         {# <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>#}
@@ -71,7 +74,14 @@
                 {% for kpi in listofkpi %}
                     <tr>
 
-                        <td><a    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true&margin-left=213px&width=800px"  title="{{ kpi.kpiName }}"> {{ kpi.kpiName }}</a></td>
+                        <td>
+
+                            <a
+                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true&margin-left=213px&width=800px" class="thickbox"
+                                    title="{{ kpi.kpiName }}">
+                                {{ kpi.kpiName }}
+                            </a>
+                        </td>
                         <td>{{ kpiweightage[i] }}%</td>
                         {% for j in 0..countmonth1 %}
                             <td>
@@ -107,5 +117,8 @@
             <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
                 </div>
         </div>
+
+
     </div>
+
 {% endblock %}

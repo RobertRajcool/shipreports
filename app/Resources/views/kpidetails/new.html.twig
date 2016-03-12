@@ -22,74 +22,72 @@
         {% endjavascripts %}#}
 
     {% endblock %}
-  {#  {% block stylesheets %}
-        {% stylesheets '@InitialShippingBundle/Resources/public/js/dropdownchecklist/css/*' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-
-    {% endblock %}#}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
-            <h2>KpiDetails creation</h2>
+            <h2>Create Kpi</h2>
             <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
         </div>
         <div class="bs-example">
-    <form  class="form-horizontal no-style"  action="{{ path('kpidetails_new1') }}" method="post">
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.shipDetailsId,{'id':'shipid','label': 'Select Ship'}) }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.kpiName,{'id':'kpiid','label': 'Kpi Name'})  }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.description,{'id':'elementId','label': 'Description'}) }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.weightage,{'id':'weightageId','label': 'Weightage'}) }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.activeDate,{'id':'month','label': 'Active Date'}) }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.endDate,{'id':'valueid','label': 'End Date'}) }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.cellName,{'id':'valueid','label': 'Cell Name'}) }}
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-xs-2">Ship Name</label>
-            <div class="col-xs-10">
-                {{ form_row(form.cellDetails,{'id':'valueid','label': 'Cell Detail'}) }}
-            </div>
-        </div>
 
+    <form class="form-horizontal no-style" action="{{ path('kpidetails_new1') }}" method="post">
+        <div class="form-group">
+            <label class="control-label col-xs-2">Ship Name</label>
+            <div class="col-xs-10">
+                {{ form_row(form.shipDetailsId,{'id':'shipid','label': ''}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Kpi Name</label>
+            <div class="col-xs-10">
+                {{ form_row(form.kpiName,{'id':'kpiid','label': ''})  }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Description</label>
+            <div class="col-xs-10">
+                {{ form_row(form.description,{'id':'elementId','label': ''}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Weightage</label>
+            <div class="col-xs-10">
+                {{ form_row(form.weightage,{'id':'weightageId','label': ''}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Active Date</label>
+            <div class="col-xs-10">
+                {{ form_row(form.activeDate,{'id':'month','label': ''}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">End Date</label>
+            <div class="col-xs-10">
 
+                {{ form_row(form.endDate,{'id':'valueid','label': ''}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Cell Name</label>
+            <div class="col-xs-10">
 
+                {{ form_row(form.cellName,{'id':'valueid','label': ''}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2">Cell Detail</label>
+            <div class="col-xs-10">
 
+                {{ form_row(form.cellDetails,{'id':'valueid','label': ''}) }}
+            </div>
+        </div>
 
 
         <table id="rule-table">
+            <tr id="row_id">
+                <th>Conditions</th>
+                <th>Color</th>
+            </tr>
 
         </table>
 
@@ -98,10 +96,13 @@
         <p id="text_box"></p>
 
         <input type="hidden" id="result" name="value">
+
+
         <div class="actions">
-        <input class="btn btn-primary" type="submit" value="Create" id="submit_id" />
-            </div>
+            <input type="submit" class="btn btn-primary" value="Create" id="submit_id" />
+        </div>
     </form>
-</div>
+
+   </div>
         </div>
 {% endblock %}

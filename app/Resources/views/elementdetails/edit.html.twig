@@ -5,7 +5,7 @@
     {% block javascripts %}
         {% javascripts
         '@AppBundle/Resources/public/js/AAA.js'
-        '@AppBundle/Resources/public/js/Element_Edit_Demo.js'
+        '@AppBundle/Resources/public/js/EditDemo.js'
         '@AppBundle/Resources/public/js/Element_actions.js'
         '@AppBundle/Resources/public/js/Element_conditions-builder.js'
         '@AppBundle/Resources/public/js/rules.js'
@@ -81,9 +81,7 @@
 
                 <div id="conditions"></div>
                 <div id="actions">
-
-
-                    <input type="submit" class="btn btn-primary" value="Edit" />
+                    <input type="submit" class="btn btn-primary" value="Update" />
                 </div>
 
                 {{ form_end(edit_form) }}

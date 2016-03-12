@@ -449,4 +449,15 @@ class DashboradController extends Controller
                 )
         );
     }
+    /**
+     * List all element for kpi
+     *
+     * @Route("/bootid", name="bootid")
+     */
+    public function bootAction(Request $request)
+    {
+        return $this->render(
+            'InitialShippingBundle:DashBorad:elementforkpi.html.twig');
+
+    }
 }

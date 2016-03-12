@@ -1,6 +1,18 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
+
+    {% block javascripts %}
+        {% javascripts '@AppBundle/Resources/public/js/AAA.js' %}
+
+        <script src="{{ asset_url }}"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#company_id').hide();
+            });
+        </script>
+        {% endjavascripts %}
+    {% endblock %}
+
 
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
@@ -21,6 +33,7 @@
                     {{  form_widget(edit_form.description) }}
                 </div>
             </div>
+            {{ form_row(edit_form.companyDetailsId,{'id':'company_id','label': ' '}) }}
             <div class="actions">
                 <input type="submit" class="btn btn-primary" value="Edit" />
             </div>

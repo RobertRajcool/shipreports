@@ -1,10 +1,10 @@
 $(document).ready(function(){
+    $('#row_id').hide();
     $('#jsid').change(function()
     {
         var id = $('#jsid').val();
         $('#element option:gt(0)').remove();
         var data = {jsid : $('#jsid').val()};
-        //alert(data.jsid);
         if($(this).val())
         {
 
@@ -50,8 +50,7 @@ $(document).ready(function(){
 
     function DynamicBox(value){
         return '<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+
-            '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'/*+
-         '<select name="sub-action-select" id="sud-action-select-id_'+j+'"> <option>--Choose color--</option> <option value="Green">Green</option> <option value="Red">Red</option> <option value="Yellow">Yellow</option> </select>'*/
+            '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 
 
@@ -65,7 +64,9 @@ $(document).ready(function(){
         $('.remove-action').remove();
     });
 
+
     var i =0;
+    var condition_text = "";
     $('.dynamic-add').live("click",function() {
         var currentId = $(this).attr('id');
         id_value = splitfun(currentId);
@@ -81,21 +82,70 @@ $(document).ready(function(){
         var rule = $('#rules-id_'+id_value).val();
         var rule_obj = JSON.parse(rule);
         var con = rule_obj.conditions.all;
-        //alert(con.length);
+        var new_rule_obj = con.filter(filterByID);
+        rule_obj.conditions.all = new_rule_obj;
+        var final_rule = JSON.stringify(rule_obj);
+        $('#rules-id_'+id_value).val(final_rule);
+        $('#row_id').show();
+
+        $.each(con, function(j)
+        {
+            //alert(con[j].operator);
+            if(con[j].operator=='equalTo')
+            {
+                con[j].operator = '=';
+            }
+            else if(con[j].operator=='notEqualTo')
+            {
+                con[j].operator = '!=';
+            }
+            else if(con[j].operator=='greaterThan')
+            {
+                con[j].operator = '>';
+            }
+            else if(con[j].operator=='greaterThanEqual')
+            {
+                con[j].operator = '>=';
+            }
+            else if(con[j].operator=='lessThan')
+            {
+                con[j].operator = '<';
+            }
+            else if(con[j].operator=='lessThanEqual')
+            {
+                con[j].operator = '<=';
+            }
+
+            var condition_text_one = con[j].operator+con[j].value;
+            if(j==0)
+            {
+                condition_text = condition_text_one;
+            }
+            if(j>0)
+            {
+                condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+            }
+        });
+
         var $tr = $('<tr>').append(
-            $('<td>').text(con[i].operator),
-            $('<td>').text(con[i].value),
+            $('<td>').text(condition_text),
             $('<td>').text(rule_obj.actions.value)
         ).appendTo('#rule-table');
         i++;
     });
-    /*$('#submit_id').live("click",function(){
-     $('#result').val(i);
-     });*/
 
     function splitfun(data){
         var num = data.split('_');
         return num[1];
     }
+
+    function filterByID(obj) {
+        if(jQuery.isEmptyObject(obj)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 });
 

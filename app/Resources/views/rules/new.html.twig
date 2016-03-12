@@ -11,27 +11,74 @@
         '@AppBundle/Resources/public/js/Element_conditions-builder.js'
         '@AppBundle/Resources/public/js/rules.js'
         '@AppBundle/Resources/public/js/sample.js'
+
         %}
 
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
-        <h1>Rules creation</h1>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Rules Create</h2>
+            <a href="{{ path('rules_select') }}">Back to the list</a>
+        </div>
 
-        <form action="{{ path('rules_new1') }}" method="post">
+        <div class="bs-example">
+            <form class="form-horizontal no-style" action="{{ path('rules_new1') }}" method="post">
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Kpi Name</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.kpiDetailsId,{'id' :'jsid'}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Element Name</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.elementDetailsId,{'id' :'element'}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Rule</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.rules,{'id' :'result'}) }}
+                    </div>
+                </div>
+                <table id="rule-table">
+                    <tr id="row_id">
+                        <th>Conditions</th>
+                        <th>Color</th>
+                    </tr>
+                </table>
+
+                <div id="conditions"></div>
+                <div id="actions"></div>
+                <p id="text_box"></p>
+                <input type="hidden" id="result" name="value">
+                <div class="actions">
+                    <input class="btn btn-primary" type="submit" value="Create" id="submit_id" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+       {# <form class="form-horizontal no-style" action="{{ path('rules_new1') }}" method="post">
             {{ form_row(form.kpiDetailsId,{'id' :'jsid'}) }}
             {{ form_row(form.elementDetailsId,{'id' :'element'}) }}
             {{ form_row(form.rules,{'id' :'result'}) }}
 
             <table id="rule-table">
-
+                <tr id="row_id">
+                    <th>Conditions</th>
+                    <th>Color</th>
+                </tr>
             </table>
 
             <div id="conditions"></div>
             <div id="actions"></div>
             <p id="text_box"></p>
 
-            <input type="hidden" size="2" id="ageField">
+            <input type="hidden" id="result" name="value">
 
             <input type="submit" value="Create" id="submit_id" />
         </form>
@@ -41,6 +88,6 @@
             <li>
                 <a href="{{ path('rules_select') }}">Back to the list</a>
             </li>
-        </ul>
+        </ul>#}
     {% endblock %}
 {% endblock %}

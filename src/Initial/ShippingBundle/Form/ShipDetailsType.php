@@ -16,7 +16,7 @@ class ShipDetailsType extends AbstractType
     {
         $builder
             ->add('shipName')
-            ->add('companyDetailsId','hidden')
+            ->add('companyDetailsId')
             ->add('description')
         ;
     }

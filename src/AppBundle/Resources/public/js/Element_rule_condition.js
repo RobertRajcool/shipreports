@@ -3,12 +3,10 @@ $(document).ready(function(){
     $('.all-any-none').remove();
     $('.remove').remove();
 
-    $('#add-rule-id').live('click',function(){
-        $('.remove').remove();
-    });
-
     var j = 0;
     $('.add-rule').bind('click',function(){
+        $('.remove').remove();
+        $('.remove-condition').remove();
         var div = $('<div>');
         j++;
         $('#operator-id_'+j).hide();

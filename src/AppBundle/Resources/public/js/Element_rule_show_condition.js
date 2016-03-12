@@ -9,7 +9,6 @@ $(document).ready(function(){
 
     var count = 0;
     var num = 0;
-    var edit_count = 0;
 
     $('.add-rule').live('click',function(){
         count++;
@@ -34,7 +33,7 @@ $(document).ready(function(){
                     {
                         var rule_obj = JSON.parse( data.Rule_Array[i].rules);
 
-                        $('#rule_obj_text').append($('<input>').attr({'type':'text','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.Rule_Array[i].rules));
+                        $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.Rule_Array[i].rules));
                         $('#rule_obj_text').append($('<br>'));
 
                         $.each(rule_obj.conditions.all, function(j)
@@ -76,7 +75,7 @@ $(document).ready(function(){
                                 }
                             }
                         });
-                        var $tr = $('<tr>').append(
+                        var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
                             $('<td>').text(condition_text),
                             $('<td>').text(rule_obj.actions.value),
                             $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit"))
@@ -97,16 +96,14 @@ $(document).ready(function(){
     var conditions, actions;
 
     $('.edit_class').live("click",function(){
-
         var currentId = $(this).attr('id');
         var ans = splitfun(currentId);
-        edit_count=parseInt(ans);
+        $('#row_id-'+ans).remove();
         var ans1 = $('#rule_obj_text-'+ans).val();
         var object_rule = JSON.parse(ans1);
-        if(edit_count==parseInt(ans))
-        {
-            $('#rule_edit_button').append($('<input>').attr({'type':'button', 'id':'edit_add-'+ans+'', 'class':'edit_add_class'}).val("add"));
-        }
+        $('#rule_edit_button').append($('<input>').attr({'type':'button', 'id':'edit_add-'+ans+'', 'class':'edit_add_class'}).val("add"));
+        $('.edit_add_class').hide();
+        $('#edit_add-'+ans).show();
 
         function onReady() {
             conditions = $("#conditions");
@@ -145,11 +142,11 @@ $(document).ready(function(){
             });
         }
         function initializeForm() {
+            var edit_condition_text="";
 
             $('.edit_add_class').live("click",function(e) {
                 var currentId1 = $(this).attr('id');
                 var ans1 = splitfun(currentId);
-                //alert(ans1);
                 e.preventDefault();
                 var engine = new RuleEngine({
                     conditions: conditions.conditionsBuilder("data"),
@@ -157,6 +154,61 @@ $(document).ready(function(){
                 });
                 var sample = JSON.stringify(engine);
                 $('#rule_obj_text-'+ans1).val(sample);
+                //console.log(engine.conditions);
+                $.each(engine.conditions.all, function(j)
+                {
+                    if(engine.conditions.all[j].operator=='equalTo')
+                    {
+                        engine.conditions.all[j].operator='=';
+                    }
+                    else if(engine.conditions.all[j].operator=='notEqualTo')
+                    {
+                        engine.conditions.all[j].operator='!=';
+                    }
+                    else if(engine.conditions.all[j].operator=='greaterThan')
+                    {
+                        engine.conditions.all[j].operator='>';
+                    }
+                    else if(engine.conditions.all[j].operator=='greaterThanEqual')
+                    {
+                        engine.conditions.all[j].operator='>=';
+                    }
+                    else if(engine.conditions.all[j].operator=='lessThan')
+                    {
+                        engine.conditions.all[j].operator='<';
+                    }
+                    else if(engine.conditions.all[j].operator=='lessThanEqual')
+                    {
+                        engine.conditions.all[j].operator='<=';
+                    }
+
+                    var edit_condition_text_one =engine.conditions.all[j].operator+engine.conditions.all[j].value;
+
+                    if(j==0)
+                    {
+                        edit_condition_text = edit_condition_text_one;
+                    }
+                    if(j>0)
+                    {
+                        edit_condition_text = edit_condition_text+'   ' + '&&' +'   '+edit_condition_text_one;
+                    }
+
+                });
+                var $tr = $('<tr>').attr({'id':'row_id-'+ans1}).append(
+                    $('<td>').text(edit_condition_text),
+                    $('<td>').text(engine.actions.value),
+                    $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+ans1+'', 'class':'edit_class'}).val("edit"))
+                ).appendTo('#rule-table');
+
+                $('.operator').remove();
+                $('.add-rule').remove();
+                $('.value').remove();
+                $('.add-condition').remove();
+                $('.remove').remove();
+                $('.field').remove();
+                $('.add').remove();
+                $('.action-select').remove();
+                $(this).remove();
             });
         }
         $(onReady);
@@ -171,7 +223,4 @@ $(document).ready(function(){
     }
 
 });
-
-
-
 

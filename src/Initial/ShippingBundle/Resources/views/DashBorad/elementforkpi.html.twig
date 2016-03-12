@@ -14,7 +14,8 @@
         {% endjavascripts %}
         <script src="http://code.highcharts.com/highcharts.js"></script>
         <script src="http://code.highcharts.com/modules/exporting.js"></script>
-        {# <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>#}
+ <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+
 
         <script type="text/javascript">
             {{ chart(chart) }}
@@ -26,12 +27,13 @@
 
     {% endblock %}
 
-    {# {% block stylesheets %}
+ {% block stylesheets %}
 
          {% stylesheets '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.css' %}
          <link rel="stylesheet" href="{{ asset_url }}" />
          {% endstylesheets %}
-     {% endblock %}#}
+     {% endblock %}
+
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>ShipName: <span style="color: #000099">{{ shipname }}</span></h2>
@@ -39,14 +41,14 @@
         </div>
         <div class="bs-example">
 
-            {#
 
             <div id="overlay">
                 {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
                 <img src="{{ asset_url }}" alt="Loader Image"/>
                 {% endimage %}
             </div>
-    #}
+
+
             <div class="table-responsive">
 
                 <table class="table table-striped" style="" id="readingkpitable">
@@ -57,7 +59,8 @@
                         <th>Weightage</th>
                         {% for monthname in montharray %}
                             <th>{{ monthname }}</th>
-                            {#<th></th>#}
+<th></th>
+
                         {% endfor %}
 
                     </tr>

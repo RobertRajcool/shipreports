@@ -59,12 +59,15 @@ class UserActivitiyController extends Controller
         $params = $request->request->get('fos_user');
         $id = $params['id'];
         $entity = $em->getRepository('InitialShippingBundle:User')->find($id);
-        //$newrolevalue = $params['roles'];
+        $newrole = $request->request->get('registration_form');
+        $role_name=$newrole['roles'];
+        $newrole1 = $request->request->get('registration_form.roles');
         $newmail = $params['email'];
         $newname = $params['username'];
 
 
         $uservalue = new User();
+        $entity->setroles($role_name);
         $entity->setemail($newmail);
         $entity->setusername($newname);
 

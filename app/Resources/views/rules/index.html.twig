@@ -1,9 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Rules list</h1>
-
-    <table>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="page-header">
+        <h2>Rules List</h2>
+        <a href="{{ path('rules_new') }}">Create Rule</a>
+    </div>
+    <div class="table-responsive">
+    <table class="table table-striped">
         <thead>
         <tr>
             <th>Kpidetailsid</th>
@@ -21,10 +25,10 @@
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('rules_show', { 'id': rule.id }) }}">show</a>
+                            <a href="{{ path('rules_show', { 'id': rule.id }) }}">Show</a>
                         </li>
                         <li>
-                            <a href="{{ path('rules_edit', { 'id': rule.id }) }}">edit</a>
+                            <a href="{{ path('rules_edit', { 'id': rule.id }) }}">Edit</a>
                         </li>
                     </ul>
                 </td>
@@ -32,10 +36,6 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('rules_new') }}">Create a new entry</a>
-        </li>
-    </ul>
+</div>
+    </div>
 {% endblock %}

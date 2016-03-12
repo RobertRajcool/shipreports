@@ -5,32 +5,63 @@
     {% block javascripts %}
         {% javascripts
         '@AppBundle/Resources/public/js/AAA.js'
-        '@AppBundle/Resources/public/js/EditDemo.js'
+        '@AppBundle/Resources/public/js/demo.js'
         '@AppBundle/Resources/public/js/actions-builder.js'
         '@AppBundle/Resources/public/js/conditions-builder.js'
         '@AppBundle/Resources/public/js/rules.js'
-        '@AppBundle/Resources/public/js/sample.js'
+        '@AppBundle/Resources/public/js/Element_rule_show_condition.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
-        <h1>Rules edit</h1>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Edit Rules </h2>
+            <a href="{{ path('rules_select') }}">Back to the list</a>
+        </div>
 
-        {{ form_start(edit_form) }}
+        <div class="bs-example">
 
-        {{ form_row(edit_form.kpiDetailsId,{'id' :'jsid'})}}
-        {{ form_row(edit_form.elementDetailsId,{'id' :'element'})}}
-        {{ form_row(edit_form.rules,{'id' :'result'}) }}
+        <form class="form-horizontal no-style" action="{{ path('rules_edit1') }}" method="post">
+            <div class="form-group">
+                <label class="control-label col-xs-2">Kpi Name</label>
+                <div class="col-xs-10">
+                    {{ form_row(edit_form.kpiDetailsId,{'id' :'jsid'})}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">Element Name</label>
+                <div class="col-xs-10">
+                    {{ form_row(edit_form.elementDetailsId,{'id' :'element'})}}
+                </div>
+            </div>
+            <div class="form-group">
+               {# <label class="control-label col-xs-2">Rule</label>#}
+                <div class="col-xs-10">
+                    {{ form_row(edit_form.rules,{'id' :'result'}) }}
+                </div>
+            </div>
+            <div id="conditions"></div>
+            <div id="actions"></div>
+            <input type="hidden" name="id" id="id" value="{{ rule.id }}">
+            <div id="rule_edit_button"></div>
 
-        <div id="conditionsedit"></div>
-        <div id="actionsedit"></div>
+            <table id="rule-table">
+                <tr id="row_id">
+                    <th>Condition</th>
+                    <th>Color</th>
+                </tr>
+            </table>
 
-        <input type="submit" value="Edit" />
-        <input type="submit" value="Add" id="submitedit" />
+            <div id="rule_obj_text"></div>
 
-        {{ form_end(edit_form) }}
+            <div class="actions">
+                <input type="submit" class="btn btn-primary" value="Update" id="edit_submit">
+            </div>
 
-        <ul>
+        </form>
+
+        {#<ul>
             <li>
                 <a href="{{ path('rules_select') }}">Back to the list</a>
             </li>
@@ -39,6 +70,7 @@
                 <input type="submit" value="Delete">
                 {{ form_end(delete_form) }}
             </li>
-        </ul>
+        </ul>#}
     {% endblock %}
+            </div>
 {% endblock %}

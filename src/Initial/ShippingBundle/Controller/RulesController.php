@@ -177,6 +177,40 @@ class RulesController extends Controller
     /**
      * Finds and displays a Rules entity.
      *
+     * @Route("/{id}/rule", name="rules_rule")
+     */
+    public function ruleAction(Request $request)
+    {
+        $id = $request->request->get('Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $ids = $em->createQueryBuilder()
+            ->select('identity(a.elementDetailsId)')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.id = :rule_Id')
+            ->setParameter('rule_Id',$id)
+            ->getQuery()
+            ->getResult();
+
+
+        $query = $em->createQueryBuilder()
+            ->select('a.rules')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.elementDetailsId = :element_id')
+            ->setParameter('element_id',$ids)
+            ->getQuery()
+            ->getResult();
+
+        $response = new JsonResponse();
+        $response->setData(array('Rule_Array' => $query));
+
+        return $response;
+    }
+
+
+    /**
+     * Finds and displays a Rules entity.
+     *
      * @Route("/{id}", name="rules_show")
      * @Method("GET")
      */
@@ -220,6 +254,50 @@ class RulesController extends Controller
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
+    }
+
+    /**
+     * Displays a form to edit an existing Rules entity.
+     *
+     * @Route("/edit1", name="rules_edit1")
+     * @Method({"GET", "POST"})
+     */
+    public function edit1Action(Request $request)
+    {
+        //echo 'hi';
+        $params = $request->request->get('rules');
+        $kpi_id = $params['kpiDetailsId'];
+        $element_id = $params['elementDetailsId'];
+        $value = $request->request->get('id');
+        $rule = $request->request->get('rule_name');
+
+        $em = $this->getDoctrine()->getManager();
+
+        //rules id finding
+        $rules_id_array= $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.elementDetailsId = :id')
+            ->setParameter('id',$element_id)
+            ->getQuery()
+            ->getResult();
+
+
+        for($j=0;$j<count($rules_id_array);$j++)
+        {
+            $entity = $em->getRepository('InitialShippingBundle:Rules')->find($rules_id_array[$j]);
+            $kpi_obj= $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpi_id));
+            $element_obj= $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$element_id));
+            $vv = $rule[$j];
+            $rule = new Rules();
+            $entity->setKpiDetailsId($kpi_obj);
+            $entity->setElementDetailsId($element_obj);
+            $entity->setRules($vv);
+            $em->flush();
+        }
+        return $this->redirectToRoute('rules_select');
+
+
     }
 
     /**
