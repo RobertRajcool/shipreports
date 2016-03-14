@@ -84,6 +84,7 @@ class HighchartController extends Controller
             'chart' => $ob,'kpiid'=>$x
         ));
     }
+
     public  function  piechartAction()
     {
         $x=0;
@@ -231,7 +232,7 @@ class HighchartController extends Controller
 
 
         $sendcommand=new SendCommand();
-        //assign file attachement for mail and Mailing Starts Here...
+        //assign file attachement for mail and Mailing Starts Here...u
        $mailer = $this->container->get('mailer');
         $message = \Swift_Message::newInstance()
             ->setFrom('lawrance@commusoft.co.uk')
