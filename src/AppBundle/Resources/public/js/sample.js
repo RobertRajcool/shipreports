@@ -69,7 +69,8 @@ $(document).ready(function(){
     var condition_text = "";
     $('.dynamic-add').live("click",function() {
         var currentId = $(this).attr('id');
-        id_value = splitfun(currentId);
+        var id_value = splitfun(currentId);
+
         $('.add').hide();
         $('.add-condition').hide();
         $('.remove').remove();
@@ -79,6 +80,7 @@ $(document).ready(function(){
         $('.operator').remove();
         $('.action-select').hide();
         $(this).remove();
+
         var rule = $('#rules-id_'+id_value).val();
         var rule_obj = JSON.parse(rule);
         var con = rule_obj.conditions.all;
@@ -90,7 +92,6 @@ $(document).ready(function(){
 
         $.each(con, function(j)
         {
-            //alert(con[j].operator);
             if(con[j].operator=='equalTo')
             {
                 con[j].operator = '=';

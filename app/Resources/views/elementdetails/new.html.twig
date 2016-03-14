@@ -6,9 +6,7 @@
 
         {% javascripts
         '@AppBundle/Resources/public/js/AAA.js'
-        '@AppBundle/Resources/public/js/Element_demo.js'
-        '@AppBundle/Resources/public/js/Element_actions.js'
-        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+        '@AppBundle/Resources/public/js/conditions-builder.js'
         '@AppBundle/Resources/public/js/rules.js'
         '@AppBundle/Resources/public/js/Element_rule_condition.js'
         %}
@@ -73,25 +71,21 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-xs-2">Rules</label>
+                        <label class="control-label col-xs-2"></label>
                         <div class="col-xs-10">
                             {{ form_row(form.rules) }}
                         </div>
                     </div>
 
-                    <table>
-                        <tr>
-                            <td>
-                                <div id="conditions"></div>
-                            </td>
-                            <td>
-                                <div id="actions"></div>
-                            </td>
+                    <table id="rule-table">
+                        <tr id="row_id">
+                            <th>Conditions</th>
+                            <th>value</th>
                         </tr>
                     </table>
 
-                    <input type="hidden" size="2" id="ageField">
-                    {#<input type="text" id="result">#}
+                    <div id="conditions"></div>
+                    <div id="actions"></div>
 
 
                     <div class="actions">

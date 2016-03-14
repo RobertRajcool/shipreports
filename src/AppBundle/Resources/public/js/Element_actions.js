@@ -10,9 +10,8 @@
         return num[1];
     }
     $.fn.actionsBuilder = function(options) {
-        var ans = $("#textbox_"+a).val();
-        //console.log(ans);
-        return ans;
+        var action_value = $("#action-value_"+a).val();
+        return action_value;
     }
 })(jQuery);
 
