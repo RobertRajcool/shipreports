@@ -2,53 +2,86 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     {% block javascripts %}
-
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}" xmlns="http://www.w3.org/1999/html"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.js' %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        <script src="http://code.highcharts.com/highcharts.js"></script>
-        <script src="http://code.highcharts.com/modules/exporting.js"></script>
- <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
-
-
+        {% javascripts '@InitialShippingBundle/Resources/public/js/bootstrap.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
         <script type="text/javascript">
             {{ chart(chart) }}
-
-
         </script>
+        <script>
+            $(document).ready(function()
+                    {
+                        $('#addcomment').hide();
 
+                        $('#addsubmitid').click(function()
+                        {
+                            /*$('#addcomment').show();
+                            $('#addcommentbutton').hide();*/
 
+                        });
+                        $('#chatform').submit(function(e)
+                        {
+                            e.preventDefault();
+                            var self = this;
+                            var obj = {},chart;
+                            chart = $('#area').highcharts();
+                            obj.svg = chart.getSVG();
+                            obj.type = 'image/png';
+                            obj.width = 450;
+                            obj.async = true;
+                            var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
+                            $.ajaxSetup({
+                                global: false,
+                                type: "post",
+                                url: "/addchart",
+                                beforeSend: function () {
+                                    $(".modal").show();
+                                },
+                                complete: function () {
+                                    $(".modal").hide();
+                                }
+                            });
+                            $.ajax({
+                                data: data,
+                                success: function (data)
+                                {
 
+                                    $('#imagefilename').val(data);
+                                    self.submit();
+
+                                }
+                                ,
+                                error: function()
+                                {
+                                    alert('Error While Generating Image as pdf');
+
+                                }
+                            });
+
+                        });
+
+                    });
+        </script>
     {% endblock %}
-
- {% block stylesheets %}
-
-         {% stylesheets '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.css' %}
-         <link rel="stylesheet" href="{{ asset_url }}" />
-         {% endstylesheets %}
-     {% endblock %}
-
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>ShipName: <span style="color: #000099">{{ shipname }}</span></h2>
-            <a href="{{ path('dashboradhome') }}">Back</a>
+         {#   <a href="{{ path('dashboradhome') }}">Back</a>#}
+            <a data-toggle="modal" data-target="#myModal" class="btn btn-info" >Add Comment</a>
         </div>
         <div class="bs-example">
-
-
-            <div id="overlay">
-                {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
-                <img src="{{ asset_url }}" alt="Loader Image"/>
-                {% endimage %}
-            </div>
-
-
             <div class="table-responsive">
 
                 <table class="table table-striped" style="" id="readingkpitable">
@@ -59,7 +92,7 @@
                         <th>Weightage</th>
                         {% for monthname in montharray %}
                             <th>{{ monthname }}</th>
-<th></th>
+                        {#<th></th>#}
 
                         {% endfor %}
 
@@ -103,6 +136,37 @@
             </div>
             <div class="form-group">
                 <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+            </div>
+            <div class="modal fade" id="myModal" style=" margin-left: 339px;margin-top: -20%;width: 46%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Send Comment Here</h4>
+                        </div>
+                        <div class="modal-body">
+                                <form id="chatform" class="form-horizontal no-style" action=" {{path('addcomment') }}" method="post">
+                                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                                    <input type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">To</label>
+                                        <div class="col-xs-10"><input id="toemail" type="email" name="send_command[clientemail]" required></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">Comment</label>
+                                        <div class="col-xs-10">
+                                            <textarea id="commentid" name="send_command[comment]" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div id="sendcommentbutton"  class="actions">
+                                        <input class="btn btn-primary" type="submit" value="Send Comment">
+
+                                    </div>
+                                </form>
+                        </div>
+                    </div> <!-- /.modal-content -->
+                </div> <!-- /.modal-dialog -->
             </div>
         </div>
     </div>

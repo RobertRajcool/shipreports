@@ -23,6 +23,12 @@ downloadexcel:
 highchart:
       path:     /highchart
       defaults: { _controller: "InitialShippingBundle:Highchart:chart"}
+areachart:
+      path:     /areachart
+      defaults: { _controller: "InitialShippingBundle:Highchart:areachart"}
+piechart:
+            path:     /piechart
+            defaults: { _controller: "InitialShippingBundle:Highchart:piechart"}
 showchart:
       path:     /showchart
       defaults: { _controller: "InitialShippingBundle:Highchart:showchart"}
@@ -57,4 +63,6 @@ delete_user:
 company_edit:
         path: /useredit
         defaults: { _controller: "InitialShippingBundle:UserActivitiy:update"}
-
+pdf:
+   path: /pdf
+   defaults: { _controller:"InitialShippingBundle:Highchart:createPdf"}

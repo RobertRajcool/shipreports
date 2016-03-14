@@ -5,50 +5,29 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.js' %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.12.0.min.js' %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
         {% javascripts '@InitialShippingBundle/Resources/public/js/bootstrap.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        <script src="http://code.highcharts.com/highcharts.js"></script>
-        <script src="http://code.highcharts.com/modules/exporting.js"></script>
-        {# <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>#}
-
         <script type="text/javascript">
             {{ chart(chart) }}
-
-
         </script>
 
 
 
     {% endblock %}
 
-   {# {% block stylesheets %}
-
-        {% stylesheets '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.css' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-    {% endblock %}#}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>{{ shipname.shipName }}</h2>
             <a href="{{ path('dashboradhome') }}">Back</a>
         </div>
         <div class="bs-example">
-
-        {#
-
-        <div id="overlay">
-            {% image '@InitialShippingBundle/Resources/public/img/ajax-loader.gif' %}
-            <img src="{{ asset_url }}" alt="Loader Image"/>
-            {% endimage %}
-        </div>
-#}
             <div class="table-responsive">
 
                 <table class="table table-striped" style="" id="readingkpitable">
@@ -63,21 +42,15 @@
                     {% endfor %}
 
                 </tr>
-
-
-
                 </thead>
                 <tbody>
                 {% set countmonth1= countmonth-1 %}
                   {% set i=0 %}
-                {#  {% set j=0 %}#}
                 {% for kpi in listofkpi %}
-                    <tr>
-
-                        <td>
+                    <tr><td>
 
                             <a
-                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true&margin-left=213px&width=800px" class="thickbox"
+                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}"
                                     title="{{ kpi.kpiName }}">
                                 {{ kpi.kpiName }}
                             </a>
