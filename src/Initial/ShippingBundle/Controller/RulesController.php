@@ -177,6 +177,39 @@ class RulesController extends Controller
     /**
      * Finds and displays a Rules entity.
      *
+     * @Route("/rule1", name="rules_rule1")
+     */
+    public function rule1Action(Request $request)
+    {
+        $id = $request->request->get('Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $ids = $em->createQueryBuilder()
+            ->select('identity(a.elementDetailsId)')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.id = :rule_Id')
+            ->setParameter('rule_Id',$id)
+            ->getQuery()
+            ->getResult();
+
+
+        $query = $em->createQueryBuilder()
+            ->select('a.rules')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.elementDetailsId = :element_id')
+            ->setParameter('element_id',$ids)
+            ->getQuery()
+            ->getResult();
+
+        $response = new JsonResponse();
+        $response->setData(array('Rule_Array' => $query));
+
+        return $response;
+    }
+
+    /**
+     * Finds and displays a Rules entity.
+     *
      * @Route("/{id}/rule", name="rules_rule")
      */
     public function ruleAction(Request $request)

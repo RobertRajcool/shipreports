@@ -112,7 +112,14 @@
         </script>
 
     {% endblock %}
-    <h1>KpiDetails</h1>
+
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+
+            <h2>KpiDetails</h2>
+            <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
+        </div>
 
     <table>
         <tbody>
@@ -173,12 +180,14 @@
     <input type="hidden" name="id" id="id" value="{{ kpiDetail.id }}">
     <p id="text_box"></p>
 
-    <ul>
+    </div>
+
+   {# <ul>
         <li>
             <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
         </li>
         <li>
             <a href="{{ path('kpidetails_edit1', { 'id': kpiDetail.id }) }}">Edit</a>
         </li>
-    </ul>
+    </ul>#}
 {% endblock %}
