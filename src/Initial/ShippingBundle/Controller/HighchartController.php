@@ -20,8 +20,10 @@ class HighchartController extends Controller
         $name="Lawrance Robert Raj";
         $this->forward('app.hello_controller:indexAction', array('name' => $name));
     }
+
     public  function  chartAction()
     {
+        $x=0;
 
         $series = array(
             array("name" => "Trichy", 'color' => 'red',   "data" => array(7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6)),
@@ -47,19 +49,76 @@ class HighchartController extends Controller
 
 
         return $this->render('InitialShippingBundle:HighChart:hightchart.html.twig', array(
-            'chart' => $ob
+            'chart' => $ob,'kpiid'=>$x
         ));
     }
+    public  function  areachartAction()
+    {
+        $x=0;
+
+        $series = array(
+            array("name" => "Trichy", 'color' => 'red',   "data" => array(7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6)),
+            array("name" =>"Thiruvannamalai",'color' => 'blue', "data" =>array(-0.2, 0.8, 5.7, 11.3, 17.0, 0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5)),
+            array("name" =>"Vellore",'color' => 'green', "data" =>array(-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0)),
+            array("name" =>"Chennai",'color' => 'yellow', "data" =>array(3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8))
+        );
+        $categories = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
+        $imgedir= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/';
+        $ob = new Highchart();
+        $ob->chart->renderTo('linechart');
+        $ob->chart->type('area');
+        $ob->exporting->url($imgedir);
+        $ob->exporting->enabled(false);
+        $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
+        $ob->subtitle->text('Tamil Nadu Whether Report');
+        $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
+        //$ob->subtitle->text(array('text'  => "Tamil Nadu Whether Report"));
+        //$ob->xAxis->title(array('text'  => "Temperature (°C)"));
+        $ob->xAxis->categories($categories);
+        $ob->series($series);
+
+
+
+
+        return $this->render('InitialShippingBundle:HighChart:hightchart.html.twig', array(
+            'chart' => $ob,'kpiid'=>$x
+        ));
+    }
+    public  function  piechartAction()
+    {
+        $x=0;
+
+        $ob = new Highchart();
+        $ob->chart->renderTo('linechart');
+        $ob->title->text('Browser market shares at a specific website in 2010');
+        $ob->plotOptions->pie(array(
+            'allowPointSelect'  => true,
+            'cursor'    => 'pointer',
+            'dataLabels'    => array('enabled' => false),
+            'showInLegend'  => true
+        ));
+        $data = array(
+            array('Firefox', 45.0),
+            array('IE', 26.8),
+            array('Chrome', 12.8),
+            array('Safari', 8.5),
+            array('Opera', 6.2),
+            array('Others', 0.7),
+        );
+        $ob->series(array(array('type' => 'pie','name' => 'Browser share', 'data' => $data)));
+
+
+
+        return $this->render('InitialShippingBundle:HighChart:hightchart.html.twig', array(
+            'chart' => $ob,'kpiid'=>$x
+        ));
+    }
+
+
     public function addchartAction(Request $request)
 
     {
         $batikdir= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/';
-
-        //define ('BATIK_PATH', 'batik-rasterizer.jar');
-
-
-
-
         $svgname =(string)$request->request->get('svgid');
         $imgtype=$request->request->get('typeid');
         $filewidth=$request->request->get('filewidth');
@@ -148,26 +207,43 @@ class HighchartController extends Controller
         //get Informaton From User
         $params = $request->request->get('send_command');
         $filename = $params['filename'];
-        $useremaildid=$params['clientemail'];
+        $pdffilename=explode('.',$filename);
         $kpiid=$params['kpiid'];
         $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
         $comment = $params['comment'];
         $today = date("Y-m-d H:i:s");
+        $imagedirect= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename;
+        $title="This is Pdf";
+        $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultheaderfontstyle = 'B';
+        $mpdf->AddPage('', 4, '', 'on');
+        $mpdf->SetHeader('Type: ' . $title . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        $mpdf->WriteHTML('<h1>Graph Detail</h1>
+                            <p><img src="'.$imagedirect.'" alt="Loader Image"/></p>
+                            <h2>Comment</h2>
+                            <p>'.$comment.'</p>
+                            ');
+        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilename[0].'.pdf';
+        $content = $mpdf->Output('', 'S');
+        file_put_contents($uploaddir, $content);
+        $useremaildid=$params['clientemail'];
+
+
         $sendcommand=new SendCommand();
         //assign file attachement for mail and Mailing Starts Here...
-        $imagedirect= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename;
-        $mailer = $this->container->get('mailer');
+       $mailer = $this->container->get('mailer');
         $message = \Swift_Message::newInstance()
             ->setFrom('lawrance@commusoft.co.uk')
             ->setTo($useremaildid)
             ->setSubject($today."  Month Graph!!!!")
             ->setBody($comment)
         ;
-        $message->attach(\Swift_Attachment::fromPath($imagedirect)->setFilename($filename));
+        $message->attach(\Swift_Attachment::fromPath($uploaddir)->setFilename($pdffilename[0].'.pdf'));
         $mailer->send($message);
         //Mailing Ends....
         //Insertion Starts Here...
-        $sendcommand->setFilename($filename);
+        $sendcommand->setFilename($pdffilename[0].'.pdf');
         $sendcommand->setClientemail("lawrance@commusoft.co.uk");
         $datetime = new \DateTime();
         $sendcommand->setUseremialid($useremaildid);
@@ -235,4 +311,58 @@ class HighchartController extends Controller
             'pdf_output' => 'custom_pdf_output_filename.pdf'
         ));
     }
+
+
+    //For  Pdf
+
+
+
+    public function createPdfAction(Request $request)
+    {
+
+        $pageName = $request->query->get('page');
+        $screenName = $this->get('translator')->trans($pageName);
+        $date = date('l jS F Y h:i', time());
+        $route = $request->attributes->get('_route');
+
+        $customerListDesign = $this->renderView('InitialShippingBundle:HighChart:createpdf.html.twig', array(
+            'link' => 'http://oss.oetiker.ch/rrdtool/gallery/energy_graph.png',
+            'screenName' => $screenName,
+            'userName' => '',
+            'date' => $date
+        ));
+
+        $printPdf = $this->createPdf($customerListDesign, $screenName);
+
+
+
+        $response = new Response();
+        $response->setContent($printPdf);
+        $response->headers->set('Content-Type', 'application/pdf');
+
+        return $response;
+    }
+
+
+
+    public function createPdf($html, $title)
+    {
+        $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultheaderfontstyle = 'B';
+        $mpdf->AddPage('', 4, '', 'on');
+        $mpdf->SetHeader('Type: ' . $title . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        //$mpdf->SetTitle($title);
+        $mpdf->WriteHTML($html);
+       // $output= $mpdf->Output('filename.pdf','F');
+        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/filename.pdf';
+
+        $content = $mpdf->Output('', 'S');
+        file_put_contents($uploaddir, $content);
+        return $content;
+    }
+
+
+
+
 }
