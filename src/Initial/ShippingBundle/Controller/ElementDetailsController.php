@@ -180,7 +180,7 @@ class ElementDetailsController extends Controller
             $elementRules = new ElementRules();
             $elementRules->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id)));
             $variable = "rules-$i";
-            $engine_rules = $params[$variable];
+            $engine_rules = $request->request->get($variable);
             $elementRules->setRules($engine_rules);
             $em->persist($elementRules);
             $em->flush();
@@ -196,9 +196,9 @@ class ElementDetailsController extends Controller
      *
      * @Route("/element_rule", name="elementdetails_element_rule")
      */
-    public function elementruleAction(Request $request)
+    public function element_ruleAction(Request $request)
     {
-        $id = $request->request->get('element_Id');
+        $id = $request->request->get('Id');
         $em = $this->getDoctrine()->getManager();
 
         $query = $em->createQueryBuilder()
@@ -210,10 +210,36 @@ class ElementDetailsController extends Controller
 
         $element_rules = $query->getResult();
         $response = new JsonResponse();
-        $response->setData(array('Element_Rule_Array' => $element_rules));
+        $response->setData(array('Rule_Array' => $element_rules));
 
         return $response;
     }
+
+
+    /**
+     * Creates a new elementDetails entity.
+     *
+     * @Route("/{id}/element_rule1", name="elementdetails_element_rule1")
+     */
+    public function element_rule1Action(Request $request)
+    {
+        $id = $request->request->get('Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.rules')
+            ->from('InitialShippingBundle:ElementRules','a')
+            ->where('a.elementDetailsId = :element_Id')
+            ->setParameter('element_Id',$id)
+            ->getQuery();
+
+        $element_rules = $query->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('Rule_Array' => $element_rules));
+
+        return $response;
+    }
+
 
     /**
      * Creates a new elementDetails entity.
@@ -238,6 +264,7 @@ class ElementDetailsController extends Controller
 
         return $response;
     }
+
 
     /**
      * Finds and displays a ElementDetails entity.
@@ -284,6 +311,89 @@ class ElementDetailsController extends Controller
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
+    }
+
+    /**
+     * Displays a form to edit an existing ElementDetails entity.
+     *
+     * @Route("/edit1", name="elementdetails_edit1")
+     * @Method({"GET", "POST"})
+     */
+    public function edit1Action(Request $request)
+    {
+        $user = $this->getUser();
+        $params = $request->request->get('element_details');
+        $kpiDetailsId  = $params['kpiDetailsId'];
+        $elementName   = $params['elementName'];
+        $description   = $params['description'];
+        $cellName      = $params['cellName'];
+        $cellDetails   = $params['cellDetails'];
+        $activatedDate = $params['activatedDate'];
+        $endDate       = $params['endDate'];
+        $count = $request->request->get('id');
+        $rule11= $request->request->get('rule_name');
+
+        $monthtostring=$activatedDate['year'].'-'.$activatedDate['month'].'-'.$activatedDate['day'];
+        $new_date=new \DateTime($monthtostring);
+        $monthtostring1=$endDate['year'].'-'.$endDate['month'].'-'.$endDate['day'];
+        $new_date1=new \DateTime($monthtostring1);
+
+        $weightage     = $params['weightage'];
+        $rules         = $params['rules'];
+
+        $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiDetailsId));
+
+        $em = $this->getDoctrine()->getManager();
+
+        $element_id_array= $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:ElementDetails','a')
+            ->where('a.elementName = :element_name')
+            ->setParameter('element_name',$elementName)
+            ->getQuery()
+            ->getResult();
+
+        for($j=1;$j<count($element_id_array);$j++)
+        {
+            $elementDetail = $em->getRepository('InitialShippingBundle:ElementDetails')->find($element_id_array[$j]);
+
+            $elementDetail1 = new ElementDetails();
+            $elementDetail->setkpiDetailsId($course);
+            $elementDetail->setelementName($elementName);
+            $elementDetail->setdescription($description);
+            $elementDetail->setcellName($cellName);
+            $elementDetail->setcellDetails($cellDetails);
+            $elementDetail->setactivatedDate($new_date);
+            $elementDetail->setendDate($new_date1);
+            $elementDetail->setweightage($weightage);
+            $elementDetail->setrules($rules);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+        }
+
+        $element_rules_id_array= $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:ElementRules','a')
+            ->where('a.elementDetailsId = :element_id')
+            ->setParameter('element_id',$element_id_array[1]['id'])
+            ->getQuery()
+            ->getResult();
+
+        if($count==1)
+        {
+            for($i=0;$i<count($rule11);$i++)
+            {
+                $element_rules_obj = $em->getRepository('InitialShippingBundle:ElementRules')->find($element_rules_id_array[$i]);
+                $element_obj= $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$element_id_array[0]));
+
+                $element_rules_obj->setRules($rule11[$i]);
+                $element_rules_obj->setKpiDetailsId($element_obj);
+                $em->flush();
+            }
+        }
+        return $this->redirectToRoute('elementdetails_select1');
+
     }
 
     /**

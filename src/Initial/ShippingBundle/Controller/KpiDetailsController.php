@@ -368,7 +368,6 @@ class KpiDetailsController extends Controller
      */
     public function edit2Action( Request $request)
     {
-        //echo "hi";
         $ships_id = $request->request->get('ships');
         $kpiName = $request->request->get('kpiName');
         $description = $request->request->get('description');
@@ -417,7 +416,6 @@ class KpiDetailsController extends Controller
             ->setParameter('kpi_id',$kpi_id_array[0]['id'])
             ->getQuery()
             ->getResult();
-
 
         if($count==1)
         {
