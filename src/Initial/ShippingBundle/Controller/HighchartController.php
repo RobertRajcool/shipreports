@@ -268,15 +268,14 @@ class HighchartController extends Controller
             ->setParameter('userId',$username)
             ->getQuery()
             ->getSingleScalarResult();
+        $total_records = $em->createQueryBuilder()
+            ->select('count(j.id)')
+            ->from('InitialShippingBundle:SendCommand','j')
+            ->Where('j.clientemail = :clientemail')
+            ->setParameter('clientemail', $clientemailid)
+            ->getQuery()
+            ->getSingleScalarResult();
 
-/*
-
-        $userdetails= $em->getRepository('InitialShippingBundle:SendCommand')->findBy(array('clientemail' => $clientemailid));
-
-        return $this->render('InitialShippingBundle:ExcelFileviews:showcomment.html.twig', array(
-            'userdetails' => $userdetails,
-        ));*/
-        $total_records = $em->getRepository('InitialShippingBundle:SendCommand')->countActiveRecords($clientemailid);
         $record_per_page = $this->container->getParameter('maxrecords_per_page');
         $last_page = ceil($total_records / $record_per_page);
         $previous_page = $page > 1 ? $page - 1 : 1;

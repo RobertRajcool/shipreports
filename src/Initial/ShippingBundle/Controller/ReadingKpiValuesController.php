@@ -3,6 +3,7 @@
 namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\CommonFunctions;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -23,18 +24,20 @@ class ReadingKpiValuesController extends Controller
     /**
      * Lists all ReadingKpiValues entities.
      *
-     * @Route("/{page}", name="readingkpivalues_index")
+     * @Route("/{page}/listall", name="readingkpivalues_index")
      * @Method("GET")
      */
     public function indexAction($page)
     {
-        $em = $this->getDoctrine()->getManager();
+       $em = $this->getDoctrine()->getManager();
         $docobject=new ReadingKpiValues();
         $user1 = $this->getUser();
         $userId = $user1->getId();
-
-        //$readingKpiValues = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findAll();
-        $total_records = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->countActiveRecords($docobject->getId());
+        $total_records = $em->createQueryBuilder()
+            ->select('count(j.id)')
+            ->from('InitialShippingBundle:ReadingKpiValues','j')
+            ->getQuery()
+            ->getSingleScalarResult();
         $record_per_page = $this->container->getParameter('maxrecords_per_page');
         $last_page = ceil($total_records / $record_per_page);
         $previous_page = $page > 1 ? $page - 1 : 1;

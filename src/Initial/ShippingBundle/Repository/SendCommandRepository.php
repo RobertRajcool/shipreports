@@ -12,20 +12,5 @@ use Doctrine\ORM\EntityRepository;
  */
 class SendCommandRepository extends EntityRepository
 {
-    public function countActiveRecords($category_id = null)
-    {
-        $qb = $this->createQueryBuilder('j')
-            ->select('count(j.id)');
 
-
-        if($category_id)
-        {
-            $qb->andWhere('j.clientemail = :category_id')
-                ->setParameter('category_id', $category_id);
-        }
-
-        $query = $qb->getQuery();
-
-        return $query->getSingleScalarResult();
-    }
 }
