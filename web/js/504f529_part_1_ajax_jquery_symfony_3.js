@@ -19,6 +19,7 @@ $(document).ready(function ()
         $('.dyaminc').remove();
 
 
+
         var data = {shipid : $('#shipid').val()};
 
         if($(this).val())
@@ -85,7 +86,7 @@ $(document).ready(function ()
                 url: "/readingkpivalues/elementlist",
                 success: function(data)
                 {
-                     alert(data);
+
                     $.each(data.ElementNameArray, function(i, listelemnt)
                     {
                         $('<p class="dyaminc"><label></label></label><input type="text" id="p_new"  name="' + listelemnt.id +'" value="" placeholder="'+listelemnt.elementName+'" />').appendTo(addDiv);

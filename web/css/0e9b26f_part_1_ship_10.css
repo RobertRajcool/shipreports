@@ -238,3 +238,7 @@ select {
     display: none;
 }
 
+.btn {
+    padding: 4px 14px;
+}
+
