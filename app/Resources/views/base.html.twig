@@ -90,7 +90,7 @@
                         <li> <a href="{{ path('elementdetails_select1') }}">Add Elements</a></li>
                         <li><a href="{{ path('rules_select') }}">Add Rules</a></li>
                         <li> <a href="{{ path('showfile') }}">Import File</a></li>
-                        <li> <a href="{{ path('readingkpivalues_index') }}">Kpi Values List</a></li>
+                        <li> <a href="{{ path('readingkpivalues_index',{ 'page': 1 }) }}">Kpi Values List</a></li>
                     {% endif %}
                     {%  if is_granted("ROLE_ADMIN")  %}
                         <li><a href="{{ path('fos_user_registration_show') }}">Manage Users</a></li>

@@ -39,7 +39,7 @@ addcomment:
       path:     /addcomment
       defaults: { _controller: "InitialShippingBundle:Highchart:addcomment"}
 showcomment:
-      path:     /showcomment
+      path:     /showcomment/{page}
       defaults: { _controller: "InitialShippingBundle:Highchart:showcomment"}
 downloadchart:
        path:    /{filename}/downloadchart

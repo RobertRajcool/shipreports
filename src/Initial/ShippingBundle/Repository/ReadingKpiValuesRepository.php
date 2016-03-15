@@ -12,4 +12,47 @@ use Doctrine\ORM\EntityRepository;
  */
 class ReadingKpiValuesRepository extends EntityRepository
 {
+
+    public function getRecords($category_id = null, $max = null, $offset = null)
+    {
+        $qb = $this->createQueryBuilder('j')
+            ->orderBy('j.id', 'DESC');
+
+        if($max)
+        {
+            $qb->setMaxResults($max);
+        }
+
+        if($offset)
+        {
+            $qb->setFirstResult($offset);
+        }
+
+       /* if($category_id)
+        {
+            $qb->andWhere('j.category = :category_id')
+                ->setParameter('category_id', $category_id);
+        }*/
+
+        $query = $qb->getQuery();
+
+        return $query->getResult();
+    }
+    public function countActiveRecords($category_id = null)
+    {
+        $qb = $this->createQueryBuilder('j')
+            ->select('count(j.id)');
+
+
+        if($category_id)
+        {
+            $qb->andWhere('j.category = :category_id')
+                ->setParameter('category_id', $category_id);
+        }
+
+        $query = $qb->getQuery();
+
+        return $query->getSingleScalarResult();
+    }
+
 }

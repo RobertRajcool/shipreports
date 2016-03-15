@@ -51,8 +51,52 @@
                 </tbody>
             </table>
         </div>
+        {#{% if last_page > 1 %}
+            <div class="pagination">
+                <a href="{{ path('readingkpivalues_index', { 'page': 1 }) }}">First page </a>
 
+                <a href="{{ path('readingkpivalues_index', {  'page': previous_page }) }}">Previous page </a>
 
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                        {{ page }}
+                    {% else %}
+                        <a href="{{ path('readingkpivalues_index', {  'page': page }) }}">{{ page }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                <a href="{{ path('readingkpivalues_index', {  'page': next_page }) }}">Next page
+                </a>
+
+                <a href="{{ path('readingkpivalues_index', {  'page': last_page }) }}">Last page
+                </a>
+            </div>
+        {% endif %}#}
+
+        {#<div class="pagination_desc">
+            <strong>{{ total_jobs }}</strong> Total Records
+
+            {% if last_page > 1 %}
+                - page <strong>{{ current_page }}/{{ last_page }}</strong>
+            {% endif %}
+        </div>#}
+
+        <div class="bs-example">
+            <ul class="pagination">
+                <li class="disabled"><a href="{{ path('readingkpivalues_index', {  'page': previous_page }) }}">Prev</a></li>
+                <li class="active"><a href="{{ path('readingkpivalues_index', { 'page': 1 }) }}">1</a></li>
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+                        {{ page }}
+                    {% else %}
+                <li>  <a href="{{ path('readingkpivalues_index', {  'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                <li> <a href="{{ path('readingkpivalues_index', {  'page': next_page }) }}">Next</a></li>
+                <li> <a href="{{ path('readingkpivalues_index', {  'page': last_page }) }}">Last</a></li>
+            </ul>
+        </div>
     </div>
 
 {% endblock %}

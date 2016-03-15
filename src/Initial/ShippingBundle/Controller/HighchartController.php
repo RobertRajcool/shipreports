@@ -253,9 +253,10 @@ class HighchartController extends Controller
         $sendcommand->setKpiid($newkpiid);
         $em->persist($sendcommand);
         $em->flush();
-        return $this->redirectToRoute('showcomment');
+        //return $this->redirectToRoute('showcomment');
+        return $this->redirect($this->generateUrl('showcomment', array('page' => 1)));
     }
-    public function showcommentAction()
+    public function showcommentAction($page)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -268,12 +269,27 @@ class HighchartController extends Controller
             ->getQuery()
             ->getSingleScalarResult();
 
-
+/*
 
         $userdetails= $em->getRepository('InitialShippingBundle:SendCommand')->findBy(array('clientemail' => $clientemailid));
 
         return $this->render('InitialShippingBundle:ExcelFileviews:showcomment.html.twig', array(
             'userdetails' => $userdetails,
+        ));*/
+        $total_records = $em->getRepository('InitialShippingBundle:SendCommand')->countActiveRecords($clientemailid);
+        $record_per_page = $this->container->getParameter('maxrecords_per_page');
+        $last_page = ceil($total_records / $record_per_page);
+        $previous_page = $page > 1 ? $page - 1 : 1;
+        $next_page = $page < $last_page ? $page + 1 : $last_page;
+        $userdetails=$em->getRepository('InitialShippingBundle:SendCommand')->findBy(array(), array('id' => 'DESC'), $record_per_page, ($page - 1) * $record_per_page);
+
+        return $this->render('InitialShippingBundle:ExcelFileviews:showcomment.html.twig', array(
+            'userdetails' => $userdetails,
+            'last_page' => $last_page,
+            'previous_page' => $previous_page,
+            'current_page' => $page,
+            'next_page' => $next_page,
+            'total_jobs' => $total_records
         ));
 
     }

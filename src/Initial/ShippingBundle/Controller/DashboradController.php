@@ -39,8 +39,6 @@ class DashboradController extends Controller
             ->setParameter('username',$username)
             ->getQuery()
             ->getResult();
-
-
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
             array('allships'=>$listallshipforcompany)
@@ -104,140 +102,221 @@ class DashboradController extends Controller
 
         $kpiweightagearray=array();
         //loop for sending dates//
-        for ($d = 0; $d < count($lastfivedatearray); $d++)
-        {
+        for ($d = 0; $d < count($lastfivedatearray); $d++) {
             $time2 = strtotime($lastfivedatearray[$d]);
             $monthinletter = date('F-Y', $time2);
-            array_push($newcategories,$monthinletter);
+            array_push($newcategories, $monthinletter);
             $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
-            $finalkpielementvalue=0;
-            $findingcolorarray=array();
+            $finalkpielementvalue = 0;
+            $findingcolorarray = array();
 
-            for($element=0;$element<count($listallkpi);$element++)
+            for ($element = 0; $element < count($listallkpi); $element++)
             {
-                $kpiidvalue=$listallkpi[$element]['id'];
-                $kpiweightage=$listallkpi[$element]['weightage'];
-                $findelementidarray=$em -> createQueryBuilder()
-                    ->select('c.id','c.weightage')
-                    ->from('InitialShippingBundle:ElementDetails','c')
+                $kpiidvalue = $listallkpi[$element]['id'];
+                $kpiweightage = $listallkpi[$element]['weightage'];
+                $kpiname = $listallkpi[$element]['kpiName'];
+                $findelementidarray = $em->createQueryBuilder()
+                    ->select('c.id', 'c.weightage')
+                    ->from('InitialShippingBundle:ElementDetails', 'c')
                     ->where('c.kpiDetailsId = :kpiid')
-                    ->setParameter('kpiid',$kpiidvalue)
+                    ->setParameter('kpiid', $kpiidvalue)
                     ->getQuery()
                     ->getResult();
 
                 $finalkpivalue = 0;
-
-                for ($jk = 0; $jk < count($findelementidarray); $jk++) {
-
-                    $weightage = $findelementidarray[$jk]['weightage'];
-                    //Finding value based on element id and dates from user//
-                    $dbvalueforelement = $em->createQueryBuilder()
-                        ->select('a.value')
-                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                        ->where('a.shipDetailsId = :shipid')
-                        ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                        ->andWhere('a.elementDetailsId = :Elementid')
-                        ->andWhere('a.monthdetail =:dataofmonth')
-                        ->setParameter('shipid', $shipid)
-                        ->setParameter('kpiDetailsId', $listallkpi[$element]['id'])
-                        ->setParameter('Elementid', $findelementidarray[$jk]['id'])
-                        ->setParameter('dataofmonth', $new_monthdetail_date)
+                if (count($findelementidarray) == 0)
+                {
+                    $newkpiid = $em->createQueryBuilder()
+                        ->select('b.id')
+                        ->from('InitialShippingBundle:KpiDetails', 'b')
+                        ->where('b.kpiName = :kpiName')
+                        ->setParameter('kpiName', $kpiname)
+                        ->groupby('b.kpiName')
                         ->getQuery()
                         ->getResult();
-
-                    if (count($dbvalueforelement) == 0)
+                    $findelementidarray = $em->createQueryBuilder()
+                        ->select('a.elementName', 'a.id', 'a.weightage')
+                        ->from('InitialShippingBundle:ElementDetails', 'a')
+                        ->where('a.kpiDetailsId = :kpiid')
+                        ->setParameter('kpiid', $newkpiid[0]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    for ($jk = 0; $jk < count($findelementidarray); $jk++)
                     {
-                        $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                        $finalkpivalue += $finddbvaluefomula;
+
+                        $weightage = $findelementidarray[$jk]['weightage'];
+                        //Finding value based on element id and dates from user//
+                        $dbvalueforelement = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                            ->where('a.shipDetailsId = :shipid')
+                            ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                            ->andWhere('a.elementDetailsId = :Elementid')
+                            ->andWhere('a.monthdetail =:dataofmonth')
+                            ->setParameter('shipid', $shipid)
+                            ->setParameter('kpiDetailsId', $newkpiid[0]['id'])
+                            ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                            ->setParameter('dataofmonth', $new_monthdetail_date)
+                            ->getQuery()
+                            ->getResult();
+
+                        if (count($dbvalueforelement) == 0) {
+                            $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+                        else {
+                            $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+
+
                     }
-                    else
-                    {
-                        $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                        $finalkpivalue += $finddbvaluefomula;
-                    }
+                    // Kpi color Finding starts Here//
 
-
-                }
-                // Kpi color Finding starts Here//
-
-                $kpi_rules = $em->createQueryBuilder()
-                    ->select('a.rules')
-                    ->from('InitialShippingBundle:KpiRules','a')
-                    ->where('a.kpiDetailsId = :kpi_id')
-                    ->setParameter('kpi_id',$kpiidvalue)
-                    ->getQuery()
-                    ->getResult();
-                $read1="";
+                    $kpi_rules = $em->createQueryBuilder()
+                        ->select('a.rules')
+                        ->from('InitialShippingBundle:KpiRules', 'a')
+                        ->where('a.kpiDetailsId = :kpi_id')
+                        ->setParameter('kpi_id', $newkpiid[0]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $read1 = "";
 
                     //Find the color based on kpi rules
-                for($kpi_rules_count=0;$kpi_rules_count<count($kpi_rules);$kpi_rules_count++)
-                {
-                    $rule = $kpi_rules[$kpi_rules_count];
-/*
-                    $rule_obj = json_encode($rule);*/
-                    $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
-                    $jsfilename = 'node ' . $jsfiledirectry;
-                    $handle = popen($jsfilename, 'r');
-                    $read = fread($handle, 2096);
-                    $read1 = str_replace("\n", '', $read);
-
-                    if ($read1 != "false")
+                    for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
                     {
-                        break;
+                        $rule = $kpi_rules[$kpi_rules_count];
+                        /*
+                                            $rule_obj = json_encode($rule);*/
+                        $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                        $jsfilename = 'node ' . $jsfiledirectry;
+                        $handle = popen($jsfilename, 'r');
+                        $read = fread($handle, 2096);
+                        $read1 = str_replace("\n", '', $read);
+
+                        if ($read1 != "false") {
+                            break;
+                        }
+
                     }
 
                 }
-                array_push($findingcolorarray,$read1);
-                array_push($kpiweightagearray,$kpiweightage);
-                // Kpi color Finding Ends Here//
-                $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
-                $finalkpielementvalue += $findkpivalue;
+                if (count($findelementidarray) > 0)
+                {
+                    for ($jk = 0; $jk < count($findelementidarray); $jk++)
+                    {
+
+                        $weightage = $findelementidarray[$jk]['weightage'];
+                        //Finding value based on element id and dates from user//
+                        $dbvalueforelement = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                            ->where('a.shipDetailsId = :shipid')
+                            ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                            ->andWhere('a.elementDetailsId = :Elementid')
+                            ->andWhere('a.monthdetail =:dataofmonth')
+                            ->setParameter('shipid', $shipid)
+                            ->setParameter('kpiDetailsId', $listallkpi[$element]['id'])
+                            ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                            ->setParameter('dataofmonth', $new_monthdetail_date)
+                            ->getQuery()
+                            ->getResult();
+
+                        if (count($dbvalueforelement) == 0) {
+                            $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+                        else {
+                            $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+
+
+                    }
+                    // Kpi color Finding starts Here//
+
+                    $kpi_rules = $em->createQueryBuilder()
+                        ->select('a.rules')
+                        ->from('InitialShippingBundle:KpiRules', 'a')
+                        ->where('a.kpiDetailsId = :kpi_id')
+                        ->setParameter('kpi_id', $kpiidvalue)
+                        ->getQuery()
+                        ->getResult();
+                    $read1 = "";
+
+                    //Find the color based on kpi rules
+                    for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
+                    {
+                        $rule = $kpi_rules[$kpi_rules_count];
+                        /*
+                                            $rule_obj = json_encode($rule);*/
+                        $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                        $jsfilename = 'node ' . $jsfiledirectry;
+                        $handle = popen($jsfilename, 'r');
+                        $read = fread($handle, 2096);
+                        $read1 = str_replace("\n", '', $read);
+
+                        if ($read1 != "false") {
+                            break;
+                        }
+
+                    }
+
+
+                }
+
+
+                    array_push($findingcolorarray, $read1);
+                    array_push($kpiweightagearray, $kpiweightage);
+                    // Kpi color Finding Ends Here//
+                    $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
+                    $finalkpielementvalue += $findkpivalue;
+                }
+                array_push($datescolorarray, $findingcolorarray);
+                array_push($finalkpielementvaluearray, $finalkpielementvalue);
+
             }
-            array_push($datescolorarray,$findingcolorarray);
-            array_push($finalkpielementvaluearray,$finalkpielementvalue);
+            $shipobject = new ShipDetails();
+            $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            $shipname = $shipid->getShipName();
+            $series = array
+            (
+                array("name" => "$shipname", 'color' => 'blue', "data" => $finalkpielementvaluearray),
 
-        }
-         $shipobject=new ShipDetails();
-        $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
-        $shipname=$shipid->getShipName();
-        $series = array
-        (
-            array("name" => "$shipname", 'color' => 'blue',   "data" => $finalkpielementvaluearray),
+            );
 
-        );
-
-       $ob = new Highchart();
-        $ob->chart->renderTo('area');
-        $ob->chart->type('line');
-        $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
-        $ob->subtitle->text($shipname);
-        $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
-        $ob->xAxis->categories($newcategories);
-        $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
-        $ob->series($series);
-        $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
-        //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
+            $ob = new Highchart();
+            $ob->chart->renderTo('area');
+            $ob->chart->type('line');
+            $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
+            $ob->subtitle->text($shipname);
+            $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
+            $ob->xAxis->categories($newcategories);
+            $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
+            $ob->series($series);
+            $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
+            //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
 
+            /* $countarray=array();
+             array_push($countarray,count($datescolorarray));*/
+
+            return $this->render(
+                'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
+                array(
+                    'listofkpi' => $listallkpi,
+                    'kpicolorarray' => $datescolorarray,
+                    'kpiweightage' => $kpiweightagearray,
+                    'montharray' => $newcategories,
+                    'shipname' => $shipid,
+                    'chart' => $ob,
+                    'countmonth' => count($datescolorarray),
+                    'avgscore' => $finalkpielementvaluearray
+                )
+            );
 
 
-       /* $countarray=array();
-        array_push($countarray,count($datescolorarray));*/
-
-        return $this->render(
-            'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
-            array(
-                'listofkpi'=>$listallkpi,
-                'kpicolorarray'=>$datescolorarray,
-                'kpiweightage'=>$kpiweightagearray,
-                'montharray'=>$newcategories,
-                'shipname'=>$shipid,
-                'chart' => $ob,
-                'countmonth'=>count($datescolorarray),
-                'avgscore'=>$finalkpielementvaluearray
-            )
-        );
     }
     /**
      * List all element for kpi

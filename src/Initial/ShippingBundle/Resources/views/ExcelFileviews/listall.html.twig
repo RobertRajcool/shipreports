@@ -18,6 +18,10 @@
             <h2>List of files upload</h2>
             <a href="{{ path('fileadd') }}">Import File</a>
         </div>
+        {% if userdetails|length <= 0 %}
+            <h4 align="center">No Record Found </h4>
+        {% endif %}
+        {% if userdetails|length > 0 %}
         <div class="table-responsive">
         <table id="readingkpitable" class="table table-striped">
             <thead>
@@ -53,6 +57,7 @@
             </tbody>
         </table>
 </div>
+        {% endif %}
 
 
     </div>

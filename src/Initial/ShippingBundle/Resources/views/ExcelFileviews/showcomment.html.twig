@@ -63,6 +63,32 @@
         </table>
 
 </div>
+    <div class="bs-example">
+        {% if last_page > 1 %}
+        <ul class="pagination">
+            <li {#class="disabled"#}><a href="{{ path('showcomment', {  'page': previous_page }) }}">Prev</a></li>
+
+            {% for page in 1..last_page %}
+                {% if page == current_page %}
+
+                    <li class="active"><a href="{{ path('showcomment', { 'page': page }) }}">  {{ page }}</a></li>
+                {% else %}
+                    <li>  <a href="{{ path('showcomment', {  'page': page }) }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            <li> <a href="{{ path('showcomment', {  'page': next_page }) }}">Next</a></li>
+            <li> <a href="{{ path('showcomment', {  'page': last_page }) }}">Last</a></li>
+        </ul>
+        {% endif %}
+        <div class="pagination_desc">
+            <strong>{{ total_jobs }}</strong> Total Record
+
+            {% if last_page > 1 %}
+                - page <strong>{{ current_page }}/{{ last_page }}</strong>
+            {% endif %}
+        </div>
+    </div>
 
     </div>
 

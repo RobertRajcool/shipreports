@@ -187,4 +187,6 @@ class ReadingKpiValues
     {
         return $this->elementDetailsId;
     }
+
+
 }

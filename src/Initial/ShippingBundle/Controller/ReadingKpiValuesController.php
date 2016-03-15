@@ -2,6 +2,7 @@
 
 namespace Initial\ShippingBundle\Controller;
 
+use Initial\ShippingBundle\Entity\CommonFunctions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -10,6 +11,7 @@ use Initial\ShippingBundle\Entity\ReadingKpiValues;
 use Initial\ShippingBundle\Form\ReadingKpiValuesType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * ReadingKpiValues controller.
@@ -21,31 +23,31 @@ class ReadingKpiValuesController extends Controller
     /**
      * Lists all ReadingKpiValues entities.
      *
-     * @Route("/", name="readingkpivalues_index")
+     * @Route("/{page}", name="readingkpivalues_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction($page)
     {
         $em = $this->getDoctrine()->getManager();
+        $docobject=new ReadingKpiValues();
         $user1 = $this->getUser();
         $userId = $user1->getId();
-        /*
-        $dbshiparrayquery=$em -> createQueryBuilder()
-            ->select('a.id')
-            ->from('InitialShippingBundle:ShipDetails')
-            ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
-            ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
-            ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
-            ->where('d.id = :userId')
-            ->setParameter('userId',$userId)
-            ->getQuery();
-        $dbshipsid=$dbshiparrayquery->getResult();
-        */
 
-        $readingKpiValues = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findAll();
+        //$readingKpiValues = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findAll();
+        $total_records = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->countActiveRecords($docobject->getId());
+        $record_per_page = $this->container->getParameter('maxrecords_per_page');
+        $last_page = ceil($total_records / $record_per_page);
+        $previous_page = $page > 1 ? $page - 1 : 1;
+        $next_page = $page < $last_page ? $page + 1 : $last_page;
+        $readingKpiValues=$em->getRepository('InitialShippingBundle:ReadingKpiValues')->findBy(array(), array('id' => 'DESC'), $record_per_page, ($page - 1) * $record_per_page);
 
         return $this->render('InitialShippingBundle:readingkpivalues:index.html.twig', array(
             'readingKpiValues' => $readingKpiValues,
+            'last_page' => $last_page,
+            'previous_page' => $previous_page,
+            'current_page' => $page,
+            'next_page' => $next_page,
+            'total_jobs' => $total_records
         ));
     }
 
@@ -430,6 +432,30 @@ class ReadingKpiValuesController extends Controller
 
         return $this->redirectToRoute('readingkpivalues_index');
 
+    }
+
+    public function getAllPosts($currentPage = 1)
+    {
+        // Create our query
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.created', 'DESC')
+            ->getQuery();
+
+        // No need to manually get get the result ($query->getResult())
+
+        $paginator = $this->paginate($query, $currentPage);
+
+        return $paginator;
+    }
+    public function paginate($dql, $page = 1, $limit = 5)
+    {
+        $paginator = new Paginator($dql);
+
+        $paginator->getQuery()
+            ->setFirstResult($limit * ($page - 1)) // Offset
+            ->setMaxResults($limit); // Limit
+
+        return $paginator;
     }
 
 
