@@ -41,6 +41,8 @@
                     {{ form_row(edit_form.rules,{'id' :'result'}) }}
                 </div>
             </div>
+
+
             <div id="conditions"></div>
             <div id="actions"></div>
             <input type="hidden" name="id" id="id" value="{{ rule.id }}">
@@ -61,16 +63,7 @@
 
         </form>
 
-        {#<ul>
-            <li>
-                <a href="{{ path('rules_select') }}">Back to the list</a>
-            </li>
-            <li>
-                {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-                {{ form_end(delete_form) }}
-            </li>
-        </ul>#}
     {% endblock %}
             </div>
+    </div>
 {% endblock %}

@@ -29,16 +29,30 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $userId = $user->getId();
         $username = $user->getUsername();
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName','a.id')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
+                ->where('b.adminName = :username')
+                ->setParameter('username',$username)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName','a.id')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:User','b', 'WITH', 'b.companyid = a.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
 
-        $listallshipforcompany = $em->createQueryBuilder()
-            ->select('a.shipName','a.id')
-            ->from('InitialShippingBundle:ShipDetails','a')
-            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
-            ->where('b.adminName = :username')
-            ->setParameter('username',$username)
-            ->getQuery()
-            ->getResult();
+        $listallshipforcompany = $query->getResult();
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
             array('allships'=>$listallshipforcompany)

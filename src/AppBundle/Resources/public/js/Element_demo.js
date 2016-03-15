@@ -1,6 +1,4 @@
-var global = this;
 var conditions, actions, ageField, submit, result, ans;
-
 
 (function($) {
 
@@ -46,7 +44,7 @@ var conditions, actions, ageField, submit, result, ans;
             $('#result_'+ans).val(sample);
         });
 
-        $('.del-remove').live("click",function(){
+       /* $('.del-remove').live("click",function(){
             var currentId = $(this).attr('id');
             ans = splitfun(currentId);
             $('#field-id_'+ans).remove();
@@ -56,10 +54,10 @@ var conditions, actions, ageField, submit, result, ans;
             $(this).remove();
             $('#textbox_'+ans).remove();
             $('#result_'+ans).remove();
-            /*var dummy = $('#element_details_rules').val()-1;
-            $('#element_details_rules').val(dummy);*/
+            *//*var dummy = $('#element_details_rules').val()-1;
+            $('#element_details_rules').val(dummy);*//*
 
-        });
+        });*/
 
         function splitfun(data){
             var num = data.split('_');
