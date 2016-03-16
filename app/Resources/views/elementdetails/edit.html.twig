@@ -74,13 +74,14 @@
                                             }
                                         }
                                     });
+                                    num++;
                                     action_arr[i]=rule_obj.actions;
                                     var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
                                             $('<td>').text(condition_text),
                                             $('<td>').text(rule_obj.actions),
-                                            $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit"))
+                                            $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit")),
+                                            $('<td>').append($('<input>').attr({'type':'button', 'id':'delete-'+i+'', 'class':'delete_class'}).val("delete"))
                                     ).appendTo('#rule-table');
-                                    num++;
                                 });
                             }
                         },
@@ -183,7 +184,8 @@
                             var $tr = $('<tr>').attr({'id':'row_id-'+ans1}).append(
                                     $('<td>').text(edit_condition_text),
                                     $('<td>').text(engine.actions),
-                                    $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+ans1+'', 'class':'edit_class'}).val("edit"))
+                                    $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+ans1+'', 'class':'edit_class'}).val("edit")),
+                                    $('<td>').append($('<input>').attr({'type':'button', 'id':'delete-'+ans1+'', 'class':'delete_class'}).val("delete"))
                             ).appendTo('#rule-table');
 
                             $('.operator').remove();
@@ -202,13 +204,23 @@
                     $('.all-any-none').hide();
                 });
 
+                $('.delete_class').live("click",function(){
+                    var currentId = $(this).attr('id');
+                    var id_value = splitfun(currentId);
+                    $('#row_id-'+id_value).remove();
+                    var count_row = $('#rule-table tr').length;
+                    if(count_row<=1)
+                    {
+                        $('#row_id').hide();
+                    }
+                    $('#rules-id_'+id_value).val('');
+                });
+
                 function splitfun(data){
                     var num = data.split('-');
                     return num[1];
                 }
-
             });
-
         </script>
     {% endblock %}
 
@@ -291,11 +303,10 @@
 
                 <div id="rule_obj_text"></div>
 
-                <div class="actions">
-                    <input type="submit" class="btn btn-primary" value="Update" id="edit_submit">
+                <div>
+                    <input type="submit" class="btn btn-primary" value="Save" id="edit_submit">
                 </div>
         </form>
-
             </div>
         </div>
 {% endblock %}

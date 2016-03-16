@@ -19,8 +19,8 @@
 
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
-            <h2>Rules Create</h2>
-            <a href="{{ path('rules_select') }}">Back to the list</a>
+            <h2>Rules Creation</h2>
+            <a href="{{ path('rules_select') }}">Back</a>
         </div>
 
         <div class="bs-example">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="control-label col-xs-2">Rule</label>
+                    {#<label class="control-label col-xs-2">Rule</label>#}
                     <div class="col-xs-10">
                         {{ form_row(form.rules,{'id' :'result'}) }}
                     </div>
@@ -61,33 +61,5 @@
         </div>
     </div>
 
-
-       {# <form class="form-horizontal no-style" action="{{ path('rules_new1') }}" method="post">
-            {{ form_row(form.kpiDetailsId,{'id' :'jsid'}) }}
-            {{ form_row(form.elementDetailsId,{'id' :'element'}) }}
-            {{ form_row(form.rules,{'id' :'result'}) }}
-
-            <table id="rule-table">
-                <tr id="row_id">
-                    <th>Conditions</th>
-                    <th>Color</th>
-                </tr>
-            </table>
-
-            <div id="conditions"></div>
-            <div id="actions"></div>
-            <p id="text_box"></p>
-
-            <input type="hidden" id="result" name="value">
-
-            <input type="submit" value="Create" id="submit_id" />
-        </form>
-
-
-        <ul>
-            <li>
-                <a href="{{ path('rules_select') }}">Back to the list</a>
-            </li>
-        </ul>#}
     {% endblock %}
 {% endblock %}

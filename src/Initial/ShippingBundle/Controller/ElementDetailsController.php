@@ -174,20 +174,20 @@ class ElementDetailsController extends Controller
 
         $id = $elementDetail->getId();
 
-
         for ($i=1;$i<=$rules;$i++)
         {
-            $elementRules = new ElementRules();
-            $elementRules->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id)));
             $variable = "rules-$i";
             $engine_rules = $request->request->get($variable);
-            $elementRules->setRules($engine_rules);
-            $em->persist($elementRules);
-            $em->flush();
+            if($engine_rules!="")
+            {
+                $elementRules = new ElementRules();
+                $elementRules->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id)));
+                $elementRules->setRules($engine_rules);
+                $em->persist($elementRules);
+                $em->flush();
+            }
         }
-
         return $this->redirectToRoute('elementdetails_show', array('id' => $elementDetail->getId()));
-
     }
 
 

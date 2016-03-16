@@ -52,6 +52,7 @@ $(document).ready(function(){
             fields: []
         });
     }
+    var i = 0;
     function initializeForm() {
 
         $('.dynamic-add').live("click",function(e) {
@@ -90,11 +91,12 @@ $(document).ready(function(){
             {
                 obj.conditions.all[0].operator = '=';
             }
-
+            i++;
             var condition_text = obj.conditions.all[0].operator +''+ obj.conditions.all[0].value;
-            var $tr = $('<tr>').append(
+            var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
                 $('<td>').text(condition_text),
-                $('<td>').text(obj.actions)
+                $('<td>').text(obj.actions),
+                $('<td>').append($('<input>').attr({'type':'button', 'id':'delete_'+i+'', 'class':'delete_class'}).val("delete"))
             ).appendTo('#rule-table');
 
         });
@@ -147,6 +149,22 @@ $(document).ready(function(){
         $('#element_details_rules').val(j);
     });
 
+    $('.delete_class').live("click",function(){
+        var currentId = $(this).attr('id');
+        var id_value = splitfun(currentId);
+        $('#row_id-'+id_value).remove();
+        var count_row = $('#rule-table tr').length;
+        if(count_row<=1)
+        {
+            $('#row_id').hide();
+        }
+        $('#rules-id_'+id_value).val('');
+    });
+
+    function splitfun(data){
+        var num = data.split('_');
+        return num[1];
+    }
 
 });
 

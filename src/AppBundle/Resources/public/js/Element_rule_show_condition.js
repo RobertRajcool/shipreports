@@ -78,7 +78,8 @@ $(document).ready(function(){
                         var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
                             $('<td>').text(condition_text),
                             $('<td>').text(rule_obj.actions.value),
-                            $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit"))
+                            $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit")),
+                            $('<td>').append($('<input>').attr({'type':'button', 'id':'delete-'+i+'', 'class':'delete_class'}).val("delete"))
                         ).appendTo('#rule-table');
                         num++;
                     });
@@ -197,7 +198,8 @@ $(document).ready(function(){
                 var $tr = $('<tr>').attr({'id':'row_id-'+ans1}).append(
                     $('<td>').text(edit_condition_text),
                     $('<td>').text(engine.actions.value),
-                    $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+ans1+'', 'class':'edit_class'}).val("edit"))
+                    $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+ans1+'', 'class':'edit_class'}).val("edit")),
+                    $('<td>').append($('<input>').attr({'type':'button', 'id':'delete-'+ans1+'', 'class':'delete_class'}).val("delete"))
                 ).appendTo('#rule-table');
 
                 $('.operator').remove();
@@ -215,6 +217,18 @@ $(document).ready(function(){
         $('#remove-id').remove();
         $('#action_remove').remove();
         $('.all-any-none').hide();
+    });
+
+    $('.delete_class').live("click",function(){
+        var currentId = $(this).attr('id');
+        var id_value = splitfun(currentId);
+        $('#row_id-'+id_value).remove();
+        var count_row = $('#rule-table tr').length;
+        if(count_row<=1)
+        {
+            $('#row_id').hide();
+        }
+        //$('#rules-id_'+id_value).val('');
     });
 
     function splitfun(data){

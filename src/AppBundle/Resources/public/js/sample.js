@@ -7,7 +7,6 @@ $(document).ready(function(){
         var data = {jsid : $('#jsid').val()};
         if($(this).val())
         {
-
             $.ajax({
                 type: "POST",
                 data: data,
@@ -20,8 +19,6 @@ $(document).ready(function(){
                             value: listkpi.id, text : listkpi.elementName
                         }));
                     });
-
-
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown)
                 {
