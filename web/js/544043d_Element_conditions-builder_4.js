@@ -71,7 +71,6 @@
             return this.buildConditional(ruleData) || this.buildRule(ruleData);
         },
 
-
         buildConditional: function(ruleData) {
             var kind;
             if(ruleData.all) { kind = "all"; }
@@ -99,18 +98,46 @@
             });
             div.append(addRuleLink);
 
-            var count1 = count;
-            count1++;
-
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id"+count1, "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 k++;
                 var f = _this.fields[0];
                 var newField = {"all": [{ operator: f.operators[0], value: null}]};
-                div.append(_this.buildConditional(newField));
+                div.append(_this.buildConditional1(newField));
             });
             div.append(addConditionLink);
+
+            var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
+            removeLink.click(function(e) {
+                e.preventDefault();
+                div.remove();
+            });
+            div.append(removeLink);
+
+            var rules = ruleData[kind];
+            for(var i=0; i<rules.length; i++) {
+                div.append(this.buildRules(rules[i]));
+            }
+            return div;
+        },
+        buildConditional1: function(ruleData) {
+            var kind;
+            if(ruleData.all) { kind = "all"; }
+            else if(ruleData.any) { kind = "any"; }
+            else if (ruleData.none) { kind = "none"; }
+            if(!kind) { return; }
+
+            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditionalid"});
+
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
+            addConditionLink.click(function(e) {
+                e.preventDefault();
+                k++;
+                var f = _this.fields[0];
+                var newField = {"all": [{ operator: f.operators[0], value: null}]};
+                div.append(_this.buildConditional1(newField));
+            });
 
             var removeLink = $("<a>", {"class": "remove", "href": "#", "text": "Remove This Sub-Condition"});
             removeLink.click(function(e) {

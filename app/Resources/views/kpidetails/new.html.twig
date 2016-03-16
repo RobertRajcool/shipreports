@@ -15,23 +15,6 @@
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-       {# <script>
-            $(document).ready(function(){
-                $('.remove-condition').live("click",function(){
-                    var currentId = $(this).attr('id');
-                    var id_value = splitfun(currentId);
-                    $('.dynamic-add').remove();
-                    $('#add-id'+id_value).remove();
-                    $('#add-condition-id'+id_value).remove();
-                    $('.action-select-id'+id_value).remove();
-                    $(this).remove();
-                });
-                function splitfun(data){
-                    var num = data.split('_');
-                    return num[1];
-                }
-            });
-        </script>#}
 
     {% endblock %}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
