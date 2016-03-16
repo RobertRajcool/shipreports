@@ -30,17 +30,17 @@ $(document).ready(function(){
             });
         }
     });
+
     var j=0;
 
     $('.add').hide();
     $('.add-condition').hide();
-    $('.remove').hide();
+    $('.remove').remove();
     $('.all-any-none').hide();
 
     $('.add-rule').bind('click',function(){
         $('.add').show();
         $('.add-condition').show();
-        //$('.remove').show();
         var div = $('<div>');
         j++;
         div.html(DynamicBox(""));
@@ -53,11 +53,11 @@ $(document).ready(function(){
             '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 
-
     var k =1;
     $('.add-condition').live("click", function () {
         $('.all-any-none').hide();
-        $('#add-rule-id'+k).hide();
+        $('#add-rule-id'+k).remove();
+        $('#remove-condition-id'+k).remove();
         k++;
     });
     $('.add').live("click",function(){
@@ -69,7 +69,8 @@ $(document).ready(function(){
     var condition_text = "";
     $('.dynamic-add').live("click",function() {
         var currentId = $(this).attr('id');
-        id_value = splitfun(currentId);
+        var id_value = splitfun(currentId);
+
         $('.add').hide();
         $('.add-condition').hide();
         $('.remove').remove();
@@ -79,6 +80,7 @@ $(document).ready(function(){
         $('.operator').remove();
         $('.action-select').hide();
         $(this).remove();
+
         var rule = $('#rules-id_'+id_value).val();
         var rule_obj = JSON.parse(rule);
         var con = rule_obj.conditions.all;
@@ -90,7 +92,6 @@ $(document).ready(function(){
 
         $.each(con, function(j)
         {
-            //alert(con[j].operator);
             if(con[j].operator=='equalTo')
             {
                 con[j].operator = '=';
@@ -132,6 +133,16 @@ $(document).ready(function(){
             $('<td>').text(rule_obj.actions.value)
         ).appendTo('#rule-table');
         i++;
+    });
+
+    $('.remove-condition').live("click",function(){
+        var currentId = $(this).attr('id');
+        var id_value = splitfun(currentId);
+        $('.dynamic-add').remove();
+        $('.add').hide();
+        $('.add-condition').hide();
+        $('.action-select').hide();
+        $(this).remove();
     });
 
     function splitfun(data){

@@ -25,11 +25,6 @@
         id_value = splitfun(currentId);
     });
 
-    $('.con-add').live("click",function() {
-        var currentId = $(this).attr('id');
-        id_value = splitfun(currentId);
-        count++;
-    });
 
     function splitfun(data){
         var num = data.split('_');
@@ -104,7 +99,10 @@
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
+            var count1 = count;
+            count1++;
+
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id"+count1, "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 k++;
@@ -179,7 +177,7 @@
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove-condition", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove-condition","id":"remove-condition-id"+k, "href": "#", "text": "Remove"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }

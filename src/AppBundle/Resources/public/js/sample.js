@@ -30,17 +30,17 @@ $(document).ready(function(){
             });
         }
     });
+
     var j=0;
 
     $('.add').hide();
     $('.add-condition').hide();
-    $('.remove').hide();
+    $('.remove').remove();
     $('.all-any-none').hide();
 
     $('.add-rule').bind('click',function(){
         $('.add').show();
         $('.add-condition').show();
-        //$('.remove').show();
         var div = $('<div>');
         j++;
         div.html(DynamicBox(""));
@@ -53,11 +53,11 @@ $(document).ready(function(){
             '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 
-
     var k =1;
     $('.add-condition').live("click", function () {
         $('.all-any-none').hide();
-        $('#add-rule-id'+k).hide();
+        $('#add-rule-id'+k).remove();
+        $('#remove-condition-id'+k).remove();
         k++;
     });
     $('.add').live("click",function(){
@@ -133,6 +133,16 @@ $(document).ready(function(){
             $('<td>').text(rule_obj.actions.value)
         ).appendTo('#rule-table');
         i++;
+    });
+
+    $('.remove-condition').live("click",function(){
+        var currentId = $(this).attr('id');
+        var id_value = splitfun(currentId);
+        $('.dynamic-add').remove();
+        $('.add').hide();
+        $('.add-condition').hide();
+        $('.action-select').hide();
+        $(this).remove();
     });
 
     function splitfun(data){

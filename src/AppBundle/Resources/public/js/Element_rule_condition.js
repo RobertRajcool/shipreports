@@ -1,6 +1,13 @@
 $(document).ready(function(){
 
     $('#row_id').hide();
+    var j = 0;
+
+    $('.remove').live("click",function(){
+        j--;
+        $('.action-value').remove();
+        $('.dynamic-add').remove();
+    });
 
     (function($) {
         var a=0;
@@ -113,7 +120,7 @@ $(document).ready(function(){
     $('.all-any-none').hide();
     $('#remove-id').remove();
 
-    var j = 0;
+
     $('.add-rule').bind('click',function(){
         $('.field').hide();
         $('.remove').show();
