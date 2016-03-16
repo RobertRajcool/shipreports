@@ -84,10 +84,11 @@
         <div class="bs-example">
             <ul class="pagination">
                 <li class="disabled"><a href="{{ path('readingkpivalues_index', {  'page': previous_page }) }}">Prev</a></li>
-                <li class="active"><a href="{{ path('readingkpivalues_index', { 'page': 1 }) }}">1</a></li>
+
                 {% for page in 1..last_page %}
                     {% if page == current_page %}
-                        {{ page }}
+
+                        <li class="active" ><a href="">{{ page }}</a></li>
                     {% else %}
                 <li>  <a href="{{ path('readingkpivalues_index', {  'page': page }) }}">{{ page }}</a></li>
                     {% endif %}
