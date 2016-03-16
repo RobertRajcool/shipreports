@@ -355,7 +355,7 @@ class RulesController extends Controller
 
         return $this->redirectToRoute('rules_index');
     }
-    
+
 
     /**
      * Creates a form to delete a Rules entity.

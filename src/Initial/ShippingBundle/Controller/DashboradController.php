@@ -52,36 +52,56 @@ class DashboradController extends Controller
                 ->getQuery();
         }
 
-        $listallshipforcompany = $query->getResult();
+        $ship_details_array = $query->getResult();
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
-            array('allships'=>$listallshipforcompany)
+            array('allships'=>$ship_details_array)
         );
     }
+
+
     /**
      * List all kpi for ship
      *
-     * @Route("/{shipid}/listallkpiforship", name="listallkpiforship")
+     * @Route("/{shipid}/ship_kpi_list", name="ship_kpi_list")
      */
-    public function listallkpiforshipAction($shipid,Request $request)
+    public function ship_kpi_listAction($shipid,Request $request)
     {
-
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $userId = $user->getId();
         $username = $user->getUsername();
-//Find Last Five Months Starts Here //
-        $comanyiddetailarray = $em->createQueryBuilder()
-            ->select('b.id')
-            ->from('InitialShippingBundle:CompanyDetails','b')
-            ->where('b.adminName = :username')
-            ->setParameter('username',$username)
-            ->getQuery()
-            ->getResult();
+
+        //Find Last Five Months Starts Here //
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $company_details_id_query = $em->createQueryBuilder()
+                ->select('b.id')
+                ->from('InitialShippingBundle:CompanyDetails','b')
+                ->where('b.adminName = :username')
+                ->setParameter('username',$username)
+                ->getQuery()
+                ->getResult();
+            $company_details_id = $company_details_id_query[0]['id'];
+        }
+        else
+        {
+            $company_details_id_query = $em->createQueryBuilder()
+                ->select('identity(a.companyid)')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :user_id')
+                ->setParameter('user_id',$userId)
+                ->getQuery()
+                ->getResult();
+            $company_details_id = $company_details_id_query[0][1];
+        }
+
         $lastdate = $em->createQueryBuilder()
             ->select('a.dataOfMonth')
             ->from('InitialShippingBundle:Excel_file_details','a')
             ->where('a.company_id = :company_id')
-            ->setParameter('company_id',$comanyiddetailarray[0]['id'])
+            ->setParameter('company_id',$company_details_id)
             ->addOrderBy('a.id', 'DESC')
             ->getQuery()
             ->getResult();
@@ -276,11 +296,7 @@ class DashboradController extends Controller
                         }
 
                     }
-
-
                 }
-
-
                     array_push($findingcolorarray, $read1);
                     array_push($kpiweightagearray, $kpiweightage);
                     // Kpi color Finding Ends Here//
@@ -289,7 +305,6 @@ class DashboradController extends Controller
                 }
                 array_push($datescolorarray, $findingcolorarray);
                 array_push($finalkpielementvaluearray, $finalkpielementvalue);
-
             }
             $shipobject = new ShipDetails();
             $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
@@ -312,7 +327,6 @@ class DashboradController extends Controller
             $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
-
             /* $countarray=array();
              array_push($countarray,count($datescolorarray));*/
 
@@ -329,9 +343,10 @@ class DashboradController extends Controller
                     'avgscore' => $finalkpielementvaluearray
                 )
             );
-
-
     }
+
+
+
     /**
      * List all element for kpi
      *
@@ -341,20 +356,38 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $userId = $user->getId();
         $username = $user->getUsername();
-//Find Last Five Months Starts Here //
-        $comanyiddetailarray = $em->createQueryBuilder()
-            ->select('b.id')
-            ->from('InitialShippingBundle:CompanyDetails','b')
-            ->where('b.adminName = :username')
-            ->setParameter('username',$username)
-            ->getQuery()
-            ->getResult();
+
+        //Find Last Five Months Starts Here //
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $company_details_id_query = $em->createQueryBuilder()
+                ->select('b.id')
+                ->from('InitialShippingBundle:CompanyDetails','b')
+                ->where('b.adminName = :username')
+                ->setParameter('username',$username)
+                ->getQuery()
+                ->getResult();
+            $company_details_id = $company_details_id_query[0]['id'];
+        }
+        else
+        {
+            $company_details_id_query = $em->createQueryBuilder()
+                ->select('identity(a.companyid)')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :user_id')
+                ->setParameter('user_id',$userId)
+                ->getQuery()
+                ->getResult();
+            $company_details_id = $company_details_id_query[0][1];
+        }
         $lastdate = $em->createQueryBuilder()
             ->select('a.dataOfMonth')
             ->from('InitialShippingBundle:Excel_file_details','a')
             ->where('a.company_id = :company_id')
-            ->setParameter('company_id',$comanyiddetailarray[0]['id'])
+            ->setParameter('company_id',$company_details_id)
             ->addOrderBy('a.id', 'DESC')
             ->getQuery()
             ->getResult();
