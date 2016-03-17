@@ -131,7 +131,15 @@ class ShipDetailsController extends Controller
     {
         $params = $request->request->get('ship_details');
         $shipName = $params['shipName'];
+        $shipType = $params['shipType'];
+        $imoNumber = $params['imoNumber'];
+        $country = $params['country'];
+        $location = $params['location'];
         $description = $params['description'];
+        $manufacturingYear = $params['manufacturingYear'];
+        $built = $params['built'];
+        $size = $params['size'];
+        $gt = $params['gt'];
 
         $user = $this->getUser();
         $userId = $user->getId();
@@ -161,11 +169,21 @@ class ShipDetailsController extends Controller
         $companyName=$ans[0]['id'];
 
         $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
+        $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id'=>$shipType));
+        $countryObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:AppsCountries')->findOneBy(array('id'=>$country));
 
         $shipdetails = new ShipDetails();
         $shipdetails->setCompanyDetailsId($course);
         $shipdetails->setShipName($shipName);
+        $shipdetails->setShipType($shipTypeObj);
+        $shipdetails->setImoNumber($imoNumber);
+        $shipdetails->setCountry($countryObj);
+        $shipdetails->setLocation($location);
         $shipdetails->setDescription($description);
+        $shipdetails->setBuilt($built);
+        $shipdetails->setSize($size);
+        $shipdetails->setGt($gt);
+        $shipdetails->setManufacturingYear($manufacturingYear);
 
         $em->persist($shipdetails);
         $em->flush();

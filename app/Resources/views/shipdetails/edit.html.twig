@@ -28,9 +28,57 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="control-label col-xs-2">ShipType</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.shipType) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">IMO</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.imoNumber) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">Country</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.country) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">Location</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.location) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">Built</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.built) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">Size</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.size) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">GT</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.gt) }}
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="control-label col-xs-2">Description</label>
                 <div class="col-xs-10">
                     {{  form_widget(edit_form.description) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2">Year of Manufacturing</label>
+                <div class="col-xs-10">
+                    {{  form_widget(edit_form.manufacturingYear) }}
                 </div>
             </div>
             {{ form_row(edit_form.companyDetailsId,{'id':'company_id','label': ' '}) }}

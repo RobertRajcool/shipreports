@@ -4,8 +4,8 @@
 
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
-            <h2>Create ship</h2>
-            <a href="{{ path('shipdetails_select1') }}">Back to the list</a>
+            <h2>Ship Creation</h2>
+            <a href="{{ path('shipdetails_select1') }}">Back</a>
         </div>
         <div class="bs-example">
 
@@ -17,9 +17,57 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="control-label col-xs-2">ShipType</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.shipType) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">IMO</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.imoNumber) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Country</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.country) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Location</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.location) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Built</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.built) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Size</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.size) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">GT</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.gt) }}
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="control-label col-xs-2">Description</label>
                     <div class="col-xs-10">
                         {{ form_row(form.description) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Year of Manufacturing</label>
+                    <div class="col-xs-10">
+                        {{ form_row(form.manufacturingYear) }}
                     </div>
                 </div>
 

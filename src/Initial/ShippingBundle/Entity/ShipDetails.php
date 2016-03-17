@@ -30,6 +30,32 @@ class ShipDetails
 
     /**
      * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\ShipTypes", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="shipType", referencedColumnName="id")
+     * })
+     */
+    private $shipType;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="imoNumber", type="string", length=125)
+     */
+    private $imoNumber;
+
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\AppsCountries", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="country", referencedColumnName="id")
+     * })
+     */
+    private $country;
+
+
+    /**
+     * @var string
      * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\CompanyDetails", cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="companyDetailsId", referencedColumnName="id")
@@ -44,6 +70,43 @@ class ShipDetails
      */
     private $description;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="location", type="string", length=125)
+     */
+    private $location;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="manufacturingYear", type="string", length=125)
+     */
+    private $manufacturingYear;
+
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="built", type="string", length=125)
+     */
+    private $built;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="size", type="string", length=125)
+     */
+    private $size;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="gt", type="string", length=125)
+     */
+    private $gt;
+
 
     /**
      * Get id
@@ -53,6 +116,22 @@ class ShipDetails
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
+
+    /**
+     * @param string $location
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
     }
 
     /**
@@ -81,6 +160,39 @@ class ShipDetails
     {
         return $this->getShipName() ? $this->getShipName() : "";
     }
+
+    /**
+     * @return string
+     */
+    public function getShipType()
+    {
+        return $this->shipType;
+    }
+
+    /**
+     * @param string $shipType
+     */
+    public function setShipType($shipType)
+    {
+        $this->shipType = $shipType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImoNumber()
+    {
+        return $this->imoNumber;
+    }
+
+    /**
+     * @param string $imoNumber
+     */
+    public function setImoNumber($imoNumber)
+    {
+        $this->imoNumber = $imoNumber;
+    }
+
     /**
      * Set companyDetailsId
      *
@@ -105,6 +217,23 @@ class ShipDetails
     }
 
     /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param string $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+
+    /**
      * Set description
      *
      * @param string $description
@@ -126,4 +255,70 @@ class ShipDetails
     {
         return $this->description;
     }
+
+    /**
+     * @return string
+     */
+    public function getManufacturingYear()
+    {
+        return $this->manufacturingYear;
+    }
+
+    /**
+     * @param string $manufacturingYear
+     */
+    public function setManufacturingYear($manufacturingYear)
+    {
+        $this->manufacturingYear = $manufacturingYear;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBuilt()
+    {
+        return $this->built;
+    }
+
+    /**
+     * @param string $built
+     */
+    public function setBuilt($built)
+    {
+        $this->built = $built;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param string $size
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGt()
+    {
+        return $this->gt;
+    }
+
+    /**
+     * @param string $gt
+     */
+    public function setGt($gt)
+    {
+        $this->gt = $gt;
+    }
+
+
 }

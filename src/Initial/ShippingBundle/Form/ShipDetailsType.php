@@ -16,8 +16,26 @@ class ShipDetailsType extends AbstractType
     {
         $builder
             ->add('shipName')
+            ->add('shipType','entity', array(
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\ShipTypes',
+                'property' => 'ShipType',
+                'empty_value' => '--ShipType--'
+            ))
+            ->add('imoNumber')
+            ->add('country','entity',array(
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\AppsCountries',
+                'property' => 'CountryName',
+                'empty_value' => '--Select Country--'
+            ))
+            ->add('location')
             ->add('companyDetailsId')
             ->add('description')
+            ->add('built')
+            ->add('size')
+            ->add('gt')
+            ->add('manufacturingYear')
         ;
     }
     
