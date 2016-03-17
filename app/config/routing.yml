@@ -1,6 +1,9 @@
 initial_shipping_kpi_rules:
     resource: "@InitialShippingBundle/Controller/KpiRulesController.php"
     type:     annotation
+initial_shipping_mailing:
+    resource: "@InitialShippingBundle/Controller/MailingController.php"
+    type:     annotation
 
 initial_shipping_dashborad:
     resource: "@InitialShippingBundle/Controller/DashboradController.php"
