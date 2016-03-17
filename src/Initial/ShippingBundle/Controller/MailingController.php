@@ -176,10 +176,11 @@ class MailingController extends Controller
         $mailing_group = $request->request->get('mailing_group');
         $groupname = $mailing_group['groupname'];
         $groupemailids = $request->request->get('emailreferenceid');
-        $mailgroupobject=new MailingGroup();
+
         for($i=0;$i<count($groupemailids);$i++)
         {
-            $emailref = $em->getRepository('InitialShippingBundle:MailingGroup')->findOneBy(array('id'=>$groupemailids[$i]));
+            $mailgroupobject=new MailingGroup();
+            $emailref = $em->getRepository('InitialShippingBundle:Mailing')->findOneBy(array('id'=>$groupemailids[$i]));
             $mailgroupobject->setGroupname($groupname);
             $mailgroupobject->setEmailreferenceid($emailref);
             $em->persist($mailgroupobject);
@@ -191,4 +192,54 @@ class MailingController extends Controller
         return $this->redirectToRoute('mailinghome');
 
     }
+    /**
+     * Lists all ReadingKpiValues entities.
+     *
+     * @Route("/listgroup", name="listmailgroup")
+     * @Method("GET")
+     */
+    public function listgroupAction(/*$page*/)
+    {
+        $em = $this->getDoctrine()->getManager();
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $username = $user->getUsername();
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
+                ->where('b.username = :username')
+                ->setParameter('username',$username)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.companyid')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $companyid=$query->getSingleScalarResult();
+        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+        $listallgroup = $em->createQueryBuilder()
+            ->select('a.id','a.emailid','a.username','b.groupname')
+            ->from('InitialShippingBundle:Mailing','a')
+            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->where('a.companyid = :companyid')
+            ->setParameter('companyid',$newcompanyid)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('InitialShippingBundle:Mailing:listallgroup.html.twig', array(
+            'listallgroup' => $listallgroup
+
+        ));
+    }
+
 }

@@ -144,7 +144,7 @@ class KpiDetailsController extends Controller
         $kpiName = $params['kpiName'];
         $shipDetailsId = $params['shipDetailsId'];
         $val = count($shipDetailsId);
-//print_r($j);die;
+
         $description = $params['description'];
         $activeDate = $params['activeDate'];
         $endDate = $params['endDate'];
@@ -158,7 +158,6 @@ class KpiDetailsController extends Controller
         $new_date1=new \DateTime($monthtostring1);
 
         $em = $this->getDoctrine()->getManager();
-        $kpidetails = new KpiDetails();
 
         for($i=0;$i<$val;$i++)
         {
@@ -183,17 +182,18 @@ class KpiDetailsController extends Controller
         $course1 = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$id));
         for($ii=1;$ii<=$value;$ii++)
         {
-            $rule = new KpiRules();
-            $rule->setKpiDetailsId($course1);
             $variable = "rules-$ii";
             $rules=$request->request->get($variable);
-            $rule->setRules($rules);
-            $em->persist($rule);
-            $em->flush();
+            if($rules!="")
+            {
+                $rule = new KpiRules();
+                $rule->setKpiDetailsId($course1);
+                $rule->setRules($rules);
+                $em->persist($rule);
+                $em->flush();
+            }
         }
-
         return $this->redirectToRoute('kpidetails_select1');
-
     }
 
     /**

@@ -5,7 +5,7 @@
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>Element Details</h2>
-            <a href="{{ path('elementdetails_new') }}">Create Element</a>
+            <a href="{{ path('elementdetails_new') }}">Add Element</a>
         </div>
     {% endif %}
     <div class="table-responsive">
@@ -20,7 +20,6 @@
                 <th>ActivatedDate</th>
                 <th>EndDate</th>
                 <th>Weightage</th>
-                <th>rules</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -35,13 +34,12 @@
                     <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
                     <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
                     <td>{{ elementDetail.weightage }}</td>
-                    <td>{{ elementDetail.rules }}</td>
                     <td>
                         <a href="{{ path('elementdetails_show', { 'id': elementDetail.id }) }}">show</a><br>
 
                         <a href="{{ path('elementdetails_edit', { 'id': elementDetail.id }) }}">edit</a>
 
-                        <a href="{{ path('subelementdetails_select', { 'id': elementDetail.id }) }}">Sub_Elements</a>
+                        {#<a href="{{ path('subelementdetails_select', { 'id': elementDetail.id }) }}">Sub_Elements</a>#}
 
                     </td>
                 </tr>

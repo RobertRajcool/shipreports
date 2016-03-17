@@ -30,17 +30,17 @@ $(document).ready(function(){
             });
         }
     });
+
     var j=0;
 
     $('.add').hide();
     $('.add-condition').hide();
-    $('.remove').hide();
+    $('.remove').remove();
     $('.all-any-none').hide();
 
     $('.add-rule').bind('click',function(){
         $('.add').show();
         $('.add-condition').show();
-        //$('.remove').show();
         var div = $('<div>');
         j++;
         div.html(DynamicBox(""));
@@ -53,23 +53,23 @@ $(document).ready(function(){
             '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 
-
     var k =1;
     $('.add-condition').live("click", function () {
         $('.all-any-none').hide();
-        $('#add-rule-id'+k).hide();
+        $('#add-rule-id'+k).remove();
+        $('#remove-condition-id'+k).remove();
         k++;
     });
     $('.add').live("click",function(){
         $('.remove-action').remove();
     });
 
-
     var i =0;
     var condition_text = "";
     $('.dynamic-add').live("click",function() {
         var currentId = $(this).attr('id');
-        id_value = splitfun(currentId);
+        var id_value = splitfun(currentId);
+
         $('.add').hide();
         $('.add-condition').hide();
         $('.remove').remove();
@@ -79,6 +79,7 @@ $(document).ready(function(){
         $('.operator').remove();
         $('.action-select').hide();
         $(this).remove();
+
         var rule = $('#rules-id_'+id_value).val();
         var rule_obj = JSON.parse(rule);
         var con = rule_obj.conditions.all;
@@ -88,35 +89,34 @@ $(document).ready(function(){
         $('#rules-id_'+id_value).val(final_rule);
         $('#row_id').show();
 
-        $.each(con, function(j)
+        $.each(new_rule_obj, function(j)
         {
-            //alert(con[j].operator);
-            if(con[j].operator=='equalTo')
+            if(new_rule_obj[j].operator=='equalTo')
             {
-                con[j].operator = '=';
+                new_rule_obj[j].operator = '=';
             }
-            else if(con[j].operator=='notEqualTo')
+            else if(new_rule_obj[j].operator=='notEqualTo')
             {
-                con[j].operator = '!=';
+                new_rule_obj[j].operator = '!=';
             }
-            else if(con[j].operator=='greaterThan')
+            else if(new_rule_obj[j].operator=='greaterThan')
             {
-                con[j].operator = '>';
+                new_rule_obj[j].operator = '>';
             }
-            else if(con[j].operator=='greaterThanEqual')
+            else if(new_rule_obj[j].operator=='greaterThanEqual')
             {
-                con[j].operator = '>=';
+                new_rule_obj[j].operator = '>=';
             }
-            else if(con[j].operator=='lessThan')
+            else if(new_rule_obj[j].operator=='lessThan')
             {
-                con[j].operator = '<';
+                new_rule_obj[j].operator = '<';
             }
-            else if(con[j].operator=='lessThanEqual')
+            else if(new_rule_obj[j].operator=='lessThanEqual')
             {
-                con[j].operator = '<=';
+                new_rule_obj[j].operator = '<=';
             }
 
-            var condition_text_one = con[j].operator+con[j].value;
+            var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
             if(j==0)
             {
                 condition_text = condition_text_one;
@@ -126,12 +126,32 @@ $(document).ready(function(){
                 condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
             }
         });
-
-        var $tr = $('<tr>').append(
-            $('<td>').text(condition_text),
-            $('<td>').text(rule_obj.actions.value)
-        ).appendTo('#rule-table');
         i++;
+        var $tr = $('<tr>').attr({'id':'row-id_'+i}).append(
+            $('<td>').text(condition_text),
+            $('<td>').text(rule_obj.actions.value),
+            $('<td>').append($('<input>').attr({'type':'button', 'id':'delete_'+j+'', 'class':'delete_class'}).val("delete"))
+        ).appendTo('#rule-table');
+    });
+
+    $('.remove-condition').live("click",function(){
+        $('.dynamic-add').remove();
+        $('.add').hide();
+        $('.add-condition').hide();
+        $('.action-select').hide();
+        $(this).remove();
+    });
+
+    $('.delete_class').live("click",function(){
+        var currentId = $(this).attr('id');
+        var id_value = splitfun(currentId);
+        $('#row-id_'+id_value).remove();
+        var count_row = $('#rule-table tr').length;
+        if(count_row<=1)
+        {
+            $('#row_id').hide();
+        }
+        $('#rules-id_'+id_value).val('');
     });
 
     function splitfun(data){

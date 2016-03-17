@@ -132,19 +132,20 @@ class RulesController extends Controller
 
         for($i=1;$i<=$value;$i++)
         {
-            $rule = new Rules();
-            $rule->setKpiDetailsId($course1);
-            $rule->setElementDetailsId($course2);
             $variable = "rules-$i";
             $rules=$request->request->get($variable);
-            $rule->setRules($rules);
-            $em->persist($rule);
-            $em->flush();
+            if($rules!="")
+            {
+                $rule = new Rules();
+                $rule->setKpiDetailsId($course1);
+                $rule->setElementDetailsId($course2);
+                $rule->setRules($rules);
+                $em->persist($rule);
+                $em->flush();
+            }
         }
 
-
         return $this->redirectToRoute('rules_show', array('id' => $rule->getId()));
-
     }
 
 
@@ -206,6 +207,7 @@ class RulesController extends Controller
 
         return $response;
     }
+
 
     /**
      * Finds and displays a Rules entity.
@@ -289,6 +291,7 @@ class RulesController extends Controller
         ));
     }
 
+
     /**
      * Displays a form to edit an existing Rules entity.
      *
@@ -330,8 +333,8 @@ class RulesController extends Controller
         }
         return $this->redirectToRoute('rules_select');
 
-
     }
+
 
     /**
      * Deletes a Rules entity.
@@ -352,6 +355,7 @@ class RulesController extends Controller
 
         return $this->redirectToRoute('rules_index');
     }
+
 
     /**
      * Creates a form to delete a Rules entity.

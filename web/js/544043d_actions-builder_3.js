@@ -1,4 +1,6 @@
+
 (function($) {
+
     $.fn.actionsBuilder = function(options) {
         if(options == "data") {
             var builder = $(this).eq(0).data("actionsBuilder");
@@ -10,13 +12,23 @@
             });
         }
     };
+
     var count = 0;
+    var num = 0;
 
     function ActionsBuilder(element, options) {
         this.element = $(element);
         this.options = options || {};
         this.init();
     }
+
+    $('.add-rule').live("click",function(){
+        num++;
+    });
+    $('.remove-condition').live("click",function(){
+        num--;
+    });
+
 
     ActionsBuilder.prototype = {
         init: function() {
@@ -28,9 +40,11 @@
         },
 
         buildActions: function(data) {
+            var num1 = num;
+            num1++;
             var container = $("<div>", {"class": "actions"});
             var buttons = $("<div>", {"class": "action-buttons"});
-            var addButton = $("<a>", {"href": "#", "class": "add", "text": "Add Action"});
+            var addButton = $("<a>", {"href": "#", "class": "add","id":"add-id"+num1, "text": "Add Action"});
             var _this = this;
 
             addButton.click(function(e) {
@@ -62,7 +76,7 @@
             var field = this._findField(data.name);
             var div = $("<div>", {"class": "action"});
             var fieldsDiv = $("<div>", {"class": "subfields","id":"subfields-id"});
-            var select = $("<select>", {"class": "action-select","id":"action-select-id"+count, "name": "action-select"});
+            var select = $("<select>", {"class": "action-select","id":"action-select-id"+num, "name": "action-select"});
 
             for(var i=0; i < this.fields.length; i++) {
                 var possibleField = this.fields[i];
@@ -96,9 +110,6 @@
             div.append(removeLink);
             return div;
         },
-
-
-
 
         collectData: function(fields) {
             var _this = this;

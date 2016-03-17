@@ -208,7 +208,7 @@ class ShipDetailsController extends Controller
             $em->persist($shipDetail);
             $em->flush();
 
-            return $this->redirectToRoute('shipdetails_index', array('id' => $shipDetail->getId()));
+            return $this->redirectToRoute('shipdetails_select1', array('id' => $shipDetail->getId()));
         }
 
         return $this->render('shipdetails/edit.html.twig', array(
@@ -235,7 +235,7 @@ class ShipDetailsController extends Controller
             $em->flush();
         }
 
-        return $this->redirectToRoute('shipdetails_index');
+        return $this->redirectToRoute('shipdetails_select1');
     }
 
     /**

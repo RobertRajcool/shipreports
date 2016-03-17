@@ -104,7 +104,7 @@
             });
             div.append(addRuleLink);
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id"+count, "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 k++;
@@ -179,7 +179,7 @@
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove-condition", "href": "#", "text": "Remove"});
+        var removeLink = $("<a>", {"class": "remove-condition","id":"remove-condition-id"+count, "href": "#", "text": "Remove"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }

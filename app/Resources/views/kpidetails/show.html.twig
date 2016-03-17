@@ -118,7 +118,7 @@
         <div class="page-header">
 
             <h2>KpiDetails</h2>
-            <a href="{{ path('kpidetails_select1') }}">Back to the list</a>
+            <a href="{{ path('kpidetails_select1') }}">Back</a>
         </div>
 
     <table>
@@ -126,14 +126,11 @@
         <tr>
             <th>Ships</th>
             <td>
-                <select>
-                    <option>--Available Ships--</option>
-                    {% for ships in ship_name %}
-                        {% for ships1 in ships %}
-                            <option value={{ ships1['shipName'] }}>{{ ships1['shipName'] }}</option>
-                        {% endfor %}
+                {% for ships in ship_name %}
+                    {% for ships1 in ships %}
+                        {{ ships1['shipName'] }},
                     {% endfor %}
-                </select>
+                {% endfor %}
             </td>
         </tr>
         <tr>
