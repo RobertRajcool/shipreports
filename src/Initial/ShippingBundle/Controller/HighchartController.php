@@ -390,11 +390,13 @@ class HighchartController extends Controller
         /*$entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->findBykpiid($kpiid);*/
         $session=new Session();
         $kpiandelementids= $session->get('commandid');
+        if($kpiandelementids!=null)
+        {
         $entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->find($kpiandelementids);
         $commandobject=new SendCommand();
         $entityobject->setUseremialid($clientemailid);
         $entityobject->setFilename($pdffilenamearray[0].'.pdf');
-        $em->flush();
+        $em->flush();}
         //return $this->redirectToRoute('showcomment');
         return $this->redirect($this->generateUrl('showcomment', array('page' => 1)));
     }
