@@ -1,0 +1,127 @@
+<html>
+<head>
+    <title>{{ screenName }}</title>
+    <style>
+        .red
+        {
+            background-color: red;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+        .green
+        {
+            background-color: green;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+        .yellow
+        {
+            background-color: yellow;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+        .nocolor
+        {
+            background-color:#0c3055;
+            border-radius: 50%;
+            /*padding: 20px;*/
+            width: 20px;
+            height: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<center><h2>Report on {{ datetime }}</h2></center>
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="page-header">
+        {# <h2>ShipName: <span style="color: #000099">{{ shipname }}</span></h2>#}
+        {#   <a href="{{ path('dashboradhome') }}">Back</a>#}
+
+
+    </div>
+    <div class="bs-example">
+        <div class="table-responsive">
+
+            <table height="50%" border="1" class="table table-striped" style="" id="readingkpitable">
+                <thead>
+                <tr>
+
+                    <th>Kpi Naame</th>
+                    <th>Weightage</th>
+                    {% for monthname in montharray %}
+                        <th>{{ monthname }}</th>
+                        {#<th></th>#}
+
+                    {% endfor %}
+
+                </tr>
+                </thead>
+                <tbody>
+                {% set cl=0 %}
+                {% set countmonth1= countmonth-1 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    <tr>
+
+
+                        <td> {{ element }}</td>
+                        <td>{{ elementweightage[i] }}%</td>
+                        {% for j in 0..countmonth1 %}
+                            <td>
+
+                                {% if elementcolorarray[cl]=="Green" %}
+
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[cl]=="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[cl]=="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
+                                {% else %}
+                                    <div class="nocolor">
+
+                                    </div>
+                                {% endif %}
+                            </td>
+                            {% set cl=cl+1 %}
+                        {% endfor %}
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                <tr>
+                    <th>Avg Score</th>
+                    <td>100%</td>
+                    {% for avg in avgscore %}
+                        <td>{{ avg }}</td>
+                    {% endfor %}
+
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div>
+
+        <img src="/uploads/brochures/{{ link }}" alt="Loader Image"/>
+    </div>
+    {% if commentarray|length <= 0 %}
+        <h4 align="center">No Commands Added </h4>
+    {% endif %}
+    {% if commentarray|length > 0 %}
+        <div id="viewcommentdiv">
+            {% for comobject in commentarray %}
+                {{ comobject }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>

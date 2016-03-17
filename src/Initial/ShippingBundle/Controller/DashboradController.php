@@ -31,6 +31,7 @@ class DashboradController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
+
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -52,6 +53,7 @@ class DashboradController extends Controller
                 ->getQuery();
         }
 
+
         $listallshipforcompany = $query->getResult();
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
@@ -65,10 +67,12 @@ class DashboradController extends Controller
      */
     public function listallkpiforshipAction($shipid,Request $request)
     {
+        $newshipid=$shipid;
 
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $username = $user->getUsername();
+        $loginuseremail=$user->getEmail();
 //Find Last Five Months Starts Here //
         $comanyiddetailarray = $em->createQueryBuilder()
             ->select('b.id')
@@ -294,6 +298,7 @@ class DashboradController extends Controller
             $shipobject = new ShipDetails();
             $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             $shipname = $shipid->getShipName();
+
             $series = array
             (
                 array("name" => "$shipname", 'color' => 'blue', "data" => $finalkpielementvaluearray),
@@ -310,13 +315,20 @@ class DashboradController extends Controller
             $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
-            //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
+
+            $listofcomment = $em->createQueryBuilder()
+            ->select('a.comment')
+            ->from('InitialShippingBundle:SendCommand','a')
+            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+            ->where('a.kpiid = :kpiid')
+            ->andwhere('b.emailId = :username')
+            ->setParameter('username',$loginuseremail)
+            ->setParameter('kpiid',$shipid)
+            ->getQuery()
+            ->getResult();
 
 
-            /* $countarray=array();
-             array_push($countarray,count($datescolorarray));*/
-
-            return $this->render(
+        return $this->render(
                 'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
                 array(
                     'listofkpi' => $listallkpi,
@@ -326,7 +338,9 @@ class DashboradController extends Controller
                     'shipname' => $shipid,
                     'chart' => $ob,
                     'countmonth' => count($datescolorarray),
-                    'avgscore' => $finalkpielementvaluearray
+                    'avgscore' => $finalkpielementvaluearray,
+                    'commentarray'=>$listofcomment,
+                    'shipid'=>$newshipid
                 )
             );
 
@@ -342,6 +356,7 @@ class DashboradController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $username = $user->getUsername();
+        $email= $user->getEmail();
 //Find Last Five Months Starts Here //
         $comanyiddetailarray = $em->createQueryBuilder()
             ->select('b.id')
@@ -516,7 +531,16 @@ class DashboradController extends Controller
             $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
-
+            $listofcomment = $em->createQueryBuilder()
+                ->select('a.comment')
+                ->from('InitialShippingBundle:SendCommand','a')
+                ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+                ->where('a.kpiid = :kpiid')
+                ->andwhere('b.emailId = :username')
+                ->setParameter('username',$email)
+                ->setParameter('kpiid',$kpiid)
+                ->getQuery()
+                ->getResult();
 
             return $this->render(
                 'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
@@ -530,7 +554,8 @@ class DashboradController extends Controller
                     'elementcolorarray'=>$findelementcolorarray,
                     'countmonth'=>count($findelementcolorarray),
                     'avgscore'=>$elementdetailvaluearray,
-                    'kpiid'=>$kpiid
+                    'kpiid'=>$kpiid,
+                    'commentarray'=>$listofcomment
                 )
             );
 
@@ -640,7 +665,17 @@ class DashboradController extends Controller
         $ob->series($series);
         $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
         //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
-
+             //find the comments for particular user//
+            $listofcomment = $em->createQueryBuilder()
+                ->select('a.comment')
+                ->from('InitialShippingBundle:SendCommand','a')
+                ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+                ->where('a.kpiid = :kpiid')
+                ->andwhere('b.emailId = :username')
+                ->setParameter('username',$email)
+                ->setParameter('kpiid',$kpiid)
+                ->getQuery()
+                ->getResult();
 
 
         return $this->render(
@@ -655,7 +690,8 @@ class DashboradController extends Controller
                 'elementcolorarray'=>$findelementcolorarray,
                 'countmonth'=>count($findelementcolorarray),
                 'avgscore'=>$elementdetailvaluearray,
-                'kpiid'=>$kpiid
+                'kpiid'=>$kpiid,
+                'commentarray'=>$listofcomment
                 )
         );
         }

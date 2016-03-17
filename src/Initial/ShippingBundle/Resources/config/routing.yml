@@ -44,6 +44,13 @@ showcomment:
 downloadchart:
        path:    /{filename}/downloadchart
        defaults: { _controller: "InitialShippingBundle:Highchart:downloadchart" }
+runtimecomment:
+      path:     /runtimecomment
+      defaults: { _controller: "InitialShippingBundle:Highchart:runtimecomment"}
+addcommentforshipreports:
+      path:     /addcommentforshipreports
+      defaults: { _controller: "InitialShippingBundle:Highchart:addcommentforshipreports"}
+
 
 downloadPdf:
       path:     /downloadPdf

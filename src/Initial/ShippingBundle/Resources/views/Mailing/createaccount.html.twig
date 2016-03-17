@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {#  {% javascripts '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.js' %}
+          <script src="{{ asset_url }}"></script>
+          {% endjavascripts %}
+          {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
+          <script src="{{ asset_url }}"></script>
+          {% endjavascripts %}#}
+
+
+
+    {% endblock %}
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Add Account</h2>
+            <a class="btn btn-primary" href="{{ path('creategroup') }}">Create Group</a>
+
+
+        </div>
+        <div class="bs-example">
+            <form action="{{ path('readinginaccount') }}"  class="form-horizontal no-style"  method="post">
+
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Name</label>
+                    <div class="col-xs-10">
+                       <input type="text" name="mailing[username]" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-2">Email</label>
+                    <div class="col-xs-10">
+                        <input type="email" name="mailing[emailid]" required>
+                    </div>
+                </div>
+
+                 <div id="sendcommentbutton"  class="actions">
+                <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
+
+                 </div>
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}

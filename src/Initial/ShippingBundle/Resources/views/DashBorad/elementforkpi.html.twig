@@ -23,12 +23,59 @@
         <script>
             $(document).ready(function()
                     {
+                        $('#commentform').hide();
                         $('#addcomment').hide();
-
-                        $('#addsubmitid').click(function()
+                        $('#showcommentform').click(function()
                         {
-                            /*$('#addcomment').show();
-                            $('#addcommentbutton').hide();*/
+                            $('#commentform').show();
+                            $('#usermycommentid').focus();
+
+                        });
+
+
+                        $('#addcommentid').click(function()
+                        {
+
+                           var kpiid=$('#kpiidforname').val();
+                            var comment=$('#usermycommentid').val();
+
+                            var data = {kpiid :kpiid,comment:comment} ;
+                            $.ajaxSetup({
+                                global: false,
+                                type: "post",
+                                url: "/runtimecomment",
+                                beforeSend: function () {
+                                    $(".modal").show();
+                                },
+                                complete: function () {
+                                    $(".modal").hide();
+                                }
+                            });
+                            $.ajax({
+                                data: data,
+                                success: function (data)
+                                {
+                                    var a=data.lastinsertid;
+                                    $('#lastid').val(a);
+
+                                    $('#viewcommentdiv').remove();
+
+                                    $.each(data.ElementNameArray, function(i, listelemnt)
+                                {
+
+                                    $('<p class="dyaminc">'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
+
+                                });
+
+
+                                }
+                                ,
+                                error: function()
+                                {
+                                    alert('Error While Generating Image as pdf');
+
+                                }
+                            });
 
                         });
                         $('#chatform').submit(function(e)
@@ -79,7 +126,8 @@
         <div class="page-header">
             <h2>ShipName: <span style="color: #000099">{{ shipname }}</span></h2>
          {#   <a href="{{ path('dashboradhome') }}">Back</a>#}
-            <a data-toggle="modal" data-target="#myModal" class="btn btn-info" >Add Comment</a>
+
+
         </div>
         <div class="bs-example">
             <div class="table-responsive">
@@ -100,14 +148,22 @@
                     </thead>
                     <tbody>
                     {% set countmonth1= countmonth-1 %}
+                    {% set newelementarray = {} %}
+                    {% set newcolorarray = {} %}
+                    {% set akj=0 %}
                     {% set i=0 %}
                     {% for element in listofelement %}
+                        {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
+
                         <tr>
 
 
                             <td><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
                             <td>{{ elementweightage[i] }}%</td>
                             {% for j in 0..countmonth1 %}
+                                {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
+
+
                                 <td>
                                     {% if elementcolorarray[j][i]=="Green" %}
                                         <div class="green"></div>
@@ -119,6 +175,9 @@
                                         <div class="nocolor"></div>
                                     {% endif %}
                                 </td>
+
+                                {% set akj=akj+1 %}
+
                             {% endfor %}
                         </tr>
                         {% set i=i+1 %}
@@ -126,8 +185,10 @@
                     <tr>
                         <th>Avg Score</th>
                         <td>100%</td>
+
                         {% for avg in avgscore %}
                             <td>{{ avg }}</td>
+
                         {% endfor %}
 
                     </tr>
@@ -137,30 +198,70 @@
             <div class="form-group">
                 <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
             </div>
-            <div class="modal fade" id="myModal" style=" margin-left: 339px;margin-top: -20%;width: 46%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="form-group">
+                <div id="viewcommentdiv">
+                    {% set newcommandarray = {} %}
+
+                    {% set jk=0 %}
+                {% for comobject in commentarray %}
+                    {{ comobject.comment }}
+                    {% set newcommandarray = newcommandarray|merge({('_'~jk):(comobject.comment)}) %}
+                    {% set jk=jk+1 %}
+                {% endfor %}
+                </div>
+
+
+
+            </div>
+            <button id="showcommentform" class="btn btn-info" >Add Comment</button>&nbsp;&nbsp;
+
+            <a data-toggle="modal" data-target="#mailform" class="btn btn-info" >Send Reports</a>
+            {# Form For Send Mail Starts Here #}
+
+            <div class="modal fade" id="mailform" style=" margin-left: 339px;margin-top: -20%;width: 46%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title">Send Comment Here</h4>
+                            <h4 class="modal-title">Send Report</h4>
                         </div>
                         <div class="modal-body">
                                 <form id="chatform" class="form-horizontal no-style" action=" {{path('addcomment') }}" method="post">
+                                    <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+                                    <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
+                                    <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
+                                    <input type="hidden" name="elementweightage" value="{{ elementweightage|join(', ') }}">
+                                    <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
+                                    <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
+                                    <input type="hidden" name="countmonth" value="{{ countmonth }}">
+
                                     <input id="imagefilename" type="hidden" name="send_command[filename]" >
-                                    <input type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+                                    <input id="lastid" type="hidden" name="send_command[lastid]" >
+                                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+
                                     <div class="form-group">
-                                        <label class="control-label col-xs-2">To</label>
-                                        <div class="col-xs-10"><input id="toemail" type="email" name="send_command[clientemail]" required></div>
+                                        <label class="control-label col-xs-2">Add Comment</label>
+                                        <div class="col-xs-10">
+                                            <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
+                                            <input id="checkbox" value="No" type="checkbox" name="send_command[addcomment]" >No
+
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-2">Comment</label>
+                                        <label class="control-label col-xs-2">To</label>
+                                        <div class="col-xs-10"><input id="toemail" type="email" name="send_command[clientemail]" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-2">Mail Box</label>
                                         <div class="col-xs-10">
-                                            <textarea id="commentid" name="send_command[comment]" required></textarea>
+                                            <textarea id="mycommentid" name="send_command[comment]" required></textarea>
                                         </div>
                                     </div>
 
                                     <div id="sendcommentbutton"  class="actions">
-                                        <input class="btn btn-primary" type="submit" value="Send Comment">
+                                        <input id="" class="btn btn-primary" type="submit" value="Send Report">
 
                                     </div>
                                 </form>
@@ -168,6 +269,31 @@
                     </div> <!-- /.modal-content -->
                 </div> <!-- /.modal-dialog -->
             </div>
+            {# Form For Send Mail Ends  Here #}
+
+            {# Form For Add Comment  Starts Here #}
+
+            <div  id="commentform" >
+
+                            <form  class="form-horizontal no-style"  method="post">
+                                <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                                <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                                <div class="form-group">
+
+                                    <div class="col-xs-10">
+                                        <textarea id="usermycommentid" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                                    </div>
+                                </div>
+
+                               {# <div id="sendcommentbutton"  class="actions">#}
+                                    <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
+
+                               {# </div>#}
+                            </form>
+
+            </div>
+            {# Form For Add Comment #}
         </div>
     </div>
 {% endblock %}

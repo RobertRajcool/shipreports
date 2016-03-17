@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+      {#  {% javascripts '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}#}
+
+
+
+    {% endblock %}
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Mailing</h2>
+            <a class="btn btn-primary" href="{{ path('createaccount') }}">Add Account</a>
+
+            <a class="btn btn-primary" href="{{ path('creategroup') }}">Create Group</a>
+
+        </div>
+        <div class="bs-example">
+
+
+    </div>
+        </div>
+
+
+{% endblock %}
