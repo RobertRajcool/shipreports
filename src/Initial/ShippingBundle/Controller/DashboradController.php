@@ -5,6 +5,7 @@ namespace Initial\ShippingBundle\Controller;
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\ShipDetails;
 use Initial\ShippingBundle\Entity\KpiRules;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -731,4 +732,70 @@ class DashboradController extends Controller
             'InitialShippingBundle:DashBorad:elementforkpi.html.twig');
 
     }
+
+    /**
+     * Auto Complete for Mailing
+     *
+     * @Route("/sutocompeltegroup", name="autocompleteformailing")
+     */
+    public function autocompleteformailingAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $username = $user->getUsername();
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
+                ->where('b.username = :username')
+                ->setParameter('username',$username)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.companyid')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $companyid=$query->getSingleScalarResult();
+        $searchstring=$request->request->get('searchstring');
+        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+        $qb=$em->createQueryBuilder();
+        $qb
+            ->select('a.emailid','b.groupname')
+            ->from('InitialShippingBundle:Mailing','a')
+            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->where('a.companyid = :companyid')
+            ->andwhere($qb->expr()->like('b.groupname', ':sreachstring'))
+            ->orwhere($qb->expr()->like('a.emailid', ':sreachstring'))
+            ->setParameter('companyid',$newcompanyid)
+            ->setParameter('sreachstring',$searchstring);
+        $result=$qb->getQuery()->getResult();
+        $response = new JsonResponse();
+
+
+        if(count($result)==0)
+        {
+            $response->setData(array('returnresult'=>0));
+        }
+        if(count($result)==1)
+        {
+        $response->setData(array('returnresult' => $result[0]['emailid']));
+        }
+        if(count($result)>1)
+        {
+            $response->setData(array('returnresult' => $result[0]['groupname']));
+        }
+        return $response;
+
+    }
+
 }

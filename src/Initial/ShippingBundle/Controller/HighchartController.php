@@ -371,20 +371,33 @@ class HighchartController extends Controller
 
         $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'pdf';
         file_put_contents($pdffilenamefullpath, $printPdf);
+
         $useremaildid=$params['clientemail'];
 
+        $findsemail=$em->createQueryBuilder()
+            ->select('a.emailid','b.groupname')
+            ->from('InitialShippingBundle:Mailing','a')
+            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->where('b.groupname = :sq')
+            ->ORwhere('a.emailid = :sb')
+            ->setParameter('sq',$useremaildid)
+            ->setParameter('sb',$useremaildid)
+            ->getQuery()
+            ->getResult();
 
 
         //assign file attachement for mail and Mailing Starts Here...u
-        $mailer = $this->container->get('mailer');
-        $message = \Swift_Message::newInstance()
-            ->setFrom($clientemailid)
-            ->setTo($useremaildid)
-            ->setSubject($kpiname)
-            ->setBody($comment)
-        ;
-        $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0].'.pdf'));
-        $mailer->send($message);
+        for($ma=0;$ma<count($findsemail);$ma++)
+        {
+            $mailer = $this->container->get('mailer');
+            $message = \Swift_Message::newInstance()
+                ->setFrom($clientemailid)
+                ->setTo($findsemail[$ma]['emailid'])
+                ->setSubject($kpiname)
+                ->setBody($comment);
+            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+            $mailer->send($message);
+        }
         //Mailing Ends....
         //Update Process Starts Here...
         /*$entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->findBykpiid($kpiid);*/
@@ -396,10 +409,12 @@ class HighchartController extends Controller
         $commandobject=new SendCommand();
         $entityobject->setUseremialid($clientemailid);
         $entityobject->setFilename($pdffilenamearray[0].'.pdf');
-        $em->flush();}
+        $em->flush();
+        }
         //return $this->redirectToRoute('showcomment');
         return $this->redirect($this->generateUrl('showcomment', array('page' => 1)));
     }
+
 
 
     public function createPdf($html, $title)
