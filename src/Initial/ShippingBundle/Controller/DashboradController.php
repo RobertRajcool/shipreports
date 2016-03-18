@@ -626,6 +626,33 @@ class DashboradController extends Controller
             array_push($kpi_rule_color_array,$kpi_color_array[$kpi_color_array_count][$index_value]);
         }
 
+        //finding kpi rule to display in the web page
+
+        $kpi_name = $em->createQueryBuilder()
+            ->select('a.kpiName')
+            ->from('InitialShippingBundle:KpiDetails', 'a')
+            ->where('a.id = :kpi_id')
+            ->setParameter('kpi_id', $kpiid)
+            ->getQuery()
+            ->getResult();
+
+        $kpi_id_array = $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:KpiDetails', 'a')
+            ->where('a.kpiName = :kpi_name')
+            ->setParameter('kpi_name', $kpi_name[0]['kpiName'])
+            ->getQuery()
+            ->getResult();
+
+        $rule_for_kpi_id = $em->createQueryBuilder()
+            ->select('a.rules')
+            ->from('InitialShippingBundle:KpiRules', 'a')
+            ->where('a.kpiDetailsId = :kpi_id')
+            ->setParameter('kpi_id', $kpi_id_array[0]['id'])
+            ->getQuery()
+            ->getResult();
+
+
         if(count($listelement)==0)
         {
 
@@ -770,7 +797,8 @@ class DashboradController extends Controller
                     'avgscore'=>$elementdetailvaluearray,
                     'kpiid'=>$kpiid,
                     'commentarray'=>$listofcomment,
-                    'kpi_color' => $kpi_rule_color_array
+                    'kpi_color' => $kpi_rule_color_array,
+                    'kpi_rule'=>$rule_for_kpi_id,
                 )
             );
 
@@ -907,7 +935,8 @@ class DashboradController extends Controller
                     'avgscore'=>$elementdetailvaluearray,
                     'kpiid'=>$kpiid,
                     'commentarray'=>$listofcomment,
-                    'kpi_color' => $kpi_rule_color_array
+                    'kpi_color' => $kpi_rule_color_array,
+                    'kpi_rule'=>$rule_for_kpi_id,
                 )
             );
         }
