@@ -182,17 +182,35 @@
                         </tr>
                         {% set i=i+1 %}
                     {% endfor %}
+                    </tbody>
+                </table>
+
+                <table>
+                    <tr>
+                        <td>{{ kpiname }}</td>
+                        <td>100%</td>
+                        {% for kpi_colors in kpi_color %}
+                            <td>
+                                {% if kpi_colors =="Green" %}
+                                    <div class="green"></div>
+                                {% elseif kpi_colors =="Red" %}
+                                    <div class="red"></div>
+                                {% elseif kpi_colors =="Yellow" %}
+                                    <div class="yellow"></div>
+                                {% else %}
+                                    <div class="nocolor"></div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
                     <tr>
                         <th>Avg Score</th>
                         <td>100%</td>
-
                         {% for avg in avgscore %}
                             <td>{{ avg }}</td>
-
                         {% endfor %}
-
                     </tr>
-                    </tbody>
+
                 </table>
             </div>
             <div class="form-group">

@@ -66,7 +66,7 @@ class DashboradController extends Controller
      *
      * @Route("/{shipid}/listallkpiforship", name="listallkpiforship")
      */
-    public function listallkpiforshipAction($shipid,Request $request)
+    public function listallkpiforshipAction($shipid,Request $request,$mode='')
     {
         $newshipid=$shipid;
 
@@ -352,6 +352,11 @@ class DashboradController extends Controller
             ->getQuery()
             ->getResult();
 
+        if($mode=='kpi_id')
+        {
+            return $datescolorarray;
+        }
+
 
         return $this->render(
             'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
@@ -436,6 +441,34 @@ class DashboradController extends Controller
         $elementdetailvaluearray=array();
         $elementweightagearray=array();
         $findelementcolorarray=array();
+
+        // Getting kpi_color value from ship_kpi_listAction function/controller
+
+        $kpi_color_array = $this->listallkpiforshipAction($shipid,$request,'kpi_id');
+
+        // Finding index of the kpi from $kpi_color_array
+
+        $find_kpi_id_index = $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:KpiDetails', 'a')
+            ->where('a.shipDetailsId = :ship_id')
+            ->setParameter('ship_id', $shipid)
+            ->getQuery()
+            ->getResult();
+        for ($find_kpi_id_index_count = 0;$find_kpi_id_index_count<count($find_kpi_id_index);$find_kpi_id_index_count++)
+        {
+            if($find_kpi_id_index[$find_kpi_id_index_count]['id']==$kpiid)
+            {
+                $index_value = $find_kpi_id_index_count;
+            }
+        }
+
+        $kpi_rule_color_array = array();
+
+        for($kpi_color_array_count=0;$kpi_color_array_count<count($kpi_color_array);$kpi_color_array_count++)
+        {
+            array_push($kpi_rule_color_array,$kpi_color_array[$kpi_color_array_count][$index_value]);
+        }
 
         if(count($listelement)==0)
         {
@@ -580,7 +613,8 @@ class DashboradController extends Controller
                     'countmonth'=>count($findelementcolorarray),
                     'avgscore'=>$elementdetailvaluearray,
                     'kpiid'=>$kpiid,
-                    'commentarray'=>$listofcomment
+                    'commentarray'=>$listofcomment,
+                    'kpi_color' => $kpi_rule_color_array
                 )
             );
 
@@ -716,7 +750,8 @@ class DashboradController extends Controller
                     'countmonth'=>count($findelementcolorarray),
                     'avgscore'=>$elementdetailvaluearray,
                     'kpiid'=>$kpiid,
-                    'commentarray'=>$listofcomment
+                    'commentarray'=>$listofcomment,
+                    'kpi_color' => $kpi_rule_color_array
                 )
             );
         }
