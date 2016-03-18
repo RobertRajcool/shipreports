@@ -56,18 +56,44 @@
                         data: data,
                         success: function (data)
                         {
-                            var m= $.isNumeric(data.returnresult);
-                            if(m)
+
+                            if($.isArray(data.returnresult))
                             {
-                                $("#livesearch").hide();
+                                $.each(data.returnresult, function(i, listelemnt)
+                                {
+
+                                    $('#hiddenresult').val(data.returnresult);
+
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<label class="dynamiclabel">' + listelemnt.emailid + '</label><br><label class="dynamiclabel">' + listelemnt.groupname + '</label>');
+                                    $("#livesearch").css("background", "#FFF");
+
+                                });
+
                             }
                             else
                             {
+
+                                var m= $.isNumeric(data.returnresult);
+
+                                if (m) {
+                                    $("#livesearch").hide();
+                                }
+                                else
+                                {
+                                    $('#hiddenresult').val(data.returnresult);
+
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<label>' + data.returnresult + '</label>');
+                                    $("#livesearch").css("background", "#FFF");
+                                }
+
                                 $('#hiddenresult').val(data.returnresult);
 
                                 $("#livesearch").show();
                                 $("#livesearch").html('<label>'+data.returnresult+'</label>');
                                 $("#livesearch").css("background","#FFF");
+
                             }
 
 
@@ -83,9 +109,9 @@
                 });
 
 
-                $("#livesearch").live("click",function(e)
+                $(".dynamiclabel").live("click",function(e)
                 {
-                    var b=$('#hiddenresult').val();
+                    var b=$(this).text();
                     $('#toemail').val(b);
                 });
 
@@ -240,11 +266,11 @@
                                 {% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}
                                 <td>
                                     {% if kpicolorarray[j][i]=="Green" %}
-                                        <div class="green"></div>
+                                        <img src="/images/01.png" alt="Loader Image"/>
                                     {% elseif kpicolorarray[j][i]=="Red" %}
-                                        <div class="red"></div>
+                                        <img src="/images/03.png" alt="Loader Image"/>
                                     {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                        <div class="yellow"></div>
+                                        <img src="/images/02.png" alt="Loader Image"/>
                                     {% else %}
                                         <div class="nocolor"></div>
                                     {% endif %}

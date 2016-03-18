@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Mmoreram\GearmanBundle\GearmanBundle(),
             new m4t1t0\FopPdfBundle\FopPdfBundle(),
 
+
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
