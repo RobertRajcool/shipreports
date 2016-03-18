@@ -41,7 +41,7 @@
                 <tbody>
                     {% for ship in allships %}
                         <tr>
-                            <td><a   href="{{ path('ship_kpi_list', { 'shipid': ship.id }) }}" title="All Kpi List"> {{ ship.shipName }}</a></td>
+                            <td><a   href="{{ path('listallkpiforship', { 'shipid': ship.id }) }}" title="All Kpi List"> {{ ship.shipName }}</a></td>
 
                         </tr>
                     {% endfor %}

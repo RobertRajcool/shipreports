@@ -17,6 +17,182 @@
         <script type="text/javascript">
             {{ chart(chart) }}
         </script>
+        <script>
+            $(document).ready(function()
+            {
+                $('#commentform').hide();
+                $('#mailform').hide();
+                $('#addcomment').hide();
+
+                $('#showcommentform').click(function()
+                {
+                    $('#mailform').hide();
+                    $('#commentform').show();
+                    $('#usermycommentid').focus();
+
+                });
+                $('#sendreports').click(function()
+                {
+                    $('#commentform').hide();
+                    $('#mailform').show();
+
+
+
+                });
+                $('#toemail').keyup(function()
+                {
+
+                    var searchstring=$(this).val();
+                    var data = {searchstring :searchstring} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: "/dashborad/sutocompeltegroup",
+                        beforeSend: function () {
+                            /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+                            var m= $.isNumeric(data.returnresult);
+                            if(m)
+                            {
+                                $("#livesearch").hide();
+                            }
+                            else
+                            {
+                                $('#hiddenresult').val(data.returnresult);
+
+                                $("#livesearch").show();
+                                $("#livesearch").html('<label>'+data.returnresult+'</label>');
+                                $("#livesearch").css("background","#FFF");
+                            }
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+
+
+                $("#livesearch").live("click",function(e)
+                {
+                    var b=$('#hiddenresult').val();
+                    $('#toemail').val(b);
+                });
+
+                $(document).live("click", function(e) {
+                    var $clicked = $(e.target);
+                    if (! $clicked.hasClass("search_keyword")){
+                        $("#livesearch").fadeOut();
+                    }
+                });
+
+                $('#toemail').click(function(){
+                    $("#livesearch").fadeIn();
+                });
+
+
+
+
+                $('#addcommentid').click(function()
+                {
+
+                    var kpiid=$('#kpiidforname').val();
+                    var comment=$('#usermycommentid').val();
+
+                    var data = {kpiid :kpiid,comment:comment} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: "/runtimecomment",
+                        beforeSend: function () {
+                            $(".modal").show();
+                        },
+                        complete: function () {
+                            $(".modal").hide();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+                            var a=data.lastinsertid;
+                            $('#lastid').val(a);
+
+                            $('#viewcommentdiv').remove();
+
+                            $.each(data.ElementNameArray, function(i, listelemnt)
+                            {
+
+                                $('<p class="dyaminc">'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
+
+                            });
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+                $('#chatform').submit(function(e)
+                {
+                    e.preventDefault();
+                    var self = this;
+                    var obj = {},chart;
+                    chart = $('#area').highcharts();
+                    obj.svg = chart.getSVG();
+                    obj.type = 'image/png';
+                    obj.width = 450;
+                    obj.async = true;
+                    var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: "/addchart",
+                        beforeSend: function () {
+                            $(".modal").show();
+                        },
+                        complete: function () {
+                            $(".modal").hide();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            $('#imagefilename').val(data);
+                            self.submit();
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+
+
+
+            });
+        </script>
 
 
 
@@ -31,67 +207,167 @@
             <div class="table-responsive">
 
                 <table class="table table-striped" style="" id="readingkpitable">
-                <thead>
-                <tr>
+                    <thead>
+                    <tr>
 
-                    <th>Kpi Name</th>
-                    <th>Weightage</th>
-                    {% for monthname in montharray %}
-                        <th>{{ monthname }}</th>
-                        {#<th></th>#}
-                    {% endfor %}
-
-                </tr>
-                </thead>
-                <tbody>
-                {% set countmonth1= countmonth-1 %}
-                  {% set i=0 %}
-                {% for kpi in listofkpi %}
-                    <tr><td>
-
-                            <a
-                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}"
-                                    title="{{ kpi.kpiName }}">
-                                {{ kpi.kpiName }}
-                            </a>
-                        </td>
-                        <td>{{ kpiweightage[i] }}%</td>
-                        {% for j in 0..countmonth1 %}
-                            <td>
-                                {% if kpicolorarray[j][i]=="Green" %}
-                                <div class="green"></div>
-                                {% elseif kpicolorarray[j][i]=="Red" %}
-                                <div class="red"></div>
-                                {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                <div class="yellow"></div>
-                                {% else %}
-                                <div class="nocolor"></div>
-                                {% endif %}
-                            </td>
+                        <th>Kpi Name</th>
+                        <th>Weightage</th>
+                        {% for monthname in montharray %}
+                            <th>{{ monthname }}</th>
+                            {#<th></th>#}
                         {% endfor %}
 
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set countmonth1= countmonth-1 %}
+                    {% set newelementarray = {} %}
+                    {% set newcolorarray = {} %}
+                    {% set akj=0 %}
+                    {% set i=0 %}
+                    {% for kpi in listofkpi %}
+                        {% set newelementarray = newelementarray|merge({('_'~i):(kpi.kpiName)}) %}
+                        <tr><td>
+
+                                <a
+                                        href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}"
+                                        title="{{ kpi.kpiName }}">
+                                    {{ kpi.kpiName }}
+                                </a>
+                            </td>
+                            <td>{{ kpiweightage[i] }}%</td>
+                            {% for j in 0..countmonth1 %}
+                                {% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}
+                                <td>
+                                    {% if kpicolorarray[j][i]=="Green" %}
+                                        <div class="green"></div>
+                                    {% elseif kpicolorarray[j][i]=="Red" %}
+                                        <div class="red"></div>
+                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                        <div class="yellow"></div>
+                                    {% else %}
+                                        <div class="nocolor"></div>
+                                    {% endif %}
+                                </td>
+                                {% set akj=akj+1 %}
+
+                            {% endfor %}
+
+
+                        </tr>
+                        {% set i=i+1 %}
+                    {% endfor %}
+                    {#  <tr><td>Total</td></tr>#}
+                    <tr>
+                        <th>Avg Score</th>
+                        <td>100%</td>
+                        {% for avg in avgscore %}
+                            <td>{{ avg }}</td>
+                        {% endfor %}
 
                     </tr>
-                    {% set i=i+1 %}
-                {% endfor %}
-              {#  <tr><td>Total</td></tr>#}
-                <tr>
-                    <th>Avg Score</th>
-                    <td>100%</td>
-                    {% for avg in avgscore %}
-                        <td>{{ avg }}</td>
-                    {% endfor %}
-
-                </tr>
-                </tbody>
-            </table>
-                </div>
+                    </tbody>
+                </table>
+            </div>
             <div class="form-group">
-            <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+                <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+            </div> <div class="form-group">
+                <div id="viewcommentdiv">
+                    {% set newcommandarray = {} %}
+
+                    {% set jk=0 %}
+                    {% for comobject in commentarray %}
+                        {{ comobject.comment }}
+                        {% set newcommandarray = newcommandarray|merge({('_'~jk):(comobject.comment)}) %}
+                        {% set jk=jk+1 %}
+                    {% endfor %}
                 </div>
+
+
+
+            </div>
+            <button id="showcommentform" class="btn btn-info" >Add Comment</button>&nbsp;&nbsp;
+
+            <button id="sendreports" class="btn btn-info" >Send Reports</button>
+            {# Form For Send Mail Starts Here #}
+
+
+            <div id="mailform" >
+
+                <h4 class="modal-title">Send Report</h4>
+
+
+                <form id="chatform" class="form-horizontal no-style" action=" {{path('addcommentforshipreports') }}" method="post">
+                    <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+                    <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
+                    <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
+                    <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
+                    <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
+                    <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
+                    <input type="hidden" name="countmonth" value="{{ countmonth }}">
+
+                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                    <input id="lastid" type="hidden" name="send_command[lastid]" >
+                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
+
+
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Add Comment</label>
+                        <div class="col-xs-10">
+                            <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
+                            <input id="checkbox" value="No" type="checkbox" name="send_command[addcomment]" >No
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">To</label>
+                        <div class="col-xs-10">
+                            <input id="toemail" type="text" class="search_keyword" name="send_command[clientemail]" required>
+                            <input type="hidden" id="hiddenresult" name="myresult">
+                            <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Mail Box</label>
+                        <div class="col-xs-10">
+                            <textarea id="mycommentid" name="send_command[comment]" required></textarea>
+                        </div>
+                    </div>
+
+                    <div id="sendcommentbutton"  class="actions">
+                        <input id="" class="btn btn-primary" type="submit" value="Send Report">
+
+                    </div>
+                </form>
+            </div>
+
+
+            {# Form For Send Mail Ends  Here #}
+
+            {# Form For Add Comment  Starts Here #}
+
+            <div  id="commentform" >
+
+                <form  class="form-horizontal no-style"  method="post">
+                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
+
+                    <div class="form-group">
+
+                        <div class="col-xs-10">
+                            <textarea id="usermycommentid" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                        </div>
+                    </div>
+
+                    {# <div id="sendcommentbutton"  class="actions">#}
+                    <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
+
+                    {# </div>#}
+                </form>
+
+            </div>
+            {# Form For Add Comment #}
         </div>
-
-
     </div>
-
 {% endblock %}

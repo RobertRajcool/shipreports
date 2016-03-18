@@ -5,6 +5,7 @@ namespace Initial\ShippingBundle\Controller;
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\ShipDetails;
 use Initial\ShippingBundle\Entity\KpiRules;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -31,6 +32,7 @@ class DashboradController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
+
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -52,28 +54,27 @@ class DashboradController extends Controller
                 ->getQuery();
         }
 
-        $ship_details_array = $query->getResult();
+
+        $listallshipforcompany = $query->getResult();
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
-            array('allships'=>$ship_details_array)
+            array('allships'=>$listallshipforcompany)
         );
     }
-
-
     /**
      * List all kpi for ship
      *
-     * @Route("/{shipid}/ship_kpi_list", name="ship_kpi_list")
+     * @Route("/{shipid}/listallkpiforship", name="listallkpiforship")
      */
-    public function ship_kpi_listAction($shipid,Request $request)
+    public function listallkpiforshipAction($shipid,Request $request)
     {
+        $newshipid=$shipid;
+
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $userId = $user->getId();
+        $userId=$user->getId();
         $username = $user->getUsername();
-
-        //Find Last Five Months Starts Here //
-
+        $loginuseremail=$user->getEmail();
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $company_details_id_query = $em->createQueryBuilder()
@@ -96,7 +97,14 @@ class DashboradController extends Controller
                 ->getResult();
             $company_details_id = $company_details_id_query[0][1];
         }
-
+//Find Last Five Months Starts Here //
+        $comanyiddetailarray = $em->createQueryBuilder()
+            ->select('b.id')
+            ->from('InitialShippingBundle:CompanyDetails','b')
+            ->where('b.adminName = :username')
+            ->setParameter('username',$username)
+            ->getQuery()
+            ->getResult();
         $lastdate = $em->createQueryBuilder()
             ->select('a.dataOfMonth')
             ->from('InitialShippingBundle:Excel_file_details','a')
@@ -115,8 +123,8 @@ class DashboradController extends Controller
             $mydatevalue=new \DateTime($mystringvaluedate);
 
             $mydatevalue->modify("last day of previous month");
-                $myvalue=$mydatevalue->format("Y-m-d");
-                array_push($lastfivedatearray,$myvalue);
+            $myvalue=$mydatevalue->format("Y-m-d");
+            array_push($lastfivedatearray,$myvalue);
 
             $mystringvaluedate=$myvalue;
 
@@ -296,57 +304,73 @@ class DashboradController extends Controller
                         }
 
                     }
+
+
                 }
-                    array_push($findingcolorarray, $read1);
-                    array_push($kpiweightagearray, $kpiweightage);
-                    // Kpi color Finding Ends Here//
-                    $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
-                    $finalkpielementvalue += $findkpivalue;
-                }
-                array_push($datescolorarray, $findingcolorarray);
-                array_push($finalkpielementvaluearray, $finalkpielementvalue);
+
+
+                array_push($findingcolorarray, $read1);
+                array_push($kpiweightagearray, $kpiweightage);
+                // Kpi color Finding Ends Here//
+                $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
+                $finalkpielementvalue += $findkpivalue;
             }
-            $shipobject = new ShipDetails();
-            $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-            $shipname = $shipid->getShipName();
-            $series = array
-            (
-                array("name" => "$shipname", 'color' => 'blue', "data" => $finalkpielementvaluearray),
+            array_push($datescolorarray, $findingcolorarray);
+            array_push($finalkpielementvaluearray, $finalkpielementvalue);
 
-            );
+        }
+        $shipobject = new ShipDetails();
+        $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+        $shipname = $shipid->getShipName();
 
-            $ob = new Highchart();
-            $ob->chart->renderTo('area');
-            $ob->chart->type('line');
-            $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
-            $ob->subtitle->text($shipname);
-            $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
-            $ob->xAxis->categories($newcategories);
-            $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
-            $ob->series($series);
-            $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
-            //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
+        $series = array
+        (
+            array("name" => "$shipname", 'color' => 'blue', "data" => $finalkpielementvaluearray),
 
-            /* $countarray=array();
-             array_push($countarray,count($datescolorarray));*/
+        );
 
-            return $this->render(
-                'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
-                array(
-                    'listofkpi' => $listallkpi,
-                    'kpicolorarray' => $datescolorarray,
-                    'kpiweightage' => $kpiweightagearray,
-                    'montharray' => $newcategories,
-                    'shipname' => $shipid,
-                    'chart' => $ob,
-                    'countmonth' => count($datescolorarray),
-                    'avgscore' => $finalkpielementvaluearray
-                )
-            );
+
+        $ob = new Highchart();
+        $ob->chart->renderTo('area');
+        $ob->chart->type('line');
+        $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
+        $ob->subtitle->text($shipname);
+        $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
+        $ob->xAxis->categories($newcategories);
+        $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
+        $ob->series($series);
+        $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
+
+        $listofcomment = $em->createQueryBuilder()
+            ->select('a.comment')
+            ->from('InitialShippingBundle:SendCommand','a')
+            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+            ->where('a.kpiid = :kpiid')
+            ->andwhere('b.emailId = :username')
+            ->setParameter('username',$loginuseremail)
+            ->setParameter('kpiid',$shipid)
+            ->getQuery()
+            ->getResult();
+
+
+        return $this->render(
+            'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
+            array(
+                'listofkpi' => $listallkpi,
+                'kpicolorarray' => $datescolorarray,
+                'kpiweightage' => $kpiweightagearray,
+                'montharray' => $newcategories,
+                'shipname' => $shipid,
+                'chart' => $ob,
+                'countmonth' => count($datescolorarray),
+                'avgscore' => $finalkpielementvaluearray,
+                'commentarray'=>$listofcomment,
+                'shipid'=>$newshipid
+            )
+        );
+
+
     }
-
-
-
     /**
      * List all element for kpi
      *
@@ -356,38 +380,21 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $userId = $user->getId();
         $username = $user->getUsername();
-
-        //Find Last Five Months Starts Here //
-
-        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
-        {
-            $company_details_id_query = $em->createQueryBuilder()
-                ->select('b.id')
-                ->from('InitialShippingBundle:CompanyDetails','b')
-                ->where('b.adminName = :username')
-                ->setParameter('username',$username)
-                ->getQuery()
-                ->getResult();
-            $company_details_id = $company_details_id_query[0]['id'];
-        }
-        else
-        {
-            $company_details_id_query = $em->createQueryBuilder()
-                ->select('identity(a.companyid)')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :user_id')
-                ->setParameter('user_id',$userId)
-                ->getQuery()
-                ->getResult();
-            $company_details_id = $company_details_id_query[0][1];
-        }
+        $email= $user->getEmail();
+//Find Last Five Months Starts Here //
+        $comanyiddetailarray = $em->createQueryBuilder()
+            ->select('b.id')
+            ->from('InitialShippingBundle:CompanyDetails','b')
+            ->where('b.adminName = :username')
+            ->setParameter('username',$username)
+            ->getQuery()
+            ->getResult();
         $lastdate = $em->createQueryBuilder()
             ->select('a.dataOfMonth')
             ->from('InitialShippingBundle:Excel_file_details','a')
             ->where('a.company_id = :company_id')
-            ->setParameter('company_id',$company_details_id)
+            ->setParameter('company_id',$comanyiddetailarray[0]['id'])
             ->addOrderBy('a.id', 'DESC')
             ->getQuery()
             ->getResult();
@@ -433,14 +440,14 @@ class DashboradController extends Controller
         if(count($listelement)==0)
         {
 
-        $newkpiid = $em->createQueryBuilder()
-            ->select('b.id')
-            ->from('InitialShippingBundle:KpiDetails', 'b')
-            ->where('b.kpiName = :kpiName')
-            ->setParameter('kpiName', $kpiname)
-            ->groupby('b.kpiName')
-            ->getQuery()
-            ->getResult();
+            $newkpiid = $em->createQueryBuilder()
+                ->select('b.id')
+                ->from('InitialShippingBundle:KpiDetails', 'b')
+                ->where('b.kpiName = :kpiName')
+                ->setParameter('kpiName', $kpiname)
+                ->groupby('b.kpiName')
+                ->getQuery()
+                ->getResult();
             $listelement = $em->createQueryBuilder()
                 ->select('a.elementName','a.id','a.weightage')
                 ->from('InitialShippingBundle:ElementDetails','a')
@@ -549,6 +556,151 @@ class DashboradController extends Controller
             $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
+            $listofcomment = $em->createQueryBuilder()
+                ->select('a.comment')
+                ->from('InitialShippingBundle:SendCommand','a')
+                ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+                ->where('a.kpiid = :kpiid')
+                ->andwhere('b.emailId = :username')
+                ->setParameter('username',$email)
+                ->setParameter('kpiid',$kpiid)
+                ->getQuery()
+                ->getResult();
+
+            return $this->render(
+                'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
+                array(
+                    'listofelement'=>$listelement,
+                    'kpiname'=>$kpiname,
+                    'chart'=>$ob,
+                    'shipname'=>$shipname,
+                    'elementweightage'=>$elementweightagearray,
+                    'montharray'=>$newcategories,
+                    'elementcolorarray'=>$findelementcolorarray,
+                    'countmonth'=>count($findelementcolorarray),
+                    'avgscore'=>$elementdetailvaluearray,
+                    'kpiid'=>$kpiid,
+                    'commentarray'=>$listofcomment
+                )
+            );
+
+        }
+        else
+        {
+
+
+
+            for ($d = 0; $d < count($lastfivedatearray); $d++)
+            {
+                $time2 = strtotime($lastfivedatearray[$d]);
+                $monthinletter = date('F-Y', $time2);
+                array_push($newcategories, $monthinletter);
+                $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
+                $finalkpivalue = 0;
+                $findingcolorarray=array();
+
+                for ($jk = 0; $jk < count($listelement); $jk++)
+                {
+
+                    $weightage = $listelement[$jk]['weightage'];
+                    //Finding value based on element id and dates from user//
+                    $dbvalueforelement = $em->createQueryBuilder()
+                        ->select('a.value')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.shipDetailsId = :shipid')
+                        ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                        ->andWhere('a.elementDetailsId = :Elementid')
+                        ->andWhere('a.monthdetail =:dataofmonth')
+                        ->setParameter('shipid', $shipid)
+                        ->setParameter('kpiDetailsId', $kpiid)
+                        ->setParameter('Elementid', $listelement[$jk]['id'])
+                        ->setParameter('dataofmonth', $new_monthdetail_date)
+                        ->getQuery()
+                        ->getResult();
+
+                    array_push($elementweightagearray,$weightage);
+                    $kpi_rules = $em->createQueryBuilder()
+                        ->select('a.rules')
+                        ->from('InitialShippingBundle:Rules','a')
+                        ->where('a.elementDetailsId = :elementid')
+                        ->andwhere('a.kpiDetailsId = :kpiid')
+                        ->setParameter('elementid',$listelement[$jk]['id'])
+                        ->setParameter('kpiid',$kpiid)
+                        ->getQuery()
+                        ->getResult();
+                    $read1="";
+
+                    //Find the color based on kpi rules
+
+
+
+                    if (count($dbvalueforelement) == 0)
+                    {
+                        $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                        $finalkpivalue += $finddbvaluefomula;
+                    } else
+                    {
+                        $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                        $finalkpivalue += $finddbvaluefomula;
+                    }
+
+                    for($kpi_rules_count=0;$kpi_rules_count<count($kpi_rules);$kpi_rules_count++)
+                    {
+                        $rule = $kpi_rules[$kpi_rules_count];
+                        /*
+                                            $rule_obj = json_encode($rule);*/
+                        $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                        $jsfilename = 'node ' . $jsfiledirectry;
+                        $handle = popen($jsfilename, 'r');
+                        $read = fread($handle, 2096);
+                        $read1 = str_replace("\n", '', $read);
+
+                        if ($read1 != "false")
+                        {
+                            break;
+                        }
+
+                    }
+                    array_push($findingcolorarray,$read1);
+
+                }
+
+                array_push($findelementcolorarray,$findingcolorarray);
+
+
+                array_push($elementdetailvaluearray,$finalkpivalue);
+            }
+
+            $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
+            $shipname=$shipid->getShipName();
+            $series = array
+            (
+                array("name" => "$kpiname", 'color' => 'blue',   "data" => $elementdetailvaluearray),
+
+            );
+
+            $ob = new Highchart();
+            $ob->chart->renderTo('area');
+            $ob->chart->type('line');
+            $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
+            $ob->subtitle->text($shipname);
+            $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
+            $ob->xAxis->categories($newcategories);
+            $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
+            $ob->series($series);
+            $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
+            //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
+            //find the comments for particular user//
+            $listofcomment = $em->createQueryBuilder()
+                ->select('a.comment')
+                ->from('InitialShippingBundle:SendCommand','a')
+                ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+                ->where('a.kpiid = :kpiid')
+                ->andwhere('b.emailId = :username')
+                ->setParameter('username',$email)
+                ->setParameter('kpiid',$kpiid)
+                ->getQuery()
+                ->getResult();
 
 
             return $this->render(
@@ -563,134 +715,10 @@ class DashboradController extends Controller
                     'elementcolorarray'=>$findelementcolorarray,
                     'countmonth'=>count($findelementcolorarray),
                     'avgscore'=>$elementdetailvaluearray,
-                    'kpiid'=>$kpiid
+                    'kpiid'=>$kpiid,
+                    'commentarray'=>$listofcomment
                 )
             );
-
-        }
-        else
-        {
-
-
-
-        for ($d = 0; $d < count($lastfivedatearray); $d++)
-        {
-            $time2 = strtotime($lastfivedatearray[$d]);
-            $monthinletter = date('F-Y', $time2);
-            array_push($newcategories, $monthinletter);
-            $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
-            $finalkpivalue = 0;
-            $findingcolorarray=array();
-
-            for ($jk = 0; $jk < count($listelement); $jk++)
-            {
-
-                $weightage = $listelement[$jk]['weightage'];
-                //Finding value based on element id and dates from user//
-                $dbvalueforelement = $em->createQueryBuilder()
-                    ->select('a.value')
-                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                    ->where('a.shipDetailsId = :shipid')
-                    ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                    ->andWhere('a.elementDetailsId = :Elementid')
-                    ->andWhere('a.monthdetail =:dataofmonth')
-                    ->setParameter('shipid', $shipid)
-                    ->setParameter('kpiDetailsId', $kpiid)
-                    ->setParameter('Elementid', $listelement[$jk]['id'])
-                    ->setParameter('dataofmonth', $new_monthdetail_date)
-                    ->getQuery()
-                    ->getResult();
-
-                array_push($elementweightagearray,$weightage);
-                $kpi_rules = $em->createQueryBuilder()
-                    ->select('a.rules')
-                    ->from('InitialShippingBundle:Rules','a')
-                    ->where('a.elementDetailsId = :elementid')
-                    ->andwhere('a.kpiDetailsId = :kpiid')
-                    ->setParameter('elementid',$listelement[$jk]['id'])
-                    ->setParameter('kpiid',$kpiid)
-                    ->getQuery()
-                    ->getResult();
-                $read1="";
-
-                //Find the color based on kpi rules
-
-
-
-                if (count($dbvalueforelement) == 0)
-                {
-                    $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                    $finalkpivalue += $finddbvaluefomula;
-                } else
-                {
-                    $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                    $finalkpivalue += $finddbvaluefomula;
-                }
-
-                for($kpi_rules_count=0;$kpi_rules_count<count($kpi_rules);$kpi_rules_count++)
-                {
-                    $rule = $kpi_rules[$kpi_rules_count];
-                    /*
-                                        $rule_obj = json_encode($rule);*/
-                    $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
-                    $jsfilename = 'node ' . $jsfiledirectry;
-                    $handle = popen($jsfilename, 'r');
-                    $read = fread($handle, 2096);
-                    $read1 = str_replace("\n", '', $read);
-
-                    if ($read1 != "false")
-                    {
-                        break;
-                    }
-
-                }
-                array_push($findingcolorarray,$read1);
-
-            }
-
-            array_push($findelementcolorarray,$findingcolorarray);
-
-
-            array_push($elementdetailvaluearray,$finalkpivalue);
-        }
-
-        $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
-        $shipname=$shipid->getShipName();
-        $series = array
-        (
-            array("name" => "$kpiname", 'color' => 'blue',   "data" => $elementdetailvaluearray),
-
-        );
-
-        $ob = new Highchart();
-        $ob->chart->renderTo('area');
-        $ob->chart->type('line');
-        $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
-        $ob->subtitle->text($shipname);
-        $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
-        $ob->xAxis->categories($newcategories);
-        $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
-        $ob->series($series);
-        $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
-        //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
-
-
-
-        return $this->render(
-            'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
-            array(
-                'listofelement'=>$listelement,
-                'kpiname'=>$kpiname,
-                'chart'=>$ob,
-                'shipname'=>$shipname,
-                'elementweightage'=>$elementweightagearray,
-                'montharray'=>$newcategories,
-                'elementcolorarray'=>$findelementcolorarray,
-                'countmonth'=>count($findelementcolorarray),
-                'avgscore'=>$elementdetailvaluearray,
-                'kpiid'=>$kpiid
-                )
-        );
         }
     }
     /**
@@ -704,4 +732,70 @@ class DashboradController extends Controller
             'InitialShippingBundle:DashBorad:elementforkpi.html.twig');
 
     }
+
+    /**
+     * Auto Complete for Mailing
+     *
+     * @Route("/sutocompeltegroup", name="autocompleteformailing")
+     */
+    public function autocompleteformailingAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $username = $user->getUsername();
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
+                ->where('b.username = :username')
+                ->setParameter('username',$username)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.companyid')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $companyid=$query->getSingleScalarResult();
+        $searchstring=$request->request->get('searchstring');
+        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+        $qb=$em->createQueryBuilder();
+        $qb
+            ->select('a.emailid','b.groupname')
+            ->from('InitialShippingBundle:Mailing','a')
+            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->where('a.companyid = :companyid')
+            ->andwhere('b.groupname LIKE :sreachstring')
+            ->orwhere('a.emailid LIKE :sreachstring')
+            ->setParameter('companyid',$newcompanyid)
+            ->setParameter('sreachstring','%'.$searchstring.'%');
+        $result=$qb->getQuery()->getResult();
+        $response = new JsonResponse();
+
+
+        if(count($result)==0)
+        {
+            $response->setData(array('returnresult'=>0));
+        }
+        if(count($result)==1)
+        {
+            $response->setData(array('returnresult' => $result[0]['emailid']));
+        }
+        if(count($result)>1)
+        {
+            $response->setData(array('returnresult' => $result));
+        }
+        return $response;
+
+    }
+
 }
