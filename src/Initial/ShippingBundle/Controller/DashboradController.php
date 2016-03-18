@@ -774,10 +774,10 @@ class DashboradController extends Controller
             ->from('InitialShippingBundle:Mailing','a')
             ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
             ->where('a.companyid = :companyid')
-            ->andwhere($qb->expr()->like('b.groupname', ':sreachstring'))
-            ->orwhere($qb->expr()->like('a.emailid', ':sreachstring'))
+            ->andwhere('b.groupname LIKE :sreachstring')
+            ->orwhere('a.emailid LIKE :sreachstring')
             ->setParameter('companyid',$newcompanyid)
-            ->setParameter('sreachstring',$searchstring);
+            ->setParameter('sreachstring','%'.$searchstring.'%');
         $result=$qb->getQuery()->getResult();
         $response = new JsonResponse();
 
@@ -792,7 +792,7 @@ class DashboradController extends Controller
         }
         if(count($result)>1)
         {
-            $response->setData(array('returnresult' => $result[0]['groupname']));
+            $response->setData(array('returnresult' => $result));
         }
         return $response;
 

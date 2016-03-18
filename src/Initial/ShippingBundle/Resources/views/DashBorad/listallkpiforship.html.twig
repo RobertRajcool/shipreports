@@ -56,18 +56,36 @@
                         data: data,
                         success: function (data)
                         {
-                            var m= $.isNumeric(data.returnresult);
-                            if(m)
+
+                            if($.isArray(data.returnresult))
                             {
-                                $("#livesearch").hide();
+                                $.each(data.returnresult, function(i, listelemnt)
+                                {
+
+                                    $('#hiddenresult').val(data.returnresult);
+
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<label class="dynamiclabel">' + listelemnt.emailid + '</label><br><label class="dynamiclabel">' + listelemnt.groupname + '</label>');
+                                    $("#livesearch").css("background", "#FFF");
+
+                                });
+
                             }
                             else
                             {
-                            $('#hiddenresult').val(data.returnresult);
+                                var m= $.isNumeric(data.returnresult);
 
-                            $("#livesearch").show();
-                            $("#livesearch").html('<label>'+data.returnresult+'</label>');
-                            $("#livesearch").css("background","#FFF");
+                                if (m) {
+                                    $("#livesearch").hide();
+                                }
+                                else
+                                {
+                                    $('#hiddenresult').val(data.returnresult);
+
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<label>' + data.returnresult + '</label>');
+                                    $("#livesearch").css("background", "#FFF");
+                                }
                             }
 
 
@@ -83,9 +101,9 @@
                 });
 
 
-                $("#livesearch").live("click",function(e)
+                $(".dynamiclabel").live("click",function(e)
                 {
-                    var b=$('#hiddenresult').val();
+                    var b=$(this).text();
                     $('#toemail').val(b);
                 });
 
