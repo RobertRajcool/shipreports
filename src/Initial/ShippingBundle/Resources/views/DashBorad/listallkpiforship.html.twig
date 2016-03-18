@@ -266,11 +266,11 @@
                                 {% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}
                                 <td>
                                     {% if kpicolorarray[j][i]=="Green" %}
-                                        <div class="green"></div>
+                                        <img src="/images/01.png" alt="Loader Image"/>
                                     {% elseif kpicolorarray[j][i]=="Red" %}
-                                        <div class="red"></div>
+                                        <img src="/images/03.png" alt="Loader Image"/>
                                     {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                        <div class="yellow"></div>
+                                        <img src="/images/02.png" alt="Loader Image"/>
                                     {% else %}
                                         <div class="nocolor"></div>
                                     {% endif %}
