@@ -1,117 +1,196 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Star Systems Shipping Application{% endblock %}</title>
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/ship.css" rel="stylesheet">
 
-    {% block stylesheets %}
-        {% stylesheets '@InitialShippingBundle/Resources/public/css/design/*' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
-        {#{% stylesheets '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.css' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}#}
-    {% endblock %}
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script>
+        var app = angular.module('myApp', []);
+        app.controller('myCtrl', function($scope) {
+            $scope.showMe = false;
+            $scope.myFunc = function() {
+                $scope.showMe = !$scope.showMe;
+            }
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
-    <style>
-        .red
-        {
-            background-color: red;
-            border-radius: 50%;
-            /*padding: 20px;*/
-            width: 20px;
-            height: 20px;
-        }
-        .green
-        {
-            background-color: green;
-            border-radius: 50%;
-            /*padding: 20px;*/
-            width: 20px;
-            height: 20px;
-        }
-        .yellow
-        {
-            background-color: yellow;
-            border-radius: 50%;
-            /*padding: 20px;*/
-            width: 20px;
-            height: 20px;
-        }
-        .nocolor
-        {
-            background-color:#0c3055;
-            border-radius: 50%;
-            /*padding: 20px;*/
-            width: 20px;
-            height: 20px;
-        }
-
-    </style>
-
+            $scope.showMe2 = false;
+            $scope.myFunc2 = function() {
+                $scope.showMe2 = !$scope.showMe2;
+            }
+        });
+    </script>
 </head>
 <body>
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Shipping</a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="welcome">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</li>
-                    <li><a href="{{ path('fos_user_security_logout') }}">Log out</a></li>
-                    <li><a href={{ path('fos_user_change_password') }}>Change Password</a></li>
-                    <li><a href="#">Help</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container">
+    <div class="container" ng-app="myApp" ng-controller="myCtrl">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
+                <div class="logo">Shipping</div>
                 <ul class="nav nav-sidebar">
-                  {#  <li><a href="{{ path('shipdetails_dashboard') }}">Home</a></li>#}
-
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                        <li><a href="{{ path('dashboradhome') }}">Home</a></li>
-                        <li><a href="{{ path('shipdetails_select1') }}">Add Ships</a></li>
-                        <li><a href="{{ path('kpidetails_select1') }}">Add KPI</a></li>
-                        <li> <a href="{{ path('elementdetails_select1') }}">Add Elements</a></li>
-                        <li><a href="{{ path('rules_select') }}">Add Rules</a></li>
-                        <li> <a href="{{ path('showfile') }}">Import File</a></li>
-                        <li> <a href="{{ path('mailinghome') }}">Mailing List</a></li>
-                        <li> <a href="{{ path('readingkpivalues_index',{ 'page': 1 }) }}">Kpi Values List</a></li>
+                        <li class="active">
+                            <a href="{{ path('dashboradhome') }}">
+                                <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
+                                <span class="menu-item-text">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('shipdetails_select1') }}">
+                                <span class="menu-item-icon ss-star">&nbsp;</span>
+                                <span class="menu-item-text">Ships</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a ng-click="myFunc2()">
+                                <span class="menu-item-icon ss-star">&nbsp;</span>
+                                <span class="menu-item-text">Kpi</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="showMe2">
+                                <li>
+                                    <a href="{{ path('kpidetails_select1') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text">Add KPI</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('elementdetails_select1') }}">
+                                        <span class="menu-item-icon ss-star">&nbsp;</span>
+                                        <span class="menu-item-text">Element</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('rules_select') }}">
+                                        <span class="menu-item-icon ss-star">&nbsp;</span>
+                                        <span class="menu-item-text">Rules</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ path('showfile') }}">
+                                <span class="menu-item-icon ss-database">&nbsp;</span>
+                                <span class="menu-item-text">Data Import</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('fos_user_registration_show') }}">
+                                <span class="menu-item-icon ss-users">&nbsp;</span>
+                                <span class="menu-item-text">Users</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('mailinghome') }}">
+                                <span class="menu-item-icon ss-mail">&nbsp;</span>
+                                <span class="menu-item-text">Mailing list</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="dashboard.html">
+                                <span class="menu-item-icon ss-repeat">&nbsp;</span>
+                                <span class="menu-item-text">Reports</span>
+                            </a>
+                        </li>
                     {% endif %}
-                    {%  if is_granted("ROLE_ADMIN")  %}
-                        <li><a href="{{ path('fos_user_registration_show') }}">Manage Users</a></li>
-                    {% endif %}
-                    {%  if is_granted("ROLE_SUPER_ADMIN")  %}
-                        {#<li><a href="{{ path('fos_user_registration_register') }}">create Admin</a></li>#}
-                        <li> <a href="{{ path('user_index') }}">Create Company </a></li>
-                    {% endif %}
-
                 </ul>
 
+                <div class="x-btn-my-account-small">
+                    <a ng-click="myFunc()">
+            	<span class="x-btn-icon-el">
+              {#  <img src="/images/user.jpg">#}
+                     <img src="/images/nouser.png">
+              </span>
+              <span class="x-btn-inner">
+                <div class="user-name">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</div>
+                <div class="company">Company Name</div>
+              </span>
+                        <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
+                    </a>
+                </div>
+
+                <div class="my-account-box" ng-show="showMe">
+                    <div class="my-account-box-inner">
+                        <div class="settings"><samp class="ss-settings"><a href={{ path('fos_user_change_password') }}>Settings for Kali</a></samp></div>
+                        <div class="logout"><samp class="ss-logout"><a href="{{ path('fos_user_security_logout') }}">Logout</a></samp></div>
+                    </div>
+                    <div class="arrow ss-dropdown">&nbsp;</div>
+                </div>
             </div>
-            {% block body %}
-            {% endblock %}
+            <section>
+                {% block body %}
+
+
+
+                    {#   <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                           <div class="col-sm-9 dashboard">
+                               <div class="widget time">
+                                   <div class="x-header">
+                                       <div class="x-panel-header-text">Lorem ipsum</div>
+                                       <div class="toolbar-title">
+                                           <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                           <span class="item">March 2016</span>
+                                           <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
+                                       </div>
+                                   </div>
+                                   <div class="chart large_chart">
+                                       <img src="images/01.jpg">
+                                   </div>
+                               </div>
+                           </div>
+
+                           <div class="col-sm-3 dashboard">
+                               <div class="widget time">
+                                   <div class="x-header">
+                                       <div class="x-panel-header-text">Lorem ipsum</div>
+                                   </div>
+                                   <div class="chart">
+                                       <img src="images/01.jpg">
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="col-sm-3 dashboard">
+                               <div class="widget time">
+                                   <div class="x-header">
+                                       <div class="x-panel-header-text">Lorem ipsum</div>
+                                   </div>
+                                   <div class="chart">
+                                       <img src="images/01.jpg">
+                                   </div>
+                               </div>
+                           </div>
+                           <div class="col-sm-3 dashboard">
+                               <div class="widget time">
+                                   <div class="x-header">
+                                       <div class="x-panel-header-text">Lorem ipsum</div>
+                                   </div>
+                                   <div class="chart">
+                                       <img src="images/chart-4.jpg">
+                                   </div>
+                               </div>
+                           </div>
+
+                       </div>#}
+                {% endblock %}
+            </section>
+
 
         </div>
     </div>
-
 {% endif %}
-
+<!-- end if for overall links -->
 {% for type, messages in app.session.flashBag.all %}
     {% for message in messages %}
         <div class="{{ type }}">
@@ -126,3 +205,5 @@
 </div>
 </body>
 </html>
+
+

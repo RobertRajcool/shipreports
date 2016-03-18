@@ -56,9 +56,165 @@ class DashboradController extends Controller
 
 
         $listallshipforcompany = $query->getResult();
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
+                ->where('b.username = :username')
+                ->setParameter('username',$username)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.companyid')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $companyid=$query->getSingleScalarResult();
+
+
+        $lastdate = $em->createQueryBuilder()
+            ->select('a.dataOfMonth')
+            ->from('InitialShippingBundle:Excel_file_details','a')
+            ->where('a.company_id = :company_id')
+            ->setParameter('company_id',$companyid)
+            ->addOrderBy('a.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $lastmonthdetail=$lastdate[0]['dataOfMonth'];
+
+
+        $shipid=$listallshipforcompany[0]['id'];
+        $findkpilist=$em -> createQueryBuilder()
+            ->select('b.kpiName','b.id','b.weightage')
+            ->from('InitialShippingBundle:KpiDetails','b')
+            ->where('b.shipDetailsId = :shipid')
+            ->setParameter('shipid',$shipid)
+            ->getQuery()
+            ->getResult();
+        // Finding Elements and Element Weightage Based on Kpi Id //
+        $findelementidarray=$em -> createQueryBuilder()
+            ->select('c.id','c.weightage')
+            ->from('InitialShippingBundle:ElementDetails','c')
+            ->where('c.kpiDetailsId = :kpiid')
+            ->setParameter('kpiid',$findkpilist[0]['id'])
+            ->getQuery()
+            ->getResult();
+        $mykpivaluearray = array();
+        $finalkpivalue = 0;
+        $categories=array();
+        for($kj=0;$kj<count($listallshipforcompany);$kj++)
+        {
+            array_push($categories,$listallshipforcompany[$kj]['shipName']);
+
+
+            //loop for sending calculating weightage value for partucular Kpi     //
+            for ($jk = 0; $jk < count($findelementidarray); $jk++)
+            {
+
+                $weightage = $findelementidarray[$jk]['weightage'];
+                //Finding value based on element id and dates from user//
+                $dbvalueforelement = $em->createQueryBuilder()
+                    ->select('a.value')
+                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                    ->where('a.shipDetailsId = :shipid')
+                    ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                    ->andWhere('a.elementDetailsId = :Elementid')
+                    ->andWhere('a.monthdetail =:dataofmonth')
+                    ->setParameter('shipid', $listallshipforcompany[$kj]['id'])
+                    ->setParameter('kpiDetailsId', $findkpilist[0]['id'])
+                    ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                    ->setParameter('dataofmonth', $lastmonthdetail)
+                    ->getQuery()
+                    ->getResult();
+
+                if (count($dbvalueforelement) == 0)
+                {
+                    $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                    $finalkpivalue += $finddbvaluefomula;
+                }
+                else
+                {
+                    $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                    $finalkpivalue += $finddbvaluefomula;
+                }
+
+
+            }
+            //Push the kpivalue values from weightage value//
+
+            $mykpivaluearray[$kj] = $finalkpivalue;
+
+        }
+
+        for ($l = 0; $l < count($mykpivaluearray); $l++)
+        {
+            $newseries[$l]['name'] = $listallshipforcompany[$l]['shipName'];
+            $newseries[$l]['data'] = array($mykpivaluearray[$l]);
+
+
+        }
+
+
+
+
+        //loop for assign name for series Ends Here //
+
+        // Adding data to javascript chart function starts Here.. //
+        /* $time2 = strtotime();
+         $monthinletter = date('F-Y', $time2);*/
+        $monthinletter = $lastmonthdetail->format('F-Y');
+
+        $formatter = new \Zend\Json\Expr('function () {
+                 var unit = {
+                     "Rainfall": "mm",
+                     "Temperature": "degrees C"
+                 }[this.series.name];
+                 return this.x + ": <b>" + this.y + "</b> " + unit;
+             }');
+        $ob = new Highchart();
+
+        $linksarray= array( 'Foo'=>'http://www.java2s.com','Bar'=> 'http://www.java2s.com');
+        $ob->chart->renderTo('area');
+        $ob->chart->type('column');
+        $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
+        $ob->subtitle->text($formatter);
+        $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
+        $ob->xAxis->categories($categories);
+        //$ob->xAxis->labels($formatter);
+        $ob->yAxis->min(0);
+        $ob->yAxis->title(array('text'=>'Values'));
+        $ob->yAxis->stackLabels(array('enabled'=>true,'style'=>array( 'fontWeight'=> 'bold','color'=>  'gray')));
+        $ob->legend->align( 'right');
+        $ob->legend->x( -30);
+        $ob->legend->verticalAlign('top');
+        $ob->legend->y(25);
+        $ob->legend->floating(true);
+        $ob->legend->backgroundColor('white');
+        $ob->legend->borderColor('#CCC');
+        $ob->legend->borderWidth(1);
+        $ob->legend->shadow(1);
+
+        $ob->series(array( array( 'showInLegend'=> false,  'name' => $monthinletter, 'color' => 'rgb(124, 181, 236)',   "data" =>$mykpivaluearray)));
+        $ob->plotOptions->column(array('stacking'=> 'normal','allowPointSelect'=>true,
+            'dataLabels'=>array('enabled'=>true,'style'=> array('textShadow'=>'0 0 3px black'))));
+        // Adding data to javascript chart function  Ends Here.. //
+
+
+
+
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
-            array('allships'=>$listallshipforcompany)
+            array('allships'=>$listallshipforcompany,'chart'=>$ob,
+                'currentmonth'=>$monthinletter,
+                'kpiname'=>$findkpilist[0]['kpiName'])
         );
     }
     /**

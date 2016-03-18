@@ -1,0 +1,430 @@
+/*
+ * Base structure
+ */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+	background:#f7faff;
+}
+/*
+ * Global add-ons
+ */
+ .login-screen {
+  background:#333333;
+}
+ .login-checkbox {
+  margin:-2px 2px 0 0 !important;
+}
+.sub-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+  border: 0;
+}
+/*
+ * Sidebar
+ */
+/* Hide for mobile, show later */
+  .sidebar {
+    position: fixed;
+    top: 0px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 15px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #333333;
+    border-right: 1px solid #eee;
+  }
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+.nav-sidebar > li > a {
+  padding:6px 1px;
+	color:#999999;
+	cursor:pointer;
+}
+.nav-sidebar li .submenu li a {
+  padding:6px 1px;
+	color:#999999;
+	display:block;
+}
+.nav-sidebar li .submenu li a:hover
+ {
+  color: #fff;
+}
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+}
+.nav {
+	padding-top:15px;
+	border-top:1px solid #42403d;
+}
+.nav  li {
+  list-style:none;
+}
+.menu-item-icon {
+  margin:0px;
+}
+.menu-item-text {
+  margin:-2px 0 0 0;
+}
+
+/*
+ * Main content
+ */
+ .logo {
+ 	font-size:24px;
+	padding:10px 0 20px 0;
+	color:#FFFFFF;
+ }
+.main {
+  padding: 20px 10px 0px 12px;
+}
+.main.no_style {
+  padding: 0px;
+}
+
+.main .page-header {
+  margin-top: 0;
+	float:left;
+	width:100%;
+}
+/*
+ * Placeholder dashboard ideas
+ */
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+
+
+.spacing-small {
+    height: 10px;
+}
+.spacing {
+    height: 20px;
+}
+.spacing.small {
+    height: 30px;
+}
+.spacing.two {
+    height: 40px;
+}
+.spacing.three {
+    height: 60px;
+}
+.navbar-brand {
+  font-size: 30px;
+	color:#FFFFFF !important;
+}
+.nav {
+	margin:0px;
+	color:#FFFFFF;
+}
+.nav .x-btn-icon-arrow {
+    color: #999;
+    font-size: 14px;
+    height: 15px;
+    right: 9px;
+    top: 10px;
+    width: 15px;
+		float:right;
+		margin-top:0px;
+}
+.navbar-nav li.welcome {
+	margin-right:20px;
+}
+.navbar-nav li a {
+	color:#FFFFFF !important;
+}
+.nav-sidebar > li > a:hover {
+	background:#333333;
+	color:#FFFFFF;
+}
+.navbar-nav li {
+	line-height:50px;
+}
+.container {
+    width: 100%;
+}
+.pagination {
+    float: right;
+}
+.pagination>.active>a, 
+.pagination>.active>a:focus, 
+.pagination>.active>a:hover, 
+.pagination>.active>span, 
+.pagination>.active>span:focus, 
+.pagination>.active>span:hover {
+	background: #333333;
+	border-color:#dddddd;
+}
+.pagination a:hover,
+.pagination .active a,
+.pagination .active span {
+  background: #333333;
+	color:#FFFFFF;
+}
+table {
+	border: 1px solid #ddd !important;
+}
+table thead th {
+  color: #ffffff;
+  background: #333333;
+  font-weight: normal !important;
+  line-height: 24px;
+  letter-spacing: 1px;
+  margin: 0;
+  padding: 4px 10px;
+  text-align: left;
+	border-bottom: 1px solid #ddd !important;
+	border-radius:0px !important;
+}
+table tbody tr td a {
+	margin-right:8px;
+}
+.main .page-header h2 {
+   float:left;
+}
+.table-responsive {
+    clear: both;
+}
+.main .page-header a {
+  margin-top: 30px;
+	float:right;
+}
+select {
+  border: 1px solid #ccc;
+}
+.textarea-input {
+	height:150px;
+}
+.btn.btn-primary {
+    background: #333333;
+}
+.btn.btn-primary:hover {
+  background: #505050;
+}
+.btn.btn-primary.padding-space {
+    padding:24px 74px;
+		font-size:24px;
+}
+.data-section-new {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  background: #ffffff;
+  padding:10px;
+  border: 1px solid #c9c9c9;
+  margin-bottom: 10px;
+}
+.data-section-new .section-separator {
+    margin: 0 0 10px;
+}
+.data-section-new h3{
+	font-size: 14px;
+	font-weight: bold;
+	line-height:17px;
+	margin:0 0 10px 0;
+}
+.input-style-1 {
+	width:220px;
+}
+.texr-padding-space-1 {
+	padding-top:5px;
+}
+
+
+.dashboard {
+	margin:0 0 15px 0;
+}
+.dashboard .widget {
+    background-color: #fbfbfb;
+    border: 1px solid #dad7cf;
+    line-height: normal;
+		border-radius:0px;
+    padding: 0;
+}
+.dashboard .widget.time {
+    border-top: 2px solid #40bad9;
+}
+.dashboard .widget .x-header {
+    padding: 5px 15px;
+		height: 40px;
+ 		border-bottom: 1px solid #dad7cf;
+}
+.dashboard .widget .x-header .x-panel-header-text {
+    color: #383838;
+    font-size: 14px;
+    font-weight: bold;
+		float:left;
+		padding:5px 0px;
+}
+.dashboard .widget .toolbar-title {
+    color: #383838;
+    font-size: 14px;
+    font-weight: bold;
+		float:right;
+		padding:5px 0px;
+}
+.dashboard .widget .toolbar-title .left-arrow {
+		margin:1px 0 0 0;
+		float:left;
+}
+.dashboard .widget .toolbar-title .right-arrow {
+		margin:1px 0 0 0;
+		float:right;
+}
+.dashboard .widget .toolbar-title .item {
+		padding:5px 6px;
+}
+.dashboard .widget .chart {
+    min-height:148px;
+		padding:5px;
+}
+.dashboard .widget .chart.large_chart {
+    min-height:584px;
+}
+
+
+.x-btn-my-account-small {
+    border-radius: 0;
+    padding: 0 0 10px 0;
+		bottom:0px;
+		position:fixed;
+		width:180px;
+}
+.x-btn-my-account-small a {
+    cursor:pointer;
+}
+.x-btn-my-account-small .x-btn-icon-el {
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 50%;
+    display: inline-block;
+    height: 32px;
+    width: 32px;
+		float:left;
+}
+.x-btn-my-account-small .x-btn-icon-el img {
+    height: 32px;
+    width: 32px;
+		border-radius:32px;
+}
+.x-btn-my-account-small .x-btn-inner {
+    color: white;
+    font-size: 86%;
+    font-weight: normal;
+    padding: 0 4px 0 38px;
+    display: block;
+    white-space: nowrap;
+		text-align: left;
+}
+.x-btn-my-account-small .x-btn-icon-arrow {
+    color: #999;
+    font-size: 14px;
+    height: 15px;
+    right: 9px;
+    top: 10px;
+    width: 15px;
+		float:right;
+		margin-top:-25px;
+}
+.x-btn-my-account-small .user-name {
+    color: #FFFFFF;
+    font-weight: normal;
+}
+.x-btn-my-account-small .company {
+    color: #999;
+    font-weight: normal;
+    margin-top: -5px;
+}
+
+.my-account-box {
+		margin:0px;
+		width:210px;
+		background:#f2f2f2;
+		border-radius: 3px;
+		box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+		border: 1px solid #dad7cf;
+		position:fixed;
+		bottom:60px;
+		padding: 15px;
+}
+.my-account-box .my-account-box-inner {
+		display:block;
+}
+.my-account-box .my-account-box-inner .settings {
+		font-size:24px;
+		float:left;
+		display:block;
+		clear:both;
+		padding:0px;
+}
+.my-account-box .my-account-box-inner .logout {
+		font-size:24px;
+		float:left;
+		display:block;
+		clear:both;
+		padding:0px;
+		margin:20px 0 0 0;
+}
+.my-account-box .my-account-box-inner .settings a {
+		color:#333333;
+		font-size:13px;
+		margin:-25px 0 0 30px;
+		display:block;
+}
+.my-account-box .my-account-box-inner .logout a {
+		color:#333333;
+		font-size:13px;
+		margin:-25px 0 0 30px;
+		display:block;
+}
+.my-account-box .my-account-box-inner .settings a:hover {
+		text-decoration:underline;
+}
+.my-account-box .my-account-box-inner .logout a:hover {
+		text-decoration:underline;
+}
+.my-account-box .arrow {
+    margin:3px 0 0 10px;
+		padding:0px;
+		color:#FFFFFF;
+		width:20px;
+		height:40px;
+		position:absolute;
+		margin:63px 0 0 -7px;
+}
+
+
+
+
+
