@@ -17,37 +17,38 @@
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>Dashboard</h2>
+            <a href="{{ path('dashboradhome') }}">Back</a>
         </div>
         <div class="bs-example">
-        <div class="modal" style="display: none">
-            <div class="center">
-                {% image '@InitialShippingBundle/Resources/public/img/loader5.gif' %}
-                <img src="{{ asset_url }}" alt="Loader Image"/>
-                {% endimage %}
+            <div class="modal" style="display: none">
+                <div class="center">
+                    {% image '@InitialShippingBundle/Resources/public/img/loader5.gif' %}
+                    <img src="{{ asset_url }}" alt="Loader Image"/>
+                    {% endimage %}
+                </div>
             </div>
-        </div>
             {% if allships|length <= 0 %}
-               <h4 align="center">No Record Found </h4>
+                <h4 align="center">No Record Found </h4>
             {% endif %}
             {% if allships|length > 0 %}
 
-            <div class="table-responsive">
-            <table class="table table-striped" style="float: left" id="readingkpitable">
-                <thead>
-                    <tr>
-                        <th>Ship Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ship in allships %}
+                <div class="table-responsive">
+                    <table class="table table-striped" style="float: left" id="readingkpitable">
+                        <thead>
                         <tr>
-                            <td><a   href="{{ path('listallkpiforship', { 'shipid': ship.id }) }}" title="All Kpi List"> {{ ship.shipName }}</a></td>
-
+                            <th>Ship Name</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                        </thead>
+                        <tbody>
+                        {% for ship in allships %}
+                            <tr>
+                                <td><a   href="{{ path('listallkpiforship', { 'shipid': ship.id }) }}" title="All Kpi List"> {{ ship.shipName }}</a></td>
+
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% endif %}
         </div>
     </div>

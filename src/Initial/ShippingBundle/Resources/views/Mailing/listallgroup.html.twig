@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{#{% block title %}Star Shipping Application{% endblock %}#}
+
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+
+
+    {% endblock %}
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>Mailing Group List</h2>
+            <a href="{{ path('creategroup') }}">Add Group</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped" >
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Group Name</th>
+                    <th>Email Id</th>
+
+
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for groupobject in listallgroup %}
+                    <tr>
+
+                        <td>{{ groupobject.username }}</td>
+                        <td>{{ groupobject.groupname }}</td>
+                        <td>{{ groupobject.emailid }}</td>
+
+
+                        <td>
+
+                            {#<a href="{{ path('readingkpivalues_show', { 'id': readingKpiValue.id }) }}">show</a>#}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="bs-example">
+         {#   <ul class="pagination">
+                <li class="disabled"><a href="{{ path('readingkpivalues_index', {  'page': previous_page }) }}">Prev</a></li>
+
+                {% for page in 1..last_page %}
+                    {% if page == current_page %}
+
+                        <li class="active" ><a href="">{{ page }}</a></li>
+                    {% else %}
+                        <li>  <a href="{{ path('readingkpivalues_index', {  'page': page }) }}">{{ page }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                <li> <a href="{{ path('readingkpivalues_index', {  'page': next_page }) }}">Next</a></li>
+                <li> <a href="{{ path('readingkpivalues_index', {  'page': last_page }) }}">Last</a></li>
+            </ul>#}
+        </div>
+    </div>
+
+{% endblock %}

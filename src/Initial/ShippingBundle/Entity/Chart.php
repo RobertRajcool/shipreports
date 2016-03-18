@@ -156,6 +156,7 @@ class Chart
         $months[] = date('F', $time2);
         return $months;
     }
+
     function get_months_and_year($date1, $date2) {
         $time1  = strtotime($date1);
         $time2  = strtotime($date2);

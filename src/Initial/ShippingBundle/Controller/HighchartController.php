@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Initial\ShippingBundle\Entity\SendCommand;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class HighchartController extends Controller
 {
@@ -190,12 +191,14 @@ class HighchartController extends Controller
 
     }
 
+
     public function addcommentAction(Request $request)
     {
         $em=$this->getDoctrine()->getManager();
         //get client Email Id
         $user = $this->getUser();
         $username = $user->getUsername();
+        $useremailaddres=$user->getEmail();
 
         $userquery = $em->createQueryBuilder()
             ->select('a.emailId')
@@ -207,27 +210,65 @@ class HighchartController extends Controller
 
         //get Informaton From User
         $params = $request->request->get('send_command');
+        $monthcount=$request->request->get('countmonth');
+        $elementavgscore=$request->request->get('avgscore');
+        $elementavgscorearray=explode(",",$elementavgscore);
+        $elementcolor=$request->request->get('elementcolorarray');
+        $elementcolorarray=explode(",",$elementcolor);
+        $elementweightage=$request->request->get('elementweightage');
+        $elementweightagearray=explode(",",$elementweightage);
+        $listofelments=$request->request->get('listofelments');
+        $listofelmentsarray=explode(",",$listofelments);
+        $listofmonth=$request->request->get('montharrayinstring');
+        $listofmontharray=explode(",",$listofmonth);
+        $listofcomments=$request->request->get('listofcomments');
+
+
         $filename = $params['filename'];
-        $pdffilename=explode('.',$filename);
+        $pdffilenamearray=explode(".",$filename);
+
         $kpiid=$params['kpiid'];
         $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
+        $kpiname=$newkpiid->getKpiName();
         $comment = $params['comment'];
+        $checkboxvalue = $params['addcomment'];
+
+        if($checkboxvalue=="Yes")
+        {
+            $listofcommentarray=explode(",",$listofcomments);
+        }
+        else
+        {
+            $listofcommentarray=array();
+        }
+        $idforrecord = $params['lastid'];
+
         $today = date("Y-m-d H:i:s");
-        $imagedirect= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename;
-        $title="This is Pdf";
-        $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
-        $mpdf->defaultheaderline = 0;
-        $mpdf->defaultheaderfontstyle = 'B';
-        $mpdf->AddPage('', 4, '', 'on');
-        $mpdf->SetHeader('Type: ' . $title . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
-        $mpdf->WriteHTML('<h1>Graph Detail</h1>
-                            <p><img src="'.$imagedirect.'" alt="Loader Image"/></p>
-                            <h2>Comment</h2>
-                            <p>'.$comment.'</p>
-                            ');
-        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilename[0].'.pdf';
-        $content = $mpdf->Output('', 'S');
-        file_put_contents($uploaddir, $content);
+        $pageName = $request->query->get('page');
+        $screenName = $this->get('translator')->trans($pageName);
+        $date = date('l jS F Y h:i', time());
+        $route = $request->attributes->get('_route');
+
+        $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate.html.twig', array(
+            'link' => $filename,
+            'screenName' => $screenName,
+            'userName' => '',
+            'date' => $date,
+            'listofelement'=>$listofelmentsarray,
+            'kpiname'=>$kpiname,
+            'elementweightage'=>$elementweightagearray,
+            'montharray'=>$listofmontharray,
+            'elementcolorarray'=>$elementcolorarray,
+            'countmonth'=>$monthcount,
+            'avgscore'=> $elementavgscorearray,
+            'commentarray'=>$listofcommentarray,
+            'datetime'=>$today
+        ));
+
+        $printPdf = $this->createPdf($customerListDesign, $screenName);
+
+        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'pdf';
+        file_put_contents($pdffilenamefullpath, $printPdf);
         $useremaildid=$params['clientemail'];
 
 
@@ -235,27 +276,166 @@ class HighchartController extends Controller
         //assign file attachement for mail and Mailing Starts Here...u
        $mailer = $this->container->get('mailer');
         $message = \Swift_Message::newInstance()
-            ->setFrom('lawrance@commusoft.co.uk')
+            ->setFrom($clientemailid)
             ->setTo($useremaildid)
-            ->setSubject($today."  Month Graph!!!!")
+            ->setSubject($kpiname)
             ->setBody($comment)
         ;
-        $message->attach(\Swift_Attachment::fromPath($uploaddir)->setFilename($pdffilename[0].'.pdf'));
+        $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0].'.pdf'));
         $mailer->send($message);
         //Mailing Ends....
-        //Insertion Starts Here...
-        $sendcommand->setFilename($pdffilename[0].'.pdf');
-        $sendcommand->setClientemail("lawrance@commusoft.co.uk");
-        $datetime = new \DateTime();
-        $sendcommand->setUseremialid($useremaildid);
-        $sendcommand->setComment($comment);
-        $sendcommand->setDatetime($datetime);
-        $sendcommand->setKpiid($newkpiid);
-        $em->persist($sendcommand);
-        $em->flush();
+        //Update Process Starts Here...
+        $entity = $em->getRepository('InitialShippingBundle:SendCommand')->find($idforrecord);
+        $entity->setFilename($pdffilenamearray[0].'.pdf');
+        $entity->setClientemail($useremailaddres);
+        $entity->flush();
         //return $this->redirectToRoute('showcomment');
         return $this->redirect($this->generateUrl('showcomment', array('page' => 1)));
     }
+    public function addcommentforshipreportsAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $useremailaddres=$user->getEmail();
+
+        $userquery = $em->createQueryBuilder()
+            ->select('a.emailId')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->where('a.adminName = :userId')
+            ->setParameter('userId',$username)
+            ->getQuery();
+        $clientemailid=$userquery->getSingleScalarResult();
+
+        //get Informaton From User
+        $params = $request->request->get('send_command');
+        $monthcount=$request->request->get('countmonth');
+        $elementavgscore=$request->request->get('avgscore');
+        $elementavgscorearray=explode(",",$elementavgscore);
+        $elementcolor=$request->request->get('elementcolorarray');
+        $elementcolorarray=explode(",",$elementcolor);
+        $elementweightage=$request->request->get('elementweightage');
+        $elementweightagearray=explode(",",$elementweightage);
+        $listofelments=$request->request->get('listofelments');
+        $listofelmentsarray=explode(",",$listofelments);
+        $listofmonth=$request->request->get('montharrayinstring');
+        $listofmontharray=explode(",",$listofmonth);
+        $listofcomments=$request->request->get('listofcomments');
+
+
+        $filename = $params['filename'];
+        $pdffilenamearray=explode(".",$filename);
+
+        $kpiid=$params['kpiid'];
+        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+        $kpiname=$newkpiid->getShipName();
+        $comment = $params['comment'];
+        $checkboxvalue = $params['addcomment'];
+
+        if($checkboxvalue=="Yes")
+        {
+            $listofcommentarray=explode(",",$listofcomments);
+        }
+        else
+        {
+            $listofcommentarray=array();
+        }
+        $idforrecord = $params['lastid'];
+
+        $today = date("Y-m-d H:i:s");
+        $pageName = $request->query->get('page');
+        $screenName = $this->get('translator')->trans($pageName);
+        $date = date('l jS F Y h:i', time());
+        $route = $request->attributes->get('_route');
+        $newelementcolorarray=array_map('trim',$elementcolorarray);
+
+        $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+            'link' => $filename,
+            'screenName' => $screenName,
+            'userName' => '',
+            'date' => $date,
+            'listofelement'=>$listofelmentsarray,
+            'kpiname'=>$kpiname,
+            'elementweightage'=>$elementweightagearray,
+            'montharray'=>$listofmontharray,
+            'elementcolorarray'=>$newelementcolorarray,
+            'countmonth'=>$monthcount,
+            'avgscore'=> $elementavgscorearray,
+            'commentarray'=>$listofcommentarray,
+            'datetime'=>$date
+        ));
+
+
+        $printPdf = $this->createPdf($customerListDesign, $screenName);
+
+        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'pdf';
+        file_put_contents($pdffilenamefullpath, $printPdf);
+
+        $useremaildid=$params['clientemail'];
+
+        $findsemail=$em->createQueryBuilder()
+            ->select('a.emailid','b.groupname')
+            ->from('InitialShippingBundle:Mailing','a')
+            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->where('b.groupname = :sq')
+            ->ORwhere('a.emailid = :sb')
+            ->setParameter('sq',$useremaildid)
+            ->setParameter('sb',$useremaildid)
+            ->getQuery()
+            ->getResult();
+
+
+        //assign file attachement for mail and Mailing Starts Here...u
+        for($ma=0;$ma<count($findsemail);$ma++)
+        {
+            $mailer = $this->container->get('mailer');
+            $message = \Swift_Message::newInstance()
+                ->setFrom($clientemailid)
+                ->setTo($findsemail[$ma]['emailid'])
+                ->setSubject($kpiname)
+                ->setBody($comment);
+            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+            $mailer->send($message);
+        }
+        //Mailing Ends....
+        //Update Process Starts Here...
+        /*$entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->findBykpiid($kpiid);*/
+        $session=new Session();
+        $kpiandelementids= $session->get('commandid');
+        if($kpiandelementids!=null)
+        {
+        $entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->find($kpiandelementids);
+        $commandobject=new SendCommand();
+        $entityobject->setUseremialid($clientemailid);
+        $entityobject->setFilename($pdffilenamearray[0].'.pdf');
+        $em->flush();
+        }
+        //return $this->redirectToRoute('showcomment');
+        return $this->redirect($this->generateUrl('showcomment', array('page' => 1)));
+    }
+
+
+
+    public function createPdf($html, $title)
+    {
+        $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultheaderfontstyle = 'B';
+        $mpdf->AddPage('', 4, '', 'on');
+        $mpdf->SetHeader('Type: ' . $title . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        //$mpdf->SetTitle($title);
+        $mpdf->WriteHTML($html);
+      /*  // $output= $mpdf->Output('filename.pdf','F');
+        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/filename.pdf';*/
+
+        $content = $mpdf->Output('', 'S');
+
+        return $content;
+    }
+
+
+
     public function showcommentAction($page)
     {
         $em = $this->getDoctrine()->getManager();
@@ -305,6 +485,48 @@ class HighchartController extends Controller
 
         $response->setContent($content);
         return $response;
+    }
+    public function runtimecommentAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        $session=new Session();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $emailid=$user->getEmail();
+        //get Informaton From User
+        $kpiid = $request->request->get('kpiid');
+
+        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+        $comment =  $request->request->get('comment');
+        $today = date("Y-m-d H:i:s");
+        $datetime = new \DateTime();
+        $sendcommand=new SendCommand();
+        $sendcommand->setClientemail($emailid);
+        $sendcommand->setComment($comment);
+        $sendcommand->setDatetime($datetime);
+        $sendcommand->setKpiid($kpiid);
+        $em->persist($sendcommand);
+        $em->flush();
+       $lastid= $sendcommand->getId();
+        $lastarray=array('id'=>$lastid);
+        $session->set('commandid', $lastid);
+
+        $listofcomment = $em->createQueryBuilder()
+            ->select('a.comment')
+            ->from('InitialShippingBundle:SendCommand','a')
+            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+            ->where('a.kpiid = :kpiid')
+            ->andwhere('b.emailId = :username')
+            ->setParameter('username',$emailid)
+            ->setParameter('kpiid',$kpiid)
+            ->getQuery()
+            ->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('kpiNameArray' => $listofcomment,'lastinsertid'=>$lastid));
+        return $response;
+
+
     }
     public function sendbackendAction(Request $request)
     {
@@ -359,24 +581,6 @@ class HighchartController extends Controller
         return $response;
     }
 
-
-
-    public function createPdf($html, $title)
-    {
-        $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
-        $mpdf->defaultheaderline = 0;
-        $mpdf->defaultheaderfontstyle = 'B';
-        $mpdf->AddPage('', 4, '', 'on');
-        $mpdf->SetHeader('Type: ' . $title . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
-        //$mpdf->SetTitle($title);
-        $mpdf->WriteHTML($html);
-       // $output= $mpdf->Output('filename.pdf','F');
-        $uploaddir = $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/filename.pdf';
-
-        $content = $mpdf->Output('', 'S');
-        file_put_contents($uploaddir, $content);
-        return $content;
-    }
 
 
 

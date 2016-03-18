@@ -36,27 +36,26 @@ class SendCommand
     /**
      * @var string
      *
-     * @ORM\Column(name="clientemail", type="string", length=35)
+     * @ORM\Column(name="clientemail", type="string", length=35,nullable=true)
      */
     private $clientemail;
     /**
      * @var string
      *
-     * @ORM\Column(name="useremialid", type="string", length=35)
+     * @ORM\Column(name="useremialid", type="string", length=35,nullable=true)
      */
     private $useremialid;
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="datetime", type="datetime")
+     * @ORM\Column(name="datetime", type="datetime",nullable=true)
      */
     private $datetime;
+
     /**
-     * @var string
-     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\KpiDetails")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="kpiid", referencedColumnName="id")
-     * })
+     * @var int
+     *
+     * @ORM\Column(name="kpiid", type="integer")
      */
     private $kpiid;
 
@@ -153,7 +152,7 @@ class SendCommand
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getKpiid()
     {
@@ -161,7 +160,7 @@ class SendCommand
     }
 
     /**
-     * @param string $kpiid
+     * @param int $kpiid
      */
     public function setKpiid($kpiid)
     {
