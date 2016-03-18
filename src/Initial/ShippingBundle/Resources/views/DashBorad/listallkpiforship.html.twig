@@ -49,7 +49,7 @@
                         type: "post",
                         url: "/dashborad/sutocompeltegroup",
                         beforeSend: function () {
-                           /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
+                            /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
                         }
                     });
                     $.ajax({
@@ -73,6 +73,7 @@
                             }
                             else
                             {
+
                                 var m= $.isNumeric(data.returnresult);
 
                                 if (m) {
@@ -86,6 +87,13 @@
                                     $("#livesearch").html('<label>' + data.returnresult + '</label>');
                                     $("#livesearch").css("background", "#FFF");
                                 }
+
+                                $('#hiddenresult').val(data.returnresult);
+
+                                $("#livesearch").show();
+                                $("#livesearch").html('<label>'+data.returnresult+'</label>');
+                                $("#livesearch").css("background","#FFF");
+
                             }
 
 
@@ -225,71 +233,71 @@
             <div class="table-responsive">
 
                 <table class="table table-striped" style="" id="readingkpitable">
-                <thead>
-                <tr>
+                    <thead>
+                    <tr>
 
-                    <th>Kpi Name</th>
-                    <th>Weightage</th>
-                    {% for monthname in montharray %}
-                        <th>{{ monthname }}</th>
-                        {#<th></th>#}
-                    {% endfor %}
-
-                </tr>
-                </thead>
-                <tbody>
-                {% set countmonth1= countmonth-1 %}
-                {% set newelementarray = {} %}
-                {% set newcolorarray = {} %}
-                {% set akj=0 %}
-                  {% set i=0 %}
-                {% for kpi in listofkpi %}
-                    {% set newelementarray = newelementarray|merge({('_'~i):(kpi.kpiName)}) %}
-                    <tr><td>
-
-                            <a
-                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}"
-                                    title="{{ kpi.kpiName }}">
-                                {{ kpi.kpiName }}
-                            </a>
-                        </td>
-                        <td>{{ kpiweightage[i] }}%</td>
-                        {% for j in 0..countmonth1 %}
-                            {% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}
-                            <td>
-                                {% if kpicolorarray[j][i]=="Green" %}
-                                <div class="green"></div>
-                                {% elseif kpicolorarray[j][i]=="Red" %}
-                                <div class="red"></div>
-                                {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                <div class="yellow"></div>
-                                {% else %}
-                                <div class="nocolor"></div>
-                                {% endif %}
-                            </td>
-                            {% set akj=akj+1 %}
-
+                        <th>Kpi Name</th>
+                        <th>Weightage</th>
+                        {% for monthname in montharray %}
+                            <th>{{ monthname }}</th>
+                            {#<th></th>#}
                         {% endfor %}
 
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set countmonth1= countmonth-1 %}
+                    {% set newelementarray = {} %}
+                    {% set newcolorarray = {} %}
+                    {% set akj=0 %}
+                    {% set i=0 %}
+                    {% for kpi in listofkpi %}
+                        {% set newelementarray = newelementarray|merge({('_'~i):(kpi.kpiName)}) %}
+                        <tr><td>
+
+                                <a
+                                        href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}"
+                                        title="{{ kpi.kpiName }}">
+                                    {{ kpi.kpiName }}
+                                </a>
+                            </td>
+                            <td>{{ kpiweightage[i] }}%</td>
+                            {% for j in 0..countmonth1 %}
+                                {% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}
+                                <td>
+                                    {% if kpicolorarray[j][i]=="Green" %}
+                                        <div class="green"></div>
+                                    {% elseif kpicolorarray[j][i]=="Red" %}
+                                        <div class="red"></div>
+                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                        <div class="yellow"></div>
+                                    {% else %}
+                                        <div class="nocolor"></div>
+                                    {% endif %}
+                                </td>
+                                {% set akj=akj+1 %}
+
+                            {% endfor %}
+
+
+                        </tr>
+                        {% set i=i+1 %}
+                    {% endfor %}
+                    {#  <tr><td>Total</td></tr>#}
+                    <tr>
+                        <th>Avg Score</th>
+                        <td>100%</td>
+                        {% for avg in avgscore %}
+                            <td>{{ avg }}</td>
+                        {% endfor %}
 
                     </tr>
-                    {% set i=i+1 %}
-                {% endfor %}
-              {#  <tr><td>Total</td></tr>#}
-                <tr>
-                    <th>Avg Score</th>
-                    <td>100%</td>
-                    {% for avg in avgscore %}
-                        <td>{{ avg }}</td>
-                    {% endfor %}
-
-                </tr>
-                </tbody>
-            </table>
-                </div>
+                    </tbody>
+                </table>
+            </div>
             <div class="form-group">
-            <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
-                </div> <div class="form-group">
+                <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+            </div> <div class="form-group">
                 <div id="viewcommentdiv">
                     {% set newcommandarray = {} %}
 
@@ -310,55 +318,55 @@
             {# Form For Send Mail Starts Here #}
 
 
-                <div id="mailform" >
+            <div id="mailform" >
 
-                            <h4 class="modal-title">Send Report</h4>
-
-
-                            <form id="chatform" class="form-horizontal no-style" action=" {{path('addcommentforshipreports') }}" method="post">
-                                <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
-                                <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
-                                <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
-                                <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
-                                <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
-                                <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
-                                <input type="hidden" name="countmonth" value="{{ countmonth }}">
-
-                                <input id="imagefilename" type="hidden" name="send_command[filename]" >
-                                <input id="lastid" type="hidden" name="send_command[lastid]" >
-                                <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
+                <h4 class="modal-title">Send Report</h4>
 
 
-                                <div class="form-group">
-                                    <label class="control-label col-xs-2">Add Comment</label>
-                                    <div class="col-xs-10">
-                                        <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
-                                        <input id="checkbox" value="No" type="checkbox" name="send_command[addcomment]" >No
+                <form id="chatform" class="form-horizontal no-style" action=" {{path('addcommentforshipreports') }}" method="post">
+                    <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+                    <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
+                    <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
+                    <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
+                    <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
+                    <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
+                    <input type="hidden" name="countmonth" value="{{ countmonth }}">
 
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-2">To</label>
-                                    <div class="col-xs-10">
-                                        <input id="toemail" type="text" class="search_keyword" name="send_command[clientemail]" required>
-                                        <input type="hidden" id="hiddenresult" name="myresult">
-                                        <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
-                                    </div>
+                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                    <input id="lastid" type="hidden" name="send_command[lastid]" >
+                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
 
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-2">Mail Box</label>
-                                    <div class="col-xs-10">
-                                        <textarea id="mycommentid" name="send_command[comment]" required></textarea>
-                                    </div>
-                                </div>
 
-                                <div id="sendcommentbutton"  class="actions">
-                                    <input id="" class="btn btn-primary" type="submit" value="Send Report">
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Add Comment</label>
+                        <div class="col-xs-10">
+                            <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
+                            <input id="checkbox" value="No" type="checkbox" name="send_command[addcomment]" >No
 
-                                </div>
-                            </form>
-                </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">To</label>
+                        <div class="col-xs-10">
+                            <input id="toemail" type="text" class="search_keyword" name="send_command[clientemail]" required>
+                            <input type="hidden" id="hiddenresult" name="myresult">
+                            <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Mail Box</label>
+                        <div class="col-xs-10">
+                            <textarea id="mycommentid" name="send_command[comment]" required></textarea>
+                        </div>
+                    </div>
+
+                    <div id="sendcommentbutton"  class="actions">
+                        <input id="" class="btn btn-primary" type="submit" value="Send Report">
+
+                    </div>
+                </form>
+            </div>
 
 
             {# Form For Send Mail Ends  Here #}

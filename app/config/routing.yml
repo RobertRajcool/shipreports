@@ -1,3 +1,11 @@
+initial_shipping_ship_types:
+    resource: "@InitialShippingBundle/Controller/ShipTypesController.php"
+    type:     annotation
+
+initial_shipping_apps_countries:
+    resource: "@InitialShippingBundle/Controller/AppsCountriesController.php"
+    type:     annotation
+
 initial_shipping_kpi_rules:
     resource: "@InitialShippingBundle/Controller/KpiRulesController.php"
     type:     annotation

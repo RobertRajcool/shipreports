@@ -788,7 +788,7 @@ class DashboradController extends Controller
         }
         if(count($result)==1)
         {
-        $response->setData(array('returnresult' => $result[0]['emailid']));
+            $response->setData(array('returnresult' => $result[0]['emailid']));
         }
         if(count($result)>1)
         {

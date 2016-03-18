@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>AppsCountries list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Countrycode</th>
+                <th>Countryname</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for appsCountry in appsCountries %}
+            <tr>
+                <td><a href="{{ path('appscountries_show', { 'id': appsCountry.id }) }}">{{ appsCountry.id }}</a></td>
+                <td>{{ appsCountry.countryCode }}</td>
+                <td>{{ appsCountry.countryName }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('appscountries_show', { 'id': appsCountry.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('appscountries_edit', { 'id': appsCountry.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('appscountries_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}
