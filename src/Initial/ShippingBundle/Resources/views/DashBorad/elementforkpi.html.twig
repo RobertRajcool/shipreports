@@ -23,6 +23,7 @@
         <script>
             $(document).ready(function()
             {
+                $('#row_id').hide();
                 $('#commentform').hide();
                 $('#addcomment').hide();
                 $('#showcommentform').click(function()
@@ -119,7 +120,68 @@
 
                 });
 
+                /*Displaying the rules above the graph*/
+
+                $('#show_rule_id').live("click",function(){
+                    var rule_value = $('#rule_value').val();
+                    var rule_value_array = splitfun(rule_value);
+                    var condition_text = "";
+                    $('#row_id').show();
+
+                    $.each(rule_value_array,function(i){
+                        var rule_obj = JSON.parse(rule_value_array[i]);
+
+                        $.each(rule_obj.conditions.all, function(j)
+                        {
+                            if(rule_obj.conditions.all[j].operator=='equalTo')
+                            {
+                                rule_obj.conditions.all[j].operator='=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='notEqualTo')
+                            {
+                                rule_obj.conditions.all[j].operator='!=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='greaterThan')
+                            {
+                                rule_obj.conditions.all[j].operator='>';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
+                            {
+                                rule_obj.conditions.all[j].operator='>=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='lessThan')
+                            {
+                                rule_obj.conditions.all[j].operator='<';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
+                            {
+                                rule_obj.conditions.all[j].operator='<=';
+                            }
+                            var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
+                            if(j==0)
+                            {
+                                condition_text = condition_text_one;
+                            }
+                            if(j>0)
+                            {
+                                condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                            }
+                        });
+                        var $tr = $('<tr>').append(
+                                $('<td>').text(condition_text),
+                                $('<td>').text(rule_obj.actions.value)
+                        ).appendTo('#rule-table');
+                    });
+                });
+
+                function splitfun(data){
+                    var result = data.split('*');
+                    return result;
+                }
+
             });
+
+
         </script>
     {% endblock %}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -212,7 +274,31 @@
                     </tr>
 
                 </table>
+
+                {# Rules display starts here #}
+
+                <input type="button" id="show_rule_id" value="show rules">
+
+                <table id="rule-table">
+                    <tr id="row_id">
+                        <th>Condition</th>
+                        <th>Color</th>
+                    </tr>
+                </table>
+
+                <div id="viewcommentdiv">
+                    {% set newcommandarray = {} %}
+
+                    {% set jk=0 %}
+                {% for kpi_rules in kpi_rule %}
+                    {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
+                    {% set jk=jk+1 %}
+                {% endfor %}
+                </div>
+
+                <input type="hidden" name="listofcomments" id="rule_value" value="{{ newcommandarray|join('*') }}">
             </div>
+        </div>
             <div class="form-group">
                 <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
             </div>
