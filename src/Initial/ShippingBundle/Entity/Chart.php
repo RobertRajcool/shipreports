@@ -25,7 +25,7 @@ class Chart
      * @var string
      * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\KpiDetails")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="kpiname", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="KpiDetailsId", referencedColumnName="id")
      * })
      */
     private $kpiname;
