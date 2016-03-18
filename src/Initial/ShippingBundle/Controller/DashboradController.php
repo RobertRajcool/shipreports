@@ -57,6 +57,17 @@ class DashboradController extends Controller
 
         $listallshipforcompany = $query->getResult();
 
+        $kpi_count_query = $em->createQueryBuilder()
+            ->select('a.kpiName','a.id')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.shipDetailsId = :ship_id')
+            ->setParameter('ship_id',$listallshipforcompany[0]['id'])
+            ->getQuery()
+            ->getResult();
+
+        $ship_count = count($listallshipforcompany);
+        $kpi_count = count($kpi_count_query);
+
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -70,14 +81,13 @@ class DashboradController extends Controller
         else
         {
             $query = $em->createQueryBuilder()
-                ->select('a.companyid')
+                ->select('identity(a.companyid)')
                 ->from('InitialShippingBundle:User','a')
                 ->where('a.id = :userId')
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
         $companyid=$query->getSingleScalarResult();
-
 
         $lastdate = $em->createQueryBuilder()
             ->select('a.dataOfMonth')
@@ -146,7 +156,6 @@ class DashboradController extends Controller
                     $finalkpivalue += $finddbvaluefomula;
                 }
 
-
             }
             //Push the kpivalue values from weightage value//
 
@@ -159,10 +168,7 @@ class DashboradController extends Controller
             $newseries[$l]['name'] = $listallshipforcompany[$l]['shipName'];
             $newseries[$l]['data'] = array($mykpivaluearray[$l]);
 
-
         }
-
-
 
 
         //loop for assign name for series Ends Here //
@@ -212,9 +218,13 @@ class DashboradController extends Controller
 
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
-            array('allships'=>$listallshipforcompany,'chart'=>$ob,
+            array('allships'=>$listallshipforcompany,
+                'chart'=>$ob,
                 'currentmonth'=>$monthinletter,
-                'kpiname'=>$findkpilist[0]['kpiName'])
+                'kpiname'=>$findkpilist[0]['kpiName'],
+                'ship_count' => $ship_count,
+                'kpi_count' => $kpi_count
+                )
         );
     }
     /**
