@@ -14,12 +14,42 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/drilldown.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
 
 
 
 
         <script type="text/javascript">
             {{ chart(chart) }}
+        </script>
+        <script>
+           /* $(document).ready(function()
+            {
+
+                var shipvaluesvaluesArray = shipvaluesvalues.split(',');
+
+                   /!* $('#button').click(function ()
+                    {*!/
+
+                        var chart = $('#area').highcharts();
+
+                      // chart.series[0].setData([y=29.9, 71.5, 106.4, 129.2, 148.5, 216.4, 194.1] );
+                        $.each(shipvaluesvaluesArray, function(index, value)
+                        {
+
+                            chart.series[0].setData([xy=value,url="http://bing.com/"]);
+                        });
+
+/!*
+                       });*!/
+
+
+
+
+
+            });*/
         </script>
 
 
@@ -50,6 +80,7 @@
                 <div class="chart">
                     <img src="images/01.jpg">
                 </div>
+               {# <button id="button">Click</button>#}
             </div>
         </div>
         <div class="col-sm-3 dashboard">
@@ -72,6 +103,7 @@
                 </div>
             </div>
         </div>
+
 
     </div>
 {% endblock %}
