@@ -36,15 +36,6 @@ class UserActivitiyController extends Controller
         $editForm = $this->createForm(new RegistrationFormType($id), $user);
         $editForm->handleRequest($request);
 
-        /* if ($editForm->isSubmitted() && $editForm->isValid()) {
-             $em = $this->getDoctrine()->getManager();
-             $em->persist($user);
-             $em->flush();
-
-              return $this->redirectToRoute('mycontroller', array('id' => $user->getId()));
-         }
-        */
-
         return $this->render('InitialShippingBundle:CompanyUsers:edit.html .twig', array(
             'userdetails' => $user,
             'edit_form' => $editForm->createView(),

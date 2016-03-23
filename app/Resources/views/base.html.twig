@@ -56,7 +56,7 @@
                         <li>
                             <a ng-click="myFunc2()">
                                 <span class="menu-item-icon ss-star">&nbsp;</span>
-                                <span class="menu-item-text">Kpi</span>
+                                <span class="menu-item-text">KPI</span>
                                 <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
                             </a>
                             <ul class="submenu" ng-show="showMe2">
@@ -80,18 +80,22 @@
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <a href="{{ path('showfile') }}">
-                                <span class="menu-item-icon ss-database">&nbsp;</span>
-                                <span class="menu-item-text">Data Import</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ path('fos_user_registration_show') }}">
-                                <span class="menu-item-icon ss-users">&nbsp;</span>
-                                <span class="menu-item-text">Users</span>
-                            </a>
-                        </li>
+                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                            <li>
+                                <a href="{{ path('showfile') }}">
+                                    <span class="menu-item-icon ss-database">&nbsp;</span>
+                                    <span class="menu-item-text">Data Import</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {%  if is_granted("ROLE_ADMIN") %}
+                            <li>
+                                <a href="{{ path('fos_user_registration_show') }}">
+                                    <span class="menu-item-icon ss-users">&nbsp;</span>
+                                    <span class="menu-item-text">Company Users</span>
+                                </a>
+                            </li>
+                        {% endif %}
                         <li>
                             <a href="{{ path('creategroup') }}">
                                 <span class="menu-item-icon ss-mail">&nbsp;</span>
@@ -114,7 +118,7 @@
                      <img src="/images/nouser.png">
               </span>
               <span class="x-btn-inner">
-                <div class="user-name">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</div>
+                <div class="user-name">{{app.user.username }}</div>
                 <div class="company">Company Name</div>
               </span>
                         <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>

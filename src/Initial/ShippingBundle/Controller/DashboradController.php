@@ -231,7 +231,7 @@ class DashboradController extends Controller
 
 
                     $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
-               }
+                }
 
 
                 $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
@@ -264,10 +264,10 @@ class DashboradController extends Controller
 
         foreach($elementleveldrildownkpi as $kpikey => $kpipvalue)
         {
-                $drilldownarray[$temp]['name']=$kpikey;
-                $drilldownarray[$temp]['id']=$kpikey;
+            $drilldownarray[$temp]['name']=$kpikey;
+            $drilldownarray[$temp]['id']=$kpikey;
 
-                $drilldownarray[$temp]['data']=$kpipvalue;
+            $drilldownarray[$temp]['data']=$kpipvalue;
 
 
             $temp++;
@@ -279,7 +279,7 @@ class DashboradController extends Controller
 
         $monthinletter = $lastmonthdetail->format('F-Y');
         // Adding data to javascript chart function starts Here.. //
-       $ob = new Highchart();
+        $ob = new Highchart();
         $ob->chart->renderTo('area');
         $ob->chart->type('column');
         $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
@@ -302,7 +302,9 @@ class DashboradController extends Controller
             array('allships'=>$listallshipforcompany,
                 'chart'=>$ob,
                 'currentmonth'=>$monthinletter,
-                'kpiname'=>$findkpilist[0]['kpiName']
+                'kpiname'=>$findkpilist[0]['kpiName'],
+                'ship_count'=>count($listallshipforcompany),
+                'kpi_count'=>count($findkpilist)
 
             )
         );
