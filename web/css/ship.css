@@ -63,13 +63,14 @@ body {
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 15px;
+    padding: 10px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #333333;
     border-right: 1px solid #eee;
-    width:212px;
+    width:182px;
 }
+
 /* Sidebar navigation */
 .nav-sidebar {
     margin-right: -21px; /* 20px padding + 1px border */
@@ -97,7 +98,6 @@ body {
 }
 .nav {
     padding-top:15px;
-    border-top:1px solid #42403d;
 }
 .nav  li {
     list-style:none;
@@ -114,8 +114,10 @@ body {
  */
 .logo {
     font-size:24px;
-    padding:10px 0 20px 0;
+    padding:6px;
+    margin:-7px -7px -9px -9px;
     color:#FFFFFF;
+    background:#FFFFFF;
 }
 .main {
     padding: 20px 10px 0px 12px;
@@ -287,9 +289,64 @@ select {
     padding-top:5px;
 }
 
+/* Dashboard screen */
+.dashboard_screen_views {
+    display: block;
+    left: 14%;
+    padding: 10px 0 0 4px;
+    position: relative;
+    width:86%;
+}
+.left_menus-2 {
+    position: fixed;
+    top: 0px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 10px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #333333;
+    border-right: 1px solid #eee;
+    width:14%;
+}
 
 .dashboard {
-    margin:0 0 15px 0;
+    margin:0 0 10px 0;
+}
+.dashboard_ship_list {
+    margin:0px;
+    padding:0px;
+    width:auto;
+    height:410px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.dashboard_ship_list ul {
+    margin:0px;
+    padding:0px;
+}
+.dashboard_ship_list ul li {
+    margin:0px;
+    padding:0px;
+    list-style:none;
+    border-bottom:1px solid #f0f0f0;
+}
+.dashboard_ship_list ul li a {
+    margin:0px;
+    padding:2px 0px 2px 5px;
+    color:#333333;
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+}
+.dashboard_ship_list ul li a:hover {
+    background:#40bad9;
+    color:#FFFFFF;
+}
+.dashboard_right_ship .col-sm-2 {
+    padding-left:0px;
 }
 .dashboard .widget {
     background-color: #fbfbfb;
@@ -332,28 +389,39 @@ select {
     padding:5px 6px;
 }
 .dashboard .widget .chart {
-    min-height:148px;
+    min-height:410px;
     padding:5px;
 }
+.dashboard .widget .ship_name {
+    min-height:410px;
+    padding:0px;
+}
+.dashboard .widget .chart-2 {
+    min-height:136px;
+    padding:25px 5px;
+    font-size:70px;
+    font-weight:bold;
+    text-align:center;
+}
 .dashboard .widget .chart.large_chart {
-    min-height:395px;
+    min-height:410px;
 }
 .dashboard_month_chart {
     width:100%;
     margin:0px;
 }
 .dashboard_month_chart .left {
-    width:49%;
+    width:49.5%;
     float:left;
-    margin:0 2% 0 0;
-    min-height:175px;
+    margin:0 1% 0 0;
+    min-height:180px;
     border: 1px solid #c9c9c9;
 }
 .dashboard_month_chart .right {
-    width:49%;
+    width:49.5%;
     float:left;
     margin:0px;
-    min-height:175px;
+    min-height:180px;
     border: 1px solid #c9c9c9;
 }
 
@@ -363,7 +431,7 @@ select {
     padding: 0 0 10px 0;
     bottom:0px;
     position:fixed;
-    width:180px;
+    width:155px;
 }
 .x-btn-my-account-small a {
     cursor:pointer;
@@ -410,6 +478,7 @@ select {
     color: #999;
     font-weight: normal;
     margin-top: -5px;
+    font-size: 11px;
 }
 
 .my-account-box {
@@ -475,7 +544,7 @@ select {
     border-right: 1px solid #dad7cf;
     bottom: 0;
     display: block;
-    left: 211px;
+    left: auto;
     padding: 15px;
     position: fixed;
     top: 0;
@@ -602,7 +671,7 @@ select {
     bottom: 64px;
     display: block;
     float: left;
-    left: 530px;
+    left: 314px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0;
@@ -714,7 +783,7 @@ select {
     bottom: 64px;
     display: block;
     float: left;
-    left: 231px;
+    left: 13px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0;
@@ -890,7 +959,7 @@ select {
 .view_new_user_screen {
     display: block;
     float: left;
-    left: 530px;
+    left: 314px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 83px 0 0 0;
@@ -902,7 +971,7 @@ select {
 .view_new_user_screen_2 {
     display: block;
     float: left;
-    left: 530px;
+    left: 314px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 51px 0 22px 0;
@@ -1019,8 +1088,9 @@ select {
     border-right: 1px solid #dad7cf;
     bottom: 0;
     display: block;
-    left: 211px;
+    left: auto;
     padding:0px;
+    margin-left: -1px;
     position: fixed;
     top: 0;
     z-index: 1000;
@@ -1069,7 +1139,7 @@ select {
     bottom: 64px;
     display: block;
     float: left;
-    left: 420px;
+    left: 203px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0;
@@ -1106,8 +1176,15 @@ select {
 
 .kpi_table_form_section {
     margin-bottom:10px;
-    background:#f9f9f9;
-    border:none !important;
+    border:1px solid #f1f1f1;
+}
+.kpi_table_form_section.second_dark {
+    background:#e5e5e5;
+    border:1px solid #f1f1f1;
+}
+.kpi_table_form_section.first_light {
+    background:#f4f4f4;
+    border:1px solid #f4f4f4;
 }
 .kpi_table_form_section thead tr th {
     margin:0px;

@@ -1,30 +1,260 @@
 
 {% extends 'base.html.twig' %}
 {% block body %}
-{#
+
     {% block javascripts %}
 
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        #}
-{#  {% javascripts '@InitialShippingBundle/Resources/public/js/thickbox/thickbox.js' %}
-          <script src="{{ asset_url }}"></script>
-          {% endjavascripts %}
-          {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
-          <script src="{{ asset_url }}"></script>
-          {% endjavascripts %}#}{#
-
-        <script src="/js/bootstrap-multiselect.js"></script>
         <script>
-$(function() {
-$('#chkveg').multiselect({
-includeSelectAllOption: true
-});
-$('#btnget').click(function() {
-alert($('#chkveg').val());
-})
-});
+            $(document).ready(function()
+            {
+                /*
+            $('#chkveg').multiselect({
+            includeSelectAllOption: true
+            });
+            $('#btnget').click(function() {
+            alert($('#chkveg').val());
+            })*/
+                $('#registercontentid').hide();
+                $('#viewcontentid').hide();
+
+                var counter = 1;
+
+
+                $('#adduserscreenbutton').click(
+                        function()
+                        {
+                            $('#addgroupidhtml').val('');
+                            $('#inputforemailid').text('');
+                            $('#tabledata').text('');
+                            $('#viewcontentid').hide();
+                            $('#updatebuttonid').hide();
+                            $('#savegroupid').show();
+                            $('#registercontentid').show();
+                        }
+                );
+
+                $('#addemailid').click
+                (
+                        function()
+                        {
+                           var email=$('#emailid').val();
+                            var atpos = email.indexOf("@");
+                            var dotpos = email.lastIndexOf(".");
+                            if (atpos<1 || dotpos<atpos+2 || dotpos+2>=email.length)
+                            {
+                                alert("Not a valid e-mail address");
+
+                            }
+                            else
+                            {
+                                $('<tr id="'+counter+'"><td id="emaildata_'+counter+'">'+email+'</td><td><a id="emailedit_'+counter+'" class="edit_icon_btn ss-write">&nbsp;</a></td><td><a id="emaildelete_'+counter+'" class="delete_icon_btn ss-delete">&nbsp;</a></td></tr>').appendTo('#tabledata');
+                                $('<input id="inputid_'+counter+'" value="'+email+'" class="addedemailclass" type="text" name="listofemail[]">').appendTo('#inputforemailid');
+                                $('#emailid').val('')
+                                counter++;
+                            }
+                        }
+                );
+
+                $('.edit_icon_btn').live('click',
+                        function()
+                        {
+                            var id = $(this).attr('id');
+                            var idarray = id.split('_');
+                            var data=$('#emaildata_'+idarray[1]).text();
+                            $('#emailid').val(data)
+                            $('#'+idarray[1]).remove();
+                            $('#inputid_'+idarray[1]).remove();
+                            counter--;
+                        }
+                );
+                $('.delete_icon_btn').live('click',
+                        function()
+                        {
+                            var id = $(this).attr('id');
+
+                            var idarray = id.split('_');
+                            $('#'+idarray[1]).remove();
+                            $('#inputid_'+idarray[1]).remove();
+                            counter--;
+                        }
+                );
+
+                $("#savegroupid").click(function()
+                {
+
+
+                    var form = $('#addemailgroupform');
+                    var gname=$('#addgroupidhtml').val();
+                    var numItems = $('.addedemailclass').length
+                    if(gname=="")
+                    {
+                        alert("Group Name Required");
+                        return false
+
+                    }
+                    if(numItems==0)
+                    {
+                        alert('Email Required');
+                        return false
+
+                    }
+                   if(gname!="" && numItems>0)
+                   {
+
+
+                    $.ajax({
+                        type: "post",
+                        data: form.serialize(),
+                        url: "/mailing/emailgroup",
+                        success: function(data)
+                        {
+                            $('#registercontentid').hide();
+                            $('#viewcontentid').hide();
+                            $('#viewtabledata').text('');
+                            $('#tabledata').text('');
+                            $('#groupname').text('');
+                            $('#addgroupidhtml').val('')
+                            $('#groupid').val('');
+                            $('#inputforemailid').text('');
+                            alert(data.savemsg);
+
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                   }
+
+
+
+                }
+                );
+                $('.name').live('click',
+                        function()
+                        {
+
+                            var textboxid = $(this).attr('id');
+                            var grouptextbox = textboxid.split('_');
+                            var emailgroupid=grouptextbox[1]
+                            var datavalue = {emailgroupid : emailgroupid};
+
+
+                                $.ajax({
+                                    type: "post",
+                                    data: datavalue,
+                                    url: "/mailing/ajaxviewemailgroup",
+                                    success: function(data)
+                                    {
+                                        $('#viewtabledata').text('');
+                                        $('#tabledata').text('');
+                                        $('#groupname').text('');
+                                        $('#addgroupidhtml').val('')
+                                        $('#groupid').val('');
+                                        $('#inputforemailid').text('');
+                                        var groupname=data.groupname;
+                                        $('#groupname').text(groupname);
+                                        $('#addgroupidhtml').val(groupname);
+                                        var groupid=data.groupid
+                                        $('#groupid').val(groupid);
+                                        var k=0;
+                                        $.each(data.groupofemailid, function(i, groupemailid)
+                                        {
+
+                                            $('<tr><td>'+groupemailid.useremailid+'</td></tr>').appendTo('#viewtabledata');
+
+                                            $('<tr id="'+k+'"><td id="emaildata_'+k+'">'+groupemailid.useremailid+'</td><td><a id="emailedit_'+k+'" class="edit_icon_btn ss-write">&nbsp;</a></td><td><a id="emaildelete_'+k+'" class="delete_icon_btn ss-delete">&nbsp;</a></td></tr>').appendTo('#tabledata');
+                                            $('<input id="inputid_'+k+'" value="'+groupemailid.useremailid+'" class="addedemailclass" type="text" name="listofemail[]">').appendTo('#inputforemailid');
+                                            $('#emailid').val('')
+                                            k++;
+
+
+                                        });
+                                        var input = $('#addemailgroupform');
+                                        input.removeAttr( "action" )
+                                        $('#viewcontentid').show();
+                                        $('#registercontentid').hide();
+
+                                    },
+                                    error: function(XMLHttpRequest, textStatus, errorThrown)
+                                    {
+                                        alert('Error : ' + errorThrown);
+                                    }
+                                });
+
+
+                           // var idarray = id.split('_');
+                           // $('#'+idarray[1]).remove();
+                           // $('#inputid_'+idarray[1]).remove();
+                           // counter--;
+                        }
+                );
+                $('#editbuttonid').click(function()
+                {
+                    $('#viewcontentid').hide();
+                    $('#registercontentid').show();
+                    $('#savegroupid').hide();
+                    $('#updatebuttonid').show();
+
+                });
+
+                $('#updatebuttonid').click(
+                        function()
+                        {
+                            var form = $('#addemailgroupform');
+                            var gname=$('#addgroupidhtml').val();
+                            var numItems = $('.addedemailclass').length
+                            if(gname=="")
+                            {
+                                alert("Group Name Required");
+                                return false
+
+                            }
+                            if(numItems==0)
+                            {
+                                alert('Email Required');
+                                return false
+
+                            }
+                            if(gname!="" && numItems>0) {
+
+
+                                $.ajax({
+                                    type: "post",
+                                    data: form.serialize(),
+                                    url: "/mailing/updatemailgroup",
+                                    success: function (data) {
+                                        $('#registercontentid').hide();
+                                        $('#viewcontentid').hide();
+                                        $('#viewtabledata').text('');
+                                        $('#tabledata').text('');
+                                        $('#groupname').text('');
+                                        $('#addgroupidhtml').val('')
+                                        $('#groupid').val('');
+                                        $('#inputforemailid').text('');
+                                        alert(data.updatemsg);
+
+                                    },
+                                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                        alert('Error : ' + errorThrown);
+                                    }
+                                });
+                            }
+
+                        }
+                );
+
+                $('#cancelbuttonid').click(function($event)
+                {
+                            $event.preventDefault();
+                            $('#registercontentid').hide();
+                            $('#viewcontentid').hide();
+                        }
+                );
+            });
 </script>
 
 
@@ -33,144 +263,42 @@ alert($('#chkveg').val());
 
     {% endblock %}
 
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="page-header">
-            <h2>Create Group</h2>
-
-            <a class="btn btn-primary" href="{{ path('createaccount') }}">Add Account</a>
-
-        </div>
-        <div class="bs-example">
-            <form action="{{ path('readgroup') }}"  class="form-horizontal no-style"  method="post">
-
-                <div class="form-group">
-                    <label class="control-label col-xs-2">Name</label>
-                    <div class="col-xs-10">
-                        <input type="text" name="mailing_group[groupname]" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label col-xs-2">Email</label>
-                    <div class="col-xs-10">
-                       <select id="chkveg" name="emailreferenceid[]" multiple>
-                           {% for userobject in listofuser %}
-                               <option value="{{ userobject.id }}">{{ userobject.username }}</option>
-                           {% endfor %}
-                       </select>
-                    </div>
-                </div>
-
-                <div id="sendcommentbutton"  class="actions">
-                    <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
-
-                </div>
-            </form>
-
-
-        </div>
-    </div>
-
-
-{% endblock %}#}
 <section>
     <div class="col-sm-3 users_views">
         <div class="add_user_btn_main">
-            <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add group</a></span>
+            <span class="user_btn_main"><a href="" id="adduserscreenbutton" class="ss-plus add_btn"> Add group</a></span>
             <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
     <span class="user_btn_main grid_list_main">
     	<span class="active"><a href="" class="grid_list_icon ss-grid">&nbsp;</a></span>
       <span><a href="" class="grid_list_icon ss-rows">&nbsp;</a></span>
     </span>
         </div>
-        <div class="users_list_main"><span>Users (10)</span> <span class="show_dropdown_icon">&nbsp;</span></div>
+        <div class="users_list_main"><span>Users ({{ usercount }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
 
         <div class="users_list_grid_main">
+            {% set i=1 %}
+            {% for object in listofuser %}
             <div class="users_list_grid">
                 <span class="user_image"><img src="images/user.jpg"></span>
     <span class="users_name_row">
-    	<span class="name">Kali</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
+    	<span id="userlistid_{{ object.id }}" class="name">{{ object.groupname }}</span>
+     {# <span class="text">Lorem ipsum dolor sit amet</span>#}
     </span>
             </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 1</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 2</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 3</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 4</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 5</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 6</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 7</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 8</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 9</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
-            <div class="users_list_grid">
-                <span class="user_image"><img src="images/user.jpg"></span>
-    <span class="users_name_row">
-    	<span class="name">User list 10</span>
-      <span class="text">Lorem ipsum dolor sit amet</span>
-    </span>
-            </div>
+                {% set i=i+1 %}
+            {% endfor %}
+
+
+
         </div>
 
     </div>
 </section>
 
-<section>
+<section id="registercontentid">
     <div class="col-sm-11">
-        <div class="add_new_users_views_screen">
-            <form class="form-horizontal no-style">
+        <div id="adduseridscreen" class="add_new_users_views_screen">
+            <form id="addemailgroupform" action="" method="post" class="form-horizontal no-style">
 
                 <div class="add_new_users_form">
                     <fieldset class="fieldset_box">
@@ -178,13 +306,13 @@ alert($('#chkveg').val());
                         <div class="form-group">
                             <label class="control-label required_field col-xs-4">Group name</label>
                             <div class="col-xs-8">
-                                <input type="text" placeholder="">
+                                <input type="text" id="addgroupidhtml" name="groupnameintextbox" novalidate placeholder="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="control-label required_field col-xs-4">Email</label>
                             <div class="col-xs-8">
-                                <input type="text" class="add_group_email_input" placeholder=""> <a class="add_email_btn ss-plus">&nbsp;</a>
+                                <input type="text" id="emailid" class="add_group_email_input" placeholder=""> <a id="addemailid" class="add_email_btn ss-plus">&nbsp;</a>
                             </div>
                         </div>
                     </fieldset>
@@ -199,74 +327,65 @@ alert($('#chkveg').val());
                                     <th class="delete">&nbsp;</th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                <tr>
-                                    <td>loremipsumdolor@gmail.com</td>
-                                    <td>
-                                        <a class="edit_icon_btn ss-write">&nbsp;</a>
-                                    </td>
-                                    <td>
-                                        <a class="delete_icon_btn ss-delete">&nbsp;</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>loremipsumdolor@gmail.com</td>
-                                    <td>
-                                        <a class="edit_icon_btn ss-write">&nbsp;</a>
-                                    </td>
-                                    <td>
-                                        <a class="delete_icon_btn ss-delete">&nbsp;</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>loremipsumdolor@gmail.com</td>
-                                    <td>
-                                        <a class="edit_icon_btn ss-write">&nbsp;</a>
-                                    </td>
-                                    <td>
-                                        <a class="delete_icon_btn ss-delete">&nbsp;</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>loremipsumdolor@gmail.com</td>
-                                    <td>
-                                        <a class="edit_icon_btn ss-write">&nbsp;</a>
-                                    </td>
-                                    <td>
-                                        <a class="delete_icon_btn ss-delete">&nbsp;</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>loremipsumdolor@gmail.com</td>
-                                    <td>
-                                        <a class="edit_icon_btn ss-write">&nbsp;</a>
-                                    </td>
-                                    <td>
-                                        <a class="delete_icon_btn ss-delete">&nbsp;</a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>loremipsumdolor@gmail.com</td>
-                                    <td>
-                                        <a class="edit_icon_btn ss-write">&nbsp;</a>
-                                    </td>
-                                    <td>
-                                        <a class="delete_icon_btn ss-delete">&nbsp;</a>
-                                    </td>
-                                </tr>
+                                <tbody id="tabledata">
+
+
+
                                 </tbody>
                             </table>
                             <div class="small">&nbsp;</div>
                         </div>
                     </fieldset>
                 </div>
+                <div id="inputforemailid">
+
+                </div>
+                <input type="hidden" id="groupid" name="viewgroupid">
                 <div class="actions_submit">
-                    <button class="submit_btn" type="submit" value="Submit">Save group</button>
-                    <button class="cancel_btn" type="submit" value="Submit">Cancel</button>
+                    <button class="submit_btn" id="savegroupid" >Save group</button>
+                    <button class="submit_btn" id="updatebuttonid" >Update group</button>
+                    <button class="cancel_btn" id="cancelbuttonid" >Cancel</button>
                 </div>
 
             </form>
         </div>
     </div>
 </section>
+    <section id="viewcontentid">
+        <div class="col-sm-11">
+            <div class="view_new_user_screen_2 form_view_screen">
+                <div class="actions_edit_button">
+                    <a id="editbuttonid" href="" class="edit_btn"> Edit group</a>
+
+                    <a href="" class="edit_btn">Archive</a>
+                </div>
+                <fieldset class="fieldset_box">
+                    <legend class="legend_name">Basic Info</legend>
+                    <div class="form_view">
+                        <label class="form_labell">Group name :</label>
+                        <label id="groupname" class="form_input">Kali</label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="fieldset_box add_rule_right_edit_form">
+                    <legend class="legend_name">Added email</legend>
+                    <div class="table-responsive">
+                        <table class="table mailing_email_list">
+                            <thead>
+                            <tr>
+                                <th>Email</th>
+                            </tr>
+                            </thead>
+                            <tbody id="viewtabledata">
+
+
+                            </tbody>
+                        </table>
+                        <div class="small">&nbsp;</div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </section>
+
 {% endblock %}

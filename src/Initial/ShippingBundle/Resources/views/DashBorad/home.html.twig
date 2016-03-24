@@ -50,8 +50,8 @@
         </script>
 
     {% endblock %}
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="col-sm-9 dashboard">
+ {#   <div class="dashboard_screen_views dashboard_right_ship">
+        <div class="col-sm-10 dashboard">
             <div class="widget time">
                 <div class="x-header">
                     <div class="x-panel-header-text">{{ kpiname }}</div>
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <div class="col-sm-3 dashboard">
+        <div class="col-sm-2 dashboard">
             <div class="widget time">
                 <div class="x-header">
                     <div class="x-panel-header-text">Ships</div>
@@ -78,16 +78,38 @@
                         {{ ship_count }}
                     </div>
                 </div>
-               {# <button id="button">Click</button>#}
+                <button id="button">Click</button>
             </div>
         </div>
-        <div class="col-sm-3 dashboard">
+        <div class="col-sm-2 dashboard">
             <div class="widget time">
                 <div class="x-header">
                     <div class="x-panel-header-text">KPI</div>
                 </div>
-                <div class="chart">
-                    {{ kpi_count }}
+                <div class="ship_name">
+                    <div class="dashboard_ship_list">
+                        <ul>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum</a></li>
+                            <li><a href="">Lorem ipsum new</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,6 +124,59 @@
             </div>
         </div>
 
+
+    </div>#}
+    <div class="dashboard_screen_views dashboard_right_ship">
+
+        <div class="col-sm-10">
+            <div class="dashboard">
+                <div class="widget time">
+                    <div class="x-header">
+                        <div class="x-panel-header-text">{{ kpiname }}</div>
+                        <div class="toolbar-title">
+                            <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
+                            <span class="item">{{ currentmonth }}</span>
+                            <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
+                        </div>
+                    </div>
+                    <div class="chart large_chart">
+                        <div id="area" ></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard_month_chart">
+                <div class="left">&nbsp;</div>
+                <div class="right">&nbsp;</div>
+            </div>
+        </div>
+
+        <div class="col-sm-2 dashboard">
+            <div class="widget time">
+                <div class="x-header">
+                    <div class="x-panel-header-text">Vessels  {{ ship_count }}</div>
+                </div>
+                <div class="ship_name">
+                    <div class="dashboard_ship_list">
+                        <ul>   {% for shipobject in allships %}
+                            <li><a href="{{ path('listallkpiforship', { 'shipid': shipobject.id}) }}">{{ shipobject.shipName }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-2 dashboard">
+            <div class="widget time">
+                <div class="x-header">
+                    <div class="x-panel-header-text">KPI</div>
+                </div>
+                <div class="chart-2">
+                     {{ kpi_count }}
+                </div>
+            </div>
+        </div>
 
     </div>
 {% endblock %}
