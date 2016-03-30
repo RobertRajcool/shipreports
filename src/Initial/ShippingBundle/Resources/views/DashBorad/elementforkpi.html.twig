@@ -26,12 +26,89 @@
                 $('#row_id').hide();
                 $('#commentform').hide();
                 $('#addcomment').hide();
+                $('#mailform').hide();
+
                 $('#showcommentform').click(function()
                 {
                     $('#commentform').show();
                     $('#usermycommentid').focus();
 
                 });
+                $('#sendreports').click(function()
+                {
+
+                    $('#commentform').hide();
+                    $('#mailform').show();
+
+
+
+                });
+                $('#toemail').keyup(function()
+                {
+
+                    var searchstring=$(this).val();
+                    var data = {searchstring :searchstring} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: "/dashborad/autocompeltegroup",
+                        beforeSend: function () {
+                            /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            if($.isArray(data.returnresult))
+                            {
+                                $.each(data.returnresult, function(i, listelemnt)
+                                {
+
+                                    $('#hiddenresult').val(data.returnresult);
+
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<label class="dynamiclabel">' + listelemnt.groupname + '</label><br><label class="dynamiclabel">' + listelemnt.useremailid + '</label>');
+                                    $("#livesearch").css("background", "#FFF");
+
+                                });
+
+                            }
+
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+
+
+                $(".dynamiclabel").live("click",function(e)
+                {
+                    var b=$(this).text();
+                    $('#toemail').val(b);
+                });
+
+                $(document).live("click", function(e) {
+                    var $clicked = $(e.target);
+                    if (! $clicked.hasClass("search_keyword")){
+                        $("#livesearch").fadeOut();
+                    }
+                });
+
+                $('#toemail').click(function(){
+                    $("#livesearch").fadeIn();
+                });
+
+
+
 
 
                 $('#addcommentid').click(function()
@@ -44,7 +121,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/runtimecomment",
+                        url: "/runtimecommentforkpi",
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -56,6 +133,7 @@
                         data: data,
                         success: function (data)
                         {
+                            alert('suc');
                             var a=data.lastinsertid;
                             $('#lastid').val(a);
 
@@ -63,6 +141,7 @@
 
                             $.each(data.ElementNameArray, function(i, listelemnt)
                             {
+                                alert(listelemnt.comment)
 
                                 $('<p class="dyaminc">'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
 
@@ -319,17 +398,15 @@
             </div>
             <button id="showcommentform" class="btn btn-info" >Add Comment</button>&nbsp;&nbsp;
 
-            <a data-toggle="modal" data-target="#mailform" class="btn btn-info" >Send Reports</a>
+            <button id="sendreports" class="btn btn-info" >Send Reports</button>
             {# Form For Send Mail Starts Here #}
 
-            <div class="modal fade" id="mailform" style=" margin-left: 339px;margin-top: -20%;width: 46%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <div id="mailform">
+
+
                             <h4 class="modal-title">Send Report</h4>
-                        </div>
-                        <div class="modal-body">
+
+
                             <form id="chatform" class="form-horizontal no-style" action=" {{path('addcomment') }}" method="post">
                                 <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
                                 <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
@@ -348,13 +425,16 @@
                                     <label class="control-label col-xs-2">Add Comment</label>
                                     <div class="col-xs-10">
                                         <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
-                                        <input id="checkbox" value="No" type="checkbox" name="send_command[addcomment]" >No
+                                        <input id="checkbox" value="No"  type="checkbox" name="send_command[addcomment]" >No
 
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-2">To</label>
-                                    <div class="col-xs-10"><input id="toemail" type="email" name="send_command[clientemail]" required>
+                                    <div class="col-xs-10">
+                                        <input id="toemail" type="text" name="send_command[clientemail]" required>  <input type="hidden" id="hiddenresult" name="myresult">
+                                        <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
+
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -369,9 +449,8 @@
 
                                 </div>
                             </form>
-                        </div>
-                    </div> <!-- /.modal-content -->
-                </div> <!-- /.modal-dialog -->
+
+
             </div>
             {# Form For Send Mail Ends  Here #}
 

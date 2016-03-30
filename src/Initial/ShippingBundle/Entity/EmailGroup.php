@@ -35,6 +35,13 @@ class EmailGroup
      * })
      */
     private $companyid;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="groupstatus", type="integer")
+     */
+    private $groupstatus;
+
 
 
     /**
@@ -84,6 +91,22 @@ class EmailGroup
     public function setCompanyid($companyid)
     {
         $this->companyid = $companyid;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGroupstatus()
+    {
+        return $this->groupstatus;
+    }
+
+    /**
+     * @param int $groupstatus
+     */
+    public function setGroupstatus($groupstatus)
+    {
+        $this->groupstatus = $groupstatus;
     }
 
 }

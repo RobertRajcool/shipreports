@@ -30,7 +30,7 @@ class SendCommand
     /**
      * @var string
      *
-     * @ORM\Column(name="filename", type="string", length=35)
+     * @ORM\Column(name="filename", type="string",length=35, nullable=true)
      */
     private $filename;
     /**
@@ -55,9 +55,15 @@ class SendCommand
     /**
      * @var int
      *
-     * @ORM\Column(name="kpiid", type="integer")
+     * @ORM\Column(name="kpiid", type="integer",nullable=true)
      */
     private $kpiid;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="shipid", type="integer",nullable=true)
+     */
+    private $shipid;
 
 
     /**
@@ -119,21 +125,7 @@ class SendCommand
         $this->datetime = new \DateTime();;
     }
 
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->filename;
-    }
 
-    /**
-     * @param string $filename
-     */
-    public function setFilename($filename)
-    {
-        $this->filename = $filename;
-    }
 
     /**
      * @return string
@@ -159,12 +151,45 @@ class SendCommand
         return $this->kpiid;
     }
 
+
     /**
      * @param int $kpiid
      */
     public function setKpiid($kpiid)
     {
         $this->kpiid = $kpiid;
+    }
+
+    /**
+     * @return int
+     */
+    public function getShipid()
+    {
+        return $this->shipid;
+    }
+
+    /**
+     * @param int $shipid
+     */
+    public function setShipid($shipid)
+    {
+        $this->shipid = $shipid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    /**
+     * @param string $filename
+     */
+    public function setFilename($filename)
+    {
+        $this->filename = $filename;
     }
 
 

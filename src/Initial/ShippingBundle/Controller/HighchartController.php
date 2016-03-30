@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Initial\ShippingBundle\Entity\SendCommand;
+use Initial\ShippingBundle\Controller\DashboradController;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class HighchartController extends Controller
@@ -120,7 +121,7 @@ class HighchartController extends Controller
     public function addchartAction(Request $request)
 
     {
-        $batikdir= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/';
+        $filegeneratedirectroy= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/';
         $svgname =(string)$request->request->get('svgid');
         $imgtype=$request->request->get('typeid');
         $filewidth=$request->request->get('filewidth');
@@ -129,65 +130,13 @@ class HighchartController extends Controller
         if (!$filename or !preg_match('/^[A-Za-z0-9\-_ ]+$/', $filename)) {
             $filename = 'chart_'.date('Y-m-d H-i-s');
         }
-        /*
-        if (get_magic_quotes_gpc()) {
-            $svg = stripslashes($svgname);
-        }
-// check for malicious attack in SVG
 
-        if(strpos($svg,"<!ENTITY") !== false || strpos($svg,"<!DOCTYPE") !== false)
-        {
-            exit("Execution is stopped, the posted SVG could contain code for a malicious attack");
-        }*/
-
-        $tempName = md5(rand());
-// allow no other than predefined types
-        if ($imgtype == 'image/png') {
-            $typeString = '-m image/png';
-            $ext = 'png';
-
-        } elseif ($imgtype == 'image/jpeg') {
-            $typeString = '-m image/jpeg';
-            $ext = 'jpg';
-        } elseif ($imgtype == 'application/pdf') {
-            $typeString = '-m application/pdf';
-            $ext = 'pdf';
-        } elseif ($imgtype == 'image/svg+xml') {
-            $ext = 'svg';
-        } else { // prevent fallthrough from global variables
-            $ext = 'txt';
-        }
-        $outfile = "$batikdir..$ext";
         $fileext=".svg";
-        //$myfile = fopen($batikdir.$filename.$fileext, "w");
-
-        if (isset($typeString)) {
-
-            // size
-            $width = '';
-            if ($filewidth) {
-                $width = (int)$filewidth;
-                if ($width) $width = "-w $width";
-            }
-            // generate the temporary file
-           // file_put_contents("test.txt", "Hello World. Testing!");
-            if (!file_put_contents($batikdir . $filename . $fileext, $svgname)) {
+            if (!file_put_contents($filegeneratedirectroy . $filename . $fileext, $svgname)) {
                 die("Couldn't create temporary file. Check that the directory permissions for
 			the /temp directory are set to 777.");
             }
-
-
-        }
-        /*
-        $imagedir=$this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename. $fileext;
-        $image = new Imagick();
-        $image->readImageBlob(file_get_contents($imagedir));
-        $image->setImageFormat("png24");
-        $image->resizeImage(1024, 768, imagick::FILTER_LANCZOS, 1);
-        $image->writeImage('image.png');
-        */
-
-        return new JsonResponse($filename . $fileext);
+        return new JsonResponse($filename.$fileext);
 
     }
 
@@ -269,20 +218,37 @@ class HighchartController extends Controller
 
         $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'pdf';
         file_put_contents($pdffilenamefullpath, $printPdf);
-        $useremaildid=$params['clientemail'];
+
 
 
         $sendcommand=new SendCommand();
         //assign file attachement for mail and Mailing Starts Here...u
-       $mailer = $this->container->get('mailer');
-        $message = \Swift_Message::newInstance()
-            ->setFrom($clientemailid)
-            ->setTo($useremaildid)
-            ->setSubject($kpiname)
-            ->setBody($comment)
-        ;
-        $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0].'.pdf'));
-        $mailer->send($message);
+        $useremaildid=$params['clientemail'];
+
+        $findsemail=$em->createQueryBuilder()
+            ->select('a.useremailid')
+            ->from('InitialShippingBundle:EmailUsers','a')
+            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+            ->where('b.groupname = :sq')
+            ->ORwhere('a.useremailid = :sb')
+            ->setParameter('sq',$useremaildid)
+            ->setParameter('sb',$useremaildid)
+            ->getQuery()
+            ->getResult();
+
+
+        //assign file attachement for mail and Mailing Starts Here...u
+        for($ma=0;$ma<count($findsemail);$ma++)
+        {
+            $mailer = $this->container->get('mailer');
+            $message = \Swift_Message::newInstance()
+                ->setFrom($clientemailid)
+                ->setTo($findsemail[$ma]['useremailid'])
+                ->setSubject($kpiname)
+                ->setBody($comment);
+            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+            $mailer->send($message);
+        }
         //Mailing Ends....
         //Update Process Starts Here...
         $entity = $em->getRepository('InitialShippingBundle:SendCommand')->find($idforrecord);
@@ -307,10 +273,14 @@ class HighchartController extends Controller
             ->setParameter('userId',$username)
             ->getQuery();
         $clientemailid=$userquery->getSingleScalarResult();
+        $params = $request->request->get('send_command');
+        $kpiid=$params['kpiid'];
+        $client = new DashboradController();
+        $client->setContainer($this->container);
+        $returnvaluefrommonth = $client->listallkpiforshipAction($kpiid,$request,'pdftemplate_shiplevel');
 
         //get Informaton From User
-        $params = $request->request->get('send_command');
-        $monthcount=$request->request->get('countmonth');
+      /*  $monthcount=$request->request->get('countmonth');
         $elementavgscore=$request->request->get('avgscore');
         $elementavgscorearray=explode(",",$elementavgscore);
         $elementcolor=$request->request->get('elementcolorarray');
@@ -321,13 +291,11 @@ class HighchartController extends Controller
         $listofelmentsarray=explode(",",$listofelments);
         $listofmonth=$request->request->get('montharrayinstring');
         $listofmontharray=explode(",",$listofmonth);
-        $listofcomments=$request->request->get('listofcomments');
+        $listofcomments=$request->request->get('listofcomments');*/
 
 
         $filename = $params['filename'];
         $pdffilenamearray=explode(".",$filename);
-
-        $kpiid=$params['kpiid'];
         $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
         $kpiname=$newkpiid->getShipName();
         $comment = $params['comment'];
@@ -335,7 +303,7 @@ class HighchartController extends Controller
 
         if($checkboxvalue=="Yes")
         {
-            $listofcommentarray=explode(",",$listofcomments);
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
         }
         else
         {
@@ -348,23 +316,33 @@ class HighchartController extends Controller
         $screenName = $this->get('translator')->trans($pageName);
         $date = date('l jS F Y h:i', time());
         $route = $request->attributes->get('_route');
-        $newelementcolorarray=array_map('trim',$elementcolorarray);
-
-        $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+       /* return $this->render('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
             'link' => $filename,
             'screenName' => $screenName,
             'userName' => '',
             'date' => $date,
-            'listofelement'=>$listofelmentsarray,
-            'kpiname'=>$kpiname,
-            'elementweightage'=>$elementweightagearray,
-            'montharray'=>$listofmontharray,
-            'elementcolorarray'=>$newelementcolorarray,
-            'countmonth'=>$monthcount,
-            'avgscore'=> $elementavgscorearray,
-            'commentarray'=>$listofcommentarray,
-            'datetime'=>$date
-        ));
+            'listofkpi' => $returnvaluefrommonth['listofkpi'],
+            'kpicolorarray' => $returnvaluefrommonth['kpicolorarray'],
+            'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
+            'montharray' => $returnvaluefrommonth['montharray'],
+            'shipname' => $returnvaluefrommonth['listofkpi'],
+            'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
+            'avgscore' => $returnvaluefrommonth['avgscore'],
+            'commentarray'=>$listofcommentarray));*/
+      $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+            'link' => $filename,
+            'screenName' => $screenName,
+            'userName' => '',
+            'date' => $date,
+            'listofkpi' => $returnvaluefrommonth['listofkpi'],
+            'kpicolorarray' => $returnvaluefrommonth['kpicolorarray'],
+            'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
+            'montharray' => $returnvaluefrommonth['montharray'],
+            'shipname' => $returnvaluefrommonth['listofkpi'],
+            'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
+            'avgscore' => $returnvaluefrommonth['avgscore'],
+            'commentarray'=>$listofcommentarray)
+        );
 
 
         $printPdf = $this->createPdf($customerListDesign, $screenName);
@@ -375,11 +353,11 @@ class HighchartController extends Controller
         $useremaildid=$params['clientemail'];
 
         $findsemail=$em->createQueryBuilder()
-            ->select('a.emailid','b.groupname')
-            ->from('InitialShippingBundle:Mailing','a')
-            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->select('a.useremailid')
+            ->from('InitialShippingBundle:EmailUsers','a')
+            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
             ->where('b.groupname = :sq')
-            ->ORwhere('a.emailid = :sb')
+            ->ORwhere('a.useremailid = :sb')
             ->setParameter('sq',$useremaildid)
             ->setParameter('sb',$useremaildid)
             ->getQuery()
@@ -400,19 +378,21 @@ class HighchartController extends Controller
         }
         //Mailing Ends....
         //Update Process Starts Here...
-        /*$entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->findBykpiid($kpiid);*/
+
         $session=new Session();
         $kpiandelementids= $session->get('commandid');
         if($kpiandelementids!=null)
         {
         $entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->find($kpiandelementids);
         $commandobject=new SendCommand();
-        $entityobject->setUseremialid($clientemailid);
+        $entityobject->setClientemail($clientemailid);
         $entityobject->setFilename($pdffilenamearray[0].'.pdf');
         $em->flush();
         }
-        //return $this->redirectToRoute('showcomment');
-        return $this->redirect($this->generateUrl('showcomment', array('page' => 1)));
+
+        $response = new JsonResponse();
+        $response->setData(array('updatemsg'=>"Report Has Been Send"));
+        return $response;
     }
 
 
@@ -505,10 +485,52 @@ class HighchartController extends Controller
         $sendcommand->setClientemail($emailid);
         $sendcommand->setComment($comment);
         $sendcommand->setDatetime($datetime);
-        $sendcommand->setKpiid($kpiid);
+        $sendcommand->setShipid($kpiid);
         $em->persist($sendcommand);
         $em->flush();
        $lastid= $sendcommand->getId();
+        $lastarray=array('id'=>$lastid);
+        $session->set('commandid', $lastid);
+
+        $listofcomment = $em->createQueryBuilder()
+            ->select('a.comment')
+            ->from('InitialShippingBundle:SendCommand','a')
+            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+            ->where('a.shipid = :shipid')
+            ->andwhere('b.emailId = :username')
+            ->setParameter('username',$emailid)
+            ->setParameter('shipid',$kpiid)
+            ->getQuery()
+            ->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('resultarray' => $listofcomment,'lastinsertid'=>$lastid));
+        return $response;
+
+
+    }
+    public function runtimecommentforkpiAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        $session=new Session();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $emailid=$user->getEmail();
+        //get Informaton From User
+        $kpiid = $request->request->get('kpiid');
+
+        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+        $comment =  $request->request->get('comment');
+        $today = date("Y-m-d H:i:s");
+        $datetime = new \DateTime();
+        $sendcommand=new SendCommand();
+        $sendcommand->setClientemail($emailid);
+        $sendcommand->setComment($comment);
+        $sendcommand->setDatetime($datetime);
+        $sendcommand->setKpiid($kpiid);
+        $em->persist($sendcommand);
+        $em->flush();
+        $lastid= $sendcommand->getId();
         $lastarray=array('id'=>$lastid);
         $session->set('commandid', $lastid);
 
@@ -523,7 +545,7 @@ class HighchartController extends Controller
             ->getQuery()
             ->getResult();
         $response = new JsonResponse();
-        $response->setData(array('kpiNameArray' => $listofcomment,'lastinsertid'=>$lastid));
+        $response->setData(array('resultarray' => $listofcomment,'lastinsertid'=>$lastid));
         return $response;
 
 

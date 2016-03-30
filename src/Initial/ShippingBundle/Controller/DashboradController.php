@@ -291,6 +291,7 @@ class DashboradController extends Controller
         $ob->series(array( array( 'showInLegend'=> false,'colorByPoint'=> true,  'name' => $monthinletter, 'color' => 'rgb(124, 181, 236)',   "data" =>$mykpivaluearray)));
 
         $ob->drilldown->series($drilldownarray);
+        $ob->exporting->enabled(false);
 
         // Adding data to javascript chart function  Ends Here.. //
 
@@ -589,21 +590,34 @@ class DashboradController extends Controller
         $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
         $ob->series($series);
         $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
+        $ob->exporting->enabled(false);
+
 
         $listofcomment = $em->createQueryBuilder()
             ->select('a.comment')
             ->from('InitialShippingBundle:SendCommand','a')
             ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
-            ->where('a.kpiid = :kpiid')
+            ->where('a.shipid = :shipid')
             ->andwhere('b.emailId = :username')
             ->setParameter('username',$loginuseremail)
-            ->setParameter('kpiid',$shipid)
+            ->setParameter('shipid',$shipid)
             ->getQuery()
             ->getResult();
 
         if($mode=='kpi_id')
         {
             return $datescolorarray;
+        }
+        if($mode=='pdftemplate_shiplevel')
+        {
+            return array(
+                'kpicolorarray'=>$datescolorarray,
+                'listofkpi'=>$listallkpi,
+                'kpiweightage'=>$kpiweightagearray,
+                'montharray'=>$newcategories,
+                'avgscore'=>$finalkpielementvaluearray,
+                'commentarray'=>$listofcomment,
+            );
         }
 
 
@@ -786,7 +800,7 @@ class DashboradController extends Controller
                         ->andWhere('a.elementDetailsId = :Elementid')
                         ->andWhere('a.monthdetail =:dataofmonth')
                         ->setParameter('shipid', $shipid)
-                        ->setParameter('kpiDetailsId', $kpiid)
+                        ->setParameter('kpiDetailsId', $newkpiid[0]['id'])
                         ->setParameter('Elementid', $listelement[$jk]['id'])
                         ->setParameter('dataofmonth', $new_monthdetail_date)
                         ->getQuery()
@@ -863,6 +877,8 @@ class DashboradController extends Controller
             $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
+            $ob->exporting->enabled(false);
+
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
             $listofcomment = $em->createQueryBuilder()
@@ -1000,6 +1016,7 @@ class DashboradController extends Controller
             $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
+            $ob->exporting->enabled(false);
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
             //find the comments for particular user//
             $listofcomment = $em->createQueryBuilder()
@@ -1049,7 +1066,7 @@ class DashboradController extends Controller
     /**
      * Auto Complete for Mailing
      *
-     * @Route("/sutocompeltegroup", name="autocompleteformailing")
+     * @Route("/autocompeltegroup", name="autocompleteformailing")
      */
     public function autocompleteformailingAction(Request $request)
     {
@@ -1083,30 +1100,18 @@ class DashboradController extends Controller
         $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
         $qb=$em->createQueryBuilder();
         $qb
-            ->select('a.emailid','b.groupname')
-            ->from('InitialShippingBundle:Mailing','a')
-            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->select('a.groupname','b.useremailid')
+            ->from('InitialShippingBundle:EmailGroup','a')
+            ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = a.id')
             ->where('a.companyid = :companyid')
-            ->andwhere('b.groupname LIKE :sreachstring')
-            ->orwhere('a.emailid LIKE :sreachstring')
+            ->andwhere('a.groupname LIKE :sreachstring')
+            ->orwhere('b.useremailid LIKE :sreachstring')
             ->setParameter('companyid',$newcompanyid)
             ->setParameter('sreachstring','%'.$searchstring.'%');
         $result=$qb->getQuery()->getResult();
         $response = new JsonResponse();
 
-
-        if(count($result)==0)
-        {
-            $response->setData(array('returnresult'=>0));
-        }
-        if(count($result)==1)
-        {
-            $response->setData(array('returnresult' => $result[0]['emailid']));
-        }
-        if(count($result)>1)
-        {
-            $response->setData(array('returnresult' => $result));
-        }
+        $response->setData(array('returnresult' => $result));
         return $response;
 
     }

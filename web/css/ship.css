@@ -227,10 +227,13 @@ table thead th {
     line-height: 24px;
     letter-spacing: 1px;
     margin: 0;
-    padding: 4px 10px;
+    padding: 4px 10px !important;
     text-align: left;
     border-bottom: 1px solid #ddd !important;
     border-radius:0px !important;
+}
+table tbody tr td {
+    padding: 4px 10px !important;
 }
 table tbody tr td a {
     margin-right:8px;
@@ -551,6 +554,21 @@ select {
     z-index: 1000;
     width:300px;
 }
+.no_user_selected_views {
+    left: auto;
+    padding: 15px;
+    width:auto;
+}
+.no_user_selected_views .text_image {
+    padding: 150px 0 0 0;
+    text-align:center;
+    width:auto;
+}
+.no_user_selected_views .text_image label {
+    font-size:25px;
+    color:#aaaaaa;
+    margin-top:20px;
+}
 .add_user_btn_main {
     padding:0px;
     margin:0px;
@@ -769,11 +787,13 @@ select {
     margin-left:8px;
 }
 .submit_btn {
-    background: #333333;
+    background: #103a71;
     border-radius: 3px;
-    border: 1px solid #191919;
+    border: 1px solid #062d60;
     padding: 3px 10px;
     color:#FFFFFF;
+    font-weight:bold;
+    font-size:12px;
 }
 .users_advanced_list_views_screen {
     padding:20px 18px;
@@ -1251,13 +1271,121 @@ select {
     font-size:14px;
     color:#006600;
 }
+.graph_colour {
+    width:100%;
+    border:1px solid #dddddd;
+}
 
+.graph_send_comment {
+    width:632px;
+    border:1px solid #dddddd;
+    margin-top:20px;
+    padding:15px;
+}
+.graph_send_comment hr {
+    margin:10px 0;
+}
+.graph_send_comment .title {
+    font-size:18px;
+}
+.fieldset_box_2 {
+    width: 600px;
+    background:#fcfcfc;
+    border-radius: 5px;
+    border: 1px solid #e6e6e6;
+    padding: 20px 20px 15px 20px;
+    margin-top:22px;
+    display: block;
+    box-shadow:none;
+    clear:both;
+}
+.fieldset_box_2 .form-add-group {
+    margin-bottom:0px;
+}
+.add_comment_textarea {
+    height:100px;
+}
+.send_reports_to_input {
+    width:230px;
+}
+.send_reports_to_input_list {
+    margin:0px 0 0 0px;
+    position: absolute;
+    width: 230px;
+    z-index: 111111;
+    background:#FFFFFF;
+    border: 1px solid #dad7cf;
+    border-top:none;
+    padding: 10px 10px 5px 10px;
+}
+.send_reports_to_input_list ul {
+    margin:0px;
+    padding:0px;
+}
+.send_reports_to_input_list ul li {
+    margin:0px 0 5px 0;
+    padding:0px;
+    list-style:none;
+    display:block;
+}
 
-
-
-
-
-
+.graph_send_comment .add_comment_checkbox {
+    float:left;
+    margin:5px 10px 0 0;
+}
+.graph_send_comment .inline-checkbox {
+    margin: -3px 2px 0 0 !important;
+}
+.email_group_show_drap {
+    margin:-52px 0 0 96px;
+    position: relative;
+    width: 189px;
+    z-index: 111111;
+    background:#f2f2f2;
+    border: 1px solid #dad7cf;
+    padding: 10px 10px 4px 10px;
+}
+.email_group_show_drap ul {
+    margin:0px;
+    padding:0px;
+}
+.email_group_show_drap ul li {
+    margin:0px 0 6px 0;
+    padding:0px;
+    list-style:none;
+    display:block;
+}
+.submit_btn_2 {
+    background: #103a71;
+    border-radius: 3px;
+    border: 1px solid #062d60;
+    padding: 3px 10px;
+    color:#FFFFFF;
+    font-weight:bold;
+    font-size:12px;
+    float:right;
+}
+.submit_btn_save {
+    background: #103a71;
+    border-radius: 3px;
+    border: 1px solid #062d60;
+    padding: 3px 10px;
+    color:#FFFFFF;
+    font-weight:bold;
+    font-size:12px;
+    float:right;
+    margin-right:-4px;
+}
+.submit_btn_add {
+    background: #103a71;
+    border-radius: 3px;
+    border: 1px solid #062d60;
+    padding: 3px 10px;
+    color:#FFFFFF;
+    font-weight:bold;
+    font-size:12px;
+    margin-right:10px;
+}
 
 
 

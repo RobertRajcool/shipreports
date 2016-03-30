@@ -50,8 +50,6 @@ runtimecomment:
 addcommentforshipreports:
       path:     /addcommentforshipreports
       defaults: { _controller: "InitialShippingBundle:Highchart:addcommentforshipreports"}
-
-
 downloadPdf:
       path:     /downloadPdf
       defaults: { _controller: "InitialShippingBundle:Highchart:downloadPdf"}
@@ -70,6 +68,9 @@ delete_user:
 company_edit:
         path: /useredit
         defaults: { _controller: "InitialShippingBundle:UserActivitiy:update"}
+runtimecommentforkpi:
+            path:     /runtimecommentforkpi
+            defaults: { _controller: "InitialShippingBundle:Highchart:runtimecommentforkpi"}
 pdf:
    path: /pdf
    defaults: { _controller:"InitialShippingBundle:Highchart:createPdf"}
