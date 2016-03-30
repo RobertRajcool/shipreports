@@ -5,12 +5,12 @@ namespace Initial\ShippingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * MailingGroup
+ * EmailGroup
  *
- * @ORM\Table(name="mailing_group")
- * @ORM\Entity(repositoryClass="Initial\ShippingBundle\Repository\MailingGroupRepository")
+ * @ORM\Table(name="email_group")
+ * @ORM\Entity(repositoryClass="Initial\ShippingBundle\Repository\EmailGroupRepository")
  */
-class MailingGroup
+class EmailGroup
 {
     /**
      * @var int
@@ -27,15 +27,21 @@ class MailingGroup
      * @ORM\Column(name="groupname", type="string", length=255)
      */
     private $groupname;
-
     /**
      * @var string
-     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\Mailing")
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\CompanyDetails")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="emailreferenceid", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="companyid", referencedColumnName="id")
      * })
      */
-    private $emailreferenceid;
+    private $companyid;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="groupstatus", type="integer")
+     */
+    private $groupstatus;
+
 
 
     /**
@@ -52,7 +58,7 @@ class MailingGroup
      * Set groupname
      *
      * @param string $groupname
-     * @return MailingGroup
+     * @return EmailGroup
      */
     public function setGroupname($groupname)
     {
@@ -74,18 +80,33 @@ class MailingGroup
     /**
      * @return string
      */
-    public function getEmailreferenceid()
+    public function getCompanyid()
     {
-        return $this->emailreferenceid;
+        return $this->companyid;
     }
 
     /**
-     * @param string $emailreferenceid
+     * @param string $companyid
      */
-    public function setEmailreferenceid($emailreferenceid)
+    public function setCompanyid($companyid)
     {
-        $this->emailreferenceid = $emailreferenceid;
+        $this->companyid = $companyid;
     }
 
+    /**
+     * @return int
+     */
+    public function getGroupstatus()
+    {
+        return $this->groupstatus;
+    }
+
+    /**
+     * @param int $groupstatus
+     */
+    public function setGroupstatus($groupstatus)
+    {
+        $this->groupstatus = $groupstatus;
+    }
 
 }

@@ -8,6 +8,8 @@ $(document).ready(function ()
 
 
     $('#reading_kpi_values_monthdetail_day').hide();
+    $('#initial_shipping_bundle_add_excel_file_dataofmonth_month' ).addClass( "add_rule_basic_drop" );
+    $('#initial_shipping_bundle_add_excel_file_dataofmonth_year' ).addClass( "add_rule_basic_drop" );
     $('#initial_shipping_bundle_add_excel_file_dataofmonth_day').hide();
     $('#chart_fromdate_day').hide();
     $('#chart_todate_day').hide();

@@ -30,6 +30,10 @@
             $scope.myFunc2 = function() {
                 $scope.showMe2 = !$scope.showMe2;
             }
+            $scope.showMe3 = false;
+            $scope.myFunc3 = function() {
+                $scope.showMe3 = !$scope.showMe3;
+            }
         });
     </script>
 </head>
@@ -37,8 +41,8 @@
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
     <div class="container" ng-app="myApp" ng-controller="myCtrl">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
-                <div class="logo">Shipping</div>
+            <div  class="col-md-2 left_menus-2">
+                <div class="logo"><img src="/images/pioneer_logo.png"></div>
                 <ul class="nav nav-sidebar">
 
                     <li class="active">
@@ -106,6 +110,12 @@
                                         <span class="menu-item-text">Rules</span>
                                     </a>
                                 </li>
+                                <li>
+                                    <a href="">
+                                        <span class="menu-item-icon ss-check">&nbsp;</span>
+                                        <span class="menu-item-text">Verification</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     {% endif %}
@@ -135,9 +145,9 @@
                     {% endif %}
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                         <li>
-                            <a href="{{ path('mailinghome') }}">
+                            <a href="{{ path('creategroup') }}">
                                 <span class="menu-item-icon ss-mail">&nbsp;</span>
-                                <span class="menu-item-text">Mailing list</span>
+                                <span class="menu-item-text">Mail</span>
                             </a>
                         </li>
                         <li>
@@ -152,7 +162,8 @@
                 <div class="x-btn-my-account-small">
                     <a ng-click="myFunc()">
             	<span class="x-btn-icon-el">
-              {#  <img src="/images/user.jpg">#}
+
+
                      <img src="/images/nouser.png">
               </span>
               <span class="x-btn-inner">
@@ -165,17 +176,19 @@
 
                 <div class="my-account-box" ng-show="showMe">
                     <div class="my-account-box-inner">
-                        <div class="settings"><samp class="ss-settings"><a href={{ path('fos_user_change_password') }}>Settings for Kali</a></samp></div>
+                        <div class="settings"><samp class="ss-settings"><a href={{ path('fos_user_change_password') }}>Settings for {{app.user.username }}</a></samp></div>
                         <div class="logout"><samp class="ss-logout"><a href="{{ path('fos_user_security_logout') }}">Logout</a></samp></div>
                     </div>
                     <div class="arrow ss-dropdown">&nbsp;</div>
                 </div>
             </div>
+            <div class="dashboard_screen_views dashboard_right_ship">
             <section>
                 {% block body %}
 
                 {% endblock %}
             </section>
+                </div>
 
 
         </div>
@@ -196,5 +209,3 @@
 </div>
 </body>
 </html>
-
-

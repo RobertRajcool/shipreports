@@ -1,0 +1,177 @@
+.certificate-wrapper-main {
+  width: 100%;
+}
+.certificate-default-margin {
+  padding: 0px 18px;
+}
+.page-header-mpdf-margin {
+  padding-top: 14px;
+}
+.gas-safety-logo-image {
+  width: 80px;
+  height: 80px;
+}
+.certificate-wrapper {
+  width: 1230px;
+  padding: 15px 0%;
+  margin: 0 auto;
+  color: #333333;
+  background: #FFFFFF;
+  font-size: 11px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.certificate-wrapper .row-fluid {
+  padding: 10px 0px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.certificates_header {
+  margin-bottom: 10px;
+}
+.certificates_header .brand-title {
+  width: 64%;
+  float: left;
+  font-family: arial;
+  color: #000000;
+}
+.certificates_header .brand-title-portable-appliance {
+  width: 74%;
+  font-family: arial;
+}
+.certificates_header .brand-logo-2 {
+  width: 10%;
+  float: right;
+  text-align: right;
+}
+.certificates_header .title {
+  font-size: 28px;
+  line-height: 29px;
+  margin-bottom: 8px;
+}
+.certificates_header p {
+  margin: 0px;
+  font-size: 11px;
+  line-height: 14px;
+}
+.data-row-section {
+  margin: 0;
+  padding: 0;
+}
+.data-row-section p {
+  font-family: arial;
+  font-size: 11px;
+  color: #333333;
+}
+.certificates-table {
+  border-right: 1px solid #afafaf;
+  border-left: 1px solid #afafaf;
+  border-top: none;
+  border-bottom: none;
+  width: 100%;
+  margin-top: -1px;
+  border-collapse: 0px;
+}
+.certificates-table thead {
+  background: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  border-bottom: none;
+}
+.certificates-table thead .no-th-right-border {
+  border-right: none;
+}
+.certificates-table thead th {
+  font-weight: bold;
+  font-size: 11px;
+  font-family: arial;
+  line-height: 12px;
+  letter-spacing: 0px;
+  margin: 0;
+  padding: 4px 4px;
+  text-align: left;
+  border-right: 1px solid #888888;
+}
+.certificates-table thead th:first-child {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+.certificates-table thead th:last-child {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  border-right: none;
+}
+.certificates-table tbody tr {
+  border-bottom: none;
+}
+.certificates-table tbody tr:nth-child(odd) {
+  background: none;
+}
+.certificates-table tbody tr:hover {
+  background: none;
+}
+.certificates-table tbody .tr-no-style {
+  border-top: none !important;
+  background: none !important;
+}
+.certificates-table tbody .tr-no-style:hover {
+  background: none !important;
+}
+.certificates-table tbody .text-style-italic {
+  font-style: italic;
+}
+
+
+.certificates-table tbody td {
+  padding: 2px 4px;
+  border-bottom: 1px solid #afafaf;
+  border-right: 1px solid #afafaf;
+  font-size: 11px;
+  color: #333333;
+  font-family: arial;
+  vertical-align: top;
+  text-align: left;
+  word-break: break-all;
+}
+.certificates-table tbody td:last-child {
+  border-right: none;
+}
+.certificates-table tbody td p strong {
+  color: #333333;
+}
+.certificates-table tbody td strong {
+  color: #333333;
+}
+.certificates-table tbody td p {
+  margin: 0 0 10px 0;
+}
+.certificates-table tbody td p:last-child {
+  margin: 0;
+}
+
+.branding-colours {
+  background: #103a71;
+  color: #ffffff;
+}
+.top-small-margin-space {
+  margin-top: 5px;
+}
+.top-margin-space {
+  margin-top: 10px;
+}
+
+.kpi_name_weightage_row thead th {
+  text-align:center;
+}
+.kpi_name_weightage_row .kpi_name {
+  width: 160px;
+}
+.kpi_name_weightage_row .weightage {
+  width: 60px;
+}
+.kpi_name_weightage_row .month {
+  width: auto;
+}

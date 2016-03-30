@@ -29,12 +29,16 @@
                     $('#mailform').hide();
                     $('#commentform').show();
                     $('#usermycommentid').focus();
+                    $('#buttonid').hide();
 
                 });
                 $('#sendreports').click(function()
                 {
+                    $('#viewcommentdiv').hide();
                     $('#commentform').hide();
                     $('#mailform').show();
+                    $('#livesearchdiv').hide();
+                    $('#buttonid').hide();
 
 
 
@@ -47,7 +51,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/dashborad/sutocompeltegroup",
+                        url: "/dashborad/autocompeltegroup",
                         beforeSend: function () {
                             /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
                         }
@@ -63,38 +67,15 @@
                                 {
 
                                     $('#hiddenresult').val(data.returnresult);
-
+                                    $('#livesearchdiv').show();
                                     $("#livesearch").show();
-                                    $("#livesearch").html('<label class="dynamiclabel">' + listelemnt.emailid + '</label><br><label class="dynamiclabel">' + listelemnt.groupname + '</label>');
-                                    $("#livesearch").css("background", "#FFF");
+                                    $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
+                                   /* $("#livesearch").css("background", "#FFF");*/
 
                                 });
 
                             }
-                            else
-                            {
 
-                                var m= $.isNumeric(data.returnresult);
-
-                                if (m) {
-                                    $("#livesearch").hide();
-                                }
-                                else
-                                {
-                                    $('#hiddenresult').val(data.returnresult);
-
-                                    $("#livesearch").show();
-                                    $("#livesearch").html('<label>' + data.returnresult + '</label>');
-                                    $("#livesearch").css("background", "#FFF");
-                                }
-
-                                $('#hiddenresult').val(data.returnresult);
-
-                                $("#livesearch").show();
-                                $("#livesearch").html('<label>'+data.returnresult+'</label>');
-                                $("#livesearch").css("background","#FFF");
-
-                            }
 
 
                         }
@@ -113,7 +94,9 @@
                 {
                     var b=$(this).text();
                     $('#toemail').val(b);
+                    $('#livesearchdiv').hide();
                 });
+/*
 
                 $(document).live("click", function(e) {
                     var $clicked = $(e.target);
@@ -122,10 +105,12 @@
                     }
                 });
 
-                $('#toemail').click(function(){
+                $('#toemail').click(function()
+                {
                     $("#livesearch").fadeIn();
                 });
 
+*/
 
 
 
@@ -147,21 +132,28 @@
                             $(".modal").hide();
                         }
                     });
+
                     $.ajax({
                         data: data,
                         success: function (data)
                         {
+
+                            $('#usermycommentid').val(' ');
+                            $('#commentform').hide();
                             var a=data.lastinsertid;
                             $('#lastid').val(a);
-
-                            $('#viewcommentdiv').remove();
-
-                            $.each(data.ElementNameArray, function(i, listelemnt)
+                            $('#viewcommentdiv').text('');
+                            if($.isArray(data.resultarray))
                             {
+                               // alert('if');
+                                $.each(data.resultarray, function(i, listelemnt)
+                                {
+                                   // alert('eachloop')
+                                    $('<p class="dyaminc">'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
+                                    $('#buttonid').show();
 
-                                $('<p class="dyaminc">'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
-
-                            });
+                                });
+                            }
 
 
                         }
@@ -177,12 +169,13 @@
                 $('#chatform').submit(function(e)
                 {
                     e.preventDefault();
+                    var abc = false;
                     var self = this;
                     var obj = {},chart;
                     chart = $('#area').highcharts();
                     obj.svg = chart.getSVG();
                     obj.type = 'image/png';
-                    obj.width = 450;
+                    obj.width = 1085;
                     obj.async = true;
                     var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
                     $.ajaxSetup({
@@ -202,7 +195,7 @@
                         {
 
                             $('#imagefilename').val(data);
-                            self.submit();
+                            submitchatform();
 
                         }
                         ,
@@ -214,6 +207,29 @@
                     });
 
                 });
+                function submitchatform()
+                {
+                    alert("formsubmitted");
+                    var form=$('#chatform');
+                    $.ajax({
+                        type: "post",
+                        data: form.serialize(),
+                        url: "/addcommentforshipreports",
+                        success: function (data)
+                        {
+                            $('#commentform').hide();
+                            $('#mailform').hide();
+                            $('#addcomment').hide();
+
+                            alert(data.updatemsg);
+
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                };
 
 
 
@@ -223,13 +239,11 @@
 
 
     {% endblock %}
-
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="page-header">
+<div class="col-md-12 users_advanced_list_views_screen">
+       {# <div class="page-header">
             <h2>{{ shipname.shipName }}</h2>
             <a href="{{ path('dashboradhome') }}">Back</a>
-        </div>
-        <div class="bs-example">
+        </div>#}
             <div class="table-responsive">
 
                 <table class="table table-striped" style="" id="readingkpitable">
@@ -247,12 +261,12 @@
                     </thead>
                     <tbody>
                     {% set countmonth1= countmonth-1 %}
-                    {% set newelementarray = {} %}
+                    {#{% set newelementarray = {} %}
                     {% set newcolorarray = {} %}
-                    {% set akj=0 %}
+                    {% set akj=0 %}#}
                     {% set i=0 %}
                     {% for kpi in listofkpi %}
-                        {% set newelementarray = newelementarray|merge({('_'~i):(kpi.kpiName)}) %}
+                       {# {% set newelementarray = newelementarray|merge({('_'~i):(kpi.kpiName)}) %}#}
                         <tr><td>
 
                                 <a
@@ -263,7 +277,7 @@
                             </td>
                             <td>{{ kpiweightage[i] }}%</td>
                             {% for j in 0..countmonth1 %}
-                                {% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}
+                                {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
                                 <td>
                                     {% if kpicolorarray[j][i]=="Green" %}
                                         <img src="/images/01.png" alt="Loader Image"/>
@@ -275,7 +289,7 @@
                                         <div class="nocolor"></div>
                                     {% endif %}
                                 </td>
-                                {% set akj=akj+1 %}
+                               {# {% set akj=akj+1 %}#}
 
                             {% endfor %}
 
@@ -295,105 +309,109 @@
                     </tbody>
                 </table>
             </div>
-            <div class="form-group">
-                <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
-            </div> <div class="form-group">
-                <div id="viewcommentdiv">
-                    {% set newcommandarray = {} %}
+    <div class="graph_colour">
+        <div id="area"></div>
+    </div>
+    <div class="graph_send_comment">
+    <div class="title" id="viewcommentdiv" >
 
-                    {% set jk=0 %}
-                    {% for comobject in commentarray %}
-                        {{ comobject.comment }}
-                        {% set newcommandarray = newcommandarray|merge({('_'~jk):(comobject.comment)}) %}
-                        {% set jk=jk+1 %}
-                    {% endfor %}
+    {#        {% set newcommandarray = {} %}
+
+            {% set jk=0 %}#}
+            {% for comobject in commentarray %}
+                {{ comobject.comment }}
+               {# {% set newcommandarray = newcommandarray|merge({('_'~jk):(comobject.comment)}) %}
+                {% set jk=jk+1 %}#}
+            {% endfor %}
+       </div>
+    <hr class="section-separator">
+
+        <div id="buttonid">
+            <button value="Submit" id="showcommentform"  class="submit_btn_add">Add comment</button>
+            <button value="Submit" id="sendreports"  class="submit_btn_add">Send reports</button>
+        </div>
+        <div class="add_new_users_form">
+            <!--Form for Add comment Starts Here  -->
+
+            <fieldset id="commentform" class="fieldset_box_2">
+                <legend class="legend_name">Add comment</legend>
+                <form  class="form-horizontal no-style"  method="post">
+
+                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
+
+                <div class="form-group">
+                    <div class="col-xs-12">
+                        {#<textarea class="add_comment_textarea" placeholder="Enter comment here..."> </textarea>#}
+                        <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                    </div>
                 </div>
-
-
-
-            </div>
-            <button id="showcommentform" class="btn btn-info" >Add Comment</button>&nbsp;&nbsp;
-
-            <button id="sendreports" class="btn btn-info" >Send Reports</button>
-            {# Form For Send Mail Starts Here #}
-
-
-            <div id="mailform" >
-
-                <h4 class="modal-title">Send Report</h4>
-
-
-                <form id="chatform" class="form-horizontal no-style" action=" {{path('addcommentforshipreports') }}" method="post">
-                    <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+              {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
+                    <input  class="submit_btn_save" id="addcommentid" type="submit" value="Save">
+                    </form>
+            </fieldset>
+            <!--Form for Add comment Ends Here  -->
+            <!--Form for Send Reports Starts Here  -->
+            <fieldset id="mailform" class="fieldset_box_2">
+                <legend class="legend_name">Send reports</legend>
+                <form id="chatform" class="form-horizontal no-style" method="post">
+                   {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
                     <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
                     <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
                     <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
                     <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
                     <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
-                    <input type="hidden" name="countmonth" value="{{ countmonth }}">
+                    <input type="hidden" name="countmonth" value="{{ countmonth }}">#}
 
                     <input id="imagefilename" type="hidden" name="send_command[filename]" >
                     <input id="lastid" type="hidden" name="send_command[lastid]" >
                     <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
+                <div class="form-group">
+                    <label class="control-label required_field col-xs-3">Add comment</label>
+                    <div class="col-xs-9">
+                        {#<div class="add_comment_checkbox">
+                            <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
+                        </div>
+                        <div class="add_comment_checkbox">
+                            <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
+                        </div>#}
+                        <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> Yes</label></div>
+                        <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> No</label></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label required_field col-xs-3">To</label>
+                    <div class="col-xs-9">
+                        {#<input type="text" class="send_reports_to_input" placeholder="">#}
+                        <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
+                        <div id="livesearchdiv"  class="send_reports_to_input_list">
+                            <ul id="livesearch">
 
-
-                    <div class="form-group">
-                        <label class="control-label col-xs-2">Add Comment</label>
-                        <div class="col-xs-10">
-                            <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
-                            <input id="checkbox" value="No" type="checkbox" name="send_command[addcomment]" >No
-
+                            </ul>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-xs-2">To</label>
-                        <div class="col-xs-10">
-                            <input id="toemail" type="text" class="search_keyword" name="send_command[clientemail]" required>
-                            <input type="hidden" id="hiddenresult" name="myresult">
-                            <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
-                        </div>
-
+                </div>
+                <div class="form-group">
+                    <label class="control-label required_field col-xs-3">Mail box</label>
+                    <div class="col-xs-9">
+                       {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
+                        <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label col-xs-2">Mail Box</label>
-                        <div class="col-xs-10">
-                            <textarea id="mycommentid" name="send_command[comment]" required></textarea>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-3">&nbsp;</label>
+                    <div class="col-xs-9">
+                        {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
+                        <input id="" class="submit_btn_2" type="submit" value="Send Report">
                     </div>
 
-                    <div id="sendcommentbutton"  class="actions">
-                        <input id="" class="btn btn-primary" type="submit" value="Send Report">
+                </div>
+                    </form>
+            </fieldset>
+            <!--Form for Send Reports Ends Here  -->
 
-                    </div>
-                </form>
             </div>
 
 
-            {# Form For Send Mail Ends  Here #}
-
-            {# Form For Add Comment  Starts Here #}
-
-            <div  id="commentform" >
-
-                <form  class="form-horizontal no-style"  method="post">
-                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
-                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
-
-                    <div class="form-group">
-
-                        <div class="col-xs-10">
-                            <textarea id="usermycommentid" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
-                        </div>
-                    </div>
-
-                    {# <div id="sendcommentbutton"  class="actions">#}
-                    <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
-
-                    {# </div>#}
-                </form>
-
-            </div>
-            {# Form For Add Comment #}
-        </div>
+    </div>
     </div>
 {% endblock %}
