@@ -139,7 +139,7 @@ $(document).ready(function(){
 
     function DynamicBox(value){
         return '<input type = "text" name="action_value" id="action-value_'+j+'" class="action-value">'+
-            /*'<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+*/
+                /*'<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+*/
             '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 

@@ -5,7 +5,7 @@ $(document).ready(function(){
     $('.remove').remove();
     $('#row_id').hide();
 
-    /*$('.add-rule').html('Show-Rules');
+    $('.add-rule').html('Show-Rules');
 
     var count = 0;
     var num = 0;
@@ -21,79 +21,79 @@ $(document).ready(function(){
         var data = {Id : $('#id').val()};
         var condition_text = "";
 
-        *//*$.ajax({
-            type: "POST",
-            data:data,
-            url: "rule",
-            success: function(data)
-            {
-                if(count==1)
-                {
-                    $.each(data.Rule_Array, function(i)
-                    {
-                        var rule_obj = JSON.parse( data.Rule_Array[i].rules);
+        /*$.ajax({
+         type: "POST",
+         data:data,
+         url: "rule",
+         success: function(data)
+         {
+         if(count==1)
+         {
+         $.each(data.Rule_Array, function(i)
+         {
+         var rule_obj = JSON.parse( data.Rule_Array[i].rules);
 
-                        $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.Rule_Array[i].rules));
-                        $('#rule_obj_text').append($('<br>'));
+         $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.Rule_Array[i].rules));
+         $('#rule_obj_text').append($('<br>'));
 
-                        $.each(rule_obj.conditions.all, function(j)
-                        {
-                            if(i==num)
-                            {
-                                if(rule_obj.conditions.all[j].operator=='equalTo')
-                                {
-                                    rule_obj.conditions.all[j].operator='=';
-                                }
-                                else if(rule_obj.conditions.all[j].operator=='notEqualTo')
-                                {
-                                    rule_obj.conditions.all[j].operator='!=';
-                                }
-                                else if(rule_obj.conditions.all[j].operator=='greaterThan')
-                                {
-                                    rule_obj.conditions.all[j].operator='>';
-                                }
-                                else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
-                                {
-                                    rule_obj.conditions.all[j].operator='>=';
-                                }
-                                else if(rule_obj.conditions.all[j].operator=='lessThan')
-                                {
-                                    rule_obj.conditions.all[j].operator='<';
-                                }
-                                else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
-                                {
-                                    rule_obj.conditions.all[j].operator='<=';
-                                }
-                                var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
-                                if(j==0)
-                                {
-                                    condition_text = condition_text_one;
-                                }
-                                if(j>0)
-                                {
-                                    condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
-                                }
-                            }
-                        });
-                        var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
-                            $('<td>').text(condition_text),
-                            $('<td>').text(rule_obj.actions.value),
-                            $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit")),
-                            $('<td>').append($('<input>').attr({'type':'button', 'id':'delete-'+i+'', 'class':'delete_class'}).val("delete"))
-                        ).appendTo('#rule-table');
-                        num++;
-                    });
-                }
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown)
-            {
-                alert('Error : ' + errorThrown);
-            }
-        });*//*
+         $.each(rule_obj.conditions.all, function(j)
+         {
+         if(i==num)
+         {
+         if(rule_obj.conditions.all[j].operator=='equalTo')
+         {
+         rule_obj.conditions.all[j].operator='=';
+         }
+         else if(rule_obj.conditions.all[j].operator=='notEqualTo')
+         {
+         rule_obj.conditions.all[j].operator='!=';
+         }
+         else if(rule_obj.conditions.all[j].operator=='greaterThan')
+         {
+         rule_obj.conditions.all[j].operator='>';
+         }
+         else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
+         {
+         rule_obj.conditions.all[j].operator='>=';
+         }
+         else if(rule_obj.conditions.all[j].operator=='lessThan')
+         {
+         rule_obj.conditions.all[j].operator='<';
+         }
+         else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
+         {
+         rule_obj.conditions.all[j].operator='<=';
+         }
+         var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
+         if(j==0)
+         {
+         condition_text = condition_text_one;
+         }
+         if(j>0)
+         {
+         condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+         }
+         }
+         });
+         var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
+         $('<td>').text(condition_text),
+         $('<td>').text(rule_obj.actions.value),
+         $('<td>').append($('<input>').attr({'type':'button', 'id':'edit-'+i+'', 'class':'edit_class'}).val("edit")),
+         $('<td>').append($('<input>').attr({'type':'button', 'id':'delete-'+i+'', 'class':'delete_class'}).val("delete"))
+         ).appendTo('#rule-table');
+         num++;
+         });
+         }
+         },
+         error: function(XMLHttpRequest, textStatus, errorThrown)
+         {
+         alert('Error : ' + errorThrown);
+         }
+         });*/
 
         $('#id').val(count);
 
-    });*/
+    });
     var conditions, actions;
 
     $('.edit_class').live("click",function(){

@@ -32,6 +32,7 @@ class DashboradController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
+        //Finding Number of Ships For particular company starts Here//
 
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
@@ -56,17 +57,9 @@ class DashboradController extends Controller
 
 
         $listallshipforcompany = $query->getResult();
+        //Finding Number of Ships For particular company Ends Here//
 
-        $kpi_count_query = $em->createQueryBuilder()
-            ->select('a.kpiName','a.id')
-            ->from('InitialShippingBundle:KpiDetails','a')
-            ->where('a.shipDetailsId = :ship_id')
-            ->setParameter('ship_id',$listallshipforcompany[0]['id'])
-            ->getQuery()
-            ->getResult();
-
-        $ship_count = count($listallshipforcompany);
-        $kpi_count = count($kpi_count_query);
+        //Finding Lastmonthdetail date Starts Here//
 
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
@@ -81,13 +74,14 @@ class DashboradController extends Controller
         else
         {
             $query = $em->createQueryBuilder()
-                ->select('identity(a.companyid)')
+                ->select('a.companyid')
                 ->from('InitialShippingBundle:User','a')
                 ->where('a.id = :userId')
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
         $companyid=$query->getSingleScalarResult();
+
 
         $lastdate = $em->createQueryBuilder()
             ->select('a.dataOfMonth')
@@ -99,118 +93,206 @@ class DashboradController extends Controller
             ->getResult();
 
         $lastmonthdetail=$lastdate[0]['dataOfMonth'];
+        //Finding Lastmonthdetail date Ends Here//
+        //Finding details for series and drildown starts Here//
 
-
-        $shipid=$listallshipforcompany[0]['id'];
-        $findkpilist=$em -> createQueryBuilder()
-            ->select('b.kpiName','b.id','b.weightage')
-            ->from('InitialShippingBundle:KpiDetails','b')
-            ->where('b.shipDetailsId = :shipid')
-            ->setParameter('shipid',$shipid)
-            ->getQuery()
-            ->getResult();
-        // Finding Elements and Element Weightage Based on Kpi Id //
-        $findelementidarray=$em -> createQueryBuilder()
-            ->select('c.id','c.weightage')
-            ->from('InitialShippingBundle:ElementDetails','c')
-            ->where('c.kpiDetailsId = :kpiid')
-            ->setParameter('kpiid',$findkpilist[0]['id'])
-            ->getQuery()
-            ->getResult();
         $mykpivaluearray = array();
-        $finalkpivalue = 0;
-        $categories=array();
+        $drilldownarray=array();
         for($kj=0;$kj<count($listallshipforcompany);$kj++)
         {
-            array_push($categories,$listallshipforcompany[$kj]['shipName']);
+
+            $findkpilist=$em -> createQueryBuilder()
+                ->select('b.kpiName','b.id','b.weightage')
+                ->from('InitialShippingBundle:KpiDetails','b')
+                ->where('b.shipDetailsId = :shipid')
+                ->setParameter('shipid',$listallshipforcompany[$kj]['id'])
+                ->getQuery()
+                ->getResult();
+
+            $drildowndataarray=array();
+
+            $finalkpielementvalue = 0;
+            $alterdrildownarray = array();
+            $elementleveldrildown=array();
+            $elementleveldrildownkpi=array();
 
 
-            //loop for sending calculating weightage value for partucular Kpi     //
-            for ($jk = 0; $jk < count($findelementidarray); $jk++)
+            for ($element = 0; $element < count($findkpilist); $element++)
             {
 
-                $weightage = $findelementidarray[$jk]['weightage'];
-                //Finding value based on element id and dates from user//
-                $dbvalueforelement = $em->createQueryBuilder()
-                    ->select('a.value')
-                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                    ->where('a.shipDetailsId = :shipid')
-                    ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                    ->andWhere('a.elementDetailsId = :Elementid')
-                    ->andWhere('a.monthdetail =:dataofmonth')
-                    ->setParameter('shipid', $listallshipforcompany[$kj]['id'])
-                    ->setParameter('kpiDetailsId', $findkpilist[0]['id'])
-                    ->setParameter('Elementid', $findelementidarray[$jk]['id'])
-                    ->setParameter('dataofmonth', $lastmonthdetail)
+                $kpiidvalue = $findkpilist[$element]['id'];
+                $kpiweightage = $findkpilist[$element]['weightage'];
+                $kpiname = $findkpilist[$element]['kpiName'];
+                $findelementidarray = $em->createQueryBuilder()
+                    ->select('c.id','c.elementName', 'c.weightage')
+                    ->from('InitialShippingBundle:ElementDetails', 'c')
+                    ->where('c.kpiDetailsId = :kpiid')
+                    ->setParameter('kpiid', $kpiidvalue)
                     ->getQuery()
                     ->getResult();
 
-                if (count($dbvalueforelement) == 0)
+
+                $finalkpivalue = 0;
+                if (count($findelementidarray) == 0)
                 {
-                    $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                    $finalkpivalue += $finddbvaluefomula;
+                    $newkpiid = $em->createQueryBuilder()
+                        ->select('b.id')
+                        ->from('InitialShippingBundle:KpiDetails', 'b')
+                        ->where('b.kpiName = :kpiName')
+                        ->setParameter('kpiName', $kpiname)
+                        ->groupby('b.kpiName')
+                        ->getQuery()
+                        ->getResult();
+                    $findelementidarray = $em->createQueryBuilder()
+                        ->select('a.elementName', 'a.id', 'a.weightage')
+                        ->from('InitialShippingBundle:ElementDetails', 'a')
+                        ->where('a.kpiDetailsId = :kpiid')
+                        ->setParameter('kpiid', $newkpiid[0]['id'])
+                        ->getQuery()
+                        ->getResult();
+
+                    for ($jk = 0; $jk < count($findelementidarray); $jk++)
+                    {
+
+                        $weightage = $findelementidarray[$jk]['weightage'];
+                        $elementname=$findelementidarray[$jk]['elementName'];
+                        //Finding value based on element id and dates from user//
+                        $dbvalueforelement = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                            ->where('a.shipDetailsId = :shipid')
+                            ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                            ->andWhere('a.elementDetailsId = :Elementid')
+                            ->andWhere('a.monthdetail =:dataofmonth')
+                            ->setParameter('shipid', $listallshipforcompany[$kj]['id'])
+                            ->setParameter('kpiDetailsId', $newkpiid[0]['id'])
+                            ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                            ->setParameter('dataofmonth', $lastmonthdetail)
+                            ->getQuery()
+                            ->getResult();
+
+                        if (count($dbvalueforelement) == 0) {
+                            $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+                        else {
+                            $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+                        $elementleveldrildown[$jk]['name']=$elementname;//assign drill down name for element
+                        $elementleveldrildown[$jk]['y']=$finalkpivalue;//assign drill down value for element
+                        $elementleveldrildown[$jk]['drilldown']=null;//assign drill down for element
+
+
+                    }
+                    $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
+
                 }
-                else
+                if (count($findelementidarray) > 0)
                 {
-                    $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                    $finalkpivalue += $finddbvaluefomula;
+
+                    for ($kk = 0; $kk < count($findelementidarray); $kk++)
+                    {
+                        $elementname=$findelementidarray[$kk]['elementName'];
+
+                        $weightage = $findelementidarray[$kk]['weightage'];
+                        //Finding value based on element id and dates from user//
+                        $dbvalueforelement = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                            ->where('a.shipDetailsId = :shipid')
+                            ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                            ->andWhere('a.elementDetailsId = :Elementid')
+                            ->andWhere('a.monthdetail =:dataofmonth')
+                            ->setParameter('shipid', $listallshipforcompany[$kj]['id'])
+                            ->setParameter('kpiDetailsId', $kpiidvalue)
+                            ->setParameter('Elementid', $findelementidarray[$kk]['id'])
+                            ->setParameter('dataofmonth', $lastmonthdetail)
+                            ->getQuery()
+                            ->getResult();
+
+                        if (count($dbvalueforelement) == 0) {
+                            $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+                        else
+                        {
+                            $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                            $finalkpivalue += $finddbvaluefomula;
+                        }
+
+
+                        $elementleveldrildown[$kk]['name']=$elementname;//assign drill down name for element
+                        $elementleveldrildown[$kk]['y']=$finalkpivalue;//assign drill down value for element
+                        $elementleveldrildown[$kk]['drilldown']=null;//assign drill down for element
+
+
+                    }
+
+
+                    $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
                 }
+
+
+                $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
+                $finalkpielementvalue += $findkpivalue;
+
+
+
+
+                $alterdrildownarray[$element]['name']=$kpiname;//assign drill down name for kpi
+                $alterdrildownarray[$element]['y']=$finalkpielementvalue;//assign drill down value for kpi
+                $alterdrildownarray[$element]['drilldown']=$kpiname;//assign drill down  for kpi
+
+                array_push($drildowndataarray,$finalkpielementvalue);//assign values to shipdetails  array value
+
+
 
             }
-            //Push the kpivalue values from weightage value//
 
-            $mykpivaluearray[$kj] = $finalkpivalue;
+            $drilldownarray[$kj]['name']=$listallshipforcompany[$kj]['shipName'];//assign drill down name for ship
+            $drilldownarray[$kj]['id']=$listallshipforcompany[$kj]['shipName'];//assign drill down id for ship
+            $mykpivaluearray[$kj]['drilldown']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown from kpivalues
+            $drilldownarray[$kj]['data']=$alterdrildownarray;//assign drilldown array values  for shipdetails drill down array
+            $mykpivaluearray[$kj]['name']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown(name) from kpivalues
+            $mykpivaluearray[$kj]['y'] = array_sum($drildowndataarray);//assign shipdrilldown(values) from kpivalues
+
 
         }
+        // Assign values of element drilldown to graph drill down array starts Here
+        $temp=count($drilldownarray);
 
-        for ($l = 0; $l < count($mykpivaluearray); $l++)
+        foreach($elementleveldrildownkpi as $kpikey => $kpipvalue)
         {
-            $newseries[$l]['name'] = $listallshipforcompany[$l]['shipName'];
-            $newseries[$l]['data'] = array($mykpivaluearray[$l]);
+            $drilldownarray[$temp]['name']=$kpikey;
+            $drilldownarray[$temp]['id']=$kpikey;
+
+            $drilldownarray[$temp]['data']=$kpipvalue;
+
+
+            $temp++;
 
         }
+        // Assign values of element drilldown to graph drill down array Ends Here
 
+        //Finding details for series and drildown Ends Here//
 
-        //loop for assign name for series Ends Here //
-
-        // Adding data to javascript chart function starts Here.. //
-        /* $time2 = strtotime();
-         $monthinletter = date('F-Y', $time2);*/
         $monthinletter = $lastmonthdetail->format('F-Y');
-
-        $formatter = new \Zend\Json\Expr('function () {
-                 var unit = {
-                     "Rainfall": "mm",
-                     "Temperature": "degrees C"
-                 }[this.series.name];
-                 return this.x + ": <b>" + this.y + "</b> " + unit;
-             }');
+        // Adding data to javascript chart function starts Here.. //
         $ob = new Highchart();
-
-        $linksarray= array( 'Foo'=>'http://www.java2s.com','Bar'=> 'http://www.java2s.com');
         $ob->chart->renderTo('area');
         $ob->chart->type('column');
         $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
-        $ob->subtitle->text($formatter);
-        $ob->subtitle->style(array('color'=>'#0000f0','fontWeight'=>'bold'));
-        $ob->xAxis->categories($categories);
-        //$ob->xAxis->labels($formatter);
-        $ob->yAxis->min(0);
+        $ob->xAxis->type('category');
         $ob->yAxis->title(array('text'=>'Values'));
-        $ob->yAxis->stackLabels(array('enabled'=>true,'style'=>array( 'fontWeight'=> 'bold','color'=>  'gray')));
-        $ob->legend->align( 'right');
-        $ob->legend->x( -30);
-        $ob->legend->verticalAlign('top');
-        $ob->legend->y(25);
-        $ob->legend->floating(true);
-        $ob->legend->backgroundColor('white');
-        $ob->legend->borderColor('#CCC');
-        $ob->legend->borderWidth(1);
-        $ob->legend->shadow(1);
+        $ob->legend->enabled(false);
+        $ob->plotOptions->series(array('borderWidth'=>0,'dataLabels'=>array('enabled'=>false)));
 
-        $ob->series(array( array( 'showInLegend'=> false,  'name' => $monthinletter, 'color' => 'rgb(124, 181, 236)',   "data" =>$mykpivaluearray)));
-        $ob->plotOptions->column(array('stacking'=> 'normal','allowPointSelect'=>true,
-            'dataLabels'=>array('enabled'=>true,'style'=> array('textShadow'=>'0 0 3px black'))));
+        $ob->series(array( array( 'showInLegend'=> false,'colorByPoint'=> true,  'name' => $monthinletter, 'color' => 'rgb(124, 181, 236)',   "data" =>$mykpivaluearray)));
+
+        $ob->drilldown->series($drilldownarray);
+        $ob->exporting->enabled(false);
+
         // Adding data to javascript chart function  Ends Here.. //
 
 
@@ -222,9 +304,10 @@ class DashboradController extends Controller
                 'chart'=>$ob,
                 'currentmonth'=>$monthinletter,
                 'kpiname'=>$findkpilist[0]['kpiName'],
-                'ship_count' => $ship_count,
-                'kpi_count' => $kpi_count
-                )
+                'ship_count'=>count($listallshipforcompany),
+                'kpi_count'=>count($findkpilist)
+
+            )
         );
     }
     /**
@@ -321,6 +404,7 @@ class DashboradController extends Controller
 
             for ($element = 0; $element < count($listallkpi); $element++)
             {
+
                 $kpiidvalue = $listallkpi[$element]['id'];
                 $kpiweightage = $listallkpi[$element]['weightage'];
                 $kpiname = $listallkpi[$element]['kpiName'];
@@ -506,21 +590,34 @@ class DashboradController extends Controller
         $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
         $ob->series($series);
         $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
+        $ob->exporting->enabled(false);
+
 
         $listofcomment = $em->createQueryBuilder()
             ->select('a.comment')
             ->from('InitialShippingBundle:SendCommand','a')
             ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
-            ->where('a.kpiid = :kpiid')
+            ->where('a.shipid = :shipid')
             ->andwhere('b.emailId = :username')
             ->setParameter('username',$loginuseremail)
-            ->setParameter('kpiid',$shipid)
+            ->setParameter('shipid',$shipid)
             ->getQuery()
             ->getResult();
 
         if($mode=='kpi_id')
         {
             return $datescolorarray;
+        }
+        if($mode=='pdftemplate_shiplevel')
+        {
+            return array(
+                'kpicolorarray'=>$datescolorarray,
+                'listofkpi'=>$listallkpi,
+                'kpiweightage'=>$kpiweightagearray,
+                'montharray'=>$newcategories,
+                'avgscore'=>$finalkpielementvaluearray,
+                'commentarray'=>$listofcomment,
+            );
         }
 
 
@@ -703,7 +800,7 @@ class DashboradController extends Controller
                         ->andWhere('a.elementDetailsId = :Elementid')
                         ->andWhere('a.monthdetail =:dataofmonth')
                         ->setParameter('shipid', $shipid)
-                        ->setParameter('kpiDetailsId', $kpiid)
+                        ->setParameter('kpiDetailsId', $newkpiid[0]['id'])
                         ->setParameter('Elementid', $listelement[$jk]['id'])
                         ->setParameter('dataofmonth', $new_monthdetail_date)
                         ->getQuery()
@@ -780,6 +877,8 @@ class DashboradController extends Controller
             $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
+            $ob->exporting->enabled(false);
+
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
             $listofcomment = $em->createQueryBuilder()
@@ -917,6 +1016,7 @@ class DashboradController extends Controller
             $ob->xAxis->labels(array('style'=>array('color'=>'#0000F0')));
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect'=>true,'dataLabels'=>array('enabled'=>true)));
+            $ob->exporting->enabled(false);
             //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
             //find the comments for particular user//
             $listofcomment = $em->createQueryBuilder()
@@ -966,7 +1066,7 @@ class DashboradController extends Controller
     /**
      * Auto Complete for Mailing
      *
-     * @Route("/sutocompeltegroup", name="autocompleteformailing")
+     * @Route("/autocompeltegroup", name="autocompleteformailing")
      */
     public function autocompleteformailingAction(Request $request)
     {
@@ -1000,30 +1100,18 @@ class DashboradController extends Controller
         $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
         $qb=$em->createQueryBuilder();
         $qb
-            ->select('a.emailid','b.groupname')
-            ->from('InitialShippingBundle:Mailing','a')
-            ->join('InitialShippingBundle:MailingGroup','b', 'WITH', 'b.emailreferenceid = a.id')
+            ->select('a.groupname','b.useremailid')
+            ->from('InitialShippingBundle:EmailGroup','a')
+            ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = a.id')
             ->where('a.companyid = :companyid')
-            ->andwhere('b.groupname LIKE :sreachstring')
-            ->orwhere('a.emailid LIKE :sreachstring')
+            ->andwhere('a.groupname LIKE :sreachstring')
+            ->orwhere('b.useremailid LIKE :sreachstring')
             ->setParameter('companyid',$newcompanyid)
             ->setParameter('sreachstring','%'.$searchstring.'%');
         $result=$qb->getQuery()->getResult();
         $response = new JsonResponse();
 
-
-        if(count($result)==0)
-        {
-            $response->setData(array('returnresult'=>0));
-        }
-        if(count($result)==1)
-        {
-            $response->setData(array('returnresult' => $result[0]['emailid']));
-        }
-        if(count($result)>1)
-        {
-            $response->setData(array('returnresult' => $result));
-        }
+        $response->setData(array('returnresult' => $result));
         return $response;
 
     }

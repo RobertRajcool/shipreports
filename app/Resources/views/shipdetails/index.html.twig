@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{#{% block body %}
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
@@ -37,6 +37,663 @@
         </table>
     </div>
     </div>
+{% endblock %}#}
+
+{% block body %}
+
+        {% block javascripts %}
+
+            {% javascripts
+            '@AppBundle/Resources/public/js/AAA.js'
+            '@AppBundle/Resources/public/js/demo.js'
+            '@AppBundle/Resources/public/js/actions-builder.js'
+            '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+            '@AppBundle/Resources/public/js/rules.js'
+            '@AppBundle/Resources/public/js/sample.js'
+            %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $('.create_view').hide();
+                    $('#list_view').hide();
+                    $('.show_view').hide();
+                    $('.show_kpi').hide();
+                    $('.show_ship_view').hide();
+                    $('.Edit_ship').hide();
+
+                    $('.add-rule').live("click", function () {
+                        $('.field').hide();
+                    });
+                    $('.add-condition').live("click", function () {
+                        $('.field').hide();
+                    });
+                    $('.box_icon').click(function () {
+                        $('#list_view').hide();
+                        $('.show_ship_view').hide();
+                        $('#grid_view').show();
+                    });
+                    $('.list_icon').click(function () {
+                        $('#grid_view').hide();
+                        $('#list_view').show();
+                        $('.show_ship_view').hide();
+                        $('.show_kpi').hide();
+                    });
+                    $('.add_btn').live("click", function () {
+                        $('#grid_view').hide();
+                        $('#list_view').hide();
+                        $('.show_ship_view').hide();
+                        $('.create_view').show();
+
+                    });
+                    $('.cancel_btn').live("click", function () {
+                        $('.create_view').hide();
+                        $('#grid_view').show();
+                    });
+
+                    $('.submit_btn').live("click", function () {
+                        $('#grid_view').show();
+                        $('#list_view').hide();
+                    });
+
+                    $('.edit_ship_button').live("click",function()
+                    {
+                        $('.show_ship_view').hide();
+                        $('.Edit_ship').show();
+                    });
+
+                    $('.edit_cancel_btn').live("click",function(){
+                        $('.Edit_ship').hide();
+                        $('.show_ship_view').show();
+                    });
+
+
+                    var count =0;
+
+                    $('.ship_class').live("click",function()
+                    {
+                        count++;
+                        var currentId = $(this).attr('id');
+                        var data = {'Id':currentId};
+                        if(count>1)
+                        {
+                            $('.Edit_ship').hide();
+                            $('.ship_name').empty();
+                            $('.ship_type').empty();
+                            $('.ship_ImoNumber').empty();
+                            $('.ship_Location').empty();
+                            $('.ship_Country').empty();
+                            $('.ship_Built').empty();
+                            $('.ship_size').empty();
+                            $('.ship_GT').empty();
+                            $('.ship_ManufacturingYear').empty();
+                            $('.ship_description').empty();
+                        }
+
+                        $.ajax({
+                            type:"POST",
+                            url: "ajax_show",
+                            data:data,
+                            success: function(data)
+                            {
+                                //alert('success');
+                                //console.log(data.ship_type);
+                                $('.ship_name').append(data.Ship_detail[0].shipName);
+                                $('.ship_type').append(data.ship_type[0].shipType);
+                                $('.ship_ImoNumber').append(data.Ship_detail[0].imoNumber);
+                                $('.ship_Location').append(data.Ship_detail[0].location);
+                                $('.ship_Country').append(data.country_name[0].countryName);
+                                $('.ship_Built').append(data.Ship_detail[0].built);
+                                $('.ship_size').append(data.Ship_detail[0].size);
+                                $('.ship_GT').append(data.Ship_detail[0].gt);
+                                $('.ship_manufacturingYear').append(data.Ship_detail[0].manufacturingYear);
+                                $('.ship_description').append(data.Ship_detail[0].description);
+
+                                //Setting value for edit view
+
+                                $('.edit_ship_name').val(data.Ship_detail[0].shipName);
+                                $('.edit_ship_id').val(data.Ship_detail[0].id);
+                                $('.edit_ship_imoNumber').val(data.Ship_detail[0].imoNumber);
+                                $('.edit_ship_location').val(data.Ship_detail[0].location);
+
+                                $('.edit_ship_built').val(data.Ship_detail[0].built);
+                                $('.edit_ship_size').val(data.Ship_detail[0].size);
+                                $('.edit_ship_gt').val(data.Ship_detail[0].gt);
+                                $('.edit_ship_manufacturingYear').val(data.Ship_detail[0].manufacturingYear);
+                                $('.edit_ship_description').val(data.Ship_detail[0].description);
+
+                                $.each(data.shipType_array,function(index){
+                                   var $option = $('<option>').append(data.shipType_array[index]['shipType']).val(data.shipType_array[index]['id']).appendTo('.edit_ship_type');
+
+                                });
+                                $.each(data.countryName_array,function(index){
+                                    var $country_option = $('<option>').append(data.countryName_array[index]['countryName']).val(data.countryName_array[index]['id']).appendTo('.edit_ship_country');
+
+                                });
+                                $('.edit_ship_type').val(data.ship_type[0].id);
+                                $('.edit_ship_country').val(data.country_name[0].id);
+
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                        $('.show_ship_view').show();
+                    });
+
+                    $('.edit_submit_btn').live("click",function()
+                    {
+                        $('.ship_name').empty();
+                        $('.ship_type').empty();
+                        $('.ship_ImoNumber').empty();
+                        $('.ship_Location').empty();
+                        $('.ship_Country').empty();
+                        $('.ship_Built').empty();
+                        $('.ship_size').empty();
+                        $('.ship_GT').empty();
+                        $('.ship_ManufacturingYear').empty();
+                        $('.ship_description').empty();
+
+                        var data = {
+                            Id :$('.edit_ship_id').val(),
+                            shipName:$('.edit_ship_name').val(),
+                            imoNumber:$('.edit_ship_imoNumber').val(),
+                            location:$('.edit_ship_location').val(),
+                            built:$('.edit_ship_built').val(),
+                            size:$('.edit_ship_size').val(),
+                            gt:$('.edit_ship_gt').val(),
+                            manufacturingYear:$('.edit_ship_manufacturingYear').val(),
+                            description:$('.edit_ship_description').val(),
+                            shipType:$('.edit_ship_type').val(),
+                            country:$('.edit_ship_country').val()
+                        };
+
+                        $.ajax({
+                            type:"POST",
+                            url:"ajax_edit",
+                            data: data,
+                            success: function(data)
+                            {
+                                $('.ship_name').append(data.Ship_detail[0].shipName);
+                                $('.ship_type').append(data.ship_type[0].shipType);
+                                $('.ship_ImoNumber').append(data.Ship_detail[0].imoNumber);
+                                $('.ship_Location').append(data.Ship_detail[0].location);
+                                $('.ship_Country').append(data.country_name[0].countryName);
+                                $('.ship_Built').append(data.Ship_detail[0].built);
+                                $('.ship_size').append(data.Ship_detail[0].size);
+                                $('.ship_GT').append(data.Ship_detail[0].gt);
+                                $('.ship_manufacturingYear').append(data.Ship_detail[0].manufacturingYear);
+                                $('.ship_description').append(data.Ship_detail[0].description);
+
+                                //Setting value for edit view
+
+                                $('.edit_ship_name').val(data.Ship_detail[0].shipName);
+                                $('.edit_ship_id').val(data.Ship_detail[0].id);
+                                $('.edit_ship_imoNumber').val(data.Ship_detail[0].imoNumber);
+                                $('.edit_ship_location').val(data.Ship_detail[0].location);
+
+                                $('.edit_ship_built').val(data.Ship_detail[0].built);
+                                $('.edit_ship_size').val(data.Ship_detail[0].size);
+                                $('.edit_ship_gt').val(data.Ship_detail[0].gt);
+                                $('.edit_ship_manufacturingYear').val(data.Ship_detail[0].manufacturingYear);
+                                $('.edit_ship_description').val(data.Ship_detail[0].description);
+
+                                $.each(data.shipType_array,function(index){
+                                    var $option = $('<option>').append(data.shipType_array[index]['shipType']).val(data.shipType_array[index]['id']).appendTo('.edit_ship_type');
+
+                                });
+                                $.each(data.countryName_array,function(index){
+                                    var $country_option = $('<option>').append(data.countryName_array[index]['countryName']).val(data.countryName_array[index]['id']).appendTo('.edit_ship_country');
+
+                                });
+                                $('.edit_ship_type').val(data.ship_type[0].id);
+                                $('.edit_ship_country').val(data.country_name[0].id);
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                        $('.Edit_ship').hide();
+                        $('.show_ship_view').show();
+                    });
+
+                });
+
+            </script>
+
+        {% endblock%}
+
+
+        <div id="grid_view">
+            <section>
+                <div class="col-sm-3 users_views">
+                    <div class="add_user_btn_main">
+                        <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Ship</a></span>
+                        <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+                        <span class="user_btn_main grid_list_main">
+                            <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
+                            <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+                        </span>
+                    </div>
+
+                    <div class="users_list_main"><span>Ship ({{ ship_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
+
+                    <div class="users_list_grid_main">
+                        {% for shipDetail in shipDetails %}
+                            <div class="users_list_grid">
+                                <span class="users_name_row">
+                                    <span class="name"><a href="" class="ship_class" id={{ shipDetail.id }} >{{ shipDetail.shipName }}</a> </span>
+                                    <span class="text">{{ shipDetail.description }}</span>
+                                 </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div id="list_view">
+            <section>
+                <div class="col-md-10 col-md-offset-2 users_advanced_list_views_screen">
+                    <div class="">
+                        <div class="add_user_btn_main">
+                            <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Ship</a></span>
+                            <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+                        <span class="user_btn_main grid_list_main">
+                            <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
+                            <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+                         </span>
+                        </div>
+                        <div class="spacing"></div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Ship Name</th>
+                                    <th>Description</th>
+                                    <th>Ship Type</th>
+                                    <th>ImoNumber</th>
+                                    <th>Country</th>
+                                    <th>Location</th>
+                                    <th>Built</th>
+                                    <th>Size</th>
+                                    <th>GT</th>
+                                    <th>Manufaturing Year</th>
+                                    {#<th>Actions</th>#}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    {% for shipDetail in shipDetails %}
+                                        <tr>
+                                            <td>{{ shipDetail.shipName }}</td>
+                                            <td>{{ shipDetail.description }}</td>
+                                            <td>{{ shipDetail.shipType }}</td>
+                                            <td>{{ shipDetail.imoNumber }}</td>
+                                            <td>{{ shipDetail.country }}</td>
+                                            <td>{{ shipDetail.location }}</td>
+                                            <td>{{ shipDetail.built }}</td>
+                                            <td>{{ shipDetail.size }}</td>
+                                            <td>{{ shipDetail.gt }}</td>
+                                            <td>{{ shipDetail.manufacturingYear }}</td>
+                                            {#<td>
+                                                <a href="" class="list_show_btn">show</a>
+                                                {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                                    <a href="" class="list_edit_btn">edit</a>
+                                                {% endif %}
+                                            </td>#}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="create_view">
+
+            <section>
+                <div class="col-sm-12">
+                    <div class="add_kpi_views_screen">
+
+                        <form class="form-horizontal no-style" action="{{ path('shipdetails_new1') }}" method="post">
+
+                            <div class="kpi_basic_details">
+                                <fieldset class="fieldset_box add_rule_form">
+
+
+                                    <legend class="legend_name">Details</legend>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Ship name</label>
+                                        <div class="col-xs-8">
+
+                                            {{ form_row(form.shipName,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Ship Type</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.shipType,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">ImoNumber</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.imoNumber,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset class="fieldset_box">
+                                    <legend class="legend_name">Address</legend>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Country</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.country,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Location</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.location,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <fieldset class="fieldset_box">
+                                    <legend class="legend_name">Capacity</legend>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Built</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.built,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Size</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.size,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">GT</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.gt,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Manufaturing Year</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.manufacturingYear,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-4">Description</label>
+                                        <div class="col-xs-8">
+                                            {{ form_row(form.description,{'label': ' '}) }}
+                                        </div>
+                                    </div>
+
+                                </fieldset>
+                            </div>
+
+                            <div class="actions_submit">
+                                <button class="submit_btn" id="submit_id"  type="submit" value="Submit">create</button>
+                                <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <div class="show_kpi">
+
+            <section>
+                <div class="col-sm-11">
+                    <div class="view_new_user_screen_2 form_view_screen">
+                        <div class="actions_edit_button">
+                            <a href="" class="edit_btn"> Edit Ship</a>
+                            <a href="" class="edit_btn">Archive</a>
+                        </div>
+
+
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Details</legend>
+                            <div class="form_view">
+                                <label class="form_labell">Ship :</label>
+                                <label class="form_input ship_name"></label>
+                            </div>
+                            <div class="form_view">
+                                <label class="form_labell">Type :</label>
+                                <label class="form_input ship_type"></label>
+                            </div>
+                            <div class="form_view">
+                                <label class="form_labell">ImoNumber :</label>
+                                <label class="form_input ship_ImoNumber"></label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Address</legend>
+                            <div class="form_view">
+                                <label class="form_labell">Countrty:</label>
+                                <label class="form_input ship_Country"></label>
+                            </div>
+                            <div class="form_view">
+                                <label class="form_labell">Location:</label>
+                                <label class="form_input ship_Location"></label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Capacity</legend>
+                            <div class="form_view">
+                                <label class="form_labell">Built:</label>
+                                <label class="form_input ship_Built"></label>
+                            </div>
+                            <div class="form_view">
+                                <label class="form_labell">Size:</label>
+                                <label class="form_input ship_size"></label>
+                            </div>
+                            <div class="form_view">
+                                <label class="form_labell">GT:</label>
+                                <label class="form_input ship_GT"></label>
+                            </div>
+
+                            <div class="form_view">
+                                <label class="form_labell">Manufacturing Year:</label>
+                                <label class="form_input ship_Manufaturingyear"></label>
+                            </div>
+                            <div class="form_view">
+                                <label class="form_labell">Description:</label>
+                                <label class="form_input ship_description"></label>
+                            </div>
+
+                            <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
+                        </fieldset>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+
+    <div class="show_ship_view">
+
+        <section>
+            <div class="col-sm-11">
+                <div class="view_new_user_screen_2 form_view_screen">
+                    <div class="actions_edit_button">
+                        <a href="" class="edit_btn edit_ship_button"> Edit Ship</a>
+                        <a href="" class="edit_btn">Archive</a>
+                    </div>
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Details</legend>
+                        <div class="form_view">
+                            <label class="form_labell">Ship :</label>
+                            <label class="form_input ship_name "></label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">Type :</label>
+                            <label class="form_input ship_type"></label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">ImoNumber :</label>
+                            <label class="form_input ship_ImoNumber"></label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Address</legend>
+                        <div class="form_view">
+                            <label class="form_labell">Countrty:</label>
+                            <label class="form_input ship_Country"></label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">Location:</label>
+                            <label class="form_input ship_Location"></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Capacity</legend>
+                        <div class="form_view">
+                            <label class="form_labell">Built:</label>
+                            <label class="form_input ship_Built"></label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">Size:</label>
+                            <label class="form_input ship_size"></label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">GT:</label>
+                            <label class="form_input ship_GT"></label>
+                        </div>
+
+                        <div class="form_view">
+                            <label class="form_labell">Manufacturing Year:</label>
+                            <label class="form_input ship_manufacturingYear"></label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">Description:</label>
+                            <label class="form_input ship_description"></label>
+                        </div>
+                        <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
+                    </fieldset>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="Edit_ship">
+        <section>
+            <div class="col-sm-11">
+                <div class="add_new_users_views_screen">
+                    <h2>Edit Ship</h2>
+                        <div class="add_new_users_form">
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Basic Info</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Ship name</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_name" value="" placeholder="">
+                                        <input type="hidden" class="edit_ship_id" value="" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Ship Type</label>
+                                    <div class="col-xs-8">
+                                        <select class="edit_ship_type">
+                                            <option selected>--Select shipType--</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">ImoNumber</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_imoNumber" value="" placeholder="">
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Address</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Country</label>
+                                    <div class="col-xs-8">
+                                        {#<input type="text" class="edit_ship_country" value="" placeholder="">#}
+                                        <select class="edit_ship_country">
+                                            <option selected>--Select Country--</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Location</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_location" value="" placeholder="">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Capacity</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Built</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_built" value="" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Size</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_size" value="" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">GT</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_gt" value="" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Manufaturing Year</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_manufacturingYear" value="" placeholder="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4">Description</label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_description" value="" placeholder="">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <div class="actions_submit">
+                                <button class=" submit_btn edit_submit_btn" value="Submit">Save</button>
+                                <button class="cancel_btn edit_cancel_btn" value="Submit">Cancel</button>
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+
 {% endblock %}
 
 

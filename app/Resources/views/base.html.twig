@@ -40,13 +40,14 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <div class="logo">Shipping</div>
                 <ul class="nav nav-sidebar">
+
+                    <li class="active">
+                        <a href="{{ path('dashboradhome') }}">
+                            <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
+                            <span class="menu-item-text">Dashboard</span>
+                        </a>
+                    </li>
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                        <li class="active">
-                            <a href="{{ path('dashboradhome') }}">
-                                <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
-                                <span class="menu-item-text">Dashboard</span>
-                            </a>
-                        </li>
                         <li>
                             <a href="{{ path('shipdetails_select1') }}">
                                 <span class="menu-item-icon ss-star">&nbsp;</span>
@@ -56,7 +57,7 @@
                         <li>
                             <a ng-click="myFunc2()">
                                 <span class="menu-item-icon ss-star">&nbsp;</span>
-                                <span class="menu-item-text">KPI</span>
+                                <span class="menu-item-text">Scorecard</span>
                                 <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
                             </a>
                             <ul class="submenu" ng-show="showMe2">
@@ -80,22 +81,59 @@
                                 </li>
                             </ul>
                         </li>
-                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                            <li>
-                                <a href="{{ path('showfile') }}">
-                                    <span class="menu-item-icon ss-database">&nbsp;</span>
-                                    <span class="menu-item-text">Data Import</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {%  if is_granted("ROLE_ADMIN") %}
-                            <li>
-                                <a href="{{ path('fos_user_registration_show') }}">
-                                    <span class="menu-item-icon ss-users">&nbsp;</span>
-                                    <span class="menu-item-text">Company Users</span>
-                                </a>
-                            </li>
-                        {% endif %}
+                        <li>
+                            <a ng-click="myFunc2()">
+                                <span class="menu-item-icon ss-star">&nbsp;</span>
+                                <span class="menu-item-text">Vessel Ranking</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="showMe2">
+                                <li>
+                                    <a href="{{ path('kpidetails_select1') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text">Add KPI</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('elementdetails_select1') }}">
+                                        <span class="menu-item-icon ss-star">&nbsp;</span>
+                                        <span class="menu-item-text">Element</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('rules_select') }}">
+                                        <span class="menu-item-icon ss-star">&nbsp;</span>
+                                        <span class="menu-item-text">Rules</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                        <li>
+                            <a href="{{ path('showfile') }}">
+                                <span class="menu-item-icon ss-database">&nbsp;</span>
+                                <span class="menu-item-text">Data Import</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_ADMIN") %}
+                        <li>
+                            <a href="{{ path('fos_user_registration_show') }}">
+                                <span class="menu-item-icon ss-users">&nbsp;</span>
+                                <span class="menu-item-text">Company Users</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_SUPER_ADMIN") %}
+                        <li>
+                            <a href="{{ path('fos_user_registration_show') }}">
+                                <span class="menu-item-icon ss-users">&nbsp;</span>
+                                <span class="menu-item-text">Company Details</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                         <li>
                             <a href="{{ path('mailinghome') }}">
                                 <span class="menu-item-icon ss-mail">&nbsp;</span>
@@ -142,7 +180,7 @@
 
         </div>
     </div>
-{% endif %}
+
 <!-- end if for overall links -->
 {% for type, messages in app.session.flashBag.all %}
     {% for message in messages %}
@@ -151,7 +189,7 @@
         </div>
     {% endfor %}
 {% endfor %}
-
+{% endif %}
 <div>
     {% block fos_user_content %}
     {% endblock fos_user_content %}

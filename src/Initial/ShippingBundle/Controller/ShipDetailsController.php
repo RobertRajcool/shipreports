@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ShipDetails;
 use Initial\ShippingBundle\Form\ShipDetailsType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * ShipDetails controller.
@@ -58,10 +59,11 @@ class ShipDetailsController extends Controller
      * @Route("/select1", name="shipdetails_select1")
      * @Method("GET")
      */
-    public function select1Action()
+    public function select1Action(Request $request)
     {
         $user = $this->getUser();
         $userId = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
 
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
@@ -87,8 +89,18 @@ class ShipDetailsController extends Controller
         }
         $shipDetails = $query->getResult();
 
+        $count = count($shipDetails);
+
+        $shipDetail = new shipDetails();
+        $form = $this->createForm(new shipDetailsType($userId,$role), $shipDetail);
+        $form->handleRequest($request);
+
         return $this->render('shipdetails/index.html.twig', array(
             'shipDetails' => $shipDetails,
+            'shipDetail' => $shipDetail,
+            'form' => $form->createView(),
+            'ship_count' => $count,
+
         ));
     }
 
@@ -188,7 +200,134 @@ class ShipDetailsController extends Controller
         $em->persist($shipdetails);
         $em->flush();
 
-        return $this->redirectToRoute('shipdetails_show', array('id' => $shipdetails->getId()));
+        return $this->redirectToRoute('shipdetails_select1');
+
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ajax_show", name="kpidetails_ajax_show")
+     */
+    public function ajax_showAction(Request $request,$hi='')
+    {
+        $id = $request->request->get('Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.id','a.shipName','a.description','a.location','a.size','a.built','a.gt','a.manufacturingYear','a.imoNumber')
+            ->from('InitialShippingBundle:ShipDetails','a')
+            ->where('a.id = :Ship_id')
+            ->setParameter('Ship_id',$id)
+            ->getQuery();
+        $ShipDetail = $query->getResult();
+
+        $shipTypeId = $em->createQueryBuilder()
+            ->select('identity(a.shipType)')
+            ->from('InitialShippingBundle:ShipDetails','a')
+            ->where('a.id = :Ship_id')
+            ->setParameter('Ship_id',$id)
+            ->getQuery()
+            ->getResult();
+
+        $shipTypeName = $em->createQueryBuilder()
+            ->select('a.shipType','a.id')
+            ->from('InitialShippingBundle:ShipTypes','a')
+            ->where('a.id = :Ship_id')
+            ->setParameter('Ship_id',$shipTypeId[0][1])
+            ->getQuery()
+            ->getResult();
+
+        $countryId = $em->createQueryBuilder()
+            ->select('identity(a.country)')
+            ->from('InitialShippingBundle:ShipDetails','a')
+            ->where('a.id = :Ship_id')
+            ->setParameter('Ship_id',$id)
+            ->getQuery()
+            ->getResult();
+
+        $countryName = $em->createQueryBuilder()
+            ->select('a.countryName','a.id')
+            ->from('InitialShippingBundle:AppsCountries','a')
+            ->where('a.id = :country_id')
+            ->setParameter('country_id',$countryId[0][1])
+            ->getQuery()
+            ->getResult();
+
+        $shipType_array = $em->createQueryBuilder()
+            ->select('a.shipType','a.id')
+            ->from('InitialShippingBundle:ShipTypes','a')
+            ->getQuery()
+            ->getResult();
+
+        $countryName_array = $em->createQueryBuilder()
+            ->select('a.countryName','a.id')
+            ->from('InitialShippingBundle:AppsCountries','a')
+            ->getQuery()
+            ->getResult();
+
+        $response = new JsonResponse();
+        $response->setData(array(
+            'Ship_detail' => $ShipDetail,
+            'ship_type' => $shipTypeName,
+            'country_name' => $countryName,
+            'shipType_array' => $shipType_array,
+            'countryName_array' => $countryName_array
+        ));
+
+        if($hi=='hi')
+        {
+            return $response;
+        }
+
+        return $response;
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ajax_edit", name="kpidetails_ajax_edit")
+     */
+    public function ajax_editAction(Request $request)
+    {
+        $id = $request->request->get('Id');
+
+        $shipName = $request->request->get('shipName');
+        $shipType = $request->request->get('shipType');
+        $imoNumber = $request->request->get('imoNumber');
+        $country = $request->request->get('country');
+        $location = $request->request->get('location');
+        $description = $request->request->get('description');
+        $manufacturingYear = $request->request->get('manufacturingYear');
+        $built = $request->request->get('built');
+        $size = $request->request->get('size');
+        $gt = $request->request->get('gt');
+        $em = $this->getDoctrine()->getManager();
+
+        $shipdetails = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id));
+        //$course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
+        $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id'=>$shipType));
+        $countryObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:AppsCountries')->findOneBy(array('id'=>$country));
+
+        $entity = new ShipDetails();
+        $shipdetails->setShipName($shipName);
+        $shipdetails->setShipType($shipTypeObj);
+        $shipdetails->setImoNumber($imoNumber);
+        $shipdetails->setCountry($countryObj);
+        $shipdetails->setLocation($location);
+        $shipdetails->setDescription($description);
+        $shipdetails->setBuilt($built);
+        $shipdetails->setSize($size);
+        $shipdetails->setGt($gt);
+        $shipdetails->setManufacturingYear($manufacturingYear);
+
+        $em->flush();
+
+        $show_response = $this->ajax_showAction($request,'hi');
+
+        return $show_response;
 
     }
 
@@ -234,6 +373,62 @@ class ShipDetailsController extends Controller
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
+    }
+
+    /**
+     * Displays a form to edit an existing ShipDetails entity.
+     *
+     * @Route("/edit", name="shipdetails_edit1")
+     * @Method({"GET", "POST"})
+     */
+    public function edit1Action(Request $request)
+    {
+        $params = $request->request->get('ship_details');
+        $shipName = $params['shipName'];
+        $shipType = $params['shipType'];
+        $imoNumber = $params['imoNumber'];
+        $country = $params['country'];
+        $built = $params['built'];
+        $size = $params['size'];
+        $gt = $params['gt'];
+        $location = $params['location'];
+        $description = $params['description'];
+        $manufacturingYear = $params['manufacturingYear'];
+        $companyDetailsId = $params['companyDetailsId'];
+
+        $em = $this->getDoctrine()->getManager();
+
+        $ship_id_array= $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:ShipDetails','a')
+            ->where('a.shipName = :ship_name')
+            ->setParameter('ship_name',$shipName)
+            ->getQuery()
+            ->getResult();
+
+        for($j=0;$j<count($ship_id_array);$j++)
+        {
+            $entity = $em->getRepository('InitialShippingBundle:ShipDetails')->find($ship_id_array[$j]['id']);
+            $shipType_ob = $em->getRepository('InitialShippingBundle:ShipDetails')->find($shipType);
+            $country_obj = $em->getRepository('InitialShippingBundle:ShipDetails')->find($country);
+            $company_obj = $em->getRepository('InitialShippingBundle:ShipDetails')->find($companyDetailsId);
+
+            $shipDetail = new ShipDetails();
+            $entity->setshipName($shipName);
+            $entity->setShipType($shipType_ob);
+            $entity->setImoNumber($imoNumber);
+            $entity->setCompanyDetailsId($company_obj);
+            $entity->setCountry($country_obj);
+            $entity->setDescription($description);
+            $entity->setManufacturingYear($manufacturingYear);
+            $entity->setBuilt($built);
+            $entity->setSize($size);
+            $entity->setGt($gt);
+            $entity->setLocation($location);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('shipdetails_select1');
     }
 
     /**
