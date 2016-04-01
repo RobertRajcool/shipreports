@@ -5,8 +5,12 @@ $(document).ready(function()
 {
     $('#registercontentid').hide();
     $('#viewcontentid').hide();
+    var defalutchecboxid = 'activecheckbox';
+    $('#activecheckbox').prop('checked', true);
+    $('#activecheckbox').attr("disabled", true);
+    /*checboxcheckeddisplay(defalutchecboxid);*/
+    var count=1;
 
-    var counter = 1;
 
 
     $('#adduserscreenbutton').click(
@@ -277,4 +281,126 @@ $(document).ready(function()
         }
     );
     //While click cancel button do remove the from Ends Here
+
+    //Find the group active or inactive checkbox value Starts Here
+    $('.inline-checkbox').live('change',function ()
+    {
+        var checkboxid = $(this).attr('id');
+        var chkArray = [];
+        $(".inline-checkbox:checked").each(function()
+        {
+            chkArray.push($(this).val());
+        });
+        var selected;
+        selected = chkArray.join(',') + ",";
+        if(selected.length > 1)
+        {
+            var sendingdata = {checkboxvalue : chkArray};
+            $.ajax({
+                type: "post",
+                data: sendingdata,
+                url: "/mailing/ajaxgroupchange",
+                success: function (data)
+                {
+                    $('#countid').text('');
+                    $('#countid').text(data.countofgroup);
+                    $('#listgroupcontent').text('');
+                    $.each(data.listofgroup, function(i, groupemail)
+                    {
+                        $('<div  class="users_list_grid"> <span class="user_image"><img src="/images/new_icon.png"></span><span  class="users_name_row">' +
+                            '<span id="userlistid_'+groupemail.id+'" class="name">'+groupemail.groupname+'</span></span></div>').appendTo('#listgroupcontent');
+                    });
+                    $('#activecheckbox').attr("disabled", false);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('Error : ' + errorThrown);
+                }
+            });
+        }
+        else
+        {
+            alert("Please at least one of the checkbox");
+        }
+
+    });
+    //Find the group active or inactive checkbox value Ends Here
+    function checboxcheckeddisplay(id)
+    {
+        /*$('#'+id).prop('checked', true);
+        $('#activecheckbox').css('display','block')*/
+
+    }
+    $('.inline-checkbox').live('click change',function ()
+    {
+
+        if($('#archivecheckbox').is(":checked")==true)
+        {
+            $('#activecheckbox').attr("disabled", false);
+            $('#archivecheckbox').attr("disabled", true);
+        }
+        if($('#archivecheckbox').is(":checked")==false)
+        {
+
+            $('#activecheckbox').attr("disabled", true);
+            $('#archivecheckbox').attr("disabled", false);
+        }
+        if($('#activecheckbox').is(":checked")==true)
+        {
+            $('#activecheckbox').attr("disabled", true);
+            $('#archivecheckbox').attr("disabled", false);
+
+
+        }
+        if($('#activecheckbox').is(":checked")==false)
+        {
+            $('#archivecheckbox').attr("disabled", true);
+            $('#activecheckbox').attr("disabled", false);
+
+        }
+        if($('#activecheckbox').is(":checked")==true && $('#archivecheckbox').is(":checked")==true)
+        {
+
+            $('#activecheckbox').attr("disabled", false);
+            $('#archivecheckbox').attr("disabled", false);
+        }
+        if($('#activecheckbox').is(":checked")==false && $('#archivecheckbox').is(":checked")==true)
+        {
+            $('#archivecheckbox').attr("disabled", true);
+            $('#activecheckbox').attr("disabled", false);
+
+        }
+        if($('#activecheckbox').is(":checked")==true && $('#archivecheckbox').is(":checked")==false)
+        {
+
+            $('#activecheckbox').attr("disabled", true);
+            $('#archivecheckbox').attr("disabled", false);
+        }
+
+      /*  var idarray = [];
+        $('.inline-checkbox').each(function ()
+        {
+            //alert("Id: " + $(this).attr("id") + " Value: " + $(this).val() + " Checked: " + $(this).is(":checked"));
+            if($(this).is(":checked")==true)
+            {
+                idarray.push($(this).attr("id"));
+            }
+
+        });
+       var length=idarray.length;
+       if(length==1)
+       {
+
+           var attributeid=idarray[0];
+           $('#'+attributeid).attr("disabled", true);
+       }
+        if(length>1)
+        {
+
+            for(var kk=0;kk<length;kk++)
+            {
+                $('#' + idarray[kk]).attr("disabled", false);
+            }
+        }*/
+    });
 });

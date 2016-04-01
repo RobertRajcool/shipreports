@@ -30,9 +30,8 @@
         "tfox/mpdf-port-bundle": "1.2.*",
         "mmoreram/gearman-bundle": "dev-master",
         "m4t1t0/fop-pdf-bundle": "dev-master",
-        "sonata-project/page-bundle": "^2.3",
-        "sonata-project/datagrid-bundle": "2.2.*@dev",
-        "sonata-project/doctrine-orm-admin-bundle": "^2.3"
+        "friendsofsymfony/jsrouting-bundle": "^1.6"
+
 
 
 

@@ -113,3 +113,5 @@ gearman:
 # FopPdfBundle Configuration
 fop_pdf:
     fop: /usr/local/bin/fop
+fos_js_routing:
+    routes_to_expose: [ "[a-zA-z0-9_-]+" ]

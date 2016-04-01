@@ -4,8 +4,6 @@ namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\EmailGroup;
 use Initial\ShippingBundle\Entity\EmailUsers;
-use Initial\ShippingBundle\Entity\Mailing;
-use Initial\ShippingBundle\Entity\MailingGroup;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 
 /**
- * DashboradController.
+ * MailingController.
  *
  * @Route("/mailing")
  */
@@ -323,7 +321,75 @@ class MailingController extends Controller
         return $response;
 
     }
+    /**
+     * Add Account.
+     *
+     * @Route("/ajaxgroupchange", name="ajaxgroupchange")
+     * @Method("Post")
+     */
+    public function ajaxgroupchangeAction(Request $request)
+    {
 
+        $em = $this->getDoctrine()->getManager();
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $username = $user->getUsername();
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:CompanyDetails','a')
+                ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
+                ->where('b.username = :username')
+                ->setParameter('username',$username)
+                ->getQuery();
+        }
+        else
+        {
+            $query = $em->createQueryBuilder()
+                ->select('a.companyid')
+                ->from('InitialShippingBundle:User','a')
+                ->where('a.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $companyid=$query->getSingleScalarResult();
+
+        $checkboxvalue = $request->request->get('checkboxvalue');
+        if(count($checkboxvalue)==2)
+        {
+            $listofgroup = $em->createQueryBuilder()
+                ->select('c.groupname','c.id','b.useremailid')
+                ->from('InitialShippingBundle:EmailGroup','c')
+                ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = c.id')
+                ->where('c.companyid = :companyid')
+                ->groupby('c.groupname')
+                ->setParameter('companyid',$companyid)
+                ->getQuery()
+                ->getResult();
+        }
+        if(count($checkboxvalue)==1)
+        {
+            $listofgroup = $em->createQueryBuilder()
+                ->select('c.groupname','c.id','b.useremailid')
+                ->from('InitialShippingBundle:EmailGroup','c')
+                ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = c.id')
+                ->where('c.companyid = :companyid')
+                ->andwhere('c.groupstatus = :groupstatus')
+                ->groupby('c.groupname')
+                ->setParameter('companyid',$companyid)
+                ->setParameter('groupstatus',$checkboxvalue[0])
+                ->getQuery()
+                ->getResult();
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array('countofgroup'=>count($listofgroup),'listofgroup'=>$listofgroup));
+        return $response;
+
+    }
 
 
 }

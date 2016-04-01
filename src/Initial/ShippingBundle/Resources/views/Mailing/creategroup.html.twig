@@ -24,26 +24,26 @@
       <span><a href="" class="grid_list_icon ss-rows">&nbsp;</a></span>
     </span>
         </div>
-        <div class="users_list_main"><span>Users ({{ usercount }})</span> <span class="show_dropdown_icon">&nbsp;</span>
+        <div class="users_list_main"><span>Users <span id="countid"> ({{ usercount }})</span></span> <span class="show_dropdown_icon">&nbsp;</span>
         </div>
         <div class="email_group_show_drap" ng-show="showMe3">
             <ul>
-                <li><input type="checkbox" class="inline-checkbox"> Active Group</li>
-                <li><input type="checkbox" class="inline-checkbox"> Archived Group</li>
+                <li class="commonclass"><input type="checkbox" id="activecheckbox" name="activecheckbox[]" value="1" class="inline-checkbox"> Active Group</li>
+                <li class="commonclass"><input type="checkbox" id="archivecheckbox" name="activecheckbox[]"  value="0" class="inline-checkbox"> Archived Group</li>
             </ul>
         </div>
 
-        <div class="users_list_grid_main">
-            {% set i=1 %}
+        <div id="listgroupcontent" class="users_list_grid_main">
+
             {% for object in listofuser %}
-            <div class="users_list_grid">
+            <div  class="users_list_grid">
                 <span class="user_image"><img src="/images/new_icon.png"></span>
-    <span class="users_name_row">
+    <span  class="users_name_row">
     	<span id="userlistid_{{ object.id }}" class="name">{{ object.groupname }}</span>
       <span class="text">&nbsp;</span>
     </span>
             </div>
-                {% set i=i+1 %}
+
             {% endfor %}
 
 

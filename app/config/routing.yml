@@ -60,6 +60,9 @@ initial_shipping_ship_details:
 initial_shipping_company_details:
     resource: "@InitialShippingBundle/Controller/CompanyDetailsController.php"
     type:     annotation
+initial_shipping_dataverfication_scorecard:
+    resource: "@InitialShippingBundle/Controller/DataVerficationController.php"
+    type:     annotation
 
 initial_shipping:
     resource: "@InitialShippingBundle/Resources/config/routing.yml"
@@ -71,6 +74,8 @@ app:
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 
 
 
