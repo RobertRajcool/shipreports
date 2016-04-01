@@ -26,14 +26,27 @@
                 $scope.showMe = !$scope.showMe;
             }
 
-            $scope.showMe2 = false;
-            $scope.myFunc2 = function() {
-                $scope.showMe2 = !$scope.showMe2;
+            $scope.ScoreCard = false;
+            $scope.myFuncScoreCard = function() {
+                $scope.ScoreCard = !$scope.ScoreCard;
             }
-            $scope.showMe3 = false;
-            $scope.myFunc3 = function() {
-                $scope.showMe3 = !$scope.showMe3;
+            $scope.VesselRanking = false;
+            $scope.myFuncVesselRanking = function() {
+                $scope.VesselRanking = !$scope.VesselRanking;
             }
+        });
+    </script>
+    <script type="text/javascript">
+        $(window).ready(function()
+        {
+            //$('#dashboradhome1').addClass("active");
+            $('.layout_name').click(function()
+            {
+                $('#dashboradhome1').removeClass("active");
+                $('.layout_name').removeClass("active");
+                var currentId = $(this).attr('id');
+                $('#'+currentId+1).addClass("active");
+            });
         });
     </script>
 </head>
@@ -44,78 +57,132 @@
             <div  class="col-md-2 left_menus-2">
                 <div class="logo"><img src="/images/pioneer_logo.png"></div>
                 <ul class="nav nav-sidebar">
+
+                    <li class="active" id="dashboradhome1">
+                        <a class="layout_name" id="dashboradhome" href="{{ path('dashboradhome') }}">
+                            <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
+                            <span class="menu-item-text">Dashboard</span>
+                        </a>
+                    </li>
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                        <li class="active">
-                            <a href="{{ path('dashboradhome') }}">
-                                <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
-                                <span class="menu-item-text">Dashboard</span>
+                        <li id="shipdetails_select1">
+                            <a id="shipdetails_select" class="layout_name" href="{{ path('shipdetails_select1') }}">
+                                <span class="menu-item-icon ss-star">&nbsp;</span>
+                                <span class="menu-item-text" >Vessels</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ path('shipdetails_select1') }}">
+                        <li id="Scorecard1">
+                            <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
                                 <span class="menu-item-icon ss-star">&nbsp;</span>
-                                <span class="menu-item-text">Ships</span>
+                                <span class="menu-item-text" id="Scorecard">Scorecard</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                             </a>
-                        </li>
-                        <li>
-                            <a ng-click="myFunc2()">
-                                <span class="menu-item-icon ss-star">&nbsp;</span>
-                                <span class="menu-item-text">KPI</span>
-                                <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
-                            </a>
-                            <ul class="submenu" ng-show="showMe2">
-                                <li>
-                                    <a href="{{ path('kpidetails_select1') }}">
+                            <ul class="submenu" ng-show="ScoreCard">
+                                <li id="kpidetails_select1">
+                                    <a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}">
                                         <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                        <span class="menu-item-text">Add KPI</span>
+                                        <span class="menu-item-text " id="kpidetails_select">Add KPI</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="{{ path('elementdetails_select1') }}">
-                                        <span class="menu-item-icon ss-star">&nbsp;</span>
-                                        <span class="menu-item-text">Element</span>
+                                <li id="elementdetails_select1">
+                                    <a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text" id="elementdetails_select">Element</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="{{ path('rules_select') }}">
-                                        <span class="menu-item-icon ss-star">&nbsp;</span>
-                                        <span class="menu-item-text">Rules</span>
+                                <li id="rules_select1">
+                                    <a class="layout_name" id="rules_select" href="{{ path('rules_select') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text" id="rules_select">Rules</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="">
+                                <li id="data_verification1">
+                                    <a class="layout_name" id="data_verification" href="">
                                         <span class="menu-item-icon ss-check">&nbsp;</span>
-                                        <span class="menu-item-text">Verification</span>
+                                        <span class="menu-item-text">Data verfication</span>
+                                    </a>
+                                </li>
+                                <li id="data_import1">
+                                    <a class="layout_name" id="data_import" href="">
+                                        <span class="menu-item-icon ss-database">&nbsp;</span>
+                                        <span class="menu-item-text">Data Import</span>
+                                    </a>
+                                </li>
+                                <li id="reports1">
+                                    <a class="layout_name" id="reports" href="">
+                                        <span class="menu-item-icon ss-barchart">&nbsp;</span>
+                                        <span class="menu-item-text">Reports</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                            <li>
-                                <a href="{{ path('showfile') }}">
-                                    <span class="menu-item-icon ss-database">&nbsp;</span>
-                                    <span class="menu-item-text">Data Import</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {%  if is_granted("ROLE_ADMIN") %}
-                            <li>
-                                <a href="{{ path('fos_user_registration_show') }}">
-                                    <span class="menu-item-icon ss-users">&nbsp;</span>
-                                    <span class="menu-item-text">Company Users</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a href="{{ path('creategroup') }}">
-                                <span class="menu-item-icon ss-mail">&nbsp;</span>
-                                <span class="menu-item-text">Mail</span>
+                        <li id="Vessel_Ranking1">
+                            <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
+                                <span class="menu-item-icon ss-warehouse">&nbsp;</span>
+                                <span class="menu-item-text layout_name">Vessel Ranking</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="VesselRanking">
+                                <li id="rankingkpidetails_select1">
+                                    <a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text">Add KPI</span>
+                                    </a>
+                                </li>
+                                <li id="rankingelementdetails_select1">
+                                    <a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text">Element</span>
+                                    </a>
+                                </li>
+                                <li id="rankingrules_select1">
+                                    <a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}">
+                                        <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                        <span class="menu-item-text">Rules</span>
+                                    </a>
+                                </li>
+                                <li id="ranking_data_verification1">
+                                    <a class="layout_name" id="ranking_data_verification1" href="">
+                                        <span class="menu-item-icon ss-check">&nbsp;</span>
+                                        <span class="menu-item-text">Data verfication</span>
+                                    </a>
+                                </li>
+                                <li id="Ranking_data_import1">
+                                    <a class="layout_name" id="Ranking_data_import" href="">
+                                        <span class="menu-item-icon ss-database">&nbsp;</span>
+                                        <span class="menu-item-text">Data Import</span>
+                                    </a>
+                                </li>
+                                <li  id="Ranking_Reports1">
+                                    <a id="Ranking_Reports" class="layout_name" href="">
+                                        <span class="menu-item-icon ss-barchart">&nbsp;</span>
+                                        <span class="menu-item-text">Reports</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_ADMIN") %}
+                        <li id="fos_user_registration_show21">
+                            <a class="layout_name" id="fos_user_registration_show" href="{{ path('fos_user_registration_show') }}">
+                                <span class="menu-item-icon ss-users">&nbsp;</span>
+                                <span class="menu-item-text">Company Users</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="dashboard.html">
-                                <span class="menu-item-icon ss-repeat">&nbsp;</span>
-                                <span class="menu-item-text">Reports</span>
+                    {% endif %}
+                    {%  if is_granted("ROLE_SUPER_ADMIN") %}
+                        <li id="fos_user_registration_show1">
+                            <a class="layout_name" id="fos_user_registration_show" href="{{ path('fos_user_registration_show') }}">
+                                <span class="menu-item-icon ss-users">&nbsp;</span>
+                                <span class="menu-item-text">Company Details</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                        <li id="creategroup1">
+                            <a class="layout_name" id="creategroup" href="{{ path('creategroup') }}">
+                                <span class="menu-item-icon ss-mail">&nbsp;</span>
+                                <span class="menu-item-text">Mail</span>
                             </a>
                         </li>
                     {% endif %}
@@ -145,26 +212,26 @@
                 </div>
             </div>
             <div class="dashboard_screen_views dashboard_right_ship">
-            <section>
-                {% block body %}
+                <section>
+                    {% block body %}
 
-                {% endblock %}
-            </section>
-                </div>
+                    {% endblock %}
+                </section>
+            </div>
 
 
         </div>
     </div>
-{% endif %}
-<!-- end if for overall links -->
-{% for type, messages in app.session.flashBag.all %}
-    {% for message in messages %}
-        <div class="{{ type }}">
-            {{ message|trans({}, 'FOSUserBundle') }}
-        </div>
-    {% endfor %}
-{% endfor %}
 
+    <!-- end if for overall links -->
+    {% for type, messages in app.session.flashBag.all %}
+        {% for message in messages %}
+            <div class="{{ type }}">
+                {{ message|trans({}, 'FOSUserBundle') }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
 <div>
     {% block fos_user_content %}
     {% endblock fos_user_content %}

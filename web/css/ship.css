@@ -1,8 +1,9 @@
-/*
- * Base structure
- */
 
-/* Move down content because we have a fixed navbar that is 50px tall */
+    /*
+     * Base structure
+     */
+
+    /* Move down content because we have a fixed navbar that is 50px tall */
 body {
     background:#FFFFFF;
 }
@@ -232,6 +233,7 @@ table thead th {
     border-bottom: 1px solid #ddd !important;
     border-radius:0px !important;
 }
+
 table tbody tr td {
     padding: 4px 10px !important;
 }
@@ -1393,19 +1395,58 @@ select {
     font-size:12px;
     margin-right:10px;
 }
+.normal_table tbody td {
+    background:#FFFFFF !important;
+}
 
+.graph_and_colour_coding_main_title_row {
+    border:1px solid #f0f0f0 !important;
+    margin-bottom:-2px;
+}
+.graph_and_colour_coding_main_title_row thead th {
+    text-align:center;
+    font-weight:bold;
+    font-size:17px;
+}
+.graph_and_colour_coding_main_title_row tbody td {
+    padding:10px 8px !important;
+}
 
-.graph_and_colour_coding_row_row .kpi_name {
-    width: 40%;
+.table-striped-2 tbody tr:nth-child(odd) td,
+.table-striped-2 tbody tr:nth-child(odd) th {
+    background-color: #f9f9f9 !important;
 }
-.graph_and_colour_coding_row_row .weightage {
+.graph_and_colour_coding_row thead th {
+    text-align:center;
+    background:#989898;
+}
+.graph_and_colour_coding_row tbody td {
+    text-align:center;
+}
+.graph_and_colour_coding_row .kpi_name_thtd {
+    text-align:left;
+}
+.graph_and_colour_coding_row {
+    border:1px solid #f0f0f0 !important;
+}
+.graph_and_colour_coding_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.graph_and_colour_coding_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.graph_and_colour_coding_row .kpi_name {
+    width: 50%;
+}
+.graph_and_colour_coding_row .weightage {
     width: 10%;
 }
-.graph_and_colour_coding_row_row .month {
-    width: 10%;
+.graph_and_colour_coding_row .month {
+    width: 8%;
 }
-.graph_and_colour_coding_row_row .month_difference {
-    width: 10%;
+.graph_and_colour_coding_row .month_difference {
+    width: 8%;
 }
 
 
@@ -1476,3 +1517,4 @@ input[type="color"],
     line-height: 19px;
     padding: 3px 6px;
 }
+
