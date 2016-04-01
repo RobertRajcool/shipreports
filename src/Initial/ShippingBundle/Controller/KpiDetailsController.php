@@ -267,6 +267,9 @@ class KpiDetailsController extends Controller
      */
     public function kpi_ajax_showAction(Request $request,$hi='')
     {
+        $user = $this->getUser();
+        $userId = $user->getId();
+
         $id = $request->request->get('Id');
         $em = $this->getDoctrine()->getManager();
 
@@ -310,12 +313,36 @@ class KpiDetailsController extends Controller
 
         $rules = $this->ruleAction($request,'hi');
 
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $ship_query = $em->createQueryBuilder()
+                ->select('a.shipName,a.id')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $ship_query = $em->createQueryBuilder()
+                ->select('a.shipName,a.id')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = a.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $shipDetails = $ship_query->getResult();
+
         $response = new JsonResponse();
         $response->setData(array(
             'kpi_detail' => $kpiDetail,
             'ship_id' => $ship_id_array,
             'ship_name' => $ship_name_array,
-            'kpi_rules' => $rules
+            'kpi_rules' => $rules,
+            'ship_array' => $shipDetails
         ));
 
         if($hi=='hi')

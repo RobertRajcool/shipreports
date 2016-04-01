@@ -1,43 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {#{% block body %}
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <div class="page-header">
-        <h2>Kpi Details</h2>
-        <a href="{{ path('kpidetails_new') }}">Add KPI</a>
-    </div>
-    <div class="table-responsive">
-    <table class="table table-striped">
+    <h1>RankingKpiDetails list</h1>
+
+    <table>
         <thead>
-        <tr>
-            <th>KpiName</th>
-            <th>Description</th>
-            <th>ActiveDate</th>
-            <th>EndDate</th>
-            <th>CellName</th>
-            <th>CellDetails</th>
-            <th>Actions</th>
-        </tr>
+            <tr>
+                <th>Id</th>
+                <th>Shipdetailsid</th>
+                <th>Kpiname</th>
+                <th>Description</th>
+                <th>Activedate</th>
+                <th>Enddate</th>
+                <th>Cellname</th>
+                <th>Celldetails</th>
+                <th>Weightage</th>
+                <th>Actions</th>
+            </tr>
         </thead>
         <tbody>
-        {% for kpiDetail in kpiDetails %}
+        {% for rankingKpiDetail in rankingKpiDetails %}
             <tr>
-                <td>{{ kpiDetail.kpiName }}</td>
-                <td>{{ kpiDetail.description }}</td>
-                <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
-                <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
-                <td>{{ kpiDetail.cellName }}</td>
-                <td>{{ kpiDetail.cellDetails }}</td>
+                <td><a href="{{ path('rankingkpidetails_show', { 'id': rankingKpiDetail.id }) }}">{{ rankingKpiDetail.id }}</a></td>
+                <td>{{ rankingKpiDetail.shipDetailsId }}</td>
+                <td>{{ rankingKpiDetail.kpiName }}</td>
+                <td>{{ rankingKpiDetail.description }}</td>
+                <td>{% if rankingKpiDetail.activeDate %}{{ rankingKpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
+                <td>{% if rankingKpiDetail.endDate %}{{ rankingKpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                <td>{{ rankingKpiDetail.cellName }}</td>
+                <td>{{ rankingKpiDetail.cellDetails }}</td>
+                <td>{{ rankingKpiDetail.weightage }}</td>
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('kpidetails_show1', { 'id': kpiDetail.id }) }}">show</a>
+                            <a href="{{ path('rankingkpidetails_show', { 'id': rankingKpiDetail.id }) }}">show</a>
                         </li>
                         <li>
-                            <a href="{{ path('kpidetails_edit1', { 'id': kpiDetail.id }) }}">edit</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('elementdetails_select', { 'id': kpiDetail.id }) }}">Kpi_Elements</a>
+                            <a href="{{ path('rankingkpidetails_edit', { 'id': rankingKpiDetail.id }) }}">edit</a>
                         </li>
                     </ul>
                 </td>
@@ -45,25 +44,28 @@
         {% endfor %}
         </tbody>
     </table>
-  </div>
-    </div>
-{% endblock %}#}
 
+    <ul>
+        <li>
+            <a href="{{ path('rankingkpidetails_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}#}
 
 {% block body %}
 
     {% block javascripts %}
 
         {% javascripts
-            '@AppBundle/Resources/public/js/AAA.js'
-            '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/rules.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-
         <script type="text/javascript">
-            $(document).ready(function(){
 
+            $(document).ready(function()
+            {
                 $('.create_kpi').hide();
                 $('.show_kpi').hide();
                 $('#list_view').hide();
@@ -108,18 +110,20 @@
                     $('.create_kpi').show();
                 });
 
-                $('.cancel_btn').live("click",function(){
+                $('.cancel_btn').live("click",function()
+                {
                     $('.create_kpi').hide();
                     $('#grid_view').show();
                 });
 
-                $('.edit_cancel_button').live("click",function(){
+                $('.edit_cancel_button').live("click",function()
+                {
                     $('.grid_edit_kpi').hide();
                     $('#grid_view').show();
                     $('.show_kpi').show();
                 });
 
-                // Kpi view coding
+                // Ranking Kpi view coding
 
                 $('.rule_div').hide();
                 var condition_text = "";
@@ -152,7 +156,7 @@
                     $.ajax({
                         type: "POST",
                         data: data,
-                        url: "kpi_ajax_show",
+                        url: "ranking_kpi_ajax_show",
                         success: function(data)
                         {
                             var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -191,6 +195,7 @@
                             $.each(data.ship_name, function(ii)
                             {
                                 $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
+                                $('.ship_name_edit').val(data.ship_name[ii][0]['id']).attr('selected');
                             });
 
                             $('.show_kpi').show();
@@ -235,15 +240,15 @@
                                 });
                                 $('.rule_div').show();
                             }
-                                },
-                                error: function(XMLHttpRequest, textStatus, errorThrown)
-                                {
-                                    alert('Error : ' + errorThrown);
-                                }
-                            });
-                            $('.show_kpi').show();
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                    $('.show_kpi').show();
 
-                        });
+                });
 
                 $('#kpi_details_activeDate_day').hide();
                 $('#kpi_details_endDate_day').hide();
@@ -285,6 +290,7 @@
                 }
 
             });
+
         </script>
 
     {% endblock %}
@@ -336,32 +342,26 @@
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>KpiName</th>
-                                    <th>Description</th>
-                                    <th>ActiveDate</th>
-                                    <th>EndDate</th>
-                                    <th>CellName</th>
-                                    <th>CellDetails</th>
-                                    {#<th>Actions</th>#}
-                                </tr>
+                            <tr>
+                                <th>KpiName</th>
+                                <th>Description</th>
+                                <th>ActiveDate</th>
+                                <th>EndDate</th>
+                                <th>CellName</th>
+                                <th>CellDetails</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                {% for kpiDetail in kpiDetails %}
-                                    <tr>
-                                        <td>{{ kpiDetail.kpiName }}</td>
-                                        <td>{{ kpiDetail.description }}</td>
-                                        <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
-                                        <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
-                                        <td>{{ kpiDetail.cellName }}</td>
-                                        <td>{{ kpiDetail.cellDetails }}</td>
-                                        {#<td>
-                                            &#123;&#35;<a href="{{ path('kpidetails_show1', { 'id': kpiDetail.id }) }}">show</a>&#35;&#125;
-                                            <a href="{{ path('kpidetails_edit1', { 'id': kpiDetail.id }) }}">edit</a>
-                                            <a href="{{ path('elementdetails_select', { 'id': kpiDetail.id }) }}">Kpi_Elements</a>
-                                        </td>#}
-                                    </tr>
-                                {% endfor %}
+                            {% for kpiDetail in kpiDetails %}
+                                <tr>
+                                    <td>{{ kpiDetail.kpiName }}</td>
+                                    <td>{{ kpiDetail.description }}</td>
+                                    <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
+                                    <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                                    <td>{{ kpiDetail.cellName }}</td>
+                                    <td>{{ kpiDetail.cellDetails }}</td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -381,7 +381,7 @@
         <section>
             <div class="col-sm-12">
                 <div class="add_kpi_views_screen">
-                    <form class="form-horizontal no-style" action="{{ path('kpidetails_new1') }}" method="post">
+                    <form class="form-horizontal no-style" action="{{ path('rankingkpidetails_new1') }}" method="post">
 
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
@@ -419,30 +419,10 @@
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
                                         <span>
-                                            {#<select class="add_rule_basic_date_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>Jan</option>
-                                            </select>
-                                        </span>
-                                        <span>
-                                            <select class="add_rule_basic_year_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>2016</option>
-                                            </select>#}
                                             {{ form_widget(form.activeDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
                                         </span>
-                                                            To
+                                        To
                                         <span>
-                                            {#<select class="add_rule_basic_date_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>Jan</option>
-                                            </select>
-                                        </span>
-                                        <span>
-                                            <select class="add_rule_basic_year_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>2016</option>
-                                            </select>#}
                                             {{ form_widget(form.endDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
                                         </span>
                                     </div>
@@ -474,19 +454,10 @@
                                 <legend class="legend_name">Rules create</legend>
                                 <div class="form-group button">
                                     <div class="col-xs-9">
-                                        {#<a href="">Add rule</a> <a href="">Sub condition</a>#}
                                         <div id="conditions"></div>
                                         <div id="actions"></div>
-
                                         <p id="text_box"></p>
                                         <input type="hidden" id="result" name="value">
-
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                                        {#<div id="actions"></div>#}
-                                        {#<a href="" id="actions">add action</a>#}
                                     </div>
                                 </div>
                                 <div class="form-group button">
@@ -494,39 +465,19 @@
 
                                     </div>
                                 </div>
-
                                 <div class="table-responsive">
                                     <table class="table add_rule_conditions" id="rule-table">
                                         <thead>
-                                        <tr id="row_id">
-                                            <th class="conditions">Conditions</th>
-                                            <th class="color">Color</th>
-                                            <th class="action">&nbsp;</th>
-                                        </tr>
+                                            <tr id="row_id">
+                                                <th class="conditions">Conditions</th>
+                                                <th class="color">Color</th>
+                                                <th class="action">&nbsp;</th>
+                                            </tr>
                                         </thead>
-                                        <tbody>
-                                        </tbody>
                                     </table>
                                     <div class="small"></div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box_right add_rule_right_form">
-                                <legend class="legend_name">Created Rules</legend>
-                                <div class="table-responsive">
-                                    <table class="table add_rule_conditions" id="rule-table">
-                                        <thead>
-                                        <tr id="row_id">
-                                            <th class="conditions">Conditions</th>
-                                            <th class="color">Color</th>
-                                            <th class="action">&nbsp;</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="small"></div>
-                                </div>
-                            </fieldset>#}
                         </div>
 
                         <div class="actions_submit">
@@ -598,9 +549,10 @@
         </section>
     </div>
 
+
     <div class="grid_edit_kpi">
 
-        {#<script src="../js/rules/conditions-builder.js"></script>
+        <script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/action-builder.js"></script>
 
         <script type="text/javascript">
@@ -788,10 +740,9 @@
                     $.ajax({
                         type: "POST",
                         data: data,
-                        url: "ajax_edit",
-                        success: function(data) {
-                            //alert('success')
-                            //console.log(data);
+                        url: "ranking_ajax_edit",
+                        success: function(data)
+                        {
                             $('.grid_edit_kpi').hide();
 
                             var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -920,7 +871,7 @@
                 }
             });
 
-        </script>#}
+        </script>
 
 
         <section>
@@ -965,7 +916,7 @@
                                 <span>
                                     <input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />
                                 </span>
-                                                        To
+                                        To
                                 <span>
                                     <input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />
                                 </span>
@@ -1010,18 +961,10 @@
                                 <legend class="legend_name">Rules create</legend>
                                 <div class="form-group button">
                                     <div class="col-xs-9">
-                            {# &#123;&#35;<a href="">Add rule</a> <a href="">Sub c&#35;&#125;>#}
                                         <div id="conditions_edit"></div>
                                         <div id="actions_edit"></div>
-
                                         <p id="text_box"></p>
                                         <input type="hidden" id="result" name="value">
-
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                            {# &#123;&#35;<div id="act&#35;&#125;>#}
                                     </div>
                                 </div>
                                 <div class="form-group button">

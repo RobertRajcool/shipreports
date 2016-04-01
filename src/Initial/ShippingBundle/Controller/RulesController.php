@@ -157,7 +157,7 @@ class RulesController extends Controller
             }
         }
 
-        return $this->redirectToRoute('rules_show', array('id' => $rule->getId()));
+        return $this->redirectToRoute('rules_select');
     }
 
 
@@ -245,13 +245,13 @@ class RulesController extends Controller
 
         for($i=0;$i<count($rule_id_array);$i++)
         {
-            $rules_array = $em->createQueryBuilder()
+            $rules_query_array = $em->createQueryBuilder()
                 ->select('a.rules')
                 ->from('InitialShippingBundle:Rules','a')
                 ->where('a.id = :rule_id')
                 ->setParameter('rule_id',$rule_id_array[$i]['id'])
-                ->getQuery()
-                ->getResult();
+                ->getQuery();
+            $rules_array[$i]=$rules_query_array->getResult();
         }
 
         $response = new JsonResponse();

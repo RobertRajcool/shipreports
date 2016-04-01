@@ -196,7 +196,7 @@ class ElementDetailsController extends Controller
                 $em->flush();
             }
         }
-        return $this->redirectToRoute('elementdetails_show', array('id' => $elementDetail->getId()));
+        return $this->redirectToRoute('elementdetails_select1');
     }
 
 
@@ -345,7 +345,7 @@ class ElementDetailsController extends Controller
         {
             $element_rules_id_array= $em->createQueryBuilder()
                 ->select('a.id')
-                ->from('InitialShippingBundle:elementRules','a')
+                ->from('InitialShippingBundle:ElementRules','a')
                 ->where('a.elementDetailsId = :element_id')
                 ->setParameter('element_id',$id)
                 ->getQuery()
@@ -353,8 +353,8 @@ class ElementDetailsController extends Controller
 
             for($i=0;$i<count($rules_array);$i++)
             {
-                $element_rules_obj = $em->getRepository('InitialShippingBundle:elementRules')->find($element_rules_id_array[$i]);
-                $element_obj= $em->getRepository('InitialShippingBundle:elementDetails')->findOneBy(array('id'=>$id));
+                $element_rules_obj = $em->getRepository('InitialShippingBundle:ElementRules')->find($element_rules_id_array[$i]);
+                $element_obj= $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id));
 
                 $element_rules_obj->setRules($rules_array[$i]);
                 $element_rules_obj->setelementDetailsId($element_obj);

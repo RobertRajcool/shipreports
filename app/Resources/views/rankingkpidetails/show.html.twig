@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>RankingKpiDetails</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ rankingKpiDetail.id }}</td>
+            </tr>
+            <tr>
+                <th>Shipdetailsid</th>
+                <td>{{ rankingKpiDetail.shipDetailsId }}</td>
+            </tr>
+            <tr>
+                <th>Kpiname</th>
+                <td>{{ rankingKpiDetail.kpiName }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ rankingKpiDetail.description }}</td>
+            </tr>
+            <tr>
+                <th>Activedate</th>
+                <td>{% if rankingKpiDetail.activeDate %}{{ rankingKpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Enddate</th>
+                <td>{% if rankingKpiDetail.endDate %}{{ rankingKpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Cellname</th>
+                <td>{{ rankingKpiDetail.cellName }}</td>
+            </tr>
+            <tr>
+                <th>Celldetails</th>
+                <td>{{ rankingKpiDetail.cellDetails }}</td>
+            </tr>
+            <tr>
+                <th>Weightage</th>
+                <td>{{ rankingKpiDetail.weightage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('rankingkpidetails_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('rankingkpidetails_edit', { 'id': rankingKpiDetail.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

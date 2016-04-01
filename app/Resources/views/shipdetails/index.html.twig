@@ -127,7 +127,7 @@
                             $('.ship_Built').empty();
                             $('.ship_size').empty();
                             $('.ship_GT').empty();
-                            $('.ship_ManufacturingYear').empty();
+                            $('.ship_manufacturingYear').empty();
                             $('.ship_description').empty();
                         }
 
@@ -137,8 +137,6 @@
                             data:data,
                             success: function(data)
                             {
-                                //alert('success');
-                                //console.log(data.ship_type);
                                 $('.ship_name').append(data.Ship_detail[0].shipName);
                                 $('.ship_type').append(data.ship_type[0].shipType);
                                 $('.ship_ImoNumber').append(data.Ship_detail[0].imoNumber);
@@ -259,6 +257,13 @@
                         $('.Edit_ship').hide();
                         $('.show_ship_view').show();
                     });
+
+                    // Ship Active and Deactive Coding
+
+                    $('.archive_btn').live("click",function()
+                    {
+                        alert('hi');
+                    })
 
                 });
 
@@ -535,7 +540,7 @@
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
                         <a href="" class="edit_btn edit_ship_button"> Edit Ship</a>
-                        <a href="" class="edit_btn">Archive</a>
+                        <a href="" class="edit_btn archive_btn">Archive</a>
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Details</legend>
