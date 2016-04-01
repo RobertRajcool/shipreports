@@ -7,30 +7,19 @@
     <title>Shipping</title>
     <!-- Bootstrap -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-
-    {#<link href="/css/jquery-ui.css" rel="stylesheet">#}
     <link href="/css/app.css" rel="stylesheet">
     <link href="/css/ship.css" rel="stylesheet">
 
     <link href="/css/ss-standard.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
-   {# <link href="/css/bootstrap-datepicke.css" rel="stylesheet">
-    <link href="/css/bootstrap-datepicker.standalone.css" rel="stylesheet">#}
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/angular.min.js"></script>
-    <script src="/js/angular-animate.js"></script>
-    <script src="/js/ui-bootstrap-tpls-1.2.5.min.js"></script>
-    <script src="/js/anularuidatepicker.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
-    {#<script src="/js/bootstrap-datepicker.min.js"></script>#}
-
-  {#  <script src="/js/jquery-ui.min.js"></script>#}
-    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
     <script>
+        var app = angular.module('myApp', []);
         app.controller('myCtrl', function($scope) {
             $scope.showMe = false;
             $scope.myFunc = function() {
@@ -47,11 +36,10 @@
             }
         });
     </script>
-
 </head>
 <body>
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    <div class="container" ng-app="ui.bootstrap.demo" ng-controller="myCtrl">
+    <div class="container" ng-app="myApp" ng-controller="myCtrl">
         <div class="row">
             <div  class="col-md-2 left_menus-2">
                 <div class="logo"><img src="/images/pioneer_logo.png"></div>
@@ -95,7 +83,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="{{ path('adddata') }}">
+                                    <a href="">
                                         <span class="menu-item-icon ss-check">&nbsp;</span>
                                         <span class="menu-item-text">Verification</span>
                                     </a>

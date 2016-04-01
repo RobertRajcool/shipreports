@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>RankingElementRules list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Rules</th>
+                <th>Elementdetailsid</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rankingElementRule in rankingElementRules %}
+            <tr>
+                <td><a href="{{ path('rankingelementrules_show', { 'id': rankingElementRule.id }) }}">{{ rankingElementRule.id }}</a></td>
+                <td>{{ rankingElementRule.rules }}</td>
+                <td>{{ rankingElementRule.elementDetailsId }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('rankingelementrules_show', { 'id': rankingElementRule.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('rankingelementrules_edit', { 'id': rankingElementRule.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('rankingelementrules_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

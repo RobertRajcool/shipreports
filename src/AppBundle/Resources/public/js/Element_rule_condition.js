@@ -96,7 +96,7 @@ $(document).ready(function(){
             var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
                 $('<td>').text(condition_text),
                 $('<td>').text(obj.actions),
-                $('<td>').append($('<input>').attr({'type':'button', 'id':'delete_'+i+'', 'class':'delete_class'}).val("delete"))
+                $('<td>').append($('<a>').attr({'id':'delete_'+i+'', 'class':'delete_class delete_icon_btn ss-delete'}))
             ).appendTo('#rule-table');
 
         });
@@ -133,12 +133,13 @@ $(document).ready(function(){
         $('#text-value-id_'+j).hide();
         div.html(DynamicBox(""));
         $('#actions').append(div);
+        $('.add_button_place').append($('<a href="">add</a>').attr({'id':'submit_'+j+'', 'class':'dynamic-add'}));
 
     });
 
     function DynamicBox(value){
         return '<input type = "text" name="action_value" id="action-value_'+j+'" class="action-value">'+
-            '<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+
+            /*'<input type="button" id="submit_'+j+'" value = "add" class = "dynamic-add" name = "DynamicAdd">'+*/
             '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 

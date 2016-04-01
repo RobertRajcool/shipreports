@@ -61,10 +61,11 @@ class KpiDetailsController extends Controller
      * @Route("/select", name="kpidetails_select1")
      * @Method("GET")
      */
-    public function select1Action()
+    public function select1Action(Request $request)
     {
         $user = $this->getUser();
         $userId = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
 
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
@@ -94,10 +95,18 @@ class KpiDetailsController extends Controller
         }
 
         $kpiDetails = $query->getResult();
+        $count = count($kpiDetails);
+
+        $kpiDetail = new KpiDetails();
+        $form = $this->createForm(new KpiDetailsType($userId,$role), $kpiDetail);
+        $form->handleRequest($request);
 
 
         return $this->render('kpidetails/index.html.twig', array(
             'kpiDetails' => $kpiDetails,
+            'kpiDetail' => $kpiDetail,
+            'form' => $form->createView(),
+            'kpi_count' => $count
         ));
     }
 
@@ -196,6 +205,7 @@ class KpiDetailsController extends Controller
         return $this->redirectToRoute('kpidetails_select1');
     }
 
+
     /**
      * Finds and displays a KpiDetails entity.
      *
@@ -253,9 +263,169 @@ class KpiDetailsController extends Controller
     /**
      * Finds and displays a KpiDetails entity.
      *
+     * @Route("/kpi_ajax_show", name="kpidetails_kpi_ajax_show")
+     */
+    public function kpi_ajax_showAction(Request $request,$hi='')
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+
+        $id = $request->request->get('Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.id','a.kpiName','a.weightage','a.description','a.activeDate','a.endDate','a.cellName','a.cellDetails')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.id = :kpi_id')
+            ->setParameter('kpi_id',$id)
+            ->getQuery();
+        $kpiDetail = $query->getResult();
+
+        $query1 = $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.kpiName = :kpi_name')
+            ->setParameter('kpi_name',$kpiDetail[0]['kpiName'])
+            ->getQuery();
+        $kpi_id_array = $query1->getResult();
+
+        for($i=0;$i<count($kpi_id_array);$i++)
+        {
+            $query2 = $em->createQueryBuilder()
+                ->select('identity(a.shipDetailsId)')
+                ->from('InitialShippingBundle:KpiDetails','a')
+                ->where('a.id = :kpi_id')
+                ->setParameter('kpi_id',$kpi_id_array[$i]['id'])
+                ->getQuery();
+            $ship_id_array[$i] = $query2->getResult();
+        }
+
+        for($j=0;$j<count($kpi_id_array);$j++)
+        {
+            $query2 = $em->createQueryBuilder()
+                ->select('a.shipName')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->where('a.id = :ship_id')
+                ->setParameter('ship_id',$ship_id_array[$j][0][1])
+                ->getQuery();
+            $ship_name_array[$j] = $query2->getResult();
+        }
+
+        $rules = $this->ruleAction($request,'hi');
+
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+        {
+            $ship_query = $em->createQueryBuilder()
+                ->select('a.shipName,a.id')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
+                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+                ->where('c.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        else
+        {
+            $ship_query = $em->createQueryBuilder()
+                ->select('a.shipName,a.id')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = a.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId',$userId)
+                ->getQuery();
+        }
+        $shipDetails = $ship_query->getResult();
+
+        $response = new JsonResponse();
+        $response->setData(array(
+            'kpi_detail' => $kpiDetail,
+            'ship_id' => $ship_id_array,
+            'ship_name' => $ship_name_array,
+            'kpi_rules' => $rules,
+            'ship_array' => $shipDetails
+        ));
+
+        if($hi=='hi')
+        {
+            return $response;
+        }
+
+        return $response;
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ajax_edit", name="kpidetails_ajax_edit")
+     */
+    public function ajax_editAction(Request $request)
+    {
+        $id = $request->request->get('Id');
+        $kpiName = $request->request->get('kpiName');
+        $weightage = $request->request->get('weightage');
+        $description = $request->request->get('description');
+        $cellName = $request->request->get('cellName');
+        $cellDetails = $request->request->get('cellDetails');
+        $rules_array = $request->request->get('rules');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $kpi_id_array= $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.kpiName = :kpi_name')
+            ->setParameter('kpi_name',$kpiName)
+            ->getQuery()
+            ->getResult();
+
+        for($j=0;$j<count($kpi_id_array);$j++)
+        {
+            $entity = $em->getRepository('InitialShippingBundle:KpiDetails')->find($kpi_id_array[$j]);
+
+            $kpiDetail = new KpiDetails();
+            $entity->setKpiName($kpiName);
+            $entity->setDescription($description);
+            $entity->setWeightage($weightage);
+            $entity->setCellName($cellName);
+            $entity->setCellDetails($cellDetails);
+            $em->flush();
+        }
+
+        if(count($rules_array)>0)
+        {
+            $kpi_rules_id_array= $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:KpiRules','a')
+                ->where('a.kpiDetailsId = :kpi_id')
+                ->setParameter('kpi_id',$id)
+                ->getQuery()
+                ->getResult();
+
+            for($i=0;$i<count($rules_array);$i++)
+            {
+                $kpi_rules_obj = $em->getRepository('InitialShippingBundle:KpiRules')->find($kpi_rules_id_array[$i]);
+                $kpi_obj= $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$id));
+
+                $kpi_rules_obj->setRules($rules_array[$i]);
+                $kpi_rules_obj->setKpiDetailsId($kpi_obj);
+                $em->flush();
+            }
+        }
+
+        $show_response = $this->kpi_ajax_showAction($request,'hi');
+
+        return $show_response;
+
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
      * @Route("/{id}/rule", name="kpidetails_rule")
      */
-    public function ruleAction(Request $request)
+    public function ruleAction(Request $request,$hi='')
     {
         $id = $request->request->get('Id');
         $em = $this->getDoctrine()->getManager();
@@ -284,6 +454,10 @@ class KpiDetailsController extends Controller
             ->setParameter('kpi_id',$num)
             ->getQuery()
             ->getResult();
+        if($hi=='hi')
+        {
+            return $query;
+        }
 
         $response = new JsonResponse();
         $response->setData(array('Rule_Array' => $query));

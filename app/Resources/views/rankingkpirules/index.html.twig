@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>RankingKpiRules list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Rules</th>
+                <th>Kpidetailsid</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for rankingKpiRule in rankingKpiRules %}
+            <tr>
+                <td><a href="{{ path('rankingkpirules_show', { 'id': rankingKpiRule.id }) }}">{{ rankingKpiRule.id }}</a></td>
+                <td>{{ rankingKpiRule.rules }}</td>
+                <td>{{ rankingKpiRule.kpiDetailsId }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('rankingkpirules_show', { 'id': rankingKpiRule.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('rankingkpirules_edit', { 'id': rankingKpiRule.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('rankingkpirules_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}

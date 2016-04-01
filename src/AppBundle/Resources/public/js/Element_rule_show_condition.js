@@ -5,7 +5,7 @@ $(document).ready(function(){
     $('.remove').remove();
     $('#row_id').hide();
 
-    $('.add-rule').html('Show-Rules');
+    /*$('.add-rule').html('Show-Rules');
 
     var count = 0;
     var num = 0;
@@ -21,7 +21,7 @@ $(document).ready(function(){
         var data = {Id : $('#id').val()};
         var condition_text = "";
 
-        $.ajax({
+        *//*$.ajax({
             type: "POST",
             data:data,
             url: "rule",
@@ -89,11 +89,11 @@ $(document).ready(function(){
             {
                 alert('Error : ' + errorThrown);
             }
-        });
+        });*//*
 
         $('#id').val(count);
 
-    });
+    });*/
     var conditions, actions;
 
     $('.edit_class').live("click",function(){

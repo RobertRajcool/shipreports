@@ -1,3 +1,23 @@
+initial_shipping_ranking_rules:
+    resource: "@InitialShippingBundle/Controller/RankingRulesController.php"
+    type:     annotation
+
+initial_shipping_ranking_element_rules:
+    resource: "@InitialShippingBundle/Controller/RankingElementRulesController.php"
+    type:     annotation
+
+initial_shipping_ranking_kpi_rules:
+    resource: "@InitialShippingBundle/Controller/RankingKpiRulesController.php"
+    type:     annotation
+
+initial_shipping_ranking_element_details:
+    resource: "@InitialShippingBundle/Controller/RankingElementDetailsController.php"
+    type:     annotation
+
+initial_shipping_ranking_kpi_details:
+    resource: "@InitialShippingBundle/Controller/RankingKpiDetailsController.php"
+    type:     annotation
+
 initial_shipping_ship_types:
     resource: "@InitialShippingBundle/Controller/ShipTypesController.php"
     type:     annotation
