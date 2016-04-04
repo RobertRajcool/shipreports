@@ -81,7 +81,6 @@
                         $('.show_kpi').hide();
                     });
                     $('.add_btn').live("click", function () {
-                        $('#grid_view').hide();
                         $('#list_view').hide();
                         $('.show_ship_view').hide();
                         $('.create_view').show();
@@ -263,7 +262,47 @@
                     $('.archive_btn').live("click",function()
                     {
                         alert('hi');
-                    })
+                        var data = {'Id' : $('.edit_ship_id').val()};
+
+                        $.ajax({
+                            type:"POST",
+                            url:"ajax_status",
+                            data: data,
+                            success: function(data)
+                            {
+                                alert('success');
+
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        })
+                    });
+
+                    $('.status_active').live("click",function()
+                    {
+                        $.ajax({
+                            type:"POST",
+                            url:"ajax_status_show",
+                            data:1,
+                            success: function(data)
+                            {
+                                $('.initail_ship_name_show').empty();
+                                alert('success');
+                                console.log(data);
+                                $.each(data.ship_details, function(i)
+                                {
+                                    $('.name_select').html('<a href="" class="ship_class" id=" '+data.ship_details[i][0]['id']+' ">' +data.ship_details[i][0]['shipName']+ '</a>');
+                                    $('.text_select').text(data.ship_details[i][0]['description']);
+                                });
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        })
+                    });
 
                 });
 
@@ -277,7 +316,7 @@
                 <div class="col-sm-3 users_views">
                     <div class="add_user_btn_main">
                         <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Ship</a></span>
-                        <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+                        <span class="user_btn_main"><a href="" class="show_btn" ng-click="myFunc3()">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
@@ -286,15 +325,30 @@
 
                     <div class="users_list_main"><span>Ship ({{ ship_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
 
+                    <div class="email_group_show_drap" ng-show="showMe3">
+                        <ul>
+                            <li><input type="checkbox" class="inline-checkbox status_active">Active Ships</li>
+                            <li><input type="checkbox" class="inline-checkbox status_inactive">Inactive Ships</li>
+                        </ul>
+                    </div>
+
                     <div class="users_list_grid_main">
-                        {% for shipDetail in shipDetails %}
-                            <div class="users_list_grid">
+                        <div class="initail_ship_name_show">
+                            {% for shipDetail in shipDetails %}
+                                <div class="users_list_grid">
                                 <span class="users_name_row">
-                                    <span class="name"><a href="" class="ship_class" id={{ shipDetail.id }} >{{ shipDetail.shipName }}</a> </span>
+                                    <span class="name"><a href="" class="ship_class" id={{ shipDetail.id }} ><span class="name_place">{{ shipDetail.shipName }}</span></a> </span>
                                     <span class="text">{{ shipDetail.description }}</span>
                                  </span>
-                            </div>
-                        {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="users_list_grid">
+                                <span class="users_name_row">
+                                    <span class="name name_select"> </span>
+                                    <span class="text text_select"></span>
+                                 </span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -363,7 +417,7 @@
 
             <section>
                 <div class="col-sm-12">
-                    <div class="add_kpi_views_screen">
+                    <div class="add_new_users_views_screen">
 
                         <form class="form-horizontal no-style" action="{{ path('shipdetails_new1') }}" method="post">
 
@@ -461,77 +515,6 @@
 
         </div>
 
-
-        <div class="show_kpi">
-
-            <section>
-                <div class="col-sm-11">
-                    <div class="view_new_user_screen_2 form_view_screen">
-                        <div class="actions_edit_button">
-                            <a href="" class="edit_btn"> Edit Ship</a>
-                            <a href="" class="edit_btn">Archive</a>
-                        </div>
-
-
-                        <fieldset class="fieldset_box">
-                            <legend class="legend_name">Details</legend>
-                            <div class="form_view">
-                                <label class="form_labell">Ship :</label>
-                                <label class="form_input ship_name"></label>
-                            </div>
-                            <div class="form_view">
-                                <label class="form_labell">Type :</label>
-                                <label class="form_input ship_type"></label>
-                            </div>
-                            <div class="form_view">
-                                <label class="form_labell">ImoNumber :</label>
-                                <label class="form_input ship_ImoNumber"></label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="fieldset_box">
-                            <legend class="legend_name">Address</legend>
-                            <div class="form_view">
-                                <label class="form_labell">Countrty:</label>
-                                <label class="form_input ship_Country"></label>
-                            </div>
-                            <div class="form_view">
-                                <label class="form_labell">Location:</label>
-                                <label class="form_input ship_Location"></label>
-                            </div>
-                        </fieldset>
-
-                        <fieldset class="fieldset_box">
-                            <legend class="legend_name">Capacity</legend>
-                            <div class="form_view">
-                                <label class="form_labell">Built:</label>
-                                <label class="form_input ship_Built"></label>
-                            </div>
-                            <div class="form_view">
-                                <label class="form_labell">Size:</label>
-                                <label class="form_input ship_size"></label>
-                            </div>
-                            <div class="form_view">
-                                <label class="form_labell">GT:</label>
-                                <label class="form_input ship_GT"></label>
-                            </div>
-
-                            <div class="form_view">
-                                <label class="form_labell">Manufacturing Year:</label>
-                                <label class="form_input ship_Manufaturingyear"></label>
-                            </div>
-                            <div class="form_view">
-                                <label class="form_labell">Description:</label>
-                                <label class="form_input ship_description"></label>
-                            </div>
-
-                            <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
-                        </fieldset>
-
-                    </div>
-                </div>
-            </section>
-        </div>
 
     <div class="show_ship_view">
 
