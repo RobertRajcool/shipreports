@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}
+{% block body %}
+    {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
+
+
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+            <h2>List of files upload</h2>
+            <a href="{{ path('fileadd') }}">Import File</a>
+        </div>
+        {% if userdetails|length <= 0 %}
+            <h4 align="center">No Record Found </h4>
+        {% endif %}
+        {% if userdetails|length > 0 %}
+        <div class="table-responsive">
+        <table id="readingkpitable" class="table table-striped">
+            <thead>
+            <tr>
+                {#<th>Username</th>#}
+                <th>Data of Month</th>
+                <th>Upload DateTime</th>
+                <th>Filename</th>
+                <th>Options</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for listofuser in userdetails %}
+                <tr>
+
+                    {#<td>{{ listofuser.userid }}</td>#}
+                    <td>{{ listofuser.dataOfMonth|date('F-Y') }}</td>
+                    <td>{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
+                    <td>{{ listofuser.filename }}</td>
+                    <td>
+
+                        <a href="{{ path('downloadexcel', { 'filename': listofuser.filename }) }}">
+                            <img src="/images/123c155_Xcel-icon_1.jpg" height="30" alt="Loader Image"/>
+                        </a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+</div>
+        {% endif %}
+
+
+    </div>
+
+{% endblock %}

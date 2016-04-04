@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+{#{% block title %}Star Shipping Application{% endblock %}
+
+{% block content %}
+    <h1 align="center">Shipping Application</h1>
+
+{% endblock %}#}
+{% block body %}
+   {# {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets '@InitialShippingBundle/Resources/public/css/*' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}#}
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="page-header">
+        <h2>Comment List</h2>
+        <a href="{{ path('dashboradhome') }}">Home</a>
+    </div>
+    <div class="table-responsive">
+
+        <table class="table table-striped" id="readingkpitable">
+            <thead>
+            <tr>
+                <th>Client Email</th>
+                <th>Kpi Name</th>
+                <th>Send DateTime</th>
+                <th>Comment</th>
+                <th>Graph Name</th>
+
+                <th>Options</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for listofuser in userdetails %}
+                <tr>
+
+                    <td>{{ listofuser.useremialid }}</td>
+                    <td>{{ listofuser.kpiid }}</td>
+                    <td>{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
+                    <td>{{ listofuser.comment }}</td>
+                    <td>{{ listofuser.filename }}</td>
+                    <td>
+
+                        {#<a href="{{ path('downloadchart', { 'filename': listofuser.filename }) }}">
+
+                            {% image '@InitialShippingBundle/Resources/public/img/download-icon.png' %}
+                            <img src="{{ asset_url }}" height="30" alt="Loader Image"/>
+                            {% endimage %}
+                        </a>#}
+                    </td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+</div>
+    <div class="bs-example">
+        {% if last_page > 1 %}
+        <ul class="pagination">
+            <li {#class="disabled"#}><a href="{{ path('showcomment', {  'page': previous_page }) }}">Prev</a></li>
+
+            {% for page in 1..last_page %}
+                {% if page == current_page %}
+
+                    <li class="active"><a href="{{ path('showcomment', { 'page': page }) }}">  {{ page }}</a></li>
+                {% else %}
+                    <li>  <a href="{{ path('showcomment', {  'page': page }) }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            <li> <a href="{{ path('showcomment', {  'page': next_page }) }}">Next</a></li>
+            <li> <a href="{{ path('showcomment', {  'page': last_page }) }}">Last</a></li>
+        </ul>
+        {% endif %}
+        <div class="pagination_desc">
+            <strong>{{ total_jobs }}</strong> Total Record
+
+            {% if last_page > 1 %}
+                - page <strong>{{ current_page }}/{{ last_page }}</strong>
+            {% endif %}
+        </div>
+    </div>
+
+    </div>
+
+{% endblock %}
