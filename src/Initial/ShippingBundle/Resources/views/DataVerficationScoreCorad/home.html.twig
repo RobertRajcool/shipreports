@@ -1,0 +1,330 @@
+
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    {% block javascripts %}
+
+        {#{% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}#}
+        {#{% javascripts '@InitialShippingBundle/Resources/public/js/emailgroup.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}#}
+
+        <script>
+            $(document).ready(function()
+            {
+                $('#kpiformforship').hide();
+                $('.linkclass').on('click',function()
+                {
+
+                    var linkid = $(this).attr('id');
+                    var shipname = $(this).attr('title');
+                    $('#shipid').val('');
+
+                    $('#addkpiformid').html('');
+                    $('#addkpiformid').text('');
+                    $('#shipname').text(' ');
+                    var dataofmonth=$('#datepikerid').val();
+                        $.ajax({
+                            type: "post",
+                            'url': Routing.generate('shipskpielment', {'shipid':linkid,'monthdetail':dataofmonth}),
+
+                            success: function(data)
+                            {
+
+                                var valuearray=data.elementvalues;
+                                $('#shipid').val(linkid);
+                                $('#shipname').text(shipname);
+                                $('#nogroupselected').hide();
+                                $('#kpiformforship').show();
+                                var j=1;
+                                var newtemp=0;
+                                $.each(data.kpiNameArray, function(i, listkpi)
+                                {
+
+                                    var k=$.isNumeric(i);
+                                    if(!k)
+                                    {
+                                        var temp=1
+
+                                        $('<table class="table kpi_table_form_section second_dark"> <tbody id="tablebody'+j+'"><tr id="tablerow'+j+'"><td rowspan="'+data.elementcount+'" class="kpi_name"><strong>'+i+'</strong></td>').appendTo('#addkpiformid');
+                                        $.each(listkpi,function(mykey,myvalue)
+                                        {
+                                            if(valuearray.length>0)
+                                            {
+
+                                                $('#updatebuttonid').show();
+                                                $('#savebuttonid').hide();
+
+                                                if(temp==1)
+                                                {
+                                                    $('<td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input onkeypress="return isNumberKey(event)" class="textbox" value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required placeholder=""></td>').appendTo("#tablerow"+j);
+                                                }
+                                                if(temp>1)
+                                                {
+                                                    $('<tr><td>'+myvalue+'</td> <td><input type="text" class="textbox" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required placeholder=""></td></tr>').appendTo("#tablebody"+j);
+                                                }
+
+
+                                            }
+                                            else
+                                            {
+                                                $('#updatebuttonid').hide();
+                                                $('#savebuttonid').show();
+                                                if(temp==1)
+                                                {
+                                                    $('<td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input class="textbox" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" placeholder=""></td>').appendTo("#tablerow"+j);
+                                                }
+                                                if(temp>1)
+                                                {
+                                                    $('<tr><td>'+myvalue+'</td> <td><input type="text" class="textbox" onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required placeholder=""></td></tr>').appendTo("#tablebody"+j);
+                                                }
+
+
+                                            }
+                                            temp++;
+                                            newtemp++;
+
+
+                                        });
+                                        $(' </tr></tbody></table>').appendTo('#addkpiformid');
+
+
+                                    }
+                                    j++;
+
+
+                                });
+
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+
+                });
+
+                /*$('.textbox').live('keypress',function (event) {
+                    alert('functioncall');
+                    return isNumber(event, this)
+                });*/
+                $(".textbox").on("keypress keyup blur",function (event) {
+                    //this.value = this.value.replace(/[^0-9\.]/g,'');
+                    $(this).val($(this).val().replace(/[^0-9\.]/g,''));
+                    if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+                        event.preventDefault();
+                    }
+                });
+
+                function isNumber(evt, element) {
+
+                    var charCode = (evt.which) ? evt.which : event.keyCode
+
+                    if (
+                            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
+                            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                            (charCode < 48 || charCode > 57))
+                        return false;
+
+                    return true;
+                }
+                $('#resetbuttonid').click(function($e)
+                {
+                    $e.preventDefault();
+                    $('.textbox').val(' ');
+                });
+
+                $("#kpiform").submit(function($e)
+                        {
+                            var btn= $(this).find("input[type=submit]:focus").attr('id');
+                            $e.preventDefault();
+                            var formid = $('#kpiform');
+
+                                $.ajax({
+                                    type: "post",
+                                    'url': Routing.generate('addkpivaluesname', {'buttonid':btn}),
+                                    data: formid.serialize(),
+                                    success: function(data)
+                                    {
+                                        var valuearray=data.elementvalues;
+                                        $('#shipid').val('');
+                                        $('#addkpiformid').html('');
+                                        $('#addkpiformid').text('');
+                                        $('#shipname').text(' ');
+
+                                        if(data.shipid!=0)
+                                        {
+
+                                        $('#shipid').val(data.shipid);
+                                        $('#shipname').text(data.shipname);
+                                        $('#nogroupselected').hide();
+                                        $('#kpiformforship').show();
+
+                                        var j=1;
+                                        var newtemp=0;
+                                        $.each(data.kpiNameArray, function(i, listkpi)
+                                        {
+
+                                            var k=$.isNumeric(i);
+                                            if(!k)
+                                            {
+                                                var temp=1
+
+                                                $('<table class="table kpi_table_form_section second_dark"> <tbody id="tablebody'+j+'"><tr id="tablerow'+j+'"><td rowspan="'+data.elementcount+'" class="kpi_name"><strong>'+i+'</strong></td>').appendTo('#addkpiformid');
+                                                $.each(listkpi,function(mykey,myvalue)
+                                                {
+                                                    if(valuearray.length>0)
+                                                    {
+
+                                                        $('#updatebuttonid').show();
+                                                        $('#savebuttonid').hide();
+                                                        if (temp == 1) {
+                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input value="'+data.elementvalues[newtemp]+'" class="textbox" type="text" name="newelemetvalues[]" required placeholder=""></td>').appendTo("#tablerow" + j);
+                                                        }
+                                                        if (temp > 1) {
+                                                            $('<tr><td>' + myvalue + '</td> <td><input type="text" class="textbox" value="'+data.elementvalues[newtemp]+'" name="newelemetvalues[]" required placeholder=""></td></tr>').appendTo("#tablebody" + j);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        $('#updatebuttonid').hide();
+                                                        $('#savebuttonid').show();
+                                                        if (temp == 1) {
+                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input class="textbox" type="text" name="newelemetvalues[]" required placeholder=""></td>').appendTo("#tablerow" + j);
+                                                        }
+                                                        if (temp > 1) {
+                                                            $('<tr><td>' + myvalue + '</td> <td><input type="text" class="textbox" name="newelemetvalues[]" required placeholder=""></td></tr>').appendTo("#tablebody" + j);
+                                                        }
+                                                    }
+                                                    newtemp++;
+                                                    temp++;
+
+                                                });
+                                                $(' </tr></tbody></table>').appendTo('#addkpiformid');
+
+
+                                            }
+                                            j++;
+
+
+                                        });
+                                            alert(data.returnmsg);
+                                        }
+                                        else
+                                        {
+                                            $('#shipid').val(' ');
+                                            $('#shipname').text(' ');
+                                            $('#nogroupselected').show();
+                                            $('#kpiformforship').hide();
+                                            alert(data.returnmsg);
+                                        }
+
+
+                                    },
+                                    error: function(XMLHttpRequest, textStatus, errorThrown)
+                                    {
+                                        alert('Error : ' + errorThrown);
+                                    }
+                                });
+
+
+
+
+                        }
+                );
+
+               /* $('#datpickerid').datepicker();*/
+               /* $(document.body).delegate('.textbox', 'keypress', function(e)
+                {
+                    alert('fucntion call')
+                    return isNumber(e, this)
+                });*/
+
+
+
+            });
+
+
+            function isNumberKey(e)
+            {
+               /* var charCode = (evt.which) ? evt.which : event.keyCode
+                if (charCode != 46 && charCode > 31
+                        && (charCode < 48 || charCode > 57))
+                    return false;
+
+                return true;*/
+                if (e.which != 46 && e.which != 45 && e.which != 46 &&
+                        !(e.which >= 48 && e.which <= 57)) {
+                    return false;
+                }
+            }
+
+        </script>
+
+    {% endblock %}
+
+
+    <section>
+        <div class="col-sm-3 views_kpi_form_list">
+            <div class="views_kpi_name_total"><span>Ships ({{ shipcount }})</span></div>
+            <div class="views_kpi_form_list_main">
+                <ui>
+                    {% for shipobject in listofships %}
+                        <li><a class="linkclass" title="{{ shipobject.shipName }}" id="{{ shipobject.id }}" >{{ shipobject.shipName }}</a></li>
+                    {% endfor %}
+
+                </ui>
+            </div>
+
+        </div>
+    </section>
+    <section id="nogroupselected">
+        <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
+            <div class="text_image">
+                <img src="/images/no-user.png">
+                <label>No Ships Selected</label>
+            </div>
+        </div>
+    </section>
+    <section id="kpiformforship">
+        <div class="col-sm-12">
+            <div  class="add_new_kpi_form_screen">
+                <form id="kpiform" class="form-horizontal no-style">
+                    <div class="add_new_kpi_top_title">
+                        <div class="title_month">
+                            <label class="title">Kpi For <span id="shipname"></span></label>
+                            <label class="toolbar-title">
+
+
+                                <span ng-controller="DatepickerDemoCtrl" class="item">
+                                    <input id="datepikerid" type="text" name="dataofmonth" uib-datepicker-popup="[[dateformat]]" ng-click="showcalendar($event)" ng-model="dt" is-open="showdp" max-date="dtmax"  />
+                                </span>
+
+                            </label>
+
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="add_new_kpi_form_section">
+
+                        <div id="addkpiformid" class="table-responsive">
+
+                        </div>
+
+
+                    </div>
+                    <input type="hidden" name="shipid" id="shipid">
+                    <div class="actions_submit">
+                        <input type="submit" class="submit_btn" id="savebuttonid"  value="Save">
+                        <input type="submit" class="submit_btn" id="updatebuttonid"  value="Update">
+                        <button class="cancel_btn" id="resetbuttonid"  value="Submit">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

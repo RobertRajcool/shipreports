@@ -24,6 +24,8 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
             new Mmoreram\GearmanBundle\GearmanBundle(),
             new m4t1t0\FopPdfBundle\FopPdfBundle(),
+            new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+
 
 
         );
