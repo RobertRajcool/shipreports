@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>ShipStatusDetails list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Activedate</th>
+                <th>Enddate</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for shipStatusDetail in shipStatusDetails %}
+            <tr>
+                <td><a href="{{ path('shipstatusdetails_show', { 'id': shipStatusDetail.id }) }}">{{ shipStatusDetail.id }}</a></td>
+                <td>{% if shipStatusDetail.activeDate %}{{ shipStatusDetail.activeDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{% if shipStatusDetail.endDate %}{{ shipStatusDetail.endDate|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('shipstatusdetails_show', { 'id': shipStatusDetail.id }) }}">show</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

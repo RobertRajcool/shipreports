@@ -1,3 +1,7 @@
+initial_shipping_ship_status_details:
+    resource: "@InitialShippingBundle/Controller/ShipStatusDetailsController.php"
+    type:     annotation
+
 initial_shipping_ranking_rules:
     resource: "@InitialShippingBundle/Controller/RankingRulesController.php"
     type:     annotation

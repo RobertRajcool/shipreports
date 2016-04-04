@@ -7,8 +7,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ShipDetails;
+use Initial\ShippingBundle\Entity\ShipStatusDetails;
 use Initial\ShippingBundle\Form\ShipDetailsType;
+use Initial\ShippingBundle\Form\ShipStatusDetailsType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * ShipDetails controller.
@@ -200,6 +203,18 @@ class ShipDetailsController extends Controller
         $em->persist($shipdetails);
         $em->flush();
 
+        $ship_id = $shipdetails->getId();
+        $today = date("Y-m-d H:i:s");
+        $today_obj = date_create($today);
+
+        $shipstatusdetails = new ShipStatusDetails();
+        $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$ship_id)));
+        $shipstatusdetails -> setActiveDate($today_obj);
+        //$shipstatusdetails -> setEndDate('');
+        $shipstatusdetails -> setStatus(1);
+        $em->persist($shipstatusdetails);
+        $em->flush();
+
         return $this->redirectToRoute('shipdetails_select1');
 
     }
@@ -329,6 +344,95 @@ class ShipDetailsController extends Controller
 
         return $show_response;
 
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ajax_status", name="kpidetails_ajax_status")
+     */
+    public function ajax_statusAction(Request $request)
+    {
+        $id = $request->request->get('Id');
+        $today = date("Y-m-d H:i:s");
+        $today_obj = date_create($today);
+
+        $em = $this->getDoctrine()->getManager();
+
+        $status_value = $em->createQueryBuilder()
+            ->select ('a.status')
+            ->from('InitialShippingBundle:ShipStatusDetails','a')
+            ->where('a.shipDetailsId = :ship_id')
+            ->setParameter('ship_id',$id)
+            ->groupby('a.id')
+            ->getQuery()
+            ->getResult();
+        $index = count($status_value);
+        if($status_value[$index-1]['status']==1)
+        {
+            $shipstatusdetails = new ShipStatusDetails();
+            $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
+            //$shipstatusdetails -> setActiveDate($today_obj);
+            $shipstatusdetails -> setEndDate($today_obj);
+            $shipstatusdetails -> setStatus(0);
+            $em->persist($shipstatusdetails);
+            $em->flush();
+        }
+        else
+        {
+            $shipstatusdetails = new ShipStatusDetails();
+            $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
+            $shipstatusdetails -> setActiveDate($today_obj);
+            //$shipstatusdetails -> setEndDate($today_obj);
+            $shipstatusdetails -> setStatus(1);
+            $em->persist($shipstatusdetails);
+            $em->flush();
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array(
+            'Ship_id' => $id
+        ));
+        return $response;
+
+    }
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ajax_status_show", name="kpidetails_ajax_status_show")
+     */
+    public function ajax_status_showAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $ship_id_value = $em->createQueryBuilder()
+            ->select ('identity(a.shipDetailsId)')
+            ->from('InitialShippingBundle:ShipStatusDetails','a')
+            ->where('a.status = :status')
+            ->setParameter('status',1)
+            ->getQuery()
+            ->getResult();
+        $index = count($ship_id_value);
+
+        for($i=0;$i<$index;$i++)
+        {
+            $ship_detail_query = $em->createQueryBuilder()
+                ->select ('a.id','a.shipName','a.description','a.location','a.size','a.built','a.gt','a.manufacturingYear','a.imoNumber')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->where('a.id = :ship_id')
+                ->setParameter('ship_id',$ship_id_value[$i][1])
+                ->getQuery()
+                ->getResult();
+            $ship_details[$i] = $ship_detail_query;
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array(
+            'ship_details' => $ship_details
+        ));
+        return $response;
     }
 
 

@@ -250,9 +250,20 @@
 
                 });
 
-                $('#kpi_details_activeDate_day').hide();
-                $('#kpi_details_endDate_day').hide();
+                $('#ranking_kpi_details_activeDate_day').hide();
+                $('#ranking_kpi_details_endDate_day').hide();
 
+
+                $('.edit_kpi_button').click(function(){
+
+                    $.getScript("../js/rules/kpi_edit_script.js");
+                    $.getScript("../js/rules/conditions-builder.js");
+                    $.getScript("../js/rules/action-builder.js");
+                });
+                $('.add_btn').click(function()
+                {
+                    $('.kpi_edit_script').remove();
+                });
 
                 function rule_operator(operator)
                 {
@@ -292,6 +303,7 @@
             });
 
         </script>
+        <script src="../js/rules/action-builder.js"></script>
 
     {% endblock %}
 
@@ -338,7 +350,6 @@
                          </span>
                     </div>
                     <div class="spacing"></div>
-
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -365,7 +376,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -374,7 +384,6 @@
     <div class="create_kpi">
 
         <script src="../js/rules/Element_conditions-builder.js"></script>
-        <script src="../js/rules/action-builder.js"></script>
         <script src="../js/rules/demo.js"></script>
         <script src="../js/rules/sample_first.js"></script>
 
@@ -420,6 +429,27 @@
                                     <div class="col-xs-8">
                                         <span>
                                             {{ form_widget(form.activeDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
+                                            {#<select class="month_text add_rule_basic_date_drop full-width-select">
+                                                <option value="1">JAN</option>
+                                                <option value="2">FEB</option>
+                                                <option value="3">MAR</option>
+                                                <option value="4">APR</option>
+                                                <option value="5">MAY</option>
+                                                <option value="6">JUN</option><option value="1">JAN</option>
+                                                <option value="7">JUL</option>
+                                                <option value="8">AUG</option>
+                                                <option value="9">SEP</option>
+                                                <option value="10">OCT</option>
+                                                <option value="11">NOV</option>
+                                                <option value="12">DEC</option>
+                                            </select>
+                                        </span>
+                                         <span>
+                                            <select class="year_text add_rule_basic_year_drop full-width-select">
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                            </select>#}
                                         </span>
                                         To
                                         <span>
@@ -481,7 +511,7 @@
                         </div>
 
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id"  value="Submit">Save user</button>
+                            <button class="submit_btn" id="submit_id"  value="Submit">Create</button>
                             <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
                         </div>
                     </form>
@@ -552,10 +582,9 @@
 
     <div class="grid_edit_kpi">
 
-        <script src="../js/rules/conditions-builder.js"></script>
-        <script src="../js/rules/action-builder.js"></script>
+        <script class="kpi_edit_script" src="../js/rules/conditions-builder.js"></script>
 
-        <script type="text/javascript">
+        {#<script class="kpi_edit_script" type="text/javascript">
 
             $(document).ready(function(){
                 $('.kpi_rules').hide();
@@ -871,8 +900,7 @@
                 }
             });
 
-        </script>
-
+        </script>#}
 
         <section>
             <div class="col-sm-11">
@@ -914,11 +942,53 @@
                                     <div class="col-xs-8">
 
                                 <span>
-                                    <input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />
+                                    <select class="month_text add_rule_basic_date_drop full-width-select">
+                                                <option value="1">JAN</option>
+                                                <option value="2">FEB</option>
+                                                <option value="3">MAR</option>
+                                                <option value="4">APR</option>
+                                                <option value="5">MAY</option>
+                                                <option value="6">JUN</option><option value="1">JAN</option>
+                                                <option value="7">JUL</option>
+                                                <option value="8">AUG</option>
+                                                <option value="9">SEP</option>
+                                                <option value="10">OCT</option>
+                                                <option value="11">NOV</option>
+                                                <option value="12">DEC</option>
+                                            </select>
+                                        </span>
+                                         <span>
+                                            <select class="year_text add_rule_basic_year_drop full-width-select">
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                            </select>
+                                    {#<input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />#}
                                 </span>
                                         To
                                 <span>
-                                    <input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />
+                                    <select class="month_text add_rule_basic_date_drop full-width-select">
+                                        <option value="1">JAN</option>
+                                        <option value="2">FEB</option>
+                                        <option value="3">MAR</option>
+                                        <option value="4">APR</option>
+                                        <option value="5">MAY</option>
+                                        <option value="6">JUN</option><option value="1">JAN</option>
+                                        <option value="7">JUL</option>
+                                        <option value="8">AUG</option>
+                                        <option value="9">SEP</option>
+                                        <option value="10">OCT</option>
+                                        <option value="11">NOV</option>
+                                        <option value="12">DEC</option>
+                                    </select>
+                                </span>
+                                 <span>
+                                    <select class="year_text add_rule_basic_year_drop full-width-select">
+                                        {% for i in 2000..2020 %}
+                                            <option value={{ i }}>{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {#<input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />#}
                                 </span>
                                     </div>
                                 </div>
@@ -968,7 +1038,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group button">
-                                    <div class="col-xs-9 add_button_place">
+                                    <div class="col-xs-9 edit_add_button_place">
                                         <div id="rule_edit_button"></div>
                                     </div>
                                 </div>
