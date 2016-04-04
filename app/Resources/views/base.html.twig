@@ -212,25 +212,25 @@
                 </div>
             </div>
             <div class="dashboard_screen_views dashboard_right_ship">
-            <section>
-                {% block body %}
+                <section>
+                    {% block body %}
 
-                {% endblock %}
-            </section>
-                </div>
+                    {% endblock %}
+                </section>
+            </div>
 
 
         </div>
     </div>
 
-<!-- end if for overall links -->
-{% for type, messages in app.session.flashBag.all %}
-    {% for message in messages %}
-        <div class="{{ type }}">
-            {{ message|trans({}, 'FOSUserBundle') }}
-        </div>
+    <!-- end if for overall links -->
+    {% for type, messages in app.session.flashBag.all %}
+        {% for message in messages %}
+            <div class="{{ type }}">
+                {{ message|trans({}, 'FOSUserBundle') }}
+            </div>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
 {% endif %}
 <div>
     {% block fos_user_content %}
