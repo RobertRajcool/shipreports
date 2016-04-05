@@ -1,3 +1,4 @@
+
 /*
  * Base structure
  */
@@ -221,8 +222,8 @@ table {
     border: 1px solid #ddd !important;
 }
 table thead th {
-    color: #333333;
-    background: #e1e1e1;
+    color: #FFFFFF;
+    background: #103a71;
     font-weight: normal !important;
     line-height: 24px;
     letter-spacing: 1px;
@@ -232,6 +233,7 @@ table thead th {
     border-bottom: 1px solid #ddd !important;
     border-radius:0px !important;
 }
+
 table tbody tr td {
     padding: 4px 10px !important;
 }
@@ -322,7 +324,7 @@ select {
     margin:0px;
     padding:0px;
     width:auto;
-    height:410px;
+    height:431px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -352,8 +354,8 @@ select {
     padding-left:0px;
 }
 .dashboard .widget {
-    background-color: #fbfbfb;
-    border: 1px solid #dad7cf;
+    background-color: #FFFFFF;
+    border: 1px solid #e9e9e8;
     line-height: normal;
     border-radius:0px;
     padding: 0;
@@ -363,22 +365,22 @@ select {
 }
 .dashboard .widget .x-header {
     padding: 5px 15px;
-    height: 40px;
-    border-bottom: 1px solid #dad7cf;
+    height: 30px;
+    border-bottom: 1px solid #e9e9e8;
 }
 .dashboard .widget .x-header .x-panel-header-text {
     color: #383838;
     font-size: 14px;
     font-weight: bold;
     float:left;
-    padding:5px 0px;
+    padding:1px 0px;
 }
 .dashboard .widget .toolbar-title {
     color: #383838;
     font-size: 14px;
     font-weight: bold;
     float:right;
-    padding:5px 0px;
+    padding:1px 0px;
 }
 .dashboard .widget .toolbar-title .left-arrow {
     margin:1px 0 0 0;
@@ -392,8 +394,12 @@ select {
     padding:5px 6px;
 }
 .dashboard .widget .chart {
-    min-height:410px;
+    min-height:283px;
     padding:5px;
+}
+.dashboard .widget .chart img {
+    width: 100%;
+    height: 273px;
 }
 .dashboard .widget .ship_name {
     min-height:410px;
@@ -406,29 +412,9 @@ select {
     font-weight:bold;
     text-align:center;
 }
-.dashboard .widget .chart.large_chart {
-    min-height:410px;
-}
-.dashboard_month_chart {
-    width:100%;
-    margin:0px;
-}
-.dashboard_month_chart .left {
-    width:49.5%;
-    float:left;
-    margin:0 1% 0 0;
-    min-height:180px;
-    border: 1px solid #c9c9c9;
-}
-.dashboard_month_chart .right {
-    width:49.5%;
-    float:left;
-    margin:0px;
-    min-height:180px;
-    border: 1px solid #c9c9c9;
-}
-
-
+/*.dashboard .widget .chart.large_chart {*/
+/*min-height:273px;*/
+/*}*/
 .x-btn-my-account-small {
     border-radius: 0;
     padding: 0 0 10px 0;
@@ -1119,6 +1105,7 @@ select {
 .views_kpi_name_total {
     margin:10px 0;
     padding-left:10px;
+    color:#333333;
 }
 .views_kpi_form_list_main {
     bottom: 0;
@@ -1129,7 +1116,7 @@ select {
     overflow-x: hidden;
     overflow-y: auto;
     position: fixed;
-    background:#444444;
+    background:#555555;
 }
 .views_kpi_form_list_main ui {
     margin:0px;
@@ -1143,7 +1130,7 @@ select {
 }
 .views_kpi_form_list_main ui li a.active {
     background:#FFFFFF;
-    color:#333333;
+    color:#666666;
 }
 .views_kpi_form_list_main ui li a {
     margin:0px;
@@ -1153,7 +1140,7 @@ select {
 }
 .views_kpi_form_list_main ui li a:hover {
     background:#FFFFFF;
-    color:#333333;
+    color:#666666;
 }
 .add_new_kpi_form_screen {
     bottom: 64px;
@@ -1169,7 +1156,7 @@ select {
     width: 800px;
 }
 .add_new_kpi_top_title {
-    padding: 10px 24px;
+    padding: 9px 24px;
     font-size: 14px;
     font-weight:bold;
     border-top: 1px solid #dad7cf !important;
@@ -1180,11 +1167,37 @@ select {
     margin:-1px 0 0 -24px;
     width:100%;
 }
+.add_new_kpi_top_title .title_month {
+    width:794px;
+    float:left;
+}
 .add_new_kpi_top_title .title {
     font-size: 16px;
     font-weight:bold;
     color:#0d56b5;
+    float:left;
+    margin:0px;
 }
+.add_new_kpi_top_title .toolbar-title {
+    color: #383838;
+    font-size: 14px;
+    font-weight: bold;
+    float:right;
+    padding: 0px;
+    margin:0px;
+}
+.add_new_kpi_top_title .toolbar-title .left-arrow {
+    margin:1px 0 0 0;
+    float:left;
+}
+.add_new_kpi_top_title .toolbar-title .right-arrow {
+    margin:1px 0 0 0;
+    float:right;
+}
+.add_new_kpi_top_title .toolbar-title .item {
+    padding:5px 6px;
+}
+
 .add_new_kpi_form_section {
     margin: 0;
     padding:60px 0 0 0;
@@ -1195,7 +1208,7 @@ select {
 }
 
 .kpi_table_form_section {
-    margin-bottom:10px;
+    margin-bottom:2px;
     border:1px solid #f1f1f1;
 }
 .kpi_table_form_section.second_dark {
@@ -1386,7 +1399,59 @@ select {
     font-size:12px;
     margin-right:10px;
 }
+.normal_table tbody td {
+    background:#FFFFFF !important;
+}
 
+.graph_and_colour_coding_main_title_row {
+    border:1px solid #f0f0f0 !important;
+    margin-bottom:-2px;
+}
+.graph_and_colour_coding_main_title_row thead th {
+    text-align:center;
+    font-weight:bold;
+    font-size:17px;
+}
+.graph_and_colour_coding_main_title_row tbody td {
+    padding:10px 8px !important;
+}
+
+.table-striped-2 tbody tr:nth-child(odd) td,
+.table-striped-2 tbody tr:nth-child(odd) th {
+    background-color: #f9f9f9 !important;
+}
+.graph_and_colour_coding_row thead th {
+    text-align:center;
+    background:#989898;
+}
+.graph_and_colour_coding_row tbody td {
+    text-align:center;
+}
+.graph_and_colour_coding_row .kpi_name_thtd {
+    text-align:left;
+}
+.graph_and_colour_coding_row {
+    border:1px solid #f0f0f0 !important;
+}
+.graph_and_colour_coding_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.graph_and_colour_coding_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.graph_and_colour_coding_row .kpi_name {
+    width: 50%;
+}
+.graph_and_colour_coding_row .weightage {
+    width: 10%;
+}
+.graph_and_colour_coding_row .month {
+    width: 8%;
+}
+.graph_and_colour_coding_row .month_difference {
+    width: 8%;
+}
 
 
 

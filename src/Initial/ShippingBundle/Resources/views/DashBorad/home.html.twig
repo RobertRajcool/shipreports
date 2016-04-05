@@ -80,18 +80,97 @@
     {% endblock %}
  <div class="col-sm-10">
         <div class="dashboard">
-            <div class="widget time">
-                <div class="x-header">
-                    <div class="x-panel-header-text">Vessels Score</div>
-                    <div class="toolbar-title">
-                        <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
-                        <span class="item"><span class="item">{{ currentmonth }}</span></span>
-                        <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
-                    </div>
-                </div>
-                <div class="chart large_chart">
-                    <img src="/images/01.jpg">
-                </div>
+            <div class="table-responsive">
+                <table class="table table-striped graph_and_colour_coding_main_title_row">
+                    <thead>
+                    <tr>
+                        <th>Management Performance</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Scorecard: Minimum ~ Maximum: 0 ~ 3.0</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped-2 graph_and_colour_coding_row">
+                    <thead>
+                    <tr>
+                        <th class="kpi_name kpi_name_thtd">Keep Performance Index</th>
+                        <th class="weightage">Weightage</th>
+                        {% set i2=0 %}
+                        {% for month in month_name %}
+                            <th class="month">{{ month }}</th>
+                            {% if i2 != 2 %}
+                                <th class="month_difference">&nbsp;</th>
+                            {% endif %}
+                            {% set i2=i2+1 %}
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set i=0 %}
+                    {% for kpi in kpi_list %}
+
+                        <tr>
+                            <td class="kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                            <td>{{ kpi.weightage }}</td>
+                            {% for j in 0..2 %}
+                                <td>
+                                    {% if kpicolorarray[j][i]=="Green" %}
+                                        <img src="/images/01.png" alt="Loader Image"/>
+                                    {% elseif kpicolorarray[j][i]=="Red" %}
+                                        <img src="/images/03.png" alt="Loader Image"/>
+                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                        <img src="/images/02.png" alt="Loader Image"/>
+                                    {% else %}
+                                        <div class="nocolor"></div>
+                                    {% endif %}
+                                </td>
+
+                                {% if j != 2 %}
+                                    {% set j1=j+1 %}
+                                    <td>
+                                        {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Yellow" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Green" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Red" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Yellow" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Green" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Red" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+
+                            {% endfor %}
+                            {% set i=i+1 %}
+                        </tr>
+
+                    {% endfor %}
+                    {% set i1=0 %}
+                    <tr>
+                        <td colspan="2" class="kpi_name_thtd"><strong>Average score</strong></td>
+                        {% for avg in avgscore %}
+                            <td><strong>{{ avg }}</strong></td>
+                            {% if i1 != 2 %}
+                                <td>&nbsp;</td>
+                            {% endif %}
+                            {% set i1=i1+1 %}
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -106,7 +185,6 @@
                     </div>
                 </div>
                 <div id="area" class="chart large_chart">
-                   {# <div  id="area" ></div>#}
                 </div>
             </div>
         </div>
