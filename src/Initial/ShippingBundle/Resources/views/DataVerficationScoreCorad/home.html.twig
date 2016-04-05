@@ -14,7 +14,40 @@
         <script>
             $(document).ready(function()
             {
+
+               /* $("#datepikerid").datepicker({
+                    dateFormat: "MM-yy"
+                }).datepicker("setDate", new Date());
+                alert($('#datepikerid').val())*/
                 $('#kpiformforship').hide();
+                var nowdate=new Date(),
+                        locale = "en-us",
+                        month = nowdate.toLocaleString(locale, { month: "long" }),
+                        year=nowdate.getFullYear();
+                $('#currentid').text(month+'-'+year)
+                $('#datofmonthid').val(month+'-'+year)
+                $('#proviousmonth').click(function($e)
+                {
+                    $e.preventDefault();
+                    var currentdate=new Date($('#currentid').text());
+                    currentdate.setMonth(currentdate.getMonth() - 1);
+                    currentdate,locale = "en-us",
+                            month = currentdate.toLocaleString(locale, { month: "long" }),
+                            year=currentdate.getFullYear();
+                    $('#currentid').text(month+'-'+year)
+                    $('#datofmonthid').val(month+'-'+year)
+                });
+                $('#nextmonth').click(function($e)
+                {
+                    $e.preventDefault();
+                    var currentdate=new Date($('#currentid').text());
+                    currentdate.setMonth(currentdate.getMonth() + 1);
+                    currentdate,locale = "en-us",
+                            month = currentdate.toLocaleString(locale, { month: "long" }),
+                            year=currentdate.getFullYear();
+                    $('#currentid').text(month+'-'+year)
+                    $('#datofmonthid').val(month+'-'+year)
+                });
                 $('.linkclass').on('click',function()
                 {
 
@@ -25,7 +58,7 @@
                     $('#addkpiformid').html('');
                     $('#addkpiformid').text('');
                     $('#shipname').text(' ');
-                    var dataofmonth=$('#datepikerid').val();
+                    var dataofmonth=$('#currentid').text();
                         $.ajax({
                             type: "post",
                             'url': Routing.generate('shipskpielment', {'shipid':linkid,'monthdetail':dataofmonth}),
@@ -242,6 +275,7 @@
                     return isNumber(e, this)
                 });*/
 
+               // $( "#datepikerid" ).datepicker();
 
 
             });
@@ -297,13 +331,10 @@
                             <label class="title">Kpi For <span id="shipname"></span></label>
                             <label class="toolbar-title">
 
-
-                                <span ng-controller="DatepickerDemoCtrl" class="item">
-                                    <input id="datepikerid" type="text" name="dataofmonth" uib-datepicker-popup="[[dateformat]]" ng-click="showcalendar($event)" ng-model="dt" is-open="showdp" max-date="dtmax"  />
-                                </span>
-
-                            </label>
-
+                                <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                <span id="currentid" class="item">March-2016</span>
+                                <input type="hidden" name="dataofmonth" id="datofmonthid">
+                                <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                             </label>
                         </div>
                     </div>
@@ -318,8 +349,16 @@
                     </div>
                     <input type="hidden" name="shipid" id="shipid">
                     <div class="actions_submit">
-                        <input type="submit" class="submit_btn" id="savebuttonid"  value="Save">
-                        <input type="submit" class="submit_btn" id="updatebuttonid"  value="Update">
+
+                        {%  if  is_granted("ROLE_ADMIN") %}
+
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="Upload">
+                        {% endif %}
+
+                        {%  if  not is_granted("ROLE_ADMIN") %}
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="Save">
+                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="Update">
+                        {% endif %}
                         <button class="cancel_btn" id="resetbuttonid"  value="Submit">Reset</button>
                     </div>
                 </form>

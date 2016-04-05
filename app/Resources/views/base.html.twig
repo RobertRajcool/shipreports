@@ -14,16 +14,30 @@
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+
     <script src="/js/jquery.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
+
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+
     <script>
         var app = angular.module('myApp', []);
+
+       /*app.config(function($interpolateProvider){
+           $interpolateProvider.startSymbol('[[').endSymbol(']]');
+       });*/
+
         app.controller('myCtrl', function($scope) {
             $scope.showMe = false;
             $scope.myFunc = function() {
                 $scope.showMe = !$scope.showMe;
+            }
+            $scope.showMe3 = false;
+            $scope.myFunc3 = function() {
+                $scope.showMe3 = !$scope.showMe3;
             }
 
             $scope.ScoreCard = false;
@@ -59,7 +73,7 @@
                 <ul class="nav nav-sidebar">
 
                     <li class="active" id="dashboradhome1">
-                        <a class="layout_name" id="dashboradhome" href="{{ path('dashboradhome') }}">
+                        <a class="layout_name" id="dashboradhome" href="{{ path('dashboardhome') }}">
                             <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
                             <span class="menu-item-text">Dashboard</span>
                         </a>
@@ -97,13 +111,13 @@
                                     </a>
                                 </li>
                                 <li id="data_verification1">
-                                    <a class="layout_name" id="data_verification" href="">
+                                    <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
                                         <span class="menu-item-icon ss-check">&nbsp;</span>
                                         <span class="menu-item-text">Data verfication</span>
                                     </a>
                                 </li>
                                 <li id="data_import1">
-                                    <a class="layout_name" id="data_import" href="">
+                                    <a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}">
                                         <span class="menu-item-icon ss-database">&nbsp;</span>
                                         <span class="menu-item-text">Data Import</span>
                                     </a>
@@ -142,13 +156,13 @@
                                     </a>
                                 </li>
                                 <li id="ranking_data_verification1">
-                                    <a class="layout_name" id="ranking_data_verification1" href="">
+                                    <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
                                         <span class="menu-item-icon ss-check">&nbsp;</span>
                                         <span class="menu-item-text">Data verfication</span>
                                     </a>
                                 </li>
                                 <li id="Ranking_data_import1">
-                                    <a class="layout_name" id="Ranking_data_import" href="">
+                                    <a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}">
                                         <span class="menu-item-icon ss-database">&nbsp;</span>
                                         <span class="menu-item-text">Data Import</span>
                                     </a>

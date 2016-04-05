@@ -4,7 +4,7 @@ namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\ShipDetails;
-use Initial\ShippingBundle\Entity\KpiRules;
+use Initial\ShippingBundle\Entity\SendCommandRanking;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Ob\HighchartsBundle\Highcharts\Highchart;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
@@ -1107,6 +1108,100 @@ class DashboradController extends Controller
 
     }
     }
+    /**
+     * Auto comment for shipreports
+     *
+     * @Route("/addcomment_ranking_kpi", name="addcomment_ranking_kpi")
+     */
+    public function runtimecommentAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        $session=new Session();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $emailid=$user->getEmail();
+        //get Informaton From User
+        $kpiid = $request->request->get('kpiid');
+
+        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+        $comment =  $request->request->get('comment');
+        $today = date("Y-m-d H:i:s");
+        $datetime = new \DateTime();
+        $sendcommand=new SendCommandRanking();
+        $sendcommand->setClientemail($emailid);
+        $sendcommand->setComment($comment);
+        $sendcommand->setDatetime($datetime);
+        $sendcommand->setShipid($kpiid);
+        $em->persist($sendcommand);
+        $em->flush();
+        $lastid= $sendcommand->getId();
+        $lastarray=array('id'=>$lastid);
+        $session->set('commandid', $lastid);
+
+        $listofcomment = $em->createQueryBuilder()
+            ->select('a.comment')
+            ->from('InitialShippingBundle:SendCommandRanking','a')
+            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+            ->where('a.shipid = :shipid')
+            ->andwhere('b.emailId = :username')
+            ->setParameter('username',$emailid)
+            ->setParameter('shipid',$kpiid)
+            ->getQuery()
+            ->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('resultarray' => $listofcomment,'lastinsertid'=>$lastid));
+        return $response;
+
+
+    }
+    /**
+     * Add commen kpi reports
+     *
+     * @Route("/addcomment_ranking_ship", name="addcomment_ranking_ship")
+     */
+    public function runtimekpicommentAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        $session=new Session();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $emailid=$user->getEmail();
+        //get Informaton From User
+        $kpiid = $request->request->get('kpiid');
+
+        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+        $comment =  $request->request->get('comment');
+        $today = date("Y-m-d H:i:s");
+        $datetime = new \DateTime();
+        $sendcommand=new SendCommandRanking();
+        $sendcommand->setClientemail($emailid);
+        $sendcommand->setComment($comment);
+        $sendcommand->setDatetime($datetime);
+        $sendcommand->setKpiid($kpiid);
+        $em->persist($sendcommand);
+        $em->flush();
+        $lastid= $sendcommand->getId();
+        $lastarray=array('id'=>$lastid);
+        $session->set('commandid', $lastid);
+
+        $listofcomment = $em->createQueryBuilder()
+            ->select('a.comment')
+            ->from('InitialShippingBundle:SendCommandRanking','a')
+            ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
+            ->where('a.kpiid = :kpiid')
+            ->andwhere('b.emailId = :username')
+            ->setParameter('username',$emailid)
+            ->setParameter('kpiid',$kpiid)
+            ->getQuery()
+            ->getResult();
+        $response = new JsonResponse();
+        $response->setData(array('resultarray' => $listofcomment,'lastinsertid'=>$lastid));
+        return $response;
+
+
+    }
 
     /**
      * List all kpi for ship
@@ -1418,6 +1513,7 @@ class DashboradController extends Controller
                     'montharray'=>$newcategories,
                     'avgscore'=>$finalkpielementvaluearray,
                     'commentarray'=>$listofcomment,
+                    'kpimonthdata'=>$overalkpivaluesmontyly
                 );
             }
 
@@ -1446,7 +1542,7 @@ class DashboradController extends Controller
      *
      * @Route("/{kpiid}/listelementforkpi_ranking?{kpiname}", name="listelementforkpi_ranking")
      */
-    public function listallelementforkpi_rankingAction($kpiid,$kpiname,Request $request)
+    public function listallelementforkpi_rankingAction($kpiid,$kpiname,Request $request,$mode='')
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -1503,6 +1599,7 @@ class DashboradController extends Controller
             $elementdetailvaluearray = array();
             $elementweightagearray = array();
             $findelementcolorarray = array();
+            $findoverallelementvalue=array();
 
             // Getting kpi_color value from ship_kpi_listAction function/controller
 
@@ -1614,15 +1711,19 @@ class DashboradController extends Controller
                         //Find the color based on kpi rules
 
 
-                        if (count($dbvalueforelement) == 0) {
+                        if (count($dbvalueforelement) == 0)
+                        {
                             $finddbvaluefomula = 0 * (((int)$weightage) / 100);
                             $finalkpivalue += $finddbvaluefomula;
-                        } else {
+                        }
+                        else
+                        {
                             $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
                             $finalkpivalue += $finddbvaluefomula;
                         }
 
-                        for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++) {
+                        for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
+                        {
                             $rule = $kpi_rules[$kpi_rules_count];
                             /*
                                                 $rule_obj = json_encode($rule);*/
@@ -1638,11 +1739,12 @@ class DashboradController extends Controller
 
                         }
                         array_push($findingcolorarray, $read1);
+                        array_push($kpielementvalue,$finalkpivalue);
 
                     }
 
                     array_push($findelementcolorarray, $findingcolorarray);
-
+                    array_push($findoverallelementvalue,$kpielementvalue);
 
                     array_push($elementdetailvaluearray, $finalkpivalue);
                 }
@@ -1671,7 +1773,7 @@ class DashboradController extends Controller
 
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment')
-                    ->from('InitialShippingBundle:SendCommand', 'a')
+                    ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                     ->where('a.kpiid = :kpiid')
                     ->andwhere('b.emailId = :username')
@@ -1679,6 +1781,18 @@ class DashboradController extends Controller
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
                     ->getResult();
+                if($mode=='pdftemplate_kpilevel')
+                {
+                    return array(
+                        'elementcolorarray'=>$findelementcolorarray,
+                        'listofelement'=>$listelement,
+                        'elementweightage'=>$elementweightagearray,
+                        'montharray'=>$newcategories,
+                        'avgscore'=>$elementdetailvaluearray,
+                        'commentarray'=>$listofcomment,
+                        'monthlydata'=>$findoverallelementvalue
+                    );
+                }
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi_ranking.html.twig',
@@ -1688,7 +1802,7 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'montharray' => $newcategories,
+                        'monthdetails' => $newcategories,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
@@ -1696,13 +1810,17 @@ class DashboradController extends Controller
                         'commentarray' => $listofcomment,
                         'kpi_color' => $kpi_rule_color_array,
                         'kpi_rule' => $rule_for_kpi_id,
+                        'shipid'=>$shipid,
+                        'monthlydata'=>$findoverallelementvalue
                     )
                 );
 
-            } else {
+            }
+            else {
 
 
-                for ($d = 0; $d < count($lastfivedatearray); $d++) {
+                for ($d = 0; $d < count($lastfivedatearray); $d++)
+                {
                     $time2 = strtotime($lastfivedatearray[$d]);
                     $monthinletter = date('M-Y', $time2);
                     array_push($newcategories, $monthinletter);
@@ -1776,7 +1894,8 @@ class DashboradController extends Controller
                     array_push($findelementcolorarray, $findingcolorarray);
 
 
-                    array_push($elementdetailvaluearray, $finalkpivalue);
+                    array_push($elementdetailvaluearray, array_sum($findlvaluemonth));
+                    array_push($findoverallelementvalue, $findlvaluemonth);
                 }
 
                 $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
@@ -1802,7 +1921,7 @@ class DashboradController extends Controller
                 //find the comments for particular user//
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment')
-                    ->from('InitialShippingBundle:SendCommand', 'a')
+                    ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                     ->where('a.kpiid = :kpiid')
                     ->andwhere('b.emailId = :username')
@@ -1810,7 +1929,18 @@ class DashboradController extends Controller
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
                     ->getResult();
-
+                if($mode=='pdftemplate_kpilevel')
+                {
+                    return array(
+                        'elementcolorarray'=>$findelementcolorarray,
+                        'listofelement'=>$listelement,
+                        'elementweightage'=>$elementweightagearray,
+                        'montharray'=>$newcategories,
+                        'avgscore'=>$elementdetailvaluearray,
+                        'commentarray'=>$listofcomment,
+                        'monthlydata'=>$findoverallelementvalue
+                    );
+                }
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi_ranking.html.twig',
@@ -1820,7 +1950,7 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'montharray' => $newcategories,
+                        'monthdetails' => $newcategories,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
@@ -1828,10 +1958,275 @@ class DashboradController extends Controller
                         'commentarray' => $listofcomment,
                         'kpi_color' => $kpi_rule_color_array,
                         'kpi_rule' => $rule_for_kpi_id,
+                        'shipid'=>$shipid,
+                        'monthlydata'=>$findoverallelementvalue
                     )
                 );
             }
         }
+    }
+
+    /**
+     * Add comment for kpireports
+     *
+     * @Route("/addcommentkpi", name="addcommentkpi")
+     */
+    public function addcommentAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $useremailaddres=$user->getEmail();
+
+        $userquery = $em->createQueryBuilder()
+            ->select('a.emailId')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->where('a.adminName = :userId')
+            ->setParameter('userId',$username)
+            ->getQuery();
+        $clientemailid=$userquery->getSingleScalarResult();
+
+        //get Informaton From User
+
+        $params = $request->request->get('send_command');
+        $kpiid=$params['kpiid'];
+        $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiid));
+        $kpiname=$newkpiid->getKpiName();
+        $returnvaluefrommonth = $this->listallelementforkpi_rankingAction($kpiid,$kpiname,$request,'pdftemplate_kpilevel');
+
+
+        $filename = $params['filename'];
+        $pdffilenamearray=explode(".",$filename);
+
+        $kpiid=$params['kpiid'];
+
+        $comment = $params['comment'];
+        $checkboxvalue = $params['addcomment'];
+        if($checkboxvalue=="Yes")
+        {
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
+        }
+        else
+        {
+            $listofcommentarray=array();
+        }
+        $idforrecord = $params['lastid'];
+
+        $today = date("Y-m-d H:i:s");
+        $pageName = $request->query->get('page');
+        $screenName = $this->get('translator')->trans($pageName);
+        $date = date('l jS F Y h:i', time());
+        $route = $request->attributes->get('_route');
+
+        $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate.html.twig', array(
+            'link' => $filename,
+            'screenName' => $screenName,
+            'userName' => '',
+            'date' => $date,
+            'listofelement'=>$returnvaluefrommonth['listofelement'],
+            'kpiname'=>$kpiname,
+            'elementweightage'=>$returnvaluefrommonth['elementweightage'],
+            'montharray'=>$returnvaluefrommonth['montharray'],
+            'elementcolorarray'=>$returnvaluefrommonth['elementcolorarray'],
+            'countmonth'=>count($returnvaluefrommonth['elementcolorarray']),
+            'avgscore'=> $returnvaluefrommonth['avgscore'],
+            'monthlydata'=>$returnvaluefrommonth['monthlydata'],
+            'commentarray'=>$listofcommentarray,
+            'datetime'=>$today
+        ));
+        $client = new HighchartController();
+        $client->setContainer($this->container);
+        $printPdf = $client->createPdf($customerListDesign, $screenName);
+
+        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'.pdf';
+        file_put_contents($pdffilenamefullpath, $printPdf);
+
+
+
+        //$sendcommand=new SendCommand();
+        //assign file attachement for mail and Mailing Starts Here...u
+        $useremaildid=$params['clientemail'];
+
+        $findsemail=$em->createQueryBuilder()
+            ->select('a.useremailid')
+            ->from('InitialShippingBundle:EmailUsers','a')
+            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+            ->where('b.groupname = :sq')
+            ->ORwhere('a.useremailid = :sb')
+            ->setParameter('sq',$useremaildid)
+            ->setParameter('sb',$useremaildid)
+            ->getQuery()
+            ->getResult();
+
+
+        //assign file attachement for mail and Mailing Starts Here...u
+        for($ma=0;$ma<count($findsemail);$ma++)
+        {
+            $mailer = $this->container->get('mailer');
+            $message = \Swift_Message::newInstance()
+                ->setFrom($clientemailid)
+                ->setTo($findsemail[$ma]['useremailid'])
+                ->setSubject($kpiname)
+                ->setBody($comment);
+            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+            $mailer->send($message);
+        }
+        //Mailing Ends....
+        //Update Process Starts Here...
+        $session=new Session();
+        $kpiandelementids= $session->get('commandid');
+        if($kpiandelementids!=null)
+        {
+            $entityobject = $em->getRepository('InitialShippingBundle:SendCommandRanking')->find($kpiandelementids);
+            $entityobject->setClientemail($clientemailid);
+            $entityobject->setFilename($pdffilenamearray[0].'.pdf');
+            $em->flush();
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array('updatemsg'=>"Report Has Been Send"));
+        return $response;
+    }
+    /**
+     * Add comment for shipreports
+     *
+     * @Route("/addcomment_ship", name="addcomment_ship")
+     */
+    public function addcommentforshipreportsAction(Request $request)
+    {
+        $em=$this->getDoctrine()->getManager();
+        //get client Email Id
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $useremailaddres=$user->getEmail();
+
+        $userquery = $em->createQueryBuilder()
+            ->select('a.emailId')
+            ->from('InitialShippingBundle:CompanyDetails','a')
+            ->where('a.adminName = :userId')
+            ->setParameter('userId',$username)
+            ->getQuery();
+        $clientemailid=$userquery->getSingleScalarResult();
+        $params = $request->request->get('send_command');
+        $kpiid=$params['kpiid'];
+        $returnvaluefrommonth = $this->listallkpiforship_rankingAction($kpiid,$request,'pdftemplate_shiplevel');
+
+        //get Informaton From User
+        /*  $monthcount=$request->request->get('countmonth');
+          $elementavgscore=$request->request->get('avgscore');
+          $elementavgscorearray=explode(",",$elementavgscore);
+          $elementcolor=$request->request->get('elementcolorarray');
+          $elementcolorarray=explode(",",$elementcolor);
+          $elementweightage=$request->request->get('elementweightage');
+          $elementweightagearray=explode(",",$elementweightage);
+          $listofelments=$request->request->get('listofelments');
+          $listofelmentsarray=explode(",",$listofelments);
+          $listofmonth=$request->request->get('montharrayinstring');
+          $listofmontharray=explode(",",$listofmonth);
+          $listofcomments=$request->request->get('listofcomments');*/
+
+
+        $filename = $params['filename'];
+        $pdffilenamearray=explode(".",$filename);
+        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+        $kpiname=$newkpiid->getShipName();
+        $comment = $params['comment'];
+        $checkboxvalue = $params['addcomment'];
+
+        if($checkboxvalue=="Yes")
+        {
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
+        }
+        else
+        {
+            $listofcommentarray=array();
+        }
+        $idforrecord = $params['lastid'];
+
+        $today = date("Y-m-d H:i:s");
+        $pageName = $request->query->get('page');
+        $screenName = $this->get('translator')->trans($pageName);
+        $date = date('l jS F Y h:i', time());
+        $route = $request->attributes->get('_route');
+        /* return $this->render('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+             'link' => $filename,
+             'screenName' => $screenName,
+             'userName' => '',
+             'date' => $date,
+             'listofkpi' => $returnvaluefrommonth['listofkpi'],
+             'kpicolorarray' => $returnvaluefrommonth['kpicolorarray'],
+             'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
+             'montharray' => $returnvaluefrommonth['montharray'],
+             'shipname' => $returnvaluefrommonth['listofkpi'],
+             'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
+             'avgscore' => $returnvaluefrommonth['avgscore'],
+             'commentarray'=>$listofcommentarray));*/
+        $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+                'link' => $filename,
+                'screenName' => $screenName,
+                'userName' => '',
+                'date' => $date,
+                'listofkpi' => $returnvaluefrommonth['listofkpi'],
+                'kpicolorarray' => $returnvaluefrommonth['kpicolorarray'],
+                'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
+                'montharray' => $returnvaluefrommonth['montharray'],
+                'shipname' => $returnvaluefrommonth['listofkpi'],
+                'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
+                'avgscore' => $returnvaluefrommonth['avgscore'],
+                'commentarray'=>$listofcommentarray,
+                 'kpimonthdata'=>$returnvaluefrommonth['kpimonthdata']
+        ));
+
+        $client = new HighchartController();
+        $client->setContainer($this->container);
+        $printPdf = $client->createPdf($customerListDesign, $screenName);
+
+        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'.pdf';
+        file_put_contents($pdffilenamefullpath, $printPdf);
+
+        $useremaildid=$params['clientemail'];
+
+        $findsemail=$em->createQueryBuilder()
+            ->select('a.useremailid')
+            ->from('InitialShippingBundle:EmailUsers','a')
+            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+            ->where('b.groupname = :sq')
+            ->ORwhere('a.useremailid = :sb')
+            ->setParameter('sq',$useremaildid)
+            ->setParameter('sb',$useremaildid)
+            ->getQuery()
+            ->getResult();
+
+
+        //assign file attachement for mail and Mailing Starts Here...u
+        for($ma=0;$ma<count($findsemail);$ma++)
+        {
+            $mailer = $this->container->get('mailer');
+            $message = \Swift_Message::newInstance()
+                ->setFrom($clientemailid)
+                ->setTo($findsemail[$ma]['emailid'])
+                ->setSubject($kpiname)
+                ->setBody($comment);
+            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+            $mailer->send($message);
+        }
+        //Mailing Ends....
+        //Update Process Starts Here...
+
+        $session=new Session();
+        $kpiandelementids= $session->get('commandid');
+        if($kpiandelementids!=null)
+        {
+            $entityobject = $em->getRepository('InitialShippingBundle:SendCommandRanking')->find($kpiandelementids);
+            $entityobject->setClientemail($clientemailid);
+            $entityobject->setFilename($pdffilenamearray[0].'.pdf');
+            $em->flush();
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array('updatemsg'=>"Report Has Been Send"));
+        return $response;
     }
 
 

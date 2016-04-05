@@ -57,7 +57,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/dashborad/autocompeltegroup",
+                        url: Routing.generate('autocompleteformailing'),
                         beforeSend: function () {
                             /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
                         }
@@ -98,6 +98,7 @@
 
                 $(".dynamiclabel").on("click",function(e)
                 {
+                    alert('function');
                     var b=$(this).text();
                     $('#toemail').val(b);
                     $('#livesearchdiv').hide();
@@ -130,7 +131,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/runtimecomment",
+                        url: Routing.generate('addcomment_ranking_kpi'),
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -187,7 +188,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/addchart",
+                        url: Routing.generate('addchart'),
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -215,12 +216,12 @@
                 });
                 function submitchatform()
                 {
-                    alert("formsubmitted");
+
                     var form=$('#chatform');
                     $.ajax({
                         type: "post",
                         data: form.serialize(),
-                        url: "/addcommentforshipreports",
+                        url: Routing.generate('addcomment_ship'),
                         success: function (data)
                         {
                             $('#commentform').hide();
