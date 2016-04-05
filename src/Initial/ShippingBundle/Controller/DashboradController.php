@@ -948,7 +948,8 @@ class DashboradController extends Controller
             $lastfivedatearray = array();
             $mystringvaluedate = $lastmonthdetail->format('Y-m-d');
             array_push($lastfivedatearray, $mystringvaluedate);
-            for ($i = 0; $i < 4; $i++) {
+            for ($i = 0; $i < 2; $i++)
+            {
                 $mydatevalue = new \DateTime($mystringvaluedate);
 
                 $mydatevalue->modify("last day of previous month");
@@ -1052,7 +1053,7 @@ class DashboradController extends Controller
                     ->getResult();
                 for ($d = 0; $d < count($lastfivedatearray); $d++) {
                     $time2 = strtotime($lastfivedatearray[$d]);
-                    $monthinletter = date('M-Y', $time2);
+                    $monthinletter = date('M', $time2);
                     array_push($newcategories, $monthinletter);
                     $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
                     $finalkpivalue = 0;
@@ -1157,6 +1158,10 @@ class DashboradController extends Controller
                     ->getQuery()
                     ->getResult();
 
+                $newcategories1 = array_reverse($newcategories);
+                $kpi_rule_color_array_new = array();
+                array_push($kpi_rule_color_array_new,$kpi_rule_color_array);
+
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
                     array(
@@ -1165,13 +1170,13 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'montharray' => $newcategories,
+                        'montharray' => $newcategories1,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
                         'kpiid' => $kpiid,
                         'commentarray' => $listofcomment,
-                        'kpi_color' => $kpi_rule_color_array,
+                        'kpi_color' => $kpi_rule_color_array_new,
                         'kpi_rule' => $rule_for_kpi_id,
                     )
                 );
@@ -1181,7 +1186,7 @@ class DashboradController extends Controller
 
                 for ($d = 0; $d < count($lastfivedatearray); $d++) {
                     $time2 = strtotime($lastfivedatearray[$d]);
-                    $monthinletter = date('M-Y', $time2);
+                    $monthinletter = date('M', $time2);
                     array_push($newcategories, $monthinletter);
                     $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
                     $finalkpivalue = 0;
@@ -1285,6 +1290,9 @@ class DashboradController extends Controller
                     ->getQuery()
                     ->getResult();
 
+                $newcategories1 = array_reverse($newcategories);
+                $kpi_rule_color_array_new = array();
+                array_push($kpi_rule_color_array_new,$kpi_rule_color_array);
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
@@ -1294,13 +1302,13 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'montharray' => $newcategories,
+                        'montharray' => $newcategories1,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
                         'kpiid' => $kpiid,
                         'commentarray' => $listofcomment,
-                        'kpi_color' => $kpi_rule_color_array,
+                        'kpi_color' => $kpi_rule_color_array_new,
                         'kpi_rule' => $rule_for_kpi_id,
                     )
                 );
