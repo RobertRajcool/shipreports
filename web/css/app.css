@@ -19,6 +19,7 @@ nav,
 section {
   display: block;
 }
+
 audio,
 canvas,
 video {
@@ -476,6 +477,7 @@ textarea {
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 }
+
 .tagged-input .tag-item {
   color: #505b65;
   border: 1px solid #bcbcbc;

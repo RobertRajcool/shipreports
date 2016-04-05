@@ -1,4 +1,5 @@
 
+
 /*
  * Base structure
  */
@@ -1153,7 +1154,7 @@ select {
     margin: 0 0 70px 0;
     position: relative;
     top: 0;
-    width: 800px;
+    width: 500px;
 }
 .add_new_kpi_top_title {
     padding: 9px 24px;
@@ -1208,8 +1209,22 @@ select {
 }
 
 .kpi_table_form_section {
-    margin-bottom:2px;
+    margin-bottom:3px;
     border:1px solid #f1f1f1;
+}
+.kpi_table_form_section input[type="text"]{
+    height:18px !important;
+}
+.kpi_table_form_section thead tr th {
+    background:#d2d2d2;
+    padding:3px 2px 3px 4px !important;
+    color:#505b65;
+    font-weight:bold !important;
+    font-size:13px;
+}
+.kpi_table_form_section tbody tr td {
+    padding:3px 2px 3px 4px !important;
+    border-top: 1px solid #eaeaea;
 }
 .kpi_table_form_section.second_dark {
     background:#e5e5e5;
@@ -1218,10 +1233,6 @@ select {
 .kpi_table_form_section.first_light {
     background:#f4f4f4;
     border:1px solid #f4f4f4;
-}
-.kpi_table_form_section thead tr th {
-    margin:0px;
-    padding:1px 2px;
 }
 .kpi_table_form_section tbody tr {
     border-bottom: none;
@@ -1232,16 +1243,12 @@ select {
 .kpi_table_form_section tbody tr:hover {
     background: none;
 }
-.kpi_table_form_section tbody tr td {
-    margin:0px;
-    padding:3px 2px;
-    border-top:none !important;
-}
 .kpi_table_form_section .kpi_name {
     width:30%;
 }
 .kpi_table_form_section .kpi_lement_name {
-    width:60%;
+    width:90%;
+
 }
 .kpi_table_form_section .kpi_lement_inputname {
     width:10%;

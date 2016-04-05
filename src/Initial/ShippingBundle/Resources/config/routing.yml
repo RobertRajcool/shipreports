@@ -5,7 +5,7 @@ initial_shipping_homepage:
 readexcelcontroller:
      path:    /readmy
      defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:index" }
-fileadd:
+scorecard_import:
      path:    /add
      defaults: { _controller: "InitialShippingBundle:ReadExcelSheet:up" }
 upload:

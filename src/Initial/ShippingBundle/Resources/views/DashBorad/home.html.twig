@@ -46,16 +46,13 @@
 
                       success: function(data)
                       {
-                          alert(data.changechartdata);
+
                           var chart = $('#area').highcharts();
                           chart.series[0].update({
                               name: month+'-'+year,
                               data: data.changechartdata
                           });
-                          chart.drilldown.update({
-                              series:data.drilldowndata ,
 
-                          });
                         //  $('#area').html('');
                         //  $('#area').text('');
 
