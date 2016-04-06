@@ -53,6 +53,17 @@
 {% endblock %}#}
 
 {% block body %}
+    <style>
+        .inlineinput div {
+            display: inline;
+            width :30px;
+        }
+        #kpi_details_endDate_year
+        {
+            display: inline;
+            width :60px;
+        }
+    </style>
 
     {% block javascripts %}
 
@@ -193,15 +204,26 @@
                             $('.end_year').val(end_date.getFullYear());
 
 
+                            var shipIdArray = [];
+                            $.each(data.ship_name, function(ii){
+                                shipIdArray.push(data.ship_name[ii][0]['id']);//add ship id here
+                            });
+
                             $.each(data.ship_array,function(index)
                             {
-                                var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
+                                if(shipIdArray.indexOf(data.ship_array[index]['id']) != -1){
+                                    //selected
+                                    var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', 'selected').appendTo('.ship_name_edit');
+                                }else{
+                                    //not selected
+                                    var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
+                                }
+                                /*var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', 'selected').appendTo('.ship_name_edit');*/
                             });
 
                             $.each(data.ship_name, function(ii)
                             {
                                 $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
-                                $('.ship_name_edit').val(data.ship_name[ii][0]['id']).attr('selected');
                             });
 
                             $('.show_kpi').show();
@@ -433,10 +455,16 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        <span>
+                                        {#<span>
                                             {{ form_widget(form.activeDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
                                         To
                                             {{ form_widget(form.endDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
+                                        </span>#}
+                                        <span class="inlineinput">
+                                            {{ form_widget(form.activeDate,{'class':'full-width-select ','label': ''}) }}
+                                        </span>
+                                        <span class="inlineinput">
+                                            To{{ form_widget(form.endDate,{'class':'full-width-select ','label': ''}) }}
                                         </span>
                                     </div>
                                 </div>
@@ -569,7 +597,7 @@
 
         <script class="kpi_edit_script" src="../js/rules/conditions-builder.js"></script>
 
-        {#<script class="kpi_edit_script" type="text/javascript">
+        <script class="kpi_edit_script" type="text/javascript">
 
             $(document).ready(function(){
                 $('.kpi_rules').hide();
@@ -887,7 +915,7 @@
                 }
             });
 
-        </script>#}
+        </script>
 
         <section>
             <div class="col-sm-11">

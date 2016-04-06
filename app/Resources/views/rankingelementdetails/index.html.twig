@@ -53,6 +53,17 @@
 {% endblock %}#}
 
 {% block body %}
+    <style>
+        .inlineinput div {
+            display: inline;
+            width :30px;
+        }
+        #kpi_details_endDate_year
+        {
+            display: inline;
+            width :60px;
+        }
+    </style>
 
     {% block javascripts %}
 
@@ -669,12 +680,18 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        <span>
+                                        {#<span>
                                             {{ form_widget(form.activeDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
                                         </span>
                                         To
                                         <span>
                                             {{ form_widget(form.endDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
+                                        </span>#}
+                                        <span class="inlineinput">
+                                            {{ form_widget(form.activeDate,{'class':'full-width-select ','label': ''}) }}
+                                        </span>
+                                        <span class="inlineinput">
+                                            To{{ form_widget(form.endDate,{'class':'full-width-select ','label': ''}) }}
                                         </span>
                                     </div>
                                 </div>
