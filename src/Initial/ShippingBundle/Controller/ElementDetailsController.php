@@ -162,7 +162,7 @@ class ElementDetailsController extends Controller
         $new_date1=new \DateTime($monthtostring1);
 
         $weightage     = $params['weightage'];
-        $rules         = $params['rules'];
+        $rules         = $request->request->get('value');
 
         $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiDetailsId));
 

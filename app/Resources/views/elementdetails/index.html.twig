@@ -680,13 +680,6 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        {#<span>
-                                            {{ form_widget(form.activatedDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
-                                        </span>
-                                        To
-                                        <span>
-                                            {{ form_widget(form.endDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
-                                        </span>#}
                                         <span class="inlineinput">
                                             {{ form_widget(form.activatedDate,{'class':'full-width-select ','label': ''}) }}
                                         </span>
@@ -760,7 +753,7 @@
                         </div>
 
                         <div class="actions_submit">
-                            <button class="submit_btn" id="get_value"  type="submit" value="Submit">Save user</button>
+                            <button class="submit_btn" id="get_value"  type="submit" value="Submit">Create</button>
                             <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
                         </div>
                     </form>

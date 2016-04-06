@@ -88,6 +88,12 @@
                     $('#rules_grid_view').show();
                 });
 
+                $('.edit_cancel_button').live("click",function(){
+                    $('.grid_edit_rules').hide();
+                    $('#rules_grid_view').show();
+                    $('.show_rules').show();
+                });
+
                 var condition_text = "";
                 var count = 0;
                 var i = 0;
@@ -389,7 +395,7 @@
                         </div>
 
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id"  type="submit" value="Submit">Save user</button>
+                            <button class="submit_btn" id="submit_id"  type="submit" value="Submit">Create</button>
                             <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
                         </div>
                     </form>
@@ -796,7 +802,7 @@
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save KPI</button>
+                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save Rule</button>
                             <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
                         </div>
 
