@@ -33,6 +33,7 @@
 
                 $('#showcommentform').click(function()
                 {
+                    $('#buttonid').hide();
                     $('#viewcommentdiv').hide();
                     $('#commentform').show();
                     $('#mailform').hide();
@@ -126,6 +127,7 @@
                 $('#addcommentid').click(function()
                 {
 
+
                     var kpiid=$('#kpiidforname').val();
                     var comment=$('#usermycommentid').val();
 
@@ -157,14 +159,14 @@
                                 {
 
                                     $('<span>'+listelemnt.comment+'</span>').appendTo('#viewcommentdiv');
-                                    $('#viewcomment').show();
-                                    $('#buttonid').show();
+
 
 
                                 });
                             }
 
-
+                            $('#buttonid').show();
+                            alert('Comment Added');
                         }
                         ,
                         error: function()

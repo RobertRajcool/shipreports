@@ -1522,22 +1522,13 @@ class DashboradController extends Controller
                 ->setParameter('username',$username)
                 ->getQuery()
                 ->getResult();
-            $monthinstring=date('Y-M-d');
-            $lastmonthdetail = new \DateTime($monthinstring);
-            $lastmonthdetail->modify('last day of this month');
+            //$monthinstring=date('Y-M-d');
+            //$lastmonthdetail = new \DateTime($monthinstring);
+            //$lastmonthdetail->modify('last day of this month');
             $lastfivedatearray=array();
-            $mystringvaluedate=$lastmonthdetail->format('Y-M-d');
-            array_push($lastfivedatearray,$mystringvaluedate);
-            for($i=0;$i<2;$i++)
-            {
-                $mydatevalue=new \DateTime($mystringvaluedate);
-
-                $mydatevalue->modify("last day of previous month");
-                $myvalue=$mydatevalue->format("Y-M-d");
-                array_push($lastfivedatearray,$myvalue);
-
-                $mystringvaluedate=$myvalue;
-
+            for ($m=1; $m<=12; $m++) {
+                $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
+               array_push($lastfivedatearray,$month);
             }
 //Find Last Five Months Ends Here//
 
@@ -1557,10 +1548,10 @@ class DashboradController extends Controller
             //loop for sending dates//
             for ($d = 0; $d < count($lastfivedatearray); $d++) {
                 $time2 = strtotime($lastfivedatearray[$d]);
-                $monthinletter = date('M-Y', $time2);
+                $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
-
+                $new_monthdetail_date->modify('last day of this month');
                 $finalkpielementvalue = 0;
                 $findingcolorarray = array();
                 $kpivaluesmontyly=array();
@@ -1800,7 +1791,8 @@ class DashboradController extends Controller
                     'avgscore' => $finalkpielementvaluearray,
                     'commentarray'=>$listofcomment,
                     'shipid'=>$newshipid,
-                    'kpimonthdata'=>$overalkpivaluesmontyly
+                    'kpimonthdata'=>$overalkpivaluesmontyly,
+                    'currentyear'=>date('Y')
                 )
             );
         }
@@ -1832,7 +1824,7 @@ class DashboradController extends Controller
                 ->setParameter('username', $username)
                 ->getQuery()
                 ->getResult();
-            $monthinstring=date('Y-m-d');
+           /* $monthinstring=date('Y-m-d');
             $lastmonthdetail = new \DateTime($monthinstring);
             $lastmonthdetail->modify('last day of this month');
             $lastfivedatearray = array();
@@ -1847,6 +1839,11 @@ class DashboradController extends Controller
 
                 $mystringvaluedate = $myvalue;
 
+            }*/
+            $lastfivedatearray=array();
+            for ($m=1; $m<=12; $m++) {
+                $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
+                array_push($lastfivedatearray,$month);
             }
 //Find Last Five Months Ends Here//
             $newcategories = array();
@@ -1946,6 +1943,7 @@ class DashboradController extends Controller
                     $monthinletter = date('M', $time2);
                     array_push($newcategories, $monthinletter);
                     $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
+                    $new_monthdetail_date->modify("last day of this month");
                     $finalkpivalue = 0;
                     $findingcolorarray = array();
                     $kpielementvalue=array();
@@ -2097,6 +2095,7 @@ class DashboradController extends Controller
                     $monthinletter = date('M', $time2);
                     array_push($newcategories, $monthinletter);
                     $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
+                    $new_monthdetail_date->modify('last day of this month');
                     $finalkpivalue = 0;
                     $findingcolorarray = array();
                     $findlvaluemonth=array();
