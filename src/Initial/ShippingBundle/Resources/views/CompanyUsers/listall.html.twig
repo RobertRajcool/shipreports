@@ -1,51 +1,576 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
-    {% block javascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+
+    {#{% block body %}
+        {% block javascripts %}
+            {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        {% endblock %}#}
+
+    {% block stylesheets %}
+        {% stylesheets
+        '@InitialShippingBundle/Resources/public/css/design/*'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
     {% endblock %}
 
-    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+
+    {#{%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>Company Users List</h2>
             <a href="{{ path('fos_user_registration_register') }}">Add newuser</a>
         </div>
-        {% endif %}
+        {% endif %}#}
 
 
-        <table id="readingkpitable">
-            <thead>
-            <tr>
-                <th>Username</th>
-                <th>Email id</th>
-                <th> Roles</th>
-                <th> Actions</th>
+    {% block javascripts %}
 
-            </tr>
-            </thead>
-            <tbody>
-            {% for listofuser in userdetails %}
-            <tr>
-
-                <td>{{ listofuser.username }}</td>
-                <td>{{ listofuser.email }}</td>
-                <td>{{ listofuser.roles[0] }}</td>
-                <td>
-                    <a href="{{ path('mycontroller', { 'id': listofuser.id }) }}">Edit</a>
-                </td>
-                {% endfor %}
-
-            </tr>
-            </tbody>
-        </table><br><br>
+        {% javascripts
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/demo.js'
+        '@AppBundle/Resources/public/js/actions-builder.js'
+        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+        '@AppBundle/Resources/public/js/rules.js'
+        '@AppBundle/Resources/public/js/sample.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
 
 
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.create_view').hide();
+                $('#list_view').hide();
+                $('.show_view').hide();
+                $('.edit_view').hide();
+
+
+                $('.add-rule').live("click",function(){
+                    $('.field').hide();
+                });
+                $('.add-condition').live("click",function(){
+                    $('.field').hide();
+                });
+                $('.box_icon').click(function(){
+                    $('#list_view').hide();
+                    $('#grid_view').show();
+                    $('.edit_view').hide();
+                    $('.show_view').hide();
+
+
+                });
+                $('.list_icon').click(function(){
+                    $('#grid_view').hide();
+                    $('#list_view').show();
+                    $('.create_view').hide();
+                    $('.edit_view').hide();
+                    $('.show_view').hide();
+
+
+                });
+                $('.add_btn').live("click",function(){
+                    $('#grid_view').show();
+                    $('#list_view').hide();
+                    $('.create_view').show();
+                    $('.edit_view').hide();
+                    $('.show_view').hide();
+
+                });
+                $('.cancel_btn').live("click",function(){
+                    $('.create_view').hide();
+                    $('#grid_view').show();
+                    $('.edit_view').hide();
+                    $('.show_view').hide();
+
+                });
+
+
+                $('.submit_btn').live("click",function(){
+                    $('#grid_view').show();
+                    $('#list_view').hide();
+                    $('.show_view').show();
+                    $('.edit_view').hide();
+
+                });
+
+
+                $('.edit_btn').live("click", function () {
+                    $('#grid_view').show();
+                    $('#list_view').hide();
+                    $('.show_view').hide();
+                    $('.create_view').hide();
+                    $('.edit_view').show();
+
+                });
+
+
+                $('.edit_user_button').live("click",function()
+                {
+                    $('.show_view').hide();
+                    $('.edit_view').show();
+                });
+
+                $('.edit_cancel_btn').live("click",function(){
+                    $('.edit_view').hide();
+                    $('.show_view').show();
+                });
+
+                //var condition_text = "";
+                var count = 0;
+                $('.user_class').live("click",function()
+                {
+                    count++;
+                    var currentId = $(this).attr('id');
+                    //alert(currentId)
+                    $('#kpi_id_reference_text').val(currentId);
+                    var data = {Id: currentId};
+                    if (count > 1) {
+                        $('.show_view').show();
+                        $('.edit_view').hide();
+                        $('.create_view').hide();
+                        $('.user_name').empty();
+                        $('.user_email').empty();
+                        $('.user_roles').empty();
+
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "sample",
+                        data: data,
+                        success: function (data) {
+                            //alert(success);
+
+                            $('.user_name').append(data.User_detail[0].username);
+                            $('.user_email').append(data.User_detail[0].email);
+                            //$('.user_mobile').append(data.User_detail[0].mobile);
+                            $('.user_roles').append(data.User_detail[0].roles[0]);
+
+                            //  for edit view
+
+                            $('.edit_user_id').val(data.User_detail[0].id);
+                            $('.edit_username').val(data.User_detail[0].username);
+                            $('.edit_email').val(data.User_detail[0].email);
+                            $('.edit_mobile').val(data.User_detail[0].mobile);
+                            $('.edit_fullname').val(data.User_detail[0].fullname);
+
+
+                            //var privilegs=[];
+                            //alert(data.User_detail[0].roles[0]);
+                            $('.inline-checkbox').each(function()
+                            {
+                                //alert($(this).val());
+
+                                if($(this).val()==data.User_detail[0].roles[0])
+                                {
+                                    var a=$(this).attr('id');
+                                    //alert(a);
+                                    $('#'+a).attr('checked','checked');
+                                    // alert("hi");
+                                }
+
+                            });
+
+
+
+                            // $('.').show();
+
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                    $('.show_kpi').show()
+                });
+
+
+
+
+                $('.edit_submit_btn').live("click",function()
+                {
+                    $('.user_name').empty();
+                    $('.user_email').empty();
+                    $('.user_roles').empty();
+                    $('.roles').empty();
+                    $('.user_mobile').empty();
+
+
+                    var data = {
+                        Id :$('.edit_user_id').val(),
+                        name: $('.edit_username').val(),
+                        email: $('.edit_email').val(),
+                        mobile: $('.edit_mobile').val(),
+                        fullname:$('.edit_fullname').val(),
+
+
+                        privileges: $('.inline-checkbox:checked').val()
+
+                    };
+
+                    $.ajax({
+                        type:"POST",
+                        url:"sample_edit",
+                        data: data,
+                        success: function(data) {
+                            $('.user_name').append(data.User_detail[0].username);
+                            $('.user_email').append(data.User_detail[0].email);
+                            $('.user_roles').append(data.User_detail[0].roles[0])
+                            $('.user_mobile').append(data.User_detail[0].mobile);
+
+
+
+                            //Setting value for edit view
+                            $('.edit_user_id').val(data.User_detail[0].id);
+                            $('.edit_username').val(data.User_detail[0].username);
+                            $('edit_email').val(data.User_detail[0].email);
+                            $('.edit_mobile').append(data.User_detail[0].mobile);
+
+
+                            $('.inline-checkbox').val(data.User_detail[0].roles[o]);
+
+
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                    // $('.edit_view').hide();
+                    $('.show_view').show();
+                });
+
+
+
+            });
+
+        </script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('#fos_user_registration_form_roles_0').hide();
+                $('#fos_user_registration_form_roles').hide();
+
+
+            });
+        </script>
+
+    {% endblock %}
+
+
+
+    <div id="grid_view">
+        <section>
+            <div class="col-sm-3 users_views">
+                <div class="add_user_btn_main">
+                    <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add User</a></span>
+                    <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+          <span class="user_btn_main grid_list_main">
+              <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
+              <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+          </span>
+                </div>
+
+                <div class="users_list_main"><span>User ({{ user_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
+
+                <div class="users_list_grid_main">
+                    {% for listofuser in userdetails %}
+                        <div class="users_list_grid">
+                    <span class="users_name_row">
+                        <span class="name"><a href="" class="user_class" id={{ listofuser.id }}>{{ listofuser.username }}</a> </span>
+                        <span class="text">{{ listofuser.email }}</span>
+
+                    </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
 
     </div>
 
+
+    <div id="list_view">
+        <section>
+            <div class="col-md-10 col-md-offset-2 users_advanced_list_views_screen">
+                <div class="">
+                    <div class="add_user_btn_main">
+                        <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add User</a></span>
+                        <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+                     <span class="user_btn_main grid_list_main">
+                         <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
+                         <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+                      </span>
+                    </div>
+                    <div class="spacing"></div>
+
+
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+
+                                <th>Username</th>
+                                <th>Email id</th>
+                                <th> Roles</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for listofuser in userdetails %}
+                                <tr>
+
+                                    <td>{{ listofuser.username }}</td>
+                                    <td>{{ listofuser.email }}</td>
+                                    <td>{{ listofuser.roles[0] }}</td>
+                                    {# <td>
+                                         <a href="{{ path('mycontroller', { 'id': listofuser.id }) }}">Edit</a>
+
+                                     </td>#}
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="create_view">
+        <section>
+            <div class="col-sm-11">
+                <div class="add_new_users_views_screen">
+                    {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register form-horizontal no-style'}}) }}
+                    <div class="add_new_users_form">
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Basic Info</legend>
+
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">Full name</label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.fullname,{'label': ' '}) }}
+                                    {#<input type="text" name="fullname">#}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">User name</label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.username,{'label': ' '}) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">Email</label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.email,{'label': ' '}) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">Mobile no</label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.mobile,{'label': ' '}) }}
+                                    {#<input type="number" name="mobile">#}
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Privileges</legend>
+                            {%  if is_granted("ROLE_SUPER_ADMIN") %}
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">&nbsp;</label>
+                                    <div class="col-xs-8">
+                                        <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_ADMIN"> Admin</label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER"> Report user</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_KPI_INFO PROVIDER"> KPI info provider</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_MANAGER"> KPI manager</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Security</legend>
+                            <div class="form-group">
+                                <label class="control-label require_field col-xs-4"> Password  </label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.plainPassword) }}
+                                </div>
+                                <div class="col-xs-8">
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                    <div class="actions_submit">
+                        <button class="submit_btn" type="submit" value="Submit">Save user</button>
+                        <button class="cancel_btn" type="submit" value="Submit">Cancel</button>
+
+                    </div>
+                    {{ form_end(form) }}
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+
+    <div class="show_view">
+
+        <section>
+            <div class="col-sm-11">
+                <div class="view_new_user_screen">
+                    {#<div class="view_new_user_screen_2 form_view_screen">#}
+                    <div class="actions_edit_button">
+                        <a href="" class="edit_btn edit_user_button"> Edit User</a>
+                        <a href="" class="edit_btn">Archive</a>
+                    </div>
+
+
+                    <div class="user_view_photo"><img src=""></div>
+                    <div class="user_view_section">
+                        <div class="user_text">
+                            <p class="user_name"> <label class="form_input user_name"></label></p>
+                            <p><label class="form_input user_email"></label></p>
+                            <p><label class="form_input user_mobile"></label></p>
+
+                        </div>
+                    </div>
+
+                    <div class="user_view_privileges">
+                        <p class="title">Privileges</p>
+                        <p><label class="form_input user_roles"></label></p>
+                    </div>
+
+
+
+
+                    <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+
+
+
+    <div class="edit_view">
+        <section>
+            <div class="col-sm-11">
+                <div class="add_new_users_views_screen">
+                    {#{{ form_start(form, {'method': 'post', 'action': path('company_edit'), 'attr': {'class': 'fos_user_registration_register form-horizontal no-style'}}) }}
+
+                 <input type="hidden" name="fos_user[id]" value="{{ userdetails.id }}" hidden>#}
+
+                    <div class="add_new_users_form">
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Basic Info</legend>
+
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">Full name</label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_fullname" value="" placeholder="">
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">User name</label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_username" value="" placeholder="">
+                                    <input type="hidden" class="edit_user_id" value="" placeholder="">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4">Email</label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_email" value="" placeholder="">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">Mobile no</label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_mobile" value="" placeholder="">
+
+                                </div>
+                            </div>
+
+                        </fieldset>
+
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Privileges</legend>
+                          {%  if is_granted("ROLE_SUPER_ADMIN") %}
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ADMIN"> Admin</label>
+                                </div>
+                            </div>
+                              {% endif %}
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" id="2" name="privileges"  class="inline-checkbox" placeholder="" value="REPORT USER">REPORT USER</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value="KPI Info provider"> KPI info provider</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" id="4"  name="privileges" class="inline-checkbox" placeholder="" value="KPI MANAGER"> KPI MANAGER</label>
+                                </div>
+                            </div>
+                            <div class="actions_submit">
+                                <button class="submit_btn edit_submit_btn" type="submit" value="Submit">Update user</button>
+                                <button class="cancel_btn edit_cancel_btn" type="submit" value="Submit">Cancel</button>
+
+                            </div>
+                        </fieldset>
+
+                    </div>
+
+
+                </div>
+            </div>
+        </section>
+    </div>
 
 {% endblock %}

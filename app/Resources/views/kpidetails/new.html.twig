@@ -5,13 +5,12 @@
     {% block javascripts %}
 
         {% javascripts
-        '@AppBundle/Resources/public/js/AAA.js'
-        '@AppBundle/Resources/public/js/demo.js'
-        '@AppBundle/Resources/public/js/actions-builder.js'
-        '@AppBundle/Resources/public/js/Element_conditions-builder.js'
-        '@AppBundle/Resources/public/js/rules.js'
-        '@AppBundle/Resources/public/js/sample.js'
-
+            '@AppBundle/Resources/public/js/AAA.js'
+            '@AppBundle/Resources/public/js/demo.js'
+            '@AppBundle/Resources/public/js/actions-builder.js'
+            '@AppBundle/Resources/public/js/Element_conditions-builder.js'
+            '@AppBundle/Resources/public/js/rules.js'
+            '@AppBundle/Resources/public/js/sample.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -28,38 +27,38 @@
         <div class="form-group">
             <label class="control-label col-xs-2">Ship Name</label>
             <div class="col-xs-10">
-                {{ form_row(form.shipDetailsId,{'id':'shipid','label': ''}) }}
+                {{ form_widget(form.shipDetailsId,{'label': ''}) }}
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2">Kpi Name</label>
             <div class="col-xs-10">
-                {{ form_row(form.kpiName,{'id':'kpiid','label': ''})  }}
+                {{ form_widget(form.kpiName,{'id':'kpiid','label': ''})  }}
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2">Description</label>
             <div class="col-xs-10">
-                {{ form_row(form.description,{'id':'elementId','label': ''}) }}
+                {{ form_widget(form.description,{'id':'elementId','label': ''}) }}
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2">Weightage</label>
             <div class="col-xs-10">
-                {{ form_row(form.weightage,{'id':'weightageId','label': ''}) }}
+                {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2">Active Date</label>
             <div class="col-xs-10">
-                {{ form_row(form.activeDate,{'id':'month','label': ''}) }}
+                {{ form_widget(form.activeDate,{'id':'month','label': ''}) }}
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-xs-2">End Date</label>
             <div class="col-xs-10">
 
-                {{ form_row(form.endDate,{'id':'valueid','label': ''}) }}
+                {{ form_widget(form.endDate,{'id':'valueid','label': ''}) }}
             </div>
         </div>
         <div class="form-group">
@@ -73,25 +72,22 @@
             <label class="control-label col-xs-2">Cell Detail</label>
             <div class="col-xs-10">
 
-                {{ form_row(form.cellDetails,{'id':'valueid','label': ''}) }}
+                {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
             </div>
         </div>
 
+        <div style="margin-left: 5%" id="conditions"></div>
+        <div id="actions"></div>
+        <p id="text_box"></p>
+        <div class="add_button_place"></div>
+        <input type="hidden" id="result" name="value">
 
         <table id="rule-table">
             <tr id="row_id">
                 <th>Conditions</th>
                 <th>Color</th>
             </tr>
-
         </table>
-
-        <div id="conditions"></div>
-        <div id="actions"></div>
-        <p id="text_box"></p>
-
-        <input type="hidden" id="result" name="value">
-
 
         <div class="actions">
             <input type="submit" class="btn btn-primary" value="Create" id="submit_id" />
