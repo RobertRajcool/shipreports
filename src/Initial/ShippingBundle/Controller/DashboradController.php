@@ -1773,7 +1773,8 @@ class DashboradController extends Controller
                     'montharray'=>$newcategories,
                     'avgscore'=>$finalkpielementvaluearray,
                     'commentarray'=>$listofcomment,
-                    'kpimonthdata'=>$overalkpivaluesmontyly
+                    'kpimonthdata'=>$overalkpivaluesmontyly,
+                    'currentyear'=>date('Y')
                 );
             }
 
@@ -2415,11 +2416,12 @@ class DashboradController extends Controller
                 'kpicolorarray' => $returnvaluefrommonth['kpicolorarray'],
                 'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
                 'montharray' => $returnvaluefrommonth['montharray'],
-                'shipname' => $returnvaluefrommonth['listofkpi'],
+                'shipname' => $kpiname,
                 'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
                 'avgscore' => $returnvaluefrommonth['avgscore'],
                 'commentarray'=>$listofcommentarray,
-                 'kpimonthdata'=>$returnvaluefrommonth['kpimonthdata']
+                 'kpimonthdata'=>$returnvaluefrommonth['kpimonthdata'],
+            'currentyear'=>date('Y')
         ));
 
         $client = new HighchartController();

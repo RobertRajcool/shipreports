@@ -1,4 +1,4 @@
-
+{#
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,9 +40,158 @@
                     <th class="branding-colours weightage">Weightage</th>
                     {% for monthname in montharray %}
                         <th class="branding-colours">{{ monthname }}</th>
+                        #}{#<th></th>#}{#
+                    {% endfor %}
+                    </tr></thead>
+                <tbody>
+                               {% set countmonth1= countmonth-1 %}
+                {% set i=0 %}
+                {% for kpi in listofkpi %}
+
+                    <tr><td>
+                            {{ kpi.kpiName }}
+                        </td>
+                        <td>{{ kpiweightage[i] }}%</td>
+                        {% for j in 0..countmonth1 %}
+
+                            <td>
+                                {{ kpimonthdata[j][i] }}
+                            </td>
+
+
+                        {% endfor %}
+
+
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                #}{#  <tr><td>Total</td></tr>#}{#
+                <tr>
+                    <td colspan="" class="kpi_name_thtd"><strong>Average score</strong></td>
+                    <td>100</td>
+
+                    {% for avg in avgscore %}
+                        <td><strong>{{ avg }}</strong></td>
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">Graph colour</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td> <img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">Comments</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {% if commentarray|length <= 0 %}
+                            <h4 align="center">No Commands Added </h4>
+                        {% endif %}
+                        {% if commentarray|length > 0 %}
+                            {% for comobject in commentarray %}
+                                {{ comobject.comment }}
+
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+</div>
+</body>
+</html>#}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <link href="css/pdf.css" rel="stylesheet">
+
+    <link href="css/ss-standard.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">KPI ranking pdf</div>
+            </div>
+            <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
+        </div>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_main_title_row">
+                <thead>
+                <tr>
+                    <th colspan="4">Pioneer Vessel Ranking</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><strong>Vessel name</strong></td>
+                    <td>{{ shipname }}</td>
+                    <td><strong>Tech manager</strong></td>
+                    <td>V-ships</td>
+                </tr>
+                <tr>
+                    <td><strong>Year</strong></td>
+                    <td>{{ currentyear }}</td>
+                    <td><strong>Age of vessel</strong></td>
+                    <td>10</td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_row">
+                <thead>
+                <tr>
+                    <th class="branding-colours kpi_name">KPI name</th>
+                    <th class="branding-colours weightage">Weightage</th>
+                    {% for monthname in montharray %}
+                        <th class="branding-colours">{{ monthname }}</th>
                         {#<th></th>#}
                     {% endfor %}
-                               {% set countmonth1= countmonth-1 %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
                 {% set i=0 %}
                 {% for kpi in listofkpi %}
 
@@ -85,7 +234,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td> <img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
+                    <td><img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
                 </tr>
                 </tbody>
             </table>
