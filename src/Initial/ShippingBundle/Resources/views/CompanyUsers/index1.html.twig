@@ -6,15 +6,11 @@
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
-
-
-
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
         <div class="page-header">
             <h2>Company Details</h2>
             <a href="{{ path('fos_user_registration_register') }}">Create Company</a>
         </div>
-
 
     <div class="table-responsive">
         <table class="table table-striped">
@@ -27,11 +23,11 @@
             </tr>
             </thead>
             <tbody>
-            {% for shipDetail in shipDetails %}
+            {% for companyDetails in companyDetail %}
                 <tr>
-                    <td>{{ shipDetail.companyName }}</td>
-                    <td>{{ shipDetail.adminName }}</td>
-                    <td>{{ shipDetail.emailId }}</td>
+                    <td>{{ companyDetails.companyName }}</td>
+                    <td>{{ companyDetails.adminName }}</td>
+                    <td>{{ companyDetails.emailId }}</td>
                     <td>
                         {%  if is_granted("ROLE_SUPER_ADMIN")  %}
                             <div class="onoffswitch">

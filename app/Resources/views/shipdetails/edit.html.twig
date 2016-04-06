@@ -20,7 +20,8 @@
             <a href="{{ path('shipdetails_select1') }}">Back</a>
         </div>
         <div class="bs-example">
-            {{ form_start(edit_form, {'attr': {'class': 'form-horizontal no-style'}}) }}
+            {#{{ form_start(edit_form, {'attr': {'class': 'form-horizontal no-style'}}) }}#}
+            <form class="form-horizontal no-style" action="{{ path('shipdetails_edit1') }}" method="post">
             <div class="form-group">
                 <label class="control-label col-xs-2">Ship Name</label>
                 <div class="col-xs-10">
@@ -85,7 +86,8 @@
             <div class="actions">
                 <input type="submit" class="btn btn-primary" value="Save" />
             </div>
-            {{ form_end(edit_form) }}
+            {#{{ form_end(edit_form) }}#}
+            </form>
         </div>
     </div>
 {% endblock %}

@@ -5,10 +5,10 @@
     {% block javascripts %}
 
         {% javascripts
-        '@AppBundle/Resources/public/js/AAA.js'
-        '@AppBundle/Resources/public/js/conditions-builder.js'
-        '@AppBundle/Resources/public/js/rules.js'
-        '@AppBundle/Resources/public/js/Element_rule_condition.js'
+            '@AppBundle/Resources/public/js/AAA.js'
+            '@AppBundle/Resources/public/js/conditions-builder.js'
+            '@AppBundle/Resources/public/js/rules.js'
+            '@AppBundle/Resources/public/js/Element_rule_condition.js'
         %}
 
         <script src="{{ asset_url }}"></script>
@@ -24,56 +24,56 @@
                     <div class="form-group">
                         <label class="control-label col-xs-2">KpiName</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.kpiDetailsId) }}
+                            {{ form_widget(form.kpiDetailsId,{'label': ''}) }}
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label col-xs-2">ElementName</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.elementName) }}
+                            {{ form_widget(form.elementName,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2">Description</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.description) }}
+                            {{ form_widget(form.description,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2">CellName</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.cellName) }}
+                            {{ form_widget(form.cellName,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2">CellDetails</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.cellDetails) }}
+                            {{ form_widget(form.cellDetails,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2">ActivateDate</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.activatedDate) }}
+                            {{ form_widget(form.activatedDate,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2">Endate</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.endDate) }}
+                            {{ form_widget(form.endDate,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2">Wightage</label>
                         <div class="col-xs-10">
-                            {{ form_row(form.weightage) }}
+                            {{ form_widget(form.weightage,{'label': ''}) }}
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-2"></label>
                         <div class="col-xs-10">
-                            {{ form_row(form.rules) }}
+                            {{ form_widget(form.rules,{'label': '','id':'element_details_rules'}) }}
                         </div>
                     </div>
 

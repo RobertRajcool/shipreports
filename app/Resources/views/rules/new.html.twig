@@ -28,13 +28,13 @@
                 <div class="form-group">
                     <label class="control-label col-xs-2">Kpi Name</label>
                     <div class="col-xs-10">
-                        {{ form_row(form.kpiDetailsId,{'id' :'jsid'}) }}
+                        {{ form_widget(form.kpiDetailsId,{'id' :'jsid','label':' '}) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-xs-2">Element Name</label>
                     <div class="col-xs-10">
-                        {{ form_row(form.elementDetailsId,{'id' :'element'}) }}
+                        {{ form_widget(form.elementDetailsId,{'id' :'element','label':' '}) }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -43,6 +43,13 @@
                         {{ form_row(form.rules,{'id' :'result'}) }}
                     </div>
                 </div>
+
+                <div style="margin-left: 5%" id="conditions"></div>
+                <div id="actions"></div>
+                <div class="add_button_place"></div>
+                <p id="text_box"></p>
+                <input type="hidden" id="result" name="value">
+
                 <table id="rule-table">
                     <tr id="row_id">
                         <th>Conditions</th>
@@ -50,10 +57,6 @@
                     </tr>
                 </table>
 
-                <div id="conditions"></div>
-                <div id="actions"></div>
-                <p id="text_box"></p>
-                <input type="hidden" id="result" name="value">
                 <div class="actions">
                     <input class="btn btn-primary" type="submit" value="Create" id="submit_id" />
                 </div>

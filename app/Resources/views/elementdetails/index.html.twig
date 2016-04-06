@@ -88,6 +88,7 @@
                 $('.list_icon').click(function(){
                     $('#element_grid_view').hide();
                     $('.show_element').hide();
+                    $('.grid_edit_element').hide();
                     $('#element_list_view').show();
                 });
 
@@ -129,6 +130,7 @@
 
                 $('.element_class').live("click",function()
                 {
+                    $('.grid_edit_element').hide();
                     $('.rule_div').hide();
                     count++;
                     var currentId = $(this).attr('id');
@@ -181,9 +183,13 @@
                             $('.edit_element_weightage').val(data.element_detail[0].weightage);
                             $('.edit_element_cellName').val(data.element_detail[0].cellName);
                             $('.edit_element_cellDetails').val(data.element_detail[0].cellDetails);
-                            $('.monthPicker_activeDate').val(data.element_detail[0].activatedDate.date);
-                            $('.monthPicker_endDate').val(data.element_detail[0].endDate.date);
+                            /*$('.monthPicker_activeDate').val(data.element_detail[0].activatedDate.date);
+                            $('.monthPicker_endDate').val(data.element_detail[0].endDate.date);*/
                             $('.element_edit_id').val(data.element_detail[0].id);
+                            $('.active_month').val(active_date.getMonth());
+                            $('.active_year').val(active_date.getFullYear());
+                            $('.end_month').val(end_date.getMonth());
+                            $('.end_year').val(end_date.getFullYear());
 
                             $.each(data.kpi_name_array, function(index){
                                var kpi_option = $('<option>').append(data.kpi_name_array[index]['kpiName']).val(data.kpi_name_array[index]['id']).appendTo('.edit_kpiName');
@@ -777,7 +783,9 @@
                         </div>
                         <div class="form_view">
                             <label class="form_labell">Valid :</label>
-                            <label class="form_input"><label class="element_activeDate_month element_activeDate_year"></label> <strong>To<label class=" element_endDate_month element_endDate_year"></label></strong> </label>
+                            <label class="form_input">
+                                <label><span class="element_activeDate_month "></span>-<sapn class=" element_activeDate_year"></sapn> <strong> To </strong> <span class=" element_endDate_month "></span>-<span class="  element_endDate_year"></span></label>
+                            </label>
                         </div>
                     </fieldset>
                     <fieldset class="fieldset_box">
@@ -848,14 +856,53 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-
-                                <span>
-                                    <input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />
-                                </span>
+                                        <span>
+                                            <select class="month_text add_rule_basic_date_drop active_month ">
+                                                <option value="0">JAN</option>
+                                                <option value="1">FEB</option>
+                                                <option value="2">MAR</option>
+                                                <option value="3">APR</option>
+                                                <option value="4">MAY</option>
+                                                <option value="5">JUN</option>
+                                                <option value="6">JUL</option>
+                                                <option value="7">AUG</option>
+                                                <option value="8">SEP</option>
+                                                <option value="9">OCT</option>
+                                                <option value="10">NOV</option>
+                                                <option value="11">DEC</option>
+                                            </select>
+                                        </span>
+                                         <span>
+                                                <select class="year_text add_rule_basic_year_drop active_year">
+                                                    {% for i in 2000..2020 %}
+                                                        <option value={{ i }}>{{ i }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                        </span>
                                         To
-                                <span>
-                                    <input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />
-                                </span>
+                                        <span>
+                                            <select class="month_text add_rule_basic_date_drop end_month">
+                                                <option value="0">JAN</option>
+                                                <option value="1">FEB</option>
+                                                <option value="2">MAR</option>
+                                                <option value="3">APR</option>
+                                                <option value="4">MAY</option>
+                                                <option value="5">JUN</option>
+                                                <option value="6">JUL</option>
+                                                <option value="7">AUG</option>
+                                                <option value="8">SEP</option>
+                                                <option value="9">OCT</option>
+                                                <option value="10">NOV</option>
+                                                <option value="11">DEC</option>
+                                            </select>
+                                        </span>
+                                         <span>
+                                            <select class="year_text add_rule_basic_year_drop end_year">
+                                                {% for i in 2000..2020 %}
+                                                    <option value={{ i }}>{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </span>
                                     </div>
                                 </div>
                             </fieldset>

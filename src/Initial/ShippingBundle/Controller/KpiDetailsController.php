@@ -303,7 +303,7 @@ class KpiDetailsController extends Controller
         for($j=0;$j<count($kpi_id_array);$j++)
         {
             $query2 = $em->createQueryBuilder()
-                ->select('a.shipName')
+                ->select('a.shipName','a.id')
                 ->from('InitialShippingBundle:ShipDetails','a')
                 ->where('a.id = :ship_id')
                 ->setParameter('ship_id',$ship_id_array[$j][0][1])

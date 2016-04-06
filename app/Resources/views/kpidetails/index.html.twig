@@ -80,6 +80,7 @@
                 $('.edit_kpi_button').live("click",function(){
                     $('.show_kpi').hide();
                     $('.create_kpi').hide();
+                    $('.rule_create_div').hide();
                     $('.grid_edit_kpi').show();
                 });
 
@@ -128,6 +129,8 @@
                 $('.kpi_class').live("click",function()
                 {
                     $('.grid_edit_kpi').hide();
+                    $('.create_kpi').hide();
+                    $('.rule_div').hide();
                     count++;
                     var currentId = $(this).attr('id');
                     var data = {Id : currentId};
@@ -136,6 +139,7 @@
                         $('.show_kpi').hide();
                         $('.ship_name').empty();
                         $('.kpi_name').empty();
+                        $('.ship_name_edit').empty();
                         $('.kpi_description').empty();
                         $('.kpi_weightage').empty();
                         $('.kpi_cellName').empty();
@@ -179,18 +183,25 @@
                             $('.edit_kpi_weightage').val(data.kpi_detail[0].weightage);
                             $('.edit_kpi_cellName').val(data.kpi_detail[0].cellName);
                             $('.edit_kpi_cellDetails').val(data.kpi_detail[0].cellDetails);
-                            $('.monthPicker_activeDate').val(data.kpi_detail[0].activeDate.date);
-                            $('.monthPicker_endDate').val(data.kpi_detail[0].endDate.date);
+                            /*$('.monthPicker_activeDate').val(data.kpi_detail[0].activeDate.date);
+                            $('.monthPicker_endDate').val(data.kpi_detail[0].endDate.date);*/
                             $('.kpi_edit_id').val(data.kpi_detail[0].id);
+                            $('.active_month').val(active_date.getMonth());
+                            $('.active_year').val(active_date.getFullYear());
+                            $('.end_month').val(end_date.getMonth());
+                            $('.end_year').val(end_date.getFullYear());
+
 
                             $.each(data.ship_array,function(index)
                             {
-                                var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
+                                var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
                             });
 
                             $.each(data.ship_name, function(ii)
                             {
                                 $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
+                                $('select .ship_name_edit').val(data.ship_name[ii][0]['id']);
+                                console.log(data.ship_name[ii][0]['id']);
                             });
 
                             $('.show_kpi').show();
@@ -235,15 +246,14 @@
                                 });
                                 $('.rule_div').show();
                             }
-                                },
-                                error: function(XMLHttpRequest, textStatus, errorThrown)
-                                {
-                                    alert('Error : ' + errorThrown);
-                                }
-                            });
-                            $('.show_kpi').show();
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
 
-                        });
+                });
 
                 $('#kpi_details_activeDate_day').hide();
                 $('#kpi_details_endDate_day').hide();
@@ -343,7 +353,6 @@
                                     <th>EndDate</th>
                                     <th>CellName</th>
                                     <th>CellDetails</th>
-                                    {#<th>Actions</th>#}
                                 </tr>
                             </thead>
                             <tbody>
@@ -355,11 +364,6 @@
                                         <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
                                         <td>{{ kpiDetail.cellName }}</td>
                                         <td>{{ kpiDetail.cellDetails }}</td>
-                                        {#<td>
-                                            &#123;&#35;<a href="{{ path('kpidetails_show1', { 'id': kpiDetail.id }) }}">show</a>&#35;&#125;
-                                            <a href="{{ path('kpidetails_edit1', { 'id': kpiDetail.id }) }}">edit</a>
-                                            <a href="{{ path('elementdetails_select', { 'id': kpiDetail.id }) }}">Kpi_Elements</a>
-                                        </td>#}
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -400,49 +404,26 @@
                                         {{ form_widget(form.kpiName,{'id':'kpiid','label': ''})  }}
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Weightage</label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Description</label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.description,{'id':'elementId','label': ''}) }}
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
                                         <span>
-                                            {#<select class="add_rule_basic_date_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>Jan</option>
-                                            </select>
-                                        </span>
-                                        <span>
-                                            <select class="add_rule_basic_year_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>2016</option>
-                                            </select>#}
                                             {{ form_widget(form.activeDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
                                         </span>
                                                             To
                                         <span>
-                                            {#<select class="add_rule_basic_date_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>Jan</option>
-                                            </select>
-                                        </span>
-                                        <span>
-                                            <select class="add_rule_basic_year_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>2016</option>
-                                            </select>#}
                                             {{ form_widget(form.endDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
                                         </span>
                                     </div>
@@ -465,7 +446,6 @@
                                         {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
                                     </div>
                                 </div>
-
                             </fieldset>
                         </div>
 
@@ -476,24 +456,14 @@
                                     <div class="col-xs-9">
                                         <div id="conditions"></div>
                                         <div id="actions"></div>
-
                                         <p id="text_box"></p>
                                         <input type="hidden" id="result" name="value">
-
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                                        {#<div id="actions"></div>#}
-                                        {#<a href="" id="actions">add action</a>#}
                                     </div>
                                 </div>
                                 <div class="form-group button">
                                     <div class="col-xs-9 add_button_place">
-
                                     </div>
                                 </div>
-
                                 <div class="table-responsive">
                                     <table class="table add_rule_conditions" id="rule-table">
                                         <thead>
@@ -509,25 +479,7 @@
                                     <div class="small"></div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box_right add_rule_right_form">
-                                <legend class="legend_name">Created Rules</legend>
-                                <div class="table-responsive">
-                                    <table class="table add_rule_conditions" id="rule-table">
-                                        <thead>
-                                        <tr id="row_id">
-                                            <th class="conditions">Conditions</th>
-                                            <th class="color">Color</th>
-                                            <th class="action">&nbsp;</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="small"></div>
-                                </div>
-                            </fieldset>#}
                         </div>
-
                         <div class="actions_submit">
                             <button class="submit_btn" id="submit_id"  value="Submit">Create</button>
                             <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
@@ -537,6 +489,7 @@
             </div>
         </section>
     </div>
+
 
     <div class = "show_kpi">
         <section>
@@ -566,7 +519,9 @@
                         </div>
                         <div class="form_view">
                             <label class="form_labell">Valid :</label>
-                            <label class="form_input"><label class="kpi_activeDate_month kpi_activeDate_year"></label> <strong>To<label class=" kpi_endDate_month kpi_endDate_year"></label></strong> </label>
+                            <label class="form_input">
+                                <label><span class="kpi_activeDate_month "></span>-<sapn class=" kpi_activeDate_year"></sapn> <strong> To </strong> <span class=" kpi_endDate_month "></span>-<span class="  kpi_endDate_year"></span></label>
+                            </label>
                         </div>
                     </fieldset>
                     <fieldset class="fieldset_box">
@@ -607,7 +562,9 @@
             $(document).ready(function(){
                 $('.kpi_rules').hide();
 
-                $('.edit_class').live("click",function(){
+                $('.edit_class').live("click",function()
+                {
+                    $('.rule_create_div').show();
                     var conditions, actions;
                     var currentId = $(this).attr('id');
                     var ans = splitfun(currentId);
@@ -960,13 +917,54 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-
-                                <span>
-                                    <input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />
+                                        <span>
+                                    <select class="month_text add_rule_basic_date_drop active_month ">
+                                        <option value="0">JAN</option>
+                                        <option value="1">FEB</option>
+                                        <option value="2">MAR</option>
+                                        <option value="3">APR</option>
+                                        <option value="4">MAY</option>
+                                        <option value="5">JUN</option>
+                                        <option value="6">JUL</option>
+                                        <option value="7">AUG</option>
+                                        <option value="8">SEP</option>
+                                        <option value="9">OCT</option>
+                                        <option value="10">NOV</option>
+                                        <option value="11">DEC</option>
+                                    </select>
+                                        </span>
+                                         <span>
+                                            <select class="year_text add_rule_basic_year_drop active_year">
+                                                {% for i in 2000..2020 %}
+                                                    <option value={{ i }}>{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                             {#<input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />#}
                                 </span>
-                                                        To
+                                        To
                                 <span>
-                                    <input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />
+                                    <select class="month_text add_rule_basic_date_drop end_month">
+                                        <option value="0">JAN</option>
+                                        <option value="1">FEB</option>
+                                        <option value="2">MAR</option>
+                                        <option value="3">APR</option>
+                                        <option value="4">MAY</option>
+                                        <option value="5">JUN</option>
+                                        <option value="6">JUL</option>
+                                        <option value="7">AUG</option>
+                                        <option value="8">SEP</option>
+                                        <option value="9">OCT</option>
+                                        <option value="10">NOV</option>
+                                        <option value="11">DEC</option>
+                                    </select>
+                                </span>
+                                 <span>
+                                    <select class="year_text add_rule_basic_year_drop end_year">
+                                        {% for i in 2000..2020 %}
+                                            <option value={{ i }}>{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                     {#<input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />#}
                                 </span>
                                     </div>
                                 </div>
@@ -1005,11 +1003,10 @@
 
                         </div>
                         <div class="kpi_rules">
-                            <fieldset class="fieldset_box_right add_rule_right_edit_form">
+                            <fieldset class="fieldset_box_right add_rule_right_edit_form rule_create_div">
                                 <legend class="legend_name">Rules create</legend>
                                 <div class="form-group button">
                                     <div class="col-xs-9">
-                            {# &#123;&#35;<a href="">Add rule</a> <a href="">Sub c&#35;&#125;>#}
                                         <div id="conditions_edit"></div>
                                         <div id="actions_edit"></div>
 
