@@ -81,7 +81,8 @@
                             <div class="actions_submit">
                                {# <button class="submit_btn" type="submit" value="Submit">Save user</button>#}
                                 <input type="submit" class="submit_btn" id="addsubmitid" value="Upload" />
-                                <button class="cancel_btn" type="submit" value="Submit">Cancel</button>
+                                {#<button class="cancel_btn" type="submit" value="Submit">Cancel</button>#}
+                                <a class="cancel_btn" id="dashboradhome" href="{{ path('dashboardhome') }}">Cancel</a>
                             </div>
                         {{ form_end(form) }}
                     </div>

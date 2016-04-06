@@ -1,8 +1,0 @@
-dashboard:
-    rightside:
-        listship: Vessel
-        kpi: Email
-    edit:
-        submit: Update
-    flash:
-        updated: 'The profile has been updated'

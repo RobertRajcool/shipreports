@@ -7,16 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shipping</title>
     <!-- Bootstrap -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/app.css" rel="stylesheet">
-    <link href="/css/pdf.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <link href="css/pdf.css" rel="stylesheet">
 
-    <link href="/css/ss-standard.css" rel="stylesheet">
-    <link href="/css/font-awesome.css" rel="stylesheet">
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/ss-standard.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/js/angular.min.js"></script>
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
 </head>
@@ -27,22 +27,47 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">Shipping pdf</div>
+                <div class="title">{{ 'kpipdf.title'|trans }}</div>
             </div>
-            <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
+            <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
 
         <section class="data-row-section top-margin-space">
-            <table class="responsive-table certificates-table kpi_name_weightage_row">
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_main_title_row">
                 <thead>
                 <tr>
-                    <th class="branding-colours kpi_name">KPI name</th>
-                    <th class="branding-colours weightage">Weightage</th>
+                    <th colspan="4">{{ 'kpiranking.header'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
+                    <td>{{ shipname }}</td>
+                    <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
+                    <td>V-ships</td>
+                </tr>
+                <tr>
+                    <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
+                    <td>{{ currentyear }}</td>
+                    <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
+                    <td>10</td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_row">
+                <thead>
+                <tr>
+                    <th class="branding-colours kpi_name">{{ 'kpiranking.kpi'|trans }}</th>
+                    <th class="branding-colours weightage">{{ 'kpiranking.weightage'|trans }}</th>
+
                     {% for monthname in montharray %}
                         <th class="branding-colours">{{ monthname }}</th>
                         {#<th></th>#}
                     {% endfor %}
-                               {% set countmonth1= countmonth-1 %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
                 {% set i=0 %}
                 {% for kpi in listofkpi %}
 
@@ -65,7 +90,7 @@
                 {% endfor %}
                 {#  <tr><td>Total</td></tr>#}
                 <tr>
-                    <td colspan="" class="kpi_name_thtd"><strong>Average score</strong></td>
+                    <td colspan="" class="kpi_name_thtd"><strong>{{ 'kpiranking.avgscore'|trans }}</strong></td>
                     <td>100</td>
 
                     {% for avg in avgscore %}
@@ -80,12 +105,12 @@
             <table class="responsive-table certificates-table">
                 <thead>
                 <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">Graph colour</th>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ 'kpiranking.graphtitle'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td> <img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
+                    <td><img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
                 </tr>
                 </tbody>
             </table>
@@ -95,14 +120,14 @@
             <table class="responsive-table certificates-table">
                 <thead>
                 <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">Comments</th>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ 'kpipdf.commands'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>
                         {% if commentarray|length <= 0 %}
-                            <h4 align="center">No Commands Added </h4>
+                            <h4 align="center">{{ 'elementranking.nocommands'|trans }} </h4>
                         {% endif %}
                         {% if commentarray|length > 0 %}
                             {% for comobject in commentarray %}
