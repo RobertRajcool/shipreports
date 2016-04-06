@@ -362,119 +362,116 @@ class DataVerficationController extends Controller
      */
     public function shipskpielmentforrankingAction(Request $request,$shipid,$monthdetail,$mode='')
     {
-        $session = new Session();
-        $em=$this->getDoctrine()->getManager();
-        $mydate='01-'.$monthdetail;
-        $time = strtotime($mydate);
-        $newformat = date('Y-m-d',$time);
-        $new_date=new \DateTime($newformat);
-        $new_date->modify('last day of this month');
-        $resularray = $em->createQueryBuilder()
-            ->select('b.value')
-            ->from('InitialShippingBundle:RankingMonthlyData', 'b')
-            ->where('b.shipDetailsId = :shipdetailsid')
-            ->andWhere('b.monthdetail =:dataofmonth')
-            ->setParameter('shipdetailsid', $shipid)
-            ->setParameter('dataofmonth', $new_date)
-            ->getQuery()
-            ->getResult();
-
-
-        $query = $em->createQueryBuilder()
-            ->select('b.kpiName', 'b.id')
-            ->from('InitialShippingBundle:RankingKpiDetails', 'b')
-            ->where('b.shipDetailsId = :shipdetailsid')
-            ->setParameter('shipdetailsid', $shipid)
-            ->add('orderBy', 'b.id  ASC ')
-            ->getQuery();
-
-        $ids = $query->getResult();
-        $maxelementcount=0;
-
-        $returnarray=array();
-        $sessionkpielementid_ranking=array();
-        $k=0;
-        for($i=0;$i<count($ids);$i++)
+        $em = $this->getDoctrine()->getManager();
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        if($user==null)
         {
-            $kpiid=$ids[$i]['id'];
-            $kpiname=$ids[$i]['kpiName'];
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        else {
+            $session = new Session();
+            $em = $this->getDoctrine()->getManager();
+            $mydate = '01-' . $monthdetail;
+            $time = strtotime($mydate);
+            $newformat = date('Y-m-d', $time);
+            $new_date = new \DateTime($newformat);
+            $new_date->modify('last day of this month');
+            $resularray = $em->createQueryBuilder()
+                ->select('b.value')
+                ->from('InitialShippingBundle:RankingMonthlyData', 'b')
+                ->where('b.shipDetailsId = :shipdetailsid')
+                ->andWhere('b.monthdetail =:dataofmonth')
+                ->setParameter('shipdetailsid', $shipid)
+                ->setParameter('dataofmonth', $new_date)
+                ->getQuery()
+                ->getResult();
+
 
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id')
-                ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                ->where('b.kpiDetailsId = :kpidetailsid')
-                ->setParameter('kpidetailsid', $kpiid)
+                ->select('b.kpiName', 'b.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.shipDetailsId = :shipdetailsid')
+                ->setParameter('shipdetailsid', $shipid)
                 ->add('orderBy', 'b.id  ASC ')
                 ->getQuery();
-            $elementids = $query->getResult();
-            if(count($elementids)==0)
-            {
-                $query1 = $em->createQueryBuilder()
-                    ->select('b.kpiName', 'b.id')
-                    ->from('InitialShippingBundle:RankingKpiDetails', 'b')
-                    ->where('b.kpiName = :kpiName')
-                    ->setParameter('kpiName', $kpiname)
-                    ->add('orderBy', 'b.id  ASC ')
-                    ->groupby('b.kpiName')
-                    ->getQuery();
 
-                $ids1 = $query1->getResult();
-                $newkpiid=$ids1[0]['id'];
-                $newkpiname=$ids1[0]['kpiName'];
+            $ids = $query->getResult();
+            $maxelementcount = 0;
+
+            $returnarray = array();
+            $sessionkpielementid_ranking = array();
+            $k = 0;
+            for ($i = 0; $i < count($ids); $i++) {
+                $kpiid = $ids[$i]['id'];
+                $kpiname = $ids[$i]['kpiName'];
+
                 $query = $em->createQueryBuilder()
                     ->select('b.elementName', 'b.id')
                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
                     ->where('b.kpiDetailsId = :kpidetailsid')
-                    ->setParameter('kpidetailsid', $newkpiid)
+                    ->setParameter('kpidetailsid', $kpiid)
                     ->add('orderBy', 'b.id  ASC ')
                     ->getQuery();
                 $elementids = $query->getResult();
-                if($maxelementcount<count($elementids))
-                {
-                    $maxelementcount=count($elementids);
-                }
-                for($j=0;$j<count($elementids);$j++)
-                {
-                    $sessionkpielementid_ranking[$newkpiid][$j] = $elementids[$j]['id'];
-                    $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+                if (count($elementids) == 0) {
+                    $query1 = $em->createQueryBuilder()
+                        ->select('b.kpiName', 'b.id')
+                        ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                        ->where('b.kpiName = :kpiName')
+                        ->setParameter('kpiName', $kpiname)
+                        ->add('orderBy', 'b.id  ASC ')
+                        ->groupby('b.kpiName')
+                        ->getQuery();
+
+                    $ids1 = $query1->getResult();
+                    $newkpiid = $ids1[0]['id'];
+                    $newkpiname = $ids1[0]['kpiName'];
+                    $query = $em->createQueryBuilder()
+                        ->select('b.elementName', 'b.id')
+                        ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                        ->where('b.kpiDetailsId = :kpidetailsid')
+                        ->setParameter('kpidetailsid', $newkpiid)
+                        ->add('orderBy', 'b.id  ASC ')
+                        ->getQuery();
+                    $elementids = $query->getResult();
+                    if ($maxelementcount < count($elementids)) {
+                        $maxelementcount = count($elementids);
+                    }
+                    for ($j = 0; $j < count($elementids); $j++) {
+                        $sessionkpielementid_ranking[$newkpiid][$j] = $elementids[$j]['id'];
+                        $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
 
 
+                    }
+                } else {
+                    if ($maxelementcount < count($elementids)) {
+                        $maxelementcount = count($elementids);
+                    }
+
+                    for ($j = 0; $j < count($elementids); $j++) {
+                        $sessionkpielementid_ranking[$kpiid][$j] = $elementids[$j]['id'];
+                        $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+
+                    }
                 }
+
+
             }
-            else
-            {
-                if($maxelementcount<count($elementids))
-                {
-                    $maxelementcount=count($elementids);
-                }
-
-                for($j=0;$j<count($elementids);$j++)
-                {
-                    $sessionkpielementid_ranking[$kpiid][$j] = $elementids[$j]['id'];
-                    $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
-
-                }
+            $elementvalues = array();
+            for ($kkk = 0; $kkk < count($resularray); $kkk++) {
+                array_push($elementvalues, $resularray[$kkk]['value']);
+            }
+            if ($mode == 'listkpielement') {
+                return array('returnarray' => $returnarray, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
             }
 
-
-
-
+            $session->remove('sessionkpielementid_ranking');
+            $session->set('sessionkpielementid_ranking', $sessionkpielementid_ranking);
+            $response = new JsonResponse();
+            $response->setData(array('kpiNameArray' => $returnarray, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
+            return $response;
         }
-        $elementvalues=array();
-        for($kkk=0;$kkk<count($resularray);$kkk++)
-        {
-            array_push($elementvalues,$resularray[$kkk]['value']);
-        }
-        if($mode=='listkpielement')
-        {
-            return array('returnarray'=>$returnarray,'elementcount'=>$maxelementcount,'elementvalues'=>$elementvalues);
-        }
-
-        $session->remove('sessionkpielementid_ranking');
-        $session->set('sessionkpielementid_ranking', $sessionkpielementid_ranking);
-        $response = new JsonResponse();
-        $response->setData(array('kpiNameArray' => $returnarray,'elementcount'=>$maxelementcount,'elementvalues'=>$elementvalues));
-        return $response;
     }
     /**
      * Adding Kpi Values Ranking.
@@ -484,95 +481,96 @@ class DataVerficationController extends Controller
      */
     public function addkpivaluesforrankingAction(Request $request,$buttonid)
     {
-        $session = new Session();
-        $kpiandelementids= $session->get('sessionkpielementid_ranking');
-        $shipid = $request->request->get('shipid');
-        $elementvalues=$request->request->get('newelemetvalues');
-        $dataofmonth = $request->request->get('dataofmonth');
-        $mydate='01-'.$dataofmonth;
-        $time = strtotime($mydate);
-        $newformat = date('Y-m-d',$time);
         $em = $this->getDoctrine()->getManager();
-        $new_date=new \DateTime($newformat);
-        $new_date->modify('last day of this month');
-        $k=0;
-        $returnmsg='';
-        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
-        if($buttonid=='updatebuttonid' ||$buttonid=='adminbutton')
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        if($user==null)
         {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        else {
+            $session = new Session();
+            $kpiandelementids = $session->get('sessionkpielementid_ranking');
+            $shipid = $request->request->get('shipid');
+            $elementvalues = $request->request->get('newelemetvalues');
+            $dataofmonth = $request->request->get('dataofmonth');
+            $mydate = '01-' . $dataofmonth;
+            $time = strtotime($mydate);
+            $newformat = date('Y-m-d', $time);
+            $em = $this->getDoctrine()->getManager();
+            $new_date = new \DateTime($newformat);
+            $new_date->modify('last day of this month');
+            $k = 0;
+            $returnmsg = '';
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbutton') {
 
-            $returnarrayids = $em->createQueryBuilder()
-                ->select('b.id')
-                ->from('InitialShippingBundle:RankingMonthlyData', 'b')
-                ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.monthdetail =:dataofmonth')
-                ->setParameter('shipdetailsid', $shipid)
-                ->setParameter('dataofmonth', $new_date)
-                ->getQuery()
-                ->getResult();
-            for($kkk=0;$kkk<count($returnarrayids);$kkk++)
-            {
-                $entityobject = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->find($returnarrayids[$kkk]['id']);
-                $entityobject->setValue($elementvalues[$kkk]);
-                //$entityobject->setFilename($pdffilenamearray[0].'.pdf');
-                $em->flush();
-                $returnmsg=' Data Updated...';
+                $returnarrayids = $em->createQueryBuilder()
+                    ->select('b.id')
+                    ->from('InitialShippingBundle:RankingMonthlyData', 'b')
+                    ->where('b.shipDetailsId = :shipdetailsid')
+                    ->andWhere('b.monthdetail =:dataofmonth')
+                    ->setParameter('shipdetailsid', $shipid)
+                    ->setParameter('dataofmonth', $new_date)
+                    ->getQuery()
+                    ->getResult();
+                for ($kkk = 0; $kkk < count($returnarrayids); $kkk++) {
+                    $entityobject = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->find($returnarrayids[$kkk]['id']);
+                    $entityobject->setValue($elementvalues[$kkk]);
+                    //$entityobject->setFilename($pdffilenamearray[0].'.pdf');
+                    $em->flush();
+                    $returnmsg = ' Data Updated...';
+                }
+
+
+            }
+            if ($buttonid == 'savebuttonid') {
+                foreach ($kpiandelementids as $kpikey => $kpipvalue) {
+
+
+                    $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpikey));
+                    foreach ($kpipvalue as $elementkey => $elementvalue) {
+                        $newelementid = $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $elementvalue));
+
+                        $readingkpivalue = new RankingMonthlyData();
+                        $readingkpivalue->setKpiDetailsId($newkpiid);
+                        $readingkpivalue->setElementDetailsId($newelementid);
+                        $readingkpivalue->setShipDetailsId($newshipid);
+                        $readingkpivalue->setMonthdetail($new_date);
+                        $readingkpivalue->setValue($elementvalues[$k]);
+                        $em->persist($readingkpivalue);
+                        $em->flush();
+                        $k++;
+
+                    }
+                }
+                $returnmsg = ' Data Saved...';
             }
 
-
-        }
-        if($buttonid=='savebuttonid')
-        {
-            foreach($kpiandelementids as $kpikey => $kpipvalue)
-            {
-
-
-                $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id'=>$kpikey));
-                foreach($kpipvalue as $elementkey => $elementvalue)
-                {
-                    $newelementid = $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id'=>$elementvalue));
-
-                    $readingkpivalue=new RankingMonthlyData();
-                    $readingkpivalue->setKpiDetailsId($newkpiid);
-                    $readingkpivalue->setElementDetailsId($newelementid);
-                    $readingkpivalue->setShipDetailsId($newshipid);
-                    $readingkpivalue->setMonthdetail($new_date);
-                    $readingkpivalue->setValue($elementvalues[$k]);
-                    $em->persist($readingkpivalue);
-                    $em->flush();
-                    $k++;
-
+            $session->remove('sessionkpielementid_ranking');
+            $shipname = $newshipid->getShipName();
+            $listships = $this->findnumofshipsAction('listships');
+            $nextshipid = 0;
+            $nextshipname = '';
+            for ($m = 0; $m < count($listships); $m++) {
+                if ($listships[$m]['id'] == $shipid) {
+                    $nextshipid = $listships[$m + 1]['id'];
+                    break;
                 }
             }
-            $returnmsg=' Data Saved...';
-        }
 
-        $session->remove('sessionkpielementid_ranking');
-        $shipname=$newshipid->getShipName();
-        $listships = $this->findnumofshipsAction('listships');
-        $nextshipid=0;
-        $nextshipname='';
-        for($m=0;$m<count($listships);$m++)
-        {
-            if($listships[$m]['id']==$shipid)
-            {
-                $nextshipid=$listships[$m+1]['id'];
-                break;
+
+            if ($nextshipid != 0) {
+                $kpielementarray = $this->shipskpielmentforrankingAction($request, $nextshipid, $dataofmonth, 'listkpielement');
+                $newnextshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $nextshipid));
+                $nextshipname = $newnextshipid->getShipName();
             }
+
+            $response = new JsonResponse();
+            $response->setData(array('returnmsg' => $shipname . $returnmsg, 'shipname' => $nextshipname, 'shipid' => $nextshipid,
+                'kpiNameArray' => $kpielementarray['returnarray'], 'elementcount' => $kpielementarray['elementcount'], 'elementvalues' => $kpielementarray['elementvalues']));
+            return $response;
         }
-
-
-        if($nextshipid!=0)
-        {
-            $kpielementarray= $this->shipskpielmentforrankingAction($request,$nextshipid,$dataofmonth,'listkpielement');
-            $newnextshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$nextshipid));
-            $nextshipname=$newnextshipid->getShipName();
-        }
-
-        $response = new JsonResponse();
-        $response->setData(array('returnmsg'=>$shipname.$returnmsg,'shipname'=>$nextshipname,'shipid'=>$nextshipid,
-            'kpiNameArray' => $kpielementarray['returnarray'],'elementcount'=>$kpielementarray['elementcount'],'elementvalues'=>$kpielementarray['elementvalues']));
-        return $response;
 
     }
     /**

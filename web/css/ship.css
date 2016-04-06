@@ -1,5 +1,4 @@
 
-
 /*
  * Base structure
  */
@@ -7,6 +6,7 @@
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
     background:#FFFFFF;
+    font-size: 13px !important;
 }
 /*
  * Global add-ons
@@ -1252,6 +1252,7 @@ select {
 }
 .kpi_table_form_section .kpi_lement_inputname {
     width:10%;
+    border-right: 1px solid #ddd;
 }
 
 .mailing_email_list {
@@ -1460,6 +1461,82 @@ select {
     width: 8%;
 }
 
+.kpi_ranking_row {
+    border:1px solid #f0f0f0 !important;
+}
+.kpi_ranking_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.kpi_ranking_row thead th {
+    background:#989898;
+}
+.kpi_ranking_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.kpi_ranking_row .kpi_name {
+    width: 22%;
+}
+.kpi_ranking_row .weightage {
+    width: 6%;
+}
+.kpi_ranking_row .month {
+    width: 6%;
+}
+
+.table-striped-3 tbody tr:nth-child(odd) td,
+.table-striped-3 tbody tr:nth-child(odd) th {
+    background-color: #fbfbfb !important;
+}
+.element_ranking_main_title_row {
+    border:1px solid #f0f0f0 !important;
+    margin-bottom:-2px;
+}
+.element_ranking_main_title_row thead th {
+    text-align:center;
+    font-weight:bold;
+    font-size:17px;
+}
+.element_ranking_main_title_row tbody td {
+    padding:4px 10px !important;
+}
+.element_ranking_main_title_row tbody .sub_title_element_ranking {
+    background:#989898 !important;
+    color:#FFFFFF;
+    border-right:none;
+    border-top: none;
+}
+.element_ranking_main_title_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.element_ranking_row tbody .element_name_title {
+    vertical-align: middle;
+}
+.element_ranking_row {
+    border:1px solid #f0f0f0 !important;
+}
+.element_ranking_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+    background:none !important;
+}
+.element_ranking_row thead th {
+    background:#989898;
+}
+.element_ranking_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.element_ranking_row .kpi_name {
+    width: 28%;
+}
+.element_ranking_row .month {
+    width: 6%;
+}
+
+
+
+
 
 
 
@@ -1527,4 +1604,56 @@ input[type="color"],
     height: 30px;
     line-height: 19px;
     padding: 3px 6px;
+}
+
+.graph_and_colour_coding_dashboard_main_title_row {
+    border:1px solid #f0f0f0 !important;
+    margin-bottom:-2px;
+}
+.graph_and_colour_coding_dashboard_main_title_row thead th {
+    text-align:center;
+    font-weight:bold;
+    font-size:14px;
+    padding:3px 10px !important;
+}
+.graph_and_colour_coding_dashboard_main_title_row tbody td {
+    padding:2px 10px !important;
+}
+
+.graph_and_colour_coding_dashboard_row {
+    margin-bottom: 0px;
+}
+.graph_and_colour_coding_dashboard_row thead th {
+    text-align:center;
+    background:#989898;
+    padding: 3px 10px !important;
+}
+.graph_and_colour_coding_dashboard_row tbody td {
+    text-align:center;
+}
+.graph_and_colour_coding_dashboard_row .kpi_name_thtd {
+    text-align:left;
+}
+.graph_and_colour_coding_dashboard_row {
+    border:1px solid #f0f0f0 !important;
+}
+.graph_and_colour_coding_dashboard_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.graph_and_colour_coding_dashboard_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+    padding: 1px 10px !important;
+}
+.graph_and_colour_coding_dashboard_row .kpi_name {
+    width: 50%;
+}
+.graph_and_colour_coding_dashboard_row .weightage {
+    width: 10%;
+}
+.graph_and_colour_coding_dashboard_row .month {
+    width: 8%;
+}
+.graph_and_colour_coding_dashboard_row .month_difference {
+    width: 8%;
 }

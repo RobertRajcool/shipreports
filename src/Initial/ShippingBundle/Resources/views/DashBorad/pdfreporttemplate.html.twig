@@ -161,47 +161,82 @@
         </div>
 
         <section class="data-row-section top-margin-space">
-            <table class="responsive-table certificates-table kpi_name_weightage_row">
+            <div class="table-responsive">
+            <table class="table table-striped graph_and_colour_coding_main_title_row">
                 <thead>
                 <tr>
-                    <th class="branding-colours kpi_name">KPI name</th>
-                    <th class="branding-colours weightage">Weightage</th>
-                    {% for monthname in montharray %}
-                        <th class="branding-colours">{{ monthname }}</th>
-                        {#<th></th>#}
-                    {% endfor %}
-                    {% set countmonth1= countmonth-1 %}
-                    {% set i=0 %}
-                    {% for kpi in listofelement %}
-
-                <tr><td>
-                        {{ kpi.elementName }}
-                    </td>
-                    <td>{{ elementweightage[i] }}%</td>
-                    {% for j in 0..countmonth1 %}
-
-                        <td>
-                            {{ monthlydata[j][i] }}
+                    <th>{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Yes
                         </td>
-
-
+                </tr>
+                </tbody>
+            </table>
+            <table class="table table-striped-3 element_ranking_row">
+                <thead>
+                <tr>
+                    <th class="kpi_name">Month</th>
+                    {% for monthname in monthdetails %}
+                        <th  class="month">{{ monthname }}</th>
                     {% endfor %}
-
 
                 </tr>
-                {% set i=i+1 %}
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    <tr>
+                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}{#<a  style="color: #2b542c"
+                                                       href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true"
+                                                       class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a>#}</td>
+                        {#<td>{{ elementweightage[i] }}%</td>#}
+
+                        {% for j in 0..countmonth1 %}
+                            {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
+                            <td>
+
+                                {{ monthlydata[j][i]  }}
+                            </td>
+
+                            {# {% set akj=akj+1 %}#}
+
+                        {% endfor %}
+
+                    </tr>
+
+                    <tr>
+                        {% for m in 0..countmonth1 %}
+                            <td>
+                                {% if elementcolorarray[m][i]=="Green" %}
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[m][i]=="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[m][i]=="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
+                                {% else %}
+                                    <img src="/images/arrow-buttom.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% set i=i+1 %}
                 {% endfor %}
-                {#  <tr><td>Total</td></tr>#}
                 <tr>
-                    <td colspan="" class="kpi_name_thtd"><strong>Average score</strong></td>
-                    <td>100</td>
+                    <td colspan="" class="kpi_name_thtd"><strong>Score</strong></td>
+
 
                     {% for avg in avgscore %}
                         <td><strong>{{ avg }}</strong></td>
                     {% endfor %}
                 </tr>
+
                 </tbody>
             </table>
+                </div>
         </section>
 
         <section class="data-row-section top-margin-space">

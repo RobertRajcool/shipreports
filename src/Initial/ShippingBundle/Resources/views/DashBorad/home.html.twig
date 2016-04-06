@@ -24,6 +24,8 @@
         <script>
           $(document).ready(function()
           {
+              $('#modal').hide();
+              $('#fade').hide();
               var newchart;
               var nowdate=new Date(),
               locale = "en-us",
@@ -40,30 +42,44 @@
                           month = currentdate.toLocaleString(locale, { month: "long" }),
                           year=currentdate.getFullYear();
                   $('#currentid').text(month+'-'+year)
-                  $.ajax({
+                  $.ajaxSetup({
+                      global: false,
                       type: "post",
                       'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
-
+                      beforeSend: function () {
+                          $("#modal").show();
+                          $('#fade').show();
+                      },
+                      complete: function () {
+                          $("#modal").hide();
+                          $('#fade').hide();
+                      }
+                  });
+                  $.ajax({
                       success: function(data)
                       {
+                          $('#area').highcharts().series[0].setData(data.changechartdata);
 
-                          var chart = $('#area').highcharts();
-                          chart.series[0].update({
-                              name: month+'-'+year,
-                              data: data.changechartdata
-                          });
+                          /*var chart = $('#area').highcharts();
+                           chart.series[0].update({
+                           name: month+'-'+year,
+                           data: data.changechartdata
+                           });
 
-                        //  $('#area').html('');
-                        //  $('#area').text('');
 
-                          newchart=data.changechart;
+                           */                      $('#modal').hide();
 
                       },
                       error: function(XMLHttpRequest, textStatus, errorThrown)
                       {
+                          $('#modal').hide();
+                          $('#fade').hide();
                           alert('Error : ' + errorThrown);
+
                       }
                   });
+
+
               });
               $('#nextmonth').click(function($e)
               {
@@ -73,7 +89,48 @@
                   currentdate,locale = "en-us",
                           month = currentdate.toLocaleString(locale, { month: "long" }),
                           year=currentdate.getFullYear();
-                  $('#currentid').text(month+'-'+year)
+
+                  $.ajaxSetup({
+                      global: false,
+                      type: "post",
+                      'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
+                      beforeSend: function () {
+                          $("#modal").show();
+                          $('#fade').show();
+                      },
+                      complete: function () {
+                          $("#modal").hide();
+                          $('#fade').hide();
+                      }
+                  });
+                  $.ajax({
+                      success: function(data)
+                      {
+                          $('#area').highcharts().series[0].setData(data.changechartdata);
+
+                          /*var chart = $('#area').highcharts();
+                           chart.series[0].update({
+                           name: month+'-'+year,
+                           data: data.changechartdata
+                           });
+
+
+                           */
+                          $('#currentid').text(month+'-'+year)
+                          $('#modal').hide();
+
+                      },
+                      error: function(XMLHttpRequest, textStatus, errorThrown)
+                      {
+                          $('#modal').hide();
+                          $('#fade').hide();
+                          alert('Error : ' + errorThrown);
+
+                      }
+                  });
+
+
+
               });
           });
         </script>
@@ -81,7 +138,7 @@
  <div class="col-sm-10">
         <div class="dashboard">
             <div class="table-responsive">
-                <table class="table table-striped graph_and_colour_coding_main_title_row">
+                <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
                     <thead>
                     <tr>
                         <th>Management Performance</th>
@@ -93,7 +150,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <table class="table table-striped-2 graph_and_colour_coding_row">
+                <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
                     <thead>
                     <tr>
                         <th class="kpi_name kpi_name_thtd">Keep Performance Index</th>
@@ -183,6 +240,15 @@
                         <span id="currentid" class="item">March-2016</span>
                         <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                     </div>
+                    <div
+                            style="position:absolute; top: 0%; left: 0%;width: 100%;height: 100%;background-color: #ababab;
+    z-index: 1001;-moz-opacity: 0.8;opacity: .70;filter: alpha(opacity=80);" id="fade">
+
+                    </div>
+                    <div align="center" id="modal">
+                        <img id="loader" src="/images/im.svg" />
+                    </div>
+
                 </div>
                 <div id="area" class="chart large_chart">
                 </div>
@@ -193,7 +259,7 @@
     <div class="col-sm-2 dashboard">
         <div class="widget time">
             <div class="x-header">
-                <div class="x-panel-header-text">Vessels  {{ ship_count }}</div>
+                <div class="x-panel-header-text">{#{{ 'dashboard.rightside.listship'|trans }}#} Vessels {{ ship_count }}</div>
             </div>
             <div class="ship_name">
                 <div class="dashboard_ship_list">
@@ -209,7 +275,7 @@
     <div class="col-sm-2 dashboard">
         <div class="widget time">
             <div class="x-header">
-                <div class="x-panel-header-text">KPI</div>
+                <div class="x-panel-header-text">{#{{ 'dashboard.rightside.kpi'|trans }}#}kPI</div>
             </div>
             <div class="chart-2">
                 {{ kpi_count }}

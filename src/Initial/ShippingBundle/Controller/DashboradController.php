@@ -259,6 +259,10 @@ class DashboradController extends Controller
         // Assign values of element drilldown to graph drill down array Ends Here
 
         //Finding details for series and drildown Ends Here//
+            if($mode=='getnextmonthchart')
+            {
+                return array("data" =>$mykpivaluearray);
+            }
 
         $monthinletter = $lastmonthdetail->format('M-Y');
         // Adding data to javascript chart function starts Here.. //
@@ -536,10 +540,7 @@ class DashboradController extends Controller
         $newcategories1 = array_reverse($newcategories);
         $finalkpielementvaluearray1 = array_reverse($finalkpielementvaluearray);
 
-            if($mode=='getnextmonthchart')
-            {
-                return array("data" =>$mykpivaluearray);
-            }
+
 
         return $this->render(
             'InitialShippingBundle:DashBorad:home.html.twig',
@@ -1130,7 +1131,7 @@ class DashboradController extends Controller
                 $shipname = $shipid->getShipName();
                 $series = array
                 (
-                    array("name" => "$kpiname", 'color' => 'blue', "data" => $elementdetailvaluearray),
+                    array("name" => "$kpiname",'showInLegend'=> false, 'color' => 'blue', "data" => $elementdetailvaluearray),
 
                 );
 
@@ -1263,7 +1264,7 @@ class DashboradController extends Controller
                 $shipname = $shipid->getShipName();
                 $series = array
                 (
-                    array("name" => "$kpiname", 'color' => 'blue', "data" => $elementdetailvaluearray),
+                    array("name" => "$kpiname",'showInLegend'=> false, 'color' => 'blue', "data" => $elementdetailvaluearray),
 
                 );
 
@@ -1739,7 +1740,7 @@ class DashboradController extends Controller
 
             $series = array
             (
-                array("name" => "$shipname", 'color' => 'blue', "data" => $finalkpielementvaluearray),
+                array("name" => "$shipname",'showInLegend'=> false, 'color' => 'blue', "data" => $finalkpielementvaluearray),
 
             );
 
@@ -1808,9 +1809,9 @@ class DashboradController extends Controller
     /**
      * List all element for kpi
      *
-     * @Route("/{kpiid}/listelementforkpi_ranking?{kpiname}", name="listelementforkpi_ranking")
+     * @Route("/{kpiid}/listelementforkpi_ranking", name="listelementforkpi_ranking")
      */
-    public function listallelementforkpi_rankingAction($kpiid,$kpiname,Request $request,$mode='')
+    public function listallelementforkpi_rankingAction($kpiid,Request $request,$mode='')
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -1822,6 +1823,8 @@ class DashboradController extends Controller
             $username = $user->getUsername();
             $email = $user->getEmail();
 //Find Last Five Months Starts Here //
+            $firstnewkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiid));
+            $kpiname=$firstnewkpiid->getKpiName();
             $comanyiddetailarray = $em->createQueryBuilder()
                 ->select('b.id')
                 ->from('InitialShippingBundle:CompanyDetails', 'b')
@@ -1835,7 +1838,7 @@ class DashboradController extends Controller
             $lastfivedatearray = array();
             $mystringvaluedate = $lastmonthdetail->format('Y-M-d');
             array_push($lastfivedatearray, $mystringvaluedate);
-            for ($i = 0; $i < 2; $i++) {
+            for ($i = 0; $i < 11; $i++) {
                 $mydatevalue = new \DateTime($mystringvaluedate);
 
                 $mydatevalue->modify("last day of previous month");
@@ -1940,11 +1943,12 @@ class DashboradController extends Controller
                     ->getResult();
                 for ($d = 0; $d < count($lastfivedatearray); $d++) {
                     $time2 = strtotime($lastfivedatearray[$d]);
-                    $monthinletter = date('M-Y', $time2);
+                    $monthinletter = date('M', $time2);
                     array_push($newcategories, $monthinletter);
                     $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
                     $finalkpivalue = 0;
                     $findingcolorarray = array();
+                    $kpielementvalue=array();
 
                     for ($jk = 0; $jk < count($listelement); $jk++) {
 
@@ -2017,11 +2021,11 @@ class DashboradController extends Controller
                     array_push($elementdetailvaluearray, $finalkpivalue);
                 }
 
-                $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-                $shipname = $shipid->getShipName();
+                $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+                $shipname = $newshipid->getShipName();
                 $series = array
                 (
-                    array("name" => "$kpiname", 'color' => 'blue', "data" => $elementdetailvaluearray),
+                    array("name" => "$kpiname",'showInLegend'=> false, 'color' => 'blue', "data" => $elementdetailvaluearray),
 
                 );
 
@@ -2090,7 +2094,7 @@ class DashboradController extends Controller
                 for ($d = 0; $d < count($lastfivedatearray); $d++)
                 {
                     $time2 = strtotime($lastfivedatearray[$d]);
-                    $monthinletter = date('M-Y', $time2);
+                    $monthinletter = date('M', $time2);
                     array_push($newcategories, $monthinletter);
                     $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
                     $finalkpivalue = 0;
@@ -2166,11 +2170,12 @@ class DashboradController extends Controller
                     array_push($findoverallelementvalue, $findlvaluemonth);
                 }
 
-                $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-                $shipname = $shipid->getShipName();
+                $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+                $shipname = $newshipid->getShipName();
+
                 $series = array
                 (
-                    array("name" => "$kpiname", 'color' => 'blue', "data" => $elementdetailvaluearray),
+                    array("name" => "$kpiname",'showInLegend'=> false, 'color' => 'blue', "data" => $elementdetailvaluearray),
 
                 );
 
@@ -2261,7 +2266,7 @@ class DashboradController extends Controller
         $kpiid=$params['kpiid'];
         $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiid));
         $kpiname=$newkpiid->getKpiName();
-        $returnvaluefrommonth = $this->listallelementforkpi_rankingAction($kpiid,$kpiname,$request,'pdftemplate_kpilevel');
+        $returnvaluefrommonth = $this->listallelementforkpi_rankingAction($kpiid,$request,'pdftemplate_kpilevel');
 
 
         $filename = $params['filename'];
@@ -2379,22 +2384,6 @@ class DashboradController extends Controller
         $params = $request->request->get('send_command');
         $kpiid=$params['kpiid'];
         $returnvaluefrommonth = $this->listallkpiforship_rankingAction($kpiid,$request,'pdftemplate_shiplevel');
-
-        //get Informaton From User
-        /*  $monthcount=$request->request->get('countmonth');
-          $elementavgscore=$request->request->get('avgscore');
-          $elementavgscorearray=explode(",",$elementavgscore);
-          $elementcolor=$request->request->get('elementcolorarray');
-          $elementcolorarray=explode(",",$elementcolor);
-          $elementweightage=$request->request->get('elementweightage');
-          $elementweightagearray=explode(",",$elementweightage);
-          $listofelments=$request->request->get('listofelments');
-          $listofelmentsarray=explode(",",$listofelments);
-          $listofmonth=$request->request->get('montharrayinstring');
-          $listofmontharray=explode(",",$listofmonth);
-          $listofcomments=$request->request->get('listofcomments');*/
-
-
         $filename = $params['filename'];
         $pdffilenamearray=explode(".",$filename);
         $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
@@ -2417,19 +2406,7 @@ class DashboradController extends Controller
         $screenName = $this->get('translator')->trans($pageName);
         $date = date('l jS F Y h:i', time());
         $route = $request->attributes->get('_route');
-        /* return $this->render('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
-             'link' => $filename,
-             'screenName' => $screenName,
-             'userName' => '',
-             'date' => $date,
-             'listofkpi' => $returnvaluefrommonth['listofkpi'],
-             'kpicolorarray' => $returnvaluefrommonth['kpicolorarray'],
-             'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
-             'montharray' => $returnvaluefrommonth['montharray'],
-             'shipname' => $returnvaluefrommonth['listofkpi'],
-             'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
-             'avgscore' => $returnvaluefrommonth['avgscore'],
-             'commentarray'=>$listofcommentarray));*/
+
         $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
                 'link' => $filename,
                 'screenName' => $screenName,

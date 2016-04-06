@@ -205,7 +205,7 @@
                                             {
                                                 var temp=1
 
-                                                $('<table class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                                $('<table  class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
                                                 $.each(listkpi,function(mykey,myvalue)
                                                 {
                                                     if(valuearray.length>0)
@@ -235,7 +235,7 @@
                                                     temp++;
 
                                                 });
-                                                $(' </tr></tbody></table>').appendTo('#addkpiformid');
+                                                $(' </tbody></table>').appendTo('#addkpiformid');
 
 
                                             }
