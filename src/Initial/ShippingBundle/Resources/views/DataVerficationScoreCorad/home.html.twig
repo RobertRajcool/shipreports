@@ -14,7 +14,40 @@
         <script>
             $(document).ready(function()
             {
+
+               /* $("#datepikerid").datepicker({
+                    dateFormat: "MM-yy"
+                }).datepicker("setDate", new Date());
+                alert($('#datepikerid').val())*/
                 $('#kpiformforship').hide();
+                var nowdate=new Date(),
+                        locale = "en-us",
+                        month = nowdate.toLocaleString(locale, { month: "long" }),
+                        year=nowdate.getFullYear();
+                $('#currentid').text(month+'-'+year)
+                $('#datofmonthid').val(month+'-'+year)
+                $('#proviousmonth').click(function($e)
+                {
+                    $e.preventDefault();
+                    var currentdate=new Date($('#currentid').text());
+                    currentdate.setMonth(currentdate.getMonth() - 1);
+                    currentdate,locale = "en-us",
+                            month = currentdate.toLocaleString(locale, { month: "long" }),
+                            year=currentdate.getFullYear();
+                    $('#currentid').text(month+'-'+year)
+                    $('#datofmonthid').val(month+'-'+year)
+                });
+                $('#nextmonth').click(function($e)
+                {
+                    $e.preventDefault();
+                    var currentdate=new Date($('#currentid').text());
+                    currentdate.setMonth(currentdate.getMonth() + 1);
+                    currentdate,locale = "en-us",
+                            month = currentdate.toLocaleString(locale, { month: "long" }),
+                            year=currentdate.getFullYear();
+                    $('#currentid').text(month+'-'+year)
+                    $('#datofmonthid').val(month+'-'+year)
+                });
                 $('.linkclass').on('click',function()
                 {
 
@@ -25,7 +58,7 @@
                     $('#addkpiformid').html('');
                     $('#addkpiformid').text('');
                     $('#shipname').text(' ');
-                    var dataofmonth=$('#datepikerid').val();
+                    var dataofmonth=$('#currentid').text();
                         $.ajax({
                             type: "post",
                             'url': Routing.generate('shipskpielment', {'shipid':linkid,'monthdetail':dataofmonth}),
@@ -48,7 +81,7 @@
                                     {
                                         var temp=1
 
-                                        $('<table class="table kpi_table_form_section second_dark"> <tbody id="tablebody'+j+'"><tr id="tablerow'+j+'"><td rowspan="'+data.elementcount+'" class="kpi_name"><strong>'+i+'</strong></td>').appendTo('#addkpiformid');
+                                        $('<table class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
                                         $.each(listkpi,function(mykey,myvalue)
                                         {
                                             if(valuearray.length>0)
@@ -59,11 +92,11 @@
 
                                                 if(temp==1)
                                                 {
-                                                    $('<td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input onkeypress="return isNumberKey(event)" class="textbox" value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required placeholder=""></td>').appendTo("#tablerow"+j);
+                                                    $('<tr><td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                                 }
                                                 if(temp>1)
                                                 {
-                                                    $('<tr><td>'+myvalue+'</td> <td><input type="text" class="textbox" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required placeholder=""></td></tr>').appendTo("#tablebody"+j);
+                                                    $('<tr ><td class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
                                                 }
 
 
@@ -74,11 +107,11 @@
                                                 $('#savebuttonid').show();
                                                 if(temp==1)
                                                 {
-                                                    $('<td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input class="textbox" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" placeholder=""></td>').appendTo("#tablerow"+j);
+                                                    $('<tr><td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
                                                 }
                                                 if(temp>1)
                                                 {
-                                                    $('<tr><td>'+myvalue+'</td> <td><input type="text" class="textbox" onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required placeholder=""></td></tr>').appendTo("#tablebody"+j);
+                                                    $('<tr><td class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                                 }
 
 
@@ -172,7 +205,7 @@
                                             {
                                                 var temp=1
 
-                                                $('<table class="table kpi_table_form_section second_dark"> <tbody id="tablebody'+j+'"><tr id="tablerow'+j+'"><td rowspan="'+data.elementcount+'" class="kpi_name"><strong>'+i+'</strong></td>').appendTo('#addkpiformid');
+                                                $('<table  class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
                                                 $.each(listkpi,function(mykey,myvalue)
                                                 {
                                                     if(valuearray.length>0)
@@ -181,10 +214,10 @@
                                                         $('#updatebuttonid').show();
                                                         $('#savebuttonid').hide();
                                                         if (temp == 1) {
-                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input value="'+data.elementvalues[newtemp]+'" class="textbox" type="text" name="newelemetvalues[]" required placeholder=""></td>').appendTo("#tablerow" + j);
+                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input value="'+data.elementvalues[newtemp]+'" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
                                                         }
                                                         if (temp > 1) {
-                                                            $('<tr><td>' + myvalue + '</td> <td><input type="text" class="textbox" value="'+data.elementvalues[newtemp]+'" name="newelemetvalues[]" required placeholder=""></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input type="text" placeholder="123" value="'+data.elementvalues[newtemp]+'" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
                                                     }
                                                     else
@@ -192,17 +225,18 @@
                                                         $('#updatebuttonid').hide();
                                                         $('#savebuttonid').show();
                                                         if (temp == 1) {
-                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input class="textbox" type="text" name="newelemetvalues[]" required placeholder=""></td>').appendTo("#tablerow" + j);
+                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
                                                         if (temp > 1) {
-                                                            $('<tr><td>' + myvalue + '</td> <td><input type="text" class="textbox" name="newelemetvalues[]" required placeholder=""></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
                                                     }
                                                     newtemp++;
                                                     temp++;
 
                                                 });
-                                                $(' </tr></tbody></table>').appendTo('#addkpiformid');
+                                                $(' </tbody></table>').appendTo('#addkpiformid');
+
 
 
                                             }
@@ -242,6 +276,7 @@
                     return isNumber(e, this)
                 });*/
 
+               // $( "#datepikerid" ).datepicker();
 
 
             });
@@ -297,13 +332,10 @@
                             <label class="title">Kpi For <span id="shipname"></span></label>
                             <label class="toolbar-title">
 
-
-                                <span ng-controller="DatepickerDemoCtrl" class="item">
-                                    <input id="datepikerid" type="text" name="dataofmonth" uib-datepicker-popup="[[dateformat]]" ng-click="showcalendar($event)" ng-model="dt" is-open="showdp" max-date="dtmax"  />
-                                </span>
-
-                            </label>
-
+                                <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                <span id="currentid" class="item">March-2016</span>
+                                <input type="hidden" name="dataofmonth" id="datofmonthid">
+                                <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                             </label>
                         </div>
                     </div>
@@ -318,8 +350,16 @@
                     </div>
                     <input type="hidden" name="shipid" id="shipid">
                     <div class="actions_submit">
-                        <input type="submit" class="submit_btn" id="savebuttonid"  value="Save">
-                        <input type="submit" class="submit_btn" id="updatebuttonid"  value="Update">
+
+                        {%  if is_granted("ROLE_ADMIN") %}
+
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="Upload">
+                        {% endif %}
+
+                        {%  if  not is_granted("ROLE_ADMIN") %}
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="Save">
+                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="Update">
+                        {% endif %}
                         <button class="cancel_btn" id="resetbuttonid"  value="Submit">Reset</button>
                     </div>
                 </form>

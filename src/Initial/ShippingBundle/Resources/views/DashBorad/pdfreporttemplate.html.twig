@@ -1,4 +1,4 @@
-<html>
+{#<html>
 <head>
     <title>{{ screenName }}</title>
     <style>
@@ -42,8 +42,8 @@
 
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
     <div class="page-header">
-       {# <h2>ShipName: <span style="color: #000099">{{ shipname }}</span></h2>#}
-        {#   <a href="{{ path('dashboradhome') }}">Back</a>#}
+       #}{# <h2>ShipName: <span style="color: #000099">{{ shipname }}</span></h2>#}{#
+        #}{#   <a href="{{ path('dashboradhome') }}">Back</a>#}{#
 
 
     </div>
@@ -58,7 +58,7 @@
                     <th>Weightage</th>
                     {% for monthname in montharray %}
                         <th>{{ monthname }}</th>
-                        {#<th></th>#}
+                        #}{#<th></th>#}{#
 
                     {% endfor %}
 
@@ -122,5 +122,164 @@
     </div>
     {% endif %}
     </div>
+</body>
+</html>#}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/pdf.css" rel="stylesheet">
+
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/angular.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">Shipping pdf</div>
+            </div>
+            <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
+        </div>
+
+        <section class="data-row-section top-margin-space">
+            <div class="table-responsive">
+            <table class="table table-striped graph_and_colour_coding_main_title_row">
+                <thead>
+                <tr>
+                    <th>{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Yes
+                        </td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="table table-striped-3 element_ranking_row">
+                <thead>
+                <tr>
+                    <th class="kpi_name">Month</th>
+                    {% for monthname in monthdetails %}
+                        <th  class="month">{{ monthname }}</th>
+                    {% endfor %}
+
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    <tr>
+                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}{#<a  style="color: #2b542c"
+                                                       href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true"
+                                                       class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a>#}</td>
+                        {#<td>{{ elementweightage[i] }}%</td>#}
+
+                        {% for j in 0..countmonth1 %}
+                            {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
+                            <td>
+
+                                {{ monthlydata[j][i]  }}
+                            </td>
+
+                            {# {% set akj=akj+1 %}#}
+
+                        {% endfor %}
+
+                    </tr>
+
+                    <tr>
+                        {% for m in 0..countmonth1 %}
+                            <td>
+                                {% if elementcolorarray[m][i]=="Green" %}
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[m][i]=="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[m][i]=="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
+                                {% else %}
+                                    <img src="/images/arrow-buttom.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                <tr>
+                    <td colspan="" class="kpi_name_thtd"><strong>Score</strong></td>
+
+
+                    {% for avg in avgscore %}
+                        <td><strong>{{ avg }}</strong></td>
+                    {% endfor %}
+                </tr>
+
+                </tbody>
+            </table>
+                </div>
+        </section>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">Graph colour</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td> <img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">Comments</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {% if commentarray|length <= 0 %}
+                            <h4 align="center">No Commands Added </h4>
+                        {% endif %}
+                        {% if commentarray|length > 0 %}
+                            {% for comobject in commentarray %}
+                                {{ comobject.comment }}
+
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+</div>
 </body>
 </html>

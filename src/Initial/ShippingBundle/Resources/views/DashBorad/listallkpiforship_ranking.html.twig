@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -20,6 +23,7 @@
                 $('#mailform').hide();
                 $('#addcomment').hide();
                 $('#viewcommentdiv').hide();
+                $('#hidecomment').hide();
 
                 $('#showcommentform').click(function()
                 {
@@ -30,12 +34,24 @@
                     $('#buttonid').hide();
 
                 });
+
                 $('#viewcomment').click(function()
                 {
                     $('#mailform').hide();
                     $('#commentform').hide();
                     $('#viewcommentdiv').show();
                     $('#viewcomment').hide();
+                    $('#hidecomment').show();
+
+                });
+                $('#hidecomment').click(function()
+                {
+                    $('#mailform').hide();
+                    $('#commentform').hide();
+                    $('#viewcommentdiv').hide();
+                    $('#viewcomment').show();
+                    $('#hidecomment').hide();
+                    $('#buttonid').show();
 
                 });
                 $('#sendreports').click(function()
@@ -57,7 +73,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/dashborad/autocompeltegroup",
+                        url: Routing.generate('autocompleteformailing'),
                         beforeSend: function () {
                             /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
                         }
@@ -96,8 +112,9 @@
                 });
 
 
-                $(".dynamiclabel").on("click",function(e)
+                $(".dynamiclabel").live("click",function(e)
                 {
+
                     var b=$(this).text();
                     $('#toemail').val(b);
                     $('#livesearchdiv').hide();
@@ -130,7 +147,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/runtimecomment",
+                        url: Routing.generate('addcomment_ranking_kpi'),
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -187,7 +204,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: "/addchart",
+                        url: Routing.generate('addchart'),
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -215,12 +232,12 @@
                 });
                 function submitchatform()
                 {
-                    alert("formsubmitted");
+
                     var form=$('#chatform');
                     $.ajax({
                         type: "post",
                         data: form.serialize(),
-                        url: "/addcommentforshipreports",
+                        url: Routing.generate('addcomment_ship'),
                         success: function (data)
                         {
                             $('#commentform').hide();
@@ -254,7 +271,7 @@
             <table class="table table-striped graph_and_colour_coding_main_title_row">
                 <thead>
                 <tr>
-                    <th>Lorem ipsum dolor sit amet</th>
+                    <th>{{ shipname }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -281,7 +298,7 @@
                 {% for kpi in listofkpi %}
                 <tr>
                     <td class="kpi_name_thtd"><a
-                                href="{{ path('listelementforkpi_ranking', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}"
+                                href="{{ path('listelementforkpi_ranking', { 'kpiid': kpi.id}) }}"
                                 title="{{ kpi.kpiName }}">
                             {{ kpi.kpiName }}
                         </a></td>
@@ -344,6 +361,7 @@
                 <button value="Submit" id="showcommentform"  class="submit_btn_add">Add comment</button>
                 <button value="Submit" id="sendreports"  class="submit_btn_add">Send reports</button>
                 <button value="Submit" id="viewcomment"  class="submit_btn_add">View Comment</button>
+                <button value="Submit" id="hidecomment"  class="submit_btn_add">Hide Comment</button>
             </div>
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->

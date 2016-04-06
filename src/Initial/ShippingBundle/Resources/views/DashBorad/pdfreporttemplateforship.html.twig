@@ -1,112 +1,4 @@
-{#
 
-{% extends 'base.html.twig' %}
-{% block body %}
-    {% block javascripts %}
-
-        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/bootstrap.min.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-
-
-
-    {% endblock %}
-    <div class="col-md-12 users_advanced_list_views_screen">
-        #}{# <div class="page-header">
-             <h2>{{ shipname.shipName }}</h2>
-             <a href="{{ path('dashboradhome') }}">Back</a>
-         </div>#}{#
-        <div class="table-responsive">
-
-            <table class="table table-striped" style="" id="readingkpitable">
-                <thead>
-                <tr>
-
-                    <th>Kpi Name</th>
-                    <th>Weightage</th>
-                    {% for monthname in montharray %}
-                        <th>{{ monthname }}</th>
-                        #}{#<th></th>#}{#
-                    {% endfor %}
-
-                </tr>
-                </thead>
-                <tbody>
-                {% set countmonth1= countmonth-1 %}
-                {% set i=0 %}
-                {% for kpi in listofkpi %}
-
-                    <tr><td>
-                                {{ kpi.kpiName }}
-                        </td>
-                        <td>{{ kpiweightage[i] }}%</td>
-                        {% for j in 0..countmonth1 %}
-
-                            <td>
-                                {% if kpicolorarray[j][i]=="Green" %}
-                                    <img src="/images/01.png" alt="Loader Image"/>
-                                {% elseif kpicolorarray[j][i]=="Red" %}
-                                    <img src="/images/03.png" alt="Loader Image"/>
-                                {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                    <img src="/images/02.png" alt="Loader Image"/>
-                                {% else %}
-                                    <div class="nocolor"></div>
-                                {% endif %}
-                            </td>
-
-
-                        {% endfor %}
-
-
-                    </tr>
-                    {% set i=i+1 %}
-                {% endfor %}
-                #}{#  <tr><td>Total</td></tr>#}{#
-                <tr>
-                    <th>Avg Score</th>
-                    <td>100%</td>
-                    {% for avg in avgscore %}
-                        <td>{{ avg }}</td>
-                    {% endfor %}
-
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="graph_colour">
-            <img src="/uploads/brochures/{{ link }}" alt="Loader Image"/>
-        </div>
-        <div class="graph_send_comment">
-
-            <div class="title" id="viewcommentdiv" >
-                {% if commentarray|length <= 0 %}
-                    <h4 align="center">No Commands Added </h4>
-                {% endif %}
-                {% if commentarray|length > 0 %}
-                {% for comobject in commentarray %}
-                    {{ comobject.comment }}
-
-                {% endfor %}
-                {% endif %}
-            </div>
-
-                <!--Form for Send Reports Ends Here  -->
-
-            </div>
-
-
-        </div>
-
-{% endblock %}#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,87 +42,7 @@
                         <th class="branding-colours">{{ monthname }}</th>
                         {#<th></th>#}
                     {% endfor %}
-                   {# <th class="branding-colours">April-2016</th>
-                    <th class="branding-colours">March-2016</th>
-                    <th class="branding-colours">February-2016</th>
-                    <th class="branding-colours">January-2016</th>
-                    <th class="branding-colours no-td-right-border">December-2015</th>#}
-                </tr>
-                </thead>
-                <tbody>{#
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                    <td><img src="images/01.png"></td>
-                </tr>#}
-                {% set countmonth1= countmonth-1 %}
+                               {% set countmonth1= countmonth-1 %}
                 {% set i=0 %}
                 {% for kpi in listofkpi %}
 
@@ -241,15 +53,7 @@
                         {% for j in 0..countmonth1 %}
 
                             <td>
-                                {% if kpicolorarray[j][i]=="Green" %}
-                                    <img src="/images/01.png" alt="Loader Image"/>
-                                {% elseif kpicolorarray[j][i]=="Red" %}
-                                    <img src="/images/03.png" alt="Loader Image"/>
-                                {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                    <img src="/images/02.png" alt="Loader Image"/>
-                                {% else %}
-                                    <div class="nocolor"></div>
-                                {% endif %}
+                                {{ kpimonthdata[j][i] }}
                             </td>
 
 
@@ -261,12 +65,12 @@
                 {% endfor %}
                 {#  <tr><td>Total</td></tr>#}
                 <tr>
-                    <th>Avg Score</th>
-                    <td>100%</td>
-                    {% for avg in avgscore %}
-                        <td>{{ avg }}</td>
-                    {% endfor %}
+                    <td colspan="" class="kpi_name_thtd"><strong>Average score</strong></td>
+                    <td>100</td>
 
+                    {% for avg in avgscore %}
+                        <td><strong>{{ avg }}</strong></td>
+                    {% endfor %}
                 </tr>
                 </tbody>
             </table>

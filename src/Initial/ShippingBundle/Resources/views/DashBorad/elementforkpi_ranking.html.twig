@@ -1,0 +1,515 @@
+
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/bootstrap.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script type="text/javascript">
+            {{ chart(chart) }}
+        </script>
+        <script>
+            $(document).ready(function()
+            {
+                $('#row_id').hide();
+                $('#commentform').hide();
+                $('#addcomment').hide();
+                $('#mailform').hide();
+                $('#viewcommentdiv').hide();
+                $('#livesearchdiv').hide();
+                $('#hidecomment').hide();
+
+                $('#showcommentform').click(function()
+                {
+                    $('#viewcommentdiv').hide();
+                    $('#commentform').show();
+                    $('#mailform').hide();
+                    $('#usermycommentid').focus();
+
+                });
+                $('#sendreports').click(function()
+                {
+
+                    $('#commentform').hide();
+                    $('#mailform').show();
+                    $('#viewcommentdiv').hide();
+
+
+
+                });
+                $('#viewcomment').click(function()
+                {
+                    $('#mailform').hide();
+                    $('#commentform').hide();
+                    $('#viewcommentdiv').show();
+                    $('#viewcomment').hide();
+                    $('#hidecomment').show();
+
+                });
+                $('#hidecomment').click(function()
+                {
+                    $('#mailform').hide();
+                    $('#commentform').hide();
+                    $('#viewcommentdiv').hide();
+                    $('#viewcomment').show();
+                    $('#hidecomment').hide();
+                    $('#buttonid').show();
+
+                });
+                $('#toemail').keyup(function()
+                {
+
+                    var searchstring=$(this).val();
+                    var data = {searchstring :searchstring} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('autocompleteformailing'),
+                        beforeSend: function () {
+                            /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            if($.isArray(data.returnresult))
+                            {
+                                $.each(data.returnresult, function(i, listelemnt)
+                                {
+
+                                    $('#hiddenresult').val(data.returnresult);
+                                    $('#livesearchdiv').show();
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
+
+                                });
+
+                            }
+
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+
+
+                $(".dynamiclabel").live("click",function(e)
+                {
+                    var b=$(this).text();
+                    $('#toemail').val(b);
+                    $('#livesearchdiv').hide();
+                });
+
+
+
+                $('#addcommentid').click(function()
+                {
+
+                    var kpiid=$('#kpiidforname').val();
+                    var comment=$('#usermycommentid').val();
+
+                    var data = {kpiid :kpiid,comment:comment} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: Routing.generate('addcomment_ranking_ship'),
+                        beforeSend: function () {
+                            $(".modal").show();
+                        },
+                        complete: function () {
+                            $(".modal").hide();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+                            $('#usermycommentid').val(' ');
+                            $('#commentform').hide();
+                            var a=data.lastinsertid;
+                            $('#lastid').val(a);
+                            $('#viewcommentdiv').text('');
+                            if($.isArray(data.resultarray))
+                            {
+                                // alert('if');
+                                $.each(data.resultarray, function(i, listelemnt)
+                                {
+
+                                    $('<span>'+listelemnt.comment+'</span>').appendTo('#viewcommentdiv');
+                                    $('#viewcomment').show();
+                                    $('#buttonid').show();
+
+
+                                });
+                            }
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+                $('#chatform').submit(function(e)
+                {
+                    e.preventDefault();
+                    var self = this;
+                    var obj = {},chart;
+                    chart = $('#area').highcharts();
+                    obj.svg = chart.getSVG();
+                    obj.type = 'image/png';
+                    obj.width = 450;
+                    obj.async = true;
+                    var data = {svgid :obj.svg,typeid:obj.type,filewidth:obj.width,fileanys:obj.async} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: Routing.generate('addchart'),
+                        beforeSend: function () {
+                            $(".modal").show();
+                        },
+                        complete: function () {
+                            $(".modal").hide();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            $('#imagefilename').val(data);
+                            submitchatform();
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            alert('Error While Generating Image as pdf');
+
+                        }
+                    });
+
+                });
+                function submitchatform()
+                {
+
+                    var form=$('#chatform');
+                    $.ajax({
+                        type: "post",
+                        data: form.serialize(),
+                        url: Routing.generate('addcommentkpi'),
+                        success: function (data)
+                        {
+                            $('#commentform').hide();
+                            $('#mailform').hide();
+                            $('#addcomment').hide();
+
+                            alert(data.updatemsg);
+
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                };
+
+                /*Displaying the rules above the graph*/
+
+                $('#show_rule_id').on("click",function(){
+                    var rule_value = $('#rule_value').val();
+                    var rule_value_array = splitfun(rule_value);
+                    var condition_text = "";
+                    $('#row_id').show();
+
+                    $.each(rule_value_array,function(i){
+                        var rule_obj = JSON.parse(rule_value_array[i]);
+
+                        $.each(rule_obj.conditions.all, function(j)
+                        {
+                            if(rule_obj.conditions.all[j].operator=='equalTo')
+                            {
+                                rule_obj.conditions.all[j].operator='=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='notEqualTo')
+                            {
+                                rule_obj.conditions.all[j].operator='!=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='greaterThan')
+                            {
+                                rule_obj.conditions.all[j].operator='>';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
+                            {
+                                rule_obj.conditions.all[j].operator='>=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='lessThan')
+                            {
+                                rule_obj.conditions.all[j].operator='<';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
+                            {
+                                rule_obj.conditions.all[j].operator='<=';
+                            }
+                            var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
+                            if(j==0)
+                            {
+                                condition_text = condition_text_one;
+                            }
+                            if(j>0)
+                            {
+                                condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                            }
+                        });
+                        var $tr = $('<tr>').append(
+                                $('<td>').text(condition_text),
+                                $('<td>').text(rule_obj.actions.value)
+                        ).appendTo('#rule-table');
+                    });
+                });
+
+                function splitfun(data){
+                    var result = data.split('*');
+                    return result;
+                }
+
+            });
+
+
+        </script>
+    {% endblock %}
+
+    <div class="col-md-12 users_advanced_list_views_screen">
+        {# <div class="page-header">
+             <h2>{{ shipname.shipName }}</h2>
+             <a href="{{ path('dashboradhome') }}">Back</a>
+         </div>#}
+        <div class="table-responsive">
+
+            <table class="table table-striped graph_and_colour_coding_main_title_row">
+                <thead>
+                <tr>
+                    <th>{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Yes
+                        <a class="linkclass" href="{{ path('listallkpiforship_ranking', { 'shipid': shipid}) }}" style="float: right"  >Back to Score card</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="table table-striped-3 element_ranking_row">
+                <thead>
+                <tr>
+                    <th class="kpi_name">Month</th>
+                    {% for monthname in monthdetails %}
+                        <th  class="month">{{ monthname }}</th>
+                    {% endfor %}
+
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    <tr>
+                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}{#<a  style="color: #2b542c"
+                                                       href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true"
+                                                       class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a>#}</td>
+                        {#<td>{{ elementweightage[i] }}%</td>#}
+
+                        {% for j in 0..countmonth1 %}
+                            {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
+                            <td>
+
+                                {{ monthlydata[j][i]  }}
+                            </td>
+
+                            {# {% set akj=akj+1 %}#}
+
+                        {% endfor %}
+
+                    </tr>
+
+                <tr>
+                    {% for m in 0..countmonth1 %}
+                    <td>
+                        {% if elementcolorarray[m][i]=="Green" %}
+                            <img src="/images/01.png" alt="Loader Image"/>
+                        {% elseif elementcolorarray[m][i]=="Red" %}
+                            <img src="/images/03.png" alt="Loader Image"/>
+                        {% elseif elementcolorarray[m][i]=="Yellow" %}
+                            <img src="/images/02.png" alt="Loader Image"/>
+                        {% else %}
+                            <img src="/images/arrow-buttom.png" alt="Loader Image"/>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                <tr>
+                    <td colspan="" class="kpi_name_thtd"><strong>Score</strong></td>
+
+
+                    {% for avg in avgscore %}
+                        <td><strong>{{ avg }}</strong></td>
+                    {% endfor %}
+                </tr>
+
+                </tbody>
+            </table>
+
+
+
+
+            <table class="table table-striped normal_table">
+                <thead>
+                <tr>
+                    <th>Graph Title</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="area"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <table class="table table-striped normal_table">
+            <tbody>
+            <tr>
+                <td id="viewcommentdiv" >
+                    {% if commentarray|length <= 0 %}
+                        No Commands Added
+                    {% endif %}
+                    {% if commentarray|length > 0 %}
+                        {% for comobject in commentarray %}
+                            {{ comobject.comment }}
+
+                        {% endfor %}
+                    {% endif %}
+                    </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="graph_send_comment">
+
+
+            <div id="buttonid">
+                <button value="Submit" id="showcommentform"  class="submit_btn_add">Add comment</button>
+                <button value="Submit" id="sendreports"  class="submit_btn_add">Send reports</button>
+                <button value="Submit" id="viewcomment"  class="submit_btn_add">View Comment</button>
+                <button value="Submit" id="hidecomment"  class="submit_btn_add">Hide Comment</button>
+            </div>
+            <div class="add_new_users_form">
+                <!--Form for Add comment Starts Here  -->
+
+                <fieldset id="commentform" class="fieldset_box_2">
+                    <legend class="legend_name">Add comment</legend>
+                    <form  class="form-horizontal no-style"  method="post">
+
+                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                {#<textarea class="add_comment_textarea" placeholder="Enter comment here..."> </textarea>#}
+                                <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                            </div>
+                        </div>
+                        {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
+                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="Save">
+                    </form>
+                </fieldset>
+                <!--Form for Add comment Ends Here  -->
+                <!--Form for Send Reports Starts Here  -->
+                <fieldset id="mailform" class="fieldset_box_2">
+                    <legend class="legend_name">Send reports</legend>
+                    <form id="chatform" class="form-horizontal no-style" method="post">
+                        {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+                         <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
+                         <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
+                         <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
+                         <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
+                         <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
+                         <input type="hidden" name="countmonth" value="{{ countmonth }}">#}
+
+                        <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                        <input id="lastid" type="hidden" name="send_command[lastid]" >
+                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">Add comment</label>
+                            <div class="col-xs-9">
+                                {#<div class="add_comment_checkbox">
+                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
+                                </div>
+                                <div class="add_comment_checkbox">
+                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
+                                </div>#}
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> Yes</label></div>
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> No</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">To</label>
+                            <div class="col-xs-9">
+                                {#<input type="text" class="send_reports_to_input" placeholder="">#}
+                                <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
+                                <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                    <ul id="livesearch">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">Mail box</label>
+                            <div class="col-xs-9">
+                                {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
+                                <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-3">&nbsp;</label>
+                            <div class="col-xs-9">
+                                {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
+                                <input id="" class="submit_btn_2" type="submit" value="Send Report">
+                            </div>
+
+                        </div>
+                    </form>
+                </fieldset>
+                <!--Form for Send Reports Ends Here  -->
+
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}
