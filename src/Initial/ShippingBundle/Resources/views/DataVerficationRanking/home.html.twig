@@ -302,7 +302,7 @@
 
     <section>
         <div class="col-sm-3 views_kpi_form_list">
-            <div class="views_kpi_name_total"><span>Ships ({{ shipcount }})</span></div>
+            <div class="views_kpi_name_total"><span>{{ 'dashboard.shipname'|trans }} ({{ shipcount }})</span></div>
             <div class="views_kpi_form_list_main">
                 <ui>
                     {% for shipobject in listofships %}
@@ -318,7 +318,7 @@
         <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
             <div class="text_image">
                 <img src="/images/no-user.png">
-                <label>No Ships Selected</label>
+                <label>{{ 'dataverification.noship'|trans }}</label>
             </div>
         </div>
     </section>
@@ -328,7 +328,7 @@
                 <form id="kpiform" class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
-                            <label class="title">Kpi For <span id="shipname"></span></label>
+                            <label class="title">{{ 'dataverification.kpifor'|trans }} <span id="shipname"></span></label>
                             <label class="toolbar-title">
 
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
@@ -356,14 +356,14 @@
 
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="Upload">
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if  not is_granted("ROLE_ADMIN") %}
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="Save">
-                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="Update">
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                         {% endif %}
-                        <button class="cancel_btn" id="resetbuttonid"  value="Submit">Reset</button>
+                        <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                     </div>
                 </form>
             </div>

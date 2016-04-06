@@ -162,17 +162,113 @@
                 <source>elementpdf.title</source>
                 <target>Element Pdf Title</target>
             </trans-unit>
-            <trans-unit id="40">
+            <trans-unit id="41">
                 <source>elementpdf.commands</source>
                 <target>Commands</target>
             </trans-unit>
-            <trans-unit id="40">
+            <trans-unit id="42">
                 <source>kpipdf.title</source>
                 <target>KPI Pdf Title</target>
             </trans-unit>
-            <trans-unit id="40">
+            <trans-unit id="43">
                 <source>kpipdf.commands</source>
                 <target>Commands</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>layout.menu.dash</source>
+                <target>Dashboard</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>layout.menu.vessel</source>
+                <target>Vessels</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>layout.menu.scorecard</source>
+                <target>Scorecard</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>layout.menu.addkpi</source>
+                <target>Add KPI</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>layout.menu.element</source>
+                <target>Element</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>layout.menu.rule</source>
+                <target>Rules</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>layout.menu.dv</source>
+                <target>Data Verfication</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>layout.menu.di</source>
+                <target>Data Import</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>layout.menu.report</source>
+                <target>Reports</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>layout.menu.vesselranking</source>
+                <target>Vessel Ranking</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>layout.menu.user</source>
+                <target>Users</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>layout.menu.companydetails</source>
+                <target>Company Details</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>layout.menu.mail</source>
+                <target>Mail</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>layout.menu.backup</source>
+                <target>Backup</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>layout.menu.settingsfor</source>
+                <target>Settings For</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>layout.menu.logout</source>
+                <target>Logout</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>dataverification.noship</source>
+                <target>No Ships Selected</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>dataverification.kpifor</source>
+                <target>Kpi For</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>dataverification.upload</source>
+                <target>Upload</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>dataverification.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>dataverification.update</source>
+                <target>Update</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>dataverification.reset</source>
+                <target>Reset</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>dataverification.noship</source>
+                <target>No Ships Selected</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>dataverification.kpifor</source>
+                <target>Kpi For</target>
             </trans-unit>
 
 
