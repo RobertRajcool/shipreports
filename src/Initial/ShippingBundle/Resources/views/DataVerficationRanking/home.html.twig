@@ -89,6 +89,7 @@
 
                                             $('#updatebuttonid').show();
                                             $('#savebuttonid').hide();
+                                            $('#adminbuttonid').show();
 
                                             if(temp==1)
                                             {
@@ -105,6 +106,7 @@
                                         {
                                             $('#updatebuttonid').hide();
                                             $('#savebuttonid').show();
+                                            $('#adminbuttonid').show();
                                             if(temp==1)
                                             {
                                                 $('<tr><td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
@@ -213,6 +215,7 @@
 
                                                         $('#updatebuttonid').show();
                                                         $('#savebuttonid').hide();
+                                                        $('#adminbuttonid').show();
                                                         if (temp == 1) {
                                                             $('<tr><td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input value="'+data.elementvalues[newtemp]+'" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
                                                         }
@@ -224,6 +227,7 @@
                                                     {
                                                         $('#updatebuttonid').hide();
                                                         $('#savebuttonid').show();
+                                                        $('#adminbuttonid').show();
                                                         if (temp == 1) {
                                                             $('<tr><td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
@@ -356,7 +360,7 @@
 
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if  not is_granted("ROLE_ADMIN") %}
