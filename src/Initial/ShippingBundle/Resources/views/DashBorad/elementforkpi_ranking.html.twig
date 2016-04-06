@@ -322,14 +322,14 @@
                 <tbody>
                 <tr>
                     <td>Yes
-                        <a class="linkclass" href="{{ path('listallkpiforship_ranking', { 'shipid': shipid}) }}" style="float: right"  >Back to Score card</a></td>
+                        <a class="linkclass" href="{{ path('listallkpiforship_ranking', { 'shipid': shipid}) }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a></td>
                 </tr>
                 </tbody>
             </table>
             <table class="table table-striped-3 element_ranking_row">
                 <thead>
                 <tr>
-                    <th class="kpi_name">Month</th>
+                    <th class="kpi_name">{{ 'elementranking.month'|trans }}</th>
                     {% for monthname in monthdetails %}
                         <th  class="month">{{ monthname }}</th>
                     {% endfor %}
@@ -363,11 +363,11 @@
                     {% for m in 0..countmonth1 %}
                     <td>
                         {% if elementcolorarray[m][i]=="Green" %}
-                            <img src="/images/01.png" alt="Loader Image"/>
+                            <img src="/images/box_green.png" alt="Loader Image"/>
                         {% elseif elementcolorarray[m][i]=="Red" %}
-                            <img src="/images/03.png" alt="Loader Image"/>
+                            <img src="/images/box_red.png" alt="Loader Image"/>
                         {% elseif elementcolorarray[m][i]=="Yellow" %}
-                            <img src="/images/02.png" alt="Loader Image"/>
+                            <img src="/images/box_yellow.png" alt="Loader Image"/>
                         {% else %}
                             <img src="/images/arrow-buttom.png" alt="Loader Image"/>
                         {% endif %}
@@ -377,7 +377,7 @@
                     {% set i=i+1 %}
                 {% endfor %}
                 <tr>
-                    <td colspan="" class="kpi_name_thtd"><strong>Score</strong></td>
+                    <td colspan="" class="kpi_name_thtd"><strong>{{ 'elementranking.score'|trans }}</strong></td>
 
 
                     {% for avg in avgscore %}
@@ -388,11 +388,11 @@
                 </tbody>
             </table>
 
-            <div class="rules_ranking"><a ng-click="myFuncKpiRulesShow()" class="rules_show_btn" href="">Rules show</a></div>
+            <div class="rules_ranking"><a ng-click="myFuncKpiRulesShow()" class="rules_show_btn" href="">{{ 'elementranking.ruleshow'|trans }}</a></div>
             <table class="table table-striped-4 kpi_ranking_rules_show_row" ng-show="KpiRulesShow">
                 <thead>
                 <tr>
-                    <th colspan="3">Rules</th>
+                    <th colspan="3">{{ 'elementranking.rule'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -431,7 +431,7 @@
             <table class="table table-striped normal_table">
                 <thead>
                 <tr>
-                    <th>Graph Title</th>
+                    <th>{{ 'elementranking.graphtitle'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -446,7 +446,8 @@
             <tr>
                 <td id="viewcommentdiv" >
                     {% if commentarray|length <= 0 %}
-                        No Commands Added
+
+                        {{ 'elementranking.nocommands'|trans }}
                     {% endif %}
                     {% if commentarray|length > 0 %}
                         {% for comobject in commentarray %}
@@ -462,16 +463,16 @@
 
 
             <div id="buttonid">
-                <button value="Submit" id="showcommentform"  class="submit_btn_add">Add comment</button>
-                <button value="Submit" id="sendreports"  class="submit_btn_add">Send reports</button>
-                <button value="Submit" id="viewcomment"  class="submit_btn_add">View Comment</button>
-                <button value="Submit" id="hidecomment"  class="submit_btn_add">Hide Comment</button>
+                <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
+                <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
+                <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'elementranking.viewcomment'|trans }}</button>
+                <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'elementranking.hidecomment'|trans }}</button>
             </div>
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->
 
                 <fieldset id="commentform" class="fieldset_box_2">
-                    <legend class="legend_name">Add comment</legend>
+                    <legend class="legend_name">{{ 'elementranking.addcomment'|trans }}</legend>
                     <form  class="form-horizontal no-style"  method="post">
 
                         <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
@@ -483,13 +484,13 @@
                             </div>
                         </div>
                         {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
-                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="Save">
+                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">
                     </form>
                 </fieldset>
                 <!--Form for Add comment Ends Here  -->
                 <!--Form for Send Reports Starts Here  -->
                 <fieldset id="mailform" class="fieldset_box_2">
-                    <legend class="legend_name">Send reports</legend>
+                    <legend class="legend_name">{{ 'elementranking.sendreport'|trans }}</legend>
                     <form id="chatform" class="form-horizontal no-style" method="post">
                         {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
                          <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
@@ -503,7 +504,7 @@
                         <input id="lastid" type="hidden" name="send_command[lastid]" >
                         <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">Add comment</label>
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
                             <div class="col-xs-9">
                                 {#<div class="add_comment_checkbox">
                                     <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
@@ -511,12 +512,12 @@
                                 <div class="add_comment_checkbox">
                                     <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
                                 </div>#}
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> Yes</label></div>
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> No</label></div>
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'elementranking.no'|trans }}</label></div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">To</label>
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
                             <div class="col-xs-9">
                                 {#<input type="text" class="send_reports_to_input" placeholder="">#}
                                 <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
@@ -528,7 +529,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">Mail box</label>
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
                             <div class="col-xs-9">
                                 {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
                                 <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
@@ -538,7 +539,7 @@
                             <label class="control-label col-xs-3">&nbsp;</label>
                             <div class="col-xs-9">
                                 {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
-                                <input id="" class="submit_btn_2" type="submit" value="Send Report">
+                                <input id="" class="submit_btn_2" type="submit" value="{{ 'elementranking.sendreport'|trans }}">
                             </div>
 
                         </div>

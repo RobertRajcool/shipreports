@@ -273,20 +273,20 @@
             <table class="table table-striped-4 element_ranking_main_title_row">
                 <thead>
                 <tr>
-                    <th colspan="4">Pioneer Vessel Ranking</th>
+                    <th colspan="4">{{ 'kpiranking.header'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td><strong>Vessel name</strong></td>
+                    <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
                     <td>{{ shipname }}</td>
-                    <td><strong>Tech manager</strong></td>
+                    <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
                     <td>V-ships</td>
                 </tr>
                 <tr>
-                    <td><strong>Year</strong></td>
+                    <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
                     <td>{{ currentyear }}</td>
-                    <td><strong>Age of vessel</strong></td>
+                    <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
                     <td>10</td>
                 </tr>
                 </tbody>
@@ -295,8 +295,8 @@
                 <thead>
                 <tr>
 
-                    <th class="kpi_name kpi_name_thtd">KPI</th>
-                    <th class="weightage">Weightage</th>
+                    <th class="kpi_name kpi_name_thtd">{{ 'kpiranking.kpi'|trans }}</th>
+                    <th class="weightage">{{ 'kpiranking.weightage'|trans }}</th>
                     {% for monthname in montharray %}
                         <th class="month">{{ monthname }}</th>
                     {% endfor %}
@@ -329,7 +329,7 @@
                 {% endfor %}
 
                 <tr>
-                    <td colspan="" class="kpi_name_thtd"><strong>Average score</strong></td>
+                    <td colspan="" class="kpi_name_thtd"><strong>{{ 'kpiranking.avgscore'|trans }}</strong></td>
                     <td>100</td>
 
                     {% for avg in avgscore %}
@@ -343,7 +343,7 @@
         <table class="table table-striped normal_table">
             <thead>
             <tr>
-                <th>Graph Title</th>
+                <th>{{ 'kpiranking.graphtitle'|trans }}</th>
             </tr>
             </thead>
             <tbody>
@@ -367,16 +367,16 @@
 
 
             <div id="buttonid">
-                <button value="Submit" id="showcommentform"  class="submit_btn_add">Add comment</button>
-                <button value="Submit" id="sendreports"  class="submit_btn_add">Send reports</button>
-                <button value="Submit" id="viewcomment"  class="submit_btn_add">View Comment</button>
-                <button value="Submit" id="hidecomment"  class="submit_btn_add">Hide Comment</button>
+                <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
+                <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
+                <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
+                <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
             </div>
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->
 
                 <fieldset id="commentform" class="fieldset_box_2">
-                    <legend class="legend_name">Add comment</legend>
+                    <legend class="legend_name">{{ 'kpiranking.addcomment'|trans }}</legend>
                     <form  class="form-horizontal no-style"  method="post">
 
                         <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
@@ -388,13 +388,13 @@
                             </div>
                         </div>
                         {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
-                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="Save">
+                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'kpiranking.save'|trans }}">
                     </form>
                 </fieldset>
                 <!--Form for Add comment Ends Here  -->
                 <!--Form for Send Reports Starts Here  -->
                 <fieldset id="mailform" class="fieldset_box_2">
-                    <legend class="legend_name">Send reports</legend>
+                    <legend class="legend_name">{{ 'kpiranking.sendreport'|trans }}</legend>
                     <form id="chatform" class="form-horizontal no-style" method="post">
                         {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
                          <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
@@ -408,7 +408,7 @@
                         <input id="lastid" type="hidden" name="send_command[lastid]" >
                         <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">Add comment</label>
+                            <label class="control-label required_field col-xs-3">{{ 'kpiranking.addcomment'|trans }}</label>
                             <div class="col-xs-9">
                                 {#<div class="add_comment_checkbox">
                                     <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
@@ -416,12 +416,12 @@
                                 <div class="add_comment_checkbox">
                                     <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
                                 </div>#}
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> Yes</label></div>
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> No</label></div>
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'kpiranking.yes'|trans }}</label></div>
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'kpiranking.no'|trans }}</label></div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">To</label>
+                            <label class="control-label required_field col-xs-3">{{ 'kpiranking.to'|trans }}</label>
                             <div class="col-xs-9">
                                 {#<input type="text" class="send_reports_to_input" placeholder="">#}
                                 <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
@@ -433,7 +433,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">Mail box</label>
+                            <label class="control-label required_field col-xs-3">{{ 'kpiranking.mailbox'|trans }}</label>
                             <div class="col-xs-9">
                                 {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
                                 <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
@@ -443,7 +443,7 @@
                             <label class="control-label col-xs-3">&nbsp;</label>
                             <div class="col-xs-9">
                                 {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
-                                <input id="" class="submit_btn_2" type="submit" value="Send Report">
+                                <input id="" class="submit_btn_2" type="submit" value="{{ 'kpiranking.sendreport'|trans }}">
                             </div>
 
                         </div>

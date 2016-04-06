@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>dashboard.main.content</source>
+                <target>Vessel Ranking</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>dashboard.shipname</source>
+                <target>Vessels</target>
+            </trans-unit>
+            <trans-unit id="3">
+                 <source>dashboard.kpi</source>
+                 <target>KPI</target>
+            </trans-unit>
+            <trans-unit id='4'>
+                 <source>kpiranking.header</source>
+                 <target>Pioneer Vessel Ranking</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>kpiranking.veseelname</source>
+                <target>Vessel Name</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>kpiranking.techmanager</source>
+                <target>Tech manager</target>
+            </trans-unit>
+            <trans-unit id="7">
+                 <source>kpiranking.year</source>
+                 <target>Year</target>
+            </trans-unit>
+            <trans-unit id='8'>
+                 <source>kpiranking.ageofvessel</source>
+                 <target>Age of vessel</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>kpiranking.kpi</source>
+                <target>Kpi</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>kpiranking.weightage</source>
+                <target>Weightage</target>
+            </trans-unit>
+            <trans-unit id="11">
+                 <source>kpiranking.avgscore</source>
+                 <target>Average score</target>
+            </trans-unit>
+            <trans-unit id='12'>
+                 <source>kpiranking.graphtitle</source>
+                 <target>Graph Title</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>kpiranking.addcomment</source>
+                <target>Add Comment</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>kpiranking.viewcomment</source>
+                <target>View Comment</target>
+            </trans-unit>
+            <trans-unit id="15">
+                 <source>kpiranking.sendreport</source>
+                 <target>Send Reports</target>
+            </trans-unit>
+            <trans-unit id='16'>
+                 <source>kpiranking.hidecomment</source>
+                 <target>Hide Comment</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>kpiranking.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="18">
+                 <source>kpiranking.to</source>
+                 <target>To</target>
+            </trans-unit>
+            <trans-unit id='19'>
+                 <source>kpiranking.yes</source>
+                 <target>Yes</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>kpiranking.no</source>
+                <target>No</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>kpiranking.mailbox</source>
+                <target>Mail Box</target>
+            </trans-unit>
+            <trans-unit id='22'>
+                 <source>elementranking.backlink</source>
+                 <target>Back to Score card</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>elementranking.month</source>
+                <target>Month</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>elementranking.score</source>
+                <target>Score</target>
+            </trans-unit>
+            <trans-unit id="25">
+                 <source>elementranking.ruleshow</source>
+                 <target>Show Rules</target>
+            </trans-unit>
+            <trans-unit id='26'>
+                 <source>elementranking.rule</source>
+                 <target>Rules</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>elementranking.hiderule</source>
+                <target>Hide Rules</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>elementranking.nocommands</source>
+                <target> No Commands Added</target>
+            </trans-unit>
+            <trans-unit id="29">
+                 <source>elementranking.avgscore</source>
+                 <target>Average score</target>
+            </trans-unit>
+            <trans-unit id='30'>
+                 <source>elementranking.graphtitle</source>
+                 <target>Graph Title</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>elementranking.addcomment</source>
+                <target>Add Comment</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>elementranking.viewcomment</source>
+                <target>View Comment</target>
+            </trans-unit>
+            <trans-unit id="33">
+                 <source>elementranking.sendreport</source>
+                 <target>Send Reports</target>
+            </trans-unit>
+            <trans-unit id='34'>
+                 <source>elementranking.hidecomment</source>
+                 <target>Hide Comment</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>elementranking.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="36">
+                 <source>elementranking.to</source>
+                 <target>To</target>
+            </trans-unit>
+            <trans-unit id='37'>
+                 <source>elementranking.yes</source>
+                 <target>Yes</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>elementranking.no</source>
+                <target>No</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>elementranking.mailbox</source>
+                <target>Mail Box</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>elementpdf.title</source>
+                <target>Element Pdf Title</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>elementpdf.commands</source>
+                <target>Commands</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>kpipdf.title</source>
+                <target>KPI Pdf Title</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>kpipdf.commands</source>
+                <target>Commands</target>
+            </trans-unit>
+
+
+
+        </body>
+    </file>
+</xliff>

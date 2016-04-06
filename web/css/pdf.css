@@ -198,7 +198,6 @@
 .kpi_ranking_12_month_pdf_main_title_row .vessel_name_4 {
   width:25%;
 }
-
 .kpi_ranking_12_month_pdf_row thead th {
   background:#989898;
 }
@@ -210,4 +209,49 @@
 }
 .kpi_ranking_12_month_pdf_row .month {
   width: 6%;
+}
+
+.element_ranking_12_month_pdf_row .kpi_name {
+  width: 28%;
+}
+.element_ranking_12_month_pdf_row .month {
+  width: 6%;
+}
+.element_ranking_12_month_pdf_row tbody .element_name_title {
+  vertical-align: middle;
+}
+
+.kpi_ranking_rules_pdf_show_row  {
+  border-bottom:1px solid #afafaf;
+}
+.kpi_ranking_rules_pdf_show_row tbody td {
+  border-bottom:none;
+}
+.kpi_ranking_rules_pdf_show_row .rules_show_1 {
+  width: 34%;
+}
+.kpi_ranking_rules_pdf_show_row .rules_show_2 {
+  width: 33%;
+}
+.kpi_ranking_rules_pdf_show_row .rules_show_3 {
+  width: 33%;
+}
+.kpi_ranking_rules_pdf_show_row tr {
+  border-bottom: none !important;
+  background:none !important;
+}
+.kpi_ranking_rules_pdf_show_row tbody tr td {
+  border-right:none;
+  border-top: none;
+}
+.rules_valus_pdf .span_1 {
+  width: 35%;
+  float:left !important;
+  margin-right:10px;
+  min-height:10px;
+}
+.rules_valus_pdf .span_2 {
+  width: 60%;
+  float:left !important;
+  min-height:10px;
 }
