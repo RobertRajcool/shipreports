@@ -1036,6 +1036,17 @@ class DashboradController extends Controller
                 ->setParameter('kpi_id', $kpi_id_array[0]['id'])
                 ->getQuery()
                 ->getResult();
+            for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+            {
+                $element_rule1 = $em->createQueryBuilder()
+                    ->select('a.rules','identity(a.elementDetailsId)')
+                    ->from('InitialShippingBundle:Rules', 'a')
+                    ->where('a.elementDetailsId = :element_id')
+                    ->setParameter('element_id', $listelement[$elementCount]['id'])
+                    ->getQuery()
+                    ->getResult();
+                $element_rule[$elementCount]=$element_rule1;
+            }
 
 
             if (count($listelement) == 0) {
@@ -1196,6 +1207,7 @@ class DashboradController extends Controller
                         'commentarray' => $listofcomment,
                         'kpi_color' => $kpi_rule_color_array_new,
                         'kpi_rule' => $rule_for_kpi_id,
+                        'elementRule' => $element_rule
                     )
                 );
 
@@ -1343,6 +1355,7 @@ class DashboradController extends Controller
                         'commentarray' => $listofcomment,
                         'kpi_color' => $kpi_rule_color_array_new,
                         'kpi_rule' => $rule_for_kpi_id,
+                        'elementRule' => $element_rule
                     )
                 );
             }

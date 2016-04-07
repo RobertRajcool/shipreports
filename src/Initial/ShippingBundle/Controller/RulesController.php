@@ -135,7 +135,7 @@ class RulesController extends Controller
         $params = $request->request->get('rules');
         $kpiDetailsId = $params['kpiDetailsId'];
         $elementDetailsId = $params['elementDetailsId'];
-        $value = $params['rules'];
+        $value = $request->request->get('value');
         $rul=$request->request->get('rules-1');
 
         $em = $this->getDoctrine()->getManager();

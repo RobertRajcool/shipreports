@@ -1,12 +1,12 @@
 
-    /*
-     * Base structure
-     */
+/*
+ * Base structure
+ */
 
-    /* Move down content because we have a fixed navbar that is 50px tall */
+/* Move down content because we have a fixed navbar that is 50px tall */
 body {
     background:#FFFFFF;
-		font-size: 13px !important;
+    font-size: 13px !important;
 }
 /*
  * Global add-ons
@@ -106,7 +106,7 @@ body {
 }
 .menu-item-icon {
     margin:1px 3px 0 0;
-		float:left;
+    float:left;
 }
 .menu-item-text {
     margin:-2px 0 0 0;
@@ -399,10 +399,10 @@ select {
     min-height:283px;
     padding:5px;
 }
-    .dashboard .widget .chart img {
-        width: 100%;
-        height: 273px;
-    }
+.dashboard .widget .chart img {
+    width: 100%;
+    height: 273px;
+}
 .dashboard .widget .ship_name {
     min-height:410px;
     padding:0px;
@@ -415,7 +415,7 @@ select {
     text-align:center;
 }
 /*.dashboard .widget .chart.large_chart {*/
-    /*min-height:273px;*/
+/*min-height:273px;*/
 /*}*/
 .menu_logout_button {
     margin:3px 0px 10px 0px;
@@ -428,14 +428,14 @@ select {
 }
 .menu_logout_button .menu-item-icon {
     color:#999999;
-		cursor: pointer;
-		float: left;
+    cursor: pointer;
+    float: left;
     margin: 1px 6px 0 0;
 }
 .menu_logout_button .menu-item-text {
     color:#999999;
-		cursor: pointer;
-		margin:-2px 0 0 0;
+    cursor: pointer;
+    margin:-2px 0 0 0;
 }
 .x-btn-my-account-small {
     border-radius: 0;
@@ -1234,15 +1234,15 @@ select {
     height:18px !important;
 }
 .kpi_table_form_section thead tr th {
-		background:#d2d2d2;
-		padding:3px 2px 3px 4px !important;
-		color:#505b65;
-		font-weight:bold !important;
-		font-size:13px;
+    background:#d2d2d2;
+    padding:3px 2px 3px 4px !important;
+    color:#505b65;
+    font-weight:bold !important;
+    font-size:13px;
 }
 .kpi_table_form_section tbody tr td {
-		padding:3px 2px 3px 4px !important;
-		border-top: 1px solid #eaeaea;
+    padding:3px 2px 3px 4px !important;
+    border-top: 1px solid #eaeaea;
 }
 .kpi_table_form_section.second_dark {
     background:#e5e5e5;
@@ -1529,8 +1529,8 @@ select {
 }
 .element_ranking_main_title_row tbody .sub_title_element_ranking {
     background:#989898 !important;
-		color:#FFFFFF;
-		border-right:none;
+    color:#FFFFFF;
+    border-right:none;
     border-top: none;
 }
 .element_ranking_main_title_row tbody tr td {
@@ -1545,7 +1545,7 @@ select {
 }
 .element_ranking_row tr {
     border-bottom: 1px solid #f0f0f0 !important;
-		background:none !important;
+    background:none !important;
 }
 .element_ranking_row thead th {
     background:#989898;
@@ -1571,7 +1571,7 @@ select {
     font-size: 12px;
     font-weight: bold;
     padding: 3px 10px;
-		text-decoration:none;
+    text-decoration:none;
 }
 .kpi_ranking_rules_show_row .rules_show_1 {
     width: 34%;
@@ -1584,7 +1584,7 @@ select {
 }
 .kpi_ranking_rules_show_row tr {
     border-bottom: none !important;
-		background:none !important;
+    background:none !important;
 }
 .kpi_ranking_rules_show_row tbody tr td {
     border-right:none;
@@ -1592,12 +1592,12 @@ select {
 }
 .rules_valus .span_1 {
     width: 35%;
-		float:left;
-		margin-right:10px;
+    float:left;
+    margin-right:10px;
 }
 .rules_valus .span_2 {
     width: 60%;
-		float:left;
+    float:left;
 }
 
 

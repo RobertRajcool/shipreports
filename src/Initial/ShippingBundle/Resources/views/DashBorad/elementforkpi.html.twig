@@ -2,9 +2,7 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     {% block javascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -23,20 +21,14 @@
         <script>
             $(document).ready(function()
             {
-                $('#row_id').hide();
+                $('#rule_row_id').hide();
                 $('#commentform').hide();
                 $('#addcomment').hide();
                 $('#mailform').hide();
-                $('#viewcommentdiv').hide();
-                $('#livesearchdiv').hide();
-                $('#hidecomment').hide();
 
                 $('#showcommentform').click(function()
                 {
-                    $('#buttonid').hide();
-                    $('#viewcommentdiv').hide();
                     $('#commentform').show();
-                    $('#mailform').hide();
                     $('#usermycommentid').focus();
 
                 });
@@ -45,28 +37,8 @@
 
                     $('#commentform').hide();
                     $('#mailform').show();
-                    $('#viewcommentdiv').hide();
 
 
-
-                });
-                $('#viewcomment').click(function()
-                {
-                    $('#mailform').hide();
-                    $('#commentform').hide();
-                    $('#viewcommentdiv').show();
-                    $('#viewcomment').hide();
-                    $('#hidecomment').show();
-
-                });
-                $('#hidecomment').click(function()
-                {
-                    $('#mailform').hide();
-                    $('#commentform').hide();
-                    $('#viewcommentdiv').hide();
-                    $('#viewcomment').show();
-                    $('#hidecomment').hide();
-                    $('#buttonid').show();
 
                 });
                 $('#toemail').keyup(function()
@@ -77,7 +49,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url:Routing.generate('autocompleteformailing'),
+                        url: "/dashborad/autocompeltegroup",
                         beforeSend: function () {
                             /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
                         }
@@ -93,9 +65,10 @@
                                 {
 
                                     $('#hiddenresult').val(data.returnresult);
-                                    $('#livesearchdiv').show();
+
                                     $("#livesearch").show();
-                                    $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
+                                    $("#livesearch").html('<label class="dynamiclabel">' + listelemnt.groupname + '</label><br><label class="dynamiclabel">' + listelemnt.useremailid + '</label>');
+                                    $("#livesearch").css("background", "#FFF");
 
                                 });
 
@@ -119,14 +92,25 @@
                 {
                     var b=$(this).text();
                     $('#toemail').val(b);
-                    $('#livesearchdiv').hide();
                 });
+
+                $(document).live("click", function(e) {
+                    var $clicked = $(e.target);
+                    if (! $clicked.hasClass("search_keyword")){
+                        $("#livesearch").fadeOut();
+                    }
+                });
+
+                $('#toemail').click(function(){
+                    $("#livesearch").fadeIn();
+                });
+
+
 
 
 
                 $('#addcommentid').click(function()
                 {
-
 
                     var kpiid=$('#kpiidforname').val();
                     var comment=$('#usermycommentid').val();
@@ -135,7 +119,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: Routing.generate('runtimecommentforkpi'),
+                        url: "/runtimecommentforkpi",
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -147,26 +131,21 @@
                         data: data,
                         success: function (data)
                         {
-                            $('#usermycommentid').val(' ');
-                            $('#commentform').hide();
+                            alert('suc');
                             var a=data.lastinsertid;
                             $('#lastid').val(a);
-                            $('#viewcommentdiv').text('');
-                            if($.isArray(data.resultarray))
+
+                            $('#viewcommentdiv').remove();
+
+                            $.each(data.ElementNameArray, function(i, listelemnt)
                             {
-                                // alert('if');
-                                $.each(data.resultarray, function(i, listelemnt)
-                                {
+                                alert(listelemnt.comment)
 
-                                    $('<span>'+listelemnt.comment+'</span>').appendTo('#viewcommentdiv');
+                                $('<p class="dyaminc">'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
+
+                            });
 
 
-
-                                });
-                            }
-
-                            $('#buttonid').show();
-                            alert('Comment Added');
                         }
                         ,
                         error: function()
@@ -191,7 +170,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: Routing.generate('addchart'),
+                        url: "/addchart",
                         beforeSend: function () {
                             $(".modal").show();
                         },
@@ -205,7 +184,7 @@
                         {
 
                             $('#imagefilename').val(data);
-                            submitchatform();
+                            self.submit();
 
                         }
                         ,
@@ -217,29 +196,6 @@
                     });
 
                 });
-                function submitchatform()
-                {
-
-                    var form=$('#chatform');
-                    $.ajax({
-                        type: "post",
-                        data: form.serialize(),
-                        url: Routing.generate('addcommentforshipreports'),
-                        success: function (data)
-                        {
-                            $('#commentform').hide();
-                            $('#mailform').hide();
-                            $('#addcomment').hide();
-
-                            alert(data.updatemsg);
-
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            alert('Error : ' + errorThrown);
-                        }
-                    });
-                };
 
                 /*Displaying the rules above the graph*/
 
@@ -305,12 +261,199 @@
 
         </script>
     {% endblock %}
-    <div class="col-md-12 users_advanced_list_views_screen">
-        {# <div class="page-header">
-             <h2>{{ shipname.shipName }}</h2>
-             <a href="{{ path('dashboradhome') }}">Back</a>
-         </div>#}
-        <div class="table-responsive">
+    {#<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="page-header">
+        </div>
+        <div class="bs-example">
+            <div class="table-responsive">
+
+                <table class="table table-striped" style="" id="readingkpitable">
+                    <thead>
+                    <tr>
+                        <th>Element Naame</th>
+                        <th>Weightage</th>
+                        {% for monthname in montharray %}
+                            <th>{{ monthname }}</th>
+                        {% endfor %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set countmonth1= countmonth-1 %}
+                    {% set newelementarray = {} %}
+                    {% set newcolorarray = {} %}
+                    {% set akj=0 %}
+                    {% set i=0 %}
+                    {% for element in listofelement %}
+                        {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
+                        <tr>
+                            <td><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                            <td>{{ elementweightage[i] }}%</td>
+                            {% for j in 0..countmonth1 %}
+                                {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
+                                <td>
+                                    {% if elementcolorarray[j][i]=="Green" %}
+                                        <img src="/images/01.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[j][i]=="Red" %}
+                                        <img src="/images/03.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                        <img src="/images/02.png" alt="Loader Image"/>
+                                    {% else %}
+                                        <div class="nocolor"></div>
+                                    {% endif %}
+                                </td>
+                                {% set akj=akj+1 %}
+                            {% endfor %}
+                        </tr>
+                        {% set i=i+1 %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <table>
+                    <tr>
+                        <td>{{ kpiname }}</td>
+                        <td>100%</td>
+                        {% for kpi_colors in kpi_color %}
+                            <td>
+                                {% if kpi_colors =="Green" %}
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif kpi_colors =="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif kpi_colors =="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
+                                {% else %}
+                                    <div class="nocolor"></div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th>Avg Score</th>
+                        <td>100%</td>
+                        {% for avg in avgscore %}
+                            <td>{{ avg }}</td>
+                        {% endfor %}
+                    </tr>
+
+                </table>
+
+                &#123;&#35; Rules display starts here &#35;&#125;
+
+                <input type="button" id="show_rule_id" value="show rules">
+
+                <table id="rule-table">
+                    <tr id="row_id">
+                        <th>Condition</th>
+                        <th>Color</th>
+                    </tr>
+                </table>
+
+                <div id="viewcommentdiv">
+                    {% set newcommandarray = {} %}
+
+                    {% set jk=0 %}
+                {% for kpi_rules in kpi_rule %}
+                    {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
+                    {% set jk=jk+1 %}
+                {% endfor %}
+                </div>
+
+                <input type="hidden" name="listofcomments" id="rule_value" value="{{ newcommandarray|join('*') }}">
+            </div>
+        </div>
+            <div class="form-group">
+                <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+            </div>
+            <div class="form-group">
+                <div id="viewcommentdiv">
+                    {% set newcommandarray = {} %}
+                    {% set jk=0 %}
+                    {% for comobject in commentarray %}
+                        {{ comobject.comment }}
+                        {% set newcommandarray = newcommandarray|merge({('_'~jk):(comobject.comment)}) %}
+                        {% set jk=jk+1 %}
+                    {% endfor %}
+                </div>
+            </div>
+            <button id="showcommentform" class="btn btn-info" >Add Comment</button>&nbsp;&nbsp;
+
+            <button id="sendreports" class="btn btn-info" >Send Reports</button>
+            &#123;&#35; Form For Send Mail Starts Here &#35;&#125;
+
+            <div id="mailform">
+
+                <h4 class="modal-title">Send Report</h4>
+
+                <form id="chatform" class="form-horizontal no-style" action=" {{path('addcomment') }}" method="post">
+                    <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+                    <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
+                    <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
+                    <input type="hidden" name="elementweightage" value="{{ elementweightage|join(', ') }}">
+                    <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
+                    <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
+                    <input type="hidden" name="countmonth" value="{{ countmonth }}">
+
+                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                    <input id="lastid" type="hidden" name="send_command[lastid]" >
+                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Add Comment</label>
+                        <div class="col-xs-10">
+                            <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
+                            <input id="checkbox" value="No"  type="checkbox" name="send_command[addcomment]" >No
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">To</label>
+                        <div class="col-xs-10">
+                            <input id="toemail" type="text" name="send_command[clientemail]" required>  <input type="hidden" id="hiddenresult" name="myresult">
+                            <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-2">Mail Box</label>
+                        <div class="col-xs-10">
+                            <textarea id="mycommentid" name="send_command[comment]" required></textarea>
+                        </div>
+                    </div>
+                    <div id="sendcommentbutton"  class="actions">
+                        <input id="" class="btn btn-primary" type="submit" value="Send Report">
+                    </div>
+                </form>
+
+            </div>
+            &#123;&#35; Form For Send Mail Ends  Here &#35;&#125;
+
+            &#123;&#35; Form For Add Comment  Starts Here &#35;&#125;
+
+            <div  id="commentform" >
+
+                <form  class="form-horizontal no-style"  method="post">
+                    <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                    <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                    <div class="form-group">
+
+                        <div class="col-xs-10">
+                            <textarea id="usermycommentid" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                        </div>
+                    </div>
+
+                    &#123;&#35; <div id="sendcommentbutton"  class="actions">&#35;&#125;
+                    <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
+
+                    &#123;&#35; </div>&#35;&#125;
+                </form>
+
+            </div>
+            &#123;&#35; Form For Add Comment &#35;&#125;
+        </div>#}
+
+    <div class="{#dashboard_screen_views dashboard_right_ship#}">
+        <section>
+            <div class="col-md-12 users_advanced_list_views_screen">
+                <div class="">
                     <table class="table table-striped graph_and_colour_coding_main_title_row">
                         <thead>
                         <tr>
@@ -493,116 +636,96 @@
                         </tbody>
                     </table>
 
-        </div>
-        <table class="table table-striped normal_table">
-            <tbody>
-            <tr>
-                <td id="viewcommentdiv" >
-                    {% if commentarray|length <= 0 %}
+                    {#<div class="form-group">
+                        <div id="area" style="min-width: 400px; height: 400px; margin: 35px auto"></div>
+                    </div>#}
 
-                        {{ 'elementranking.nocommands'|trans }}
-                    {% endif %}
-                    {% if commentarray|length > 0 %}
-                        {% for comobject in commentarray %}
-                            {{ comobject.comment }}
-
-                        {% endfor %}
-                    {% endif %}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="graph_send_comment">
-
-
-            <div id="buttonid">
-                <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
-                <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
-                <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'elementranking.viewcomment'|trans }}</button>
-                <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'elementranking.hidecomment'|trans }}</button>
-            </div>
-            <div class="add_new_users_form">
-                <!--Form for Add comment Starts Here  -->
-
-                <fieldset id="commentform" class="fieldset_box_2">
-                    <legend class="legend_name">{{ 'elementranking.addcomment'|trans }}</legend>
-                    <form  class="form-horizontal no-style"  method="post">
-
-                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
-
-                        <div class="form-group">
-                            <div class="col-xs-12">
-                                {#<textarea class="add_comment_textarea" placeholder="Enter comment here..."> </textarea>#}
-                                <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
-                            </div>
+                    <div class="form-group">
+                        <div id="viewcommentdiv">
+                            {% set newcommandarray = {} %}
+                            {% set jk=0 %}
+                            {% for comobject in commentarray %}
+                                {{ comobject.comment }}
+                                {% set newcommandarray = newcommandarray|merge({('_'~jk):(comobject.comment)}) %}
+                                {% set jk=jk+1 %}
+                            {% endfor %}
                         </div>
-                        {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
-                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">
-                    </form>
-                </fieldset>
-                <!--Form for Add comment Ends Here  -->
-                <!--Form for Send Reports Starts Here  -->
-                <fieldset id="mailform" class="fieldset_box_2">
-                    <legend class="legend_name">{{ 'elementranking.sendreport'|trans }}</legend>
-                    <form id="chatform" class="form-horizontal no-style" method="post">
-                        {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
-                         <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
-                         <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
-                         <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
-                         <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
-                         <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
-                         <input type="hidden" name="countmonth" value="{{ countmonth }}">#}
+                    </div>
+                    <button id="showcommentform" class="btn btn-info" >Add Comment</button>&nbsp;&nbsp;
 
-                        <input id="imagefilename" type="hidden" name="send_command[filename]" >
-                        <input id="lastid" type="hidden" name="send_command[lastid]" >
-                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
-                        <div class="form-group">
-                            <label class="control-label required_field col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
-                            <div class="col-xs-9">
-                                {#<div class="add_comment_checkbox">
-                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
-                                </div>
-                                <div class="add_comment_checkbox">
-                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
-                                </div>#}
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'elementranking.no'|trans }}</label></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
-                            <div class="col-xs-9">
-                                {#<input type="text" class="send_reports_to_input" placeholder="">#}
-                                <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
-                                <div id="livesearchdiv"  class="send_reports_to_input_list">
-                                    <ul id="livesearch">
+                    <button id="sendreports" class="btn btn-info" >Send Reports</button>
+                    {# Form For Send Mail Starts Here #}
 
-                                    </ul>
+                    <div id="mailform">
+
+                        <h4 class="modal-title">Send Report</h4>
+
+                        <form id="chatform" class="form-horizontal no-style" action=" {{path('addcomment') }}" method="post">
+                            <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
+                            <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
+                            <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
+                            <input type="hidden" name="elementweightage" value="{{ elementweightage|join(', ') }}">
+                            <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
+                            <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
+                            <input type="hidden" name="countmonth" value="{{ countmonth }}">
+
+                            <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                            <input id="lastid" type="hidden" name="send_command[lastid]" >
+                            <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                            <div class="form-group">
+                                <label class="control-label col-xs-2">Add Comment</label>
+                                <div class="col-xs-10">
+                                    <input id="checkbox" value="Yes" type="checkbox" name="send_command[addcomment]" >Yes
+                                    <input id="checkbox" value="No"  type="checkbox" name="send_command[addcomment]" >No
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
-                            <div class="col-xs-9">
-                                {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
-                                <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                            <div class="form-group">
+                                <label class="control-label col-xs-2">To</label>
+                                <div class="col-xs-10">
+                                    <input id="toemail" type="text" name="send_command[clientemail]" required>  <input type="hidden" id="hiddenresult" name="myresult">
+                                    <div style="padding-left: 18%;padding-top: 4%" id = "livesearch"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-xs-3">&nbsp;</label>
-                            <div class="col-xs-9">
-                                {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
-                                <input id="" class="submit_btn_2" type="submit" value="{{ 'elementranking.sendreport'|trans }}">
+                            <div class="form-group">
+                                <label class="control-label col-xs-2">Mail Box</label>
+                                <div class="col-xs-10">
+                                    <textarea id="mycommentid" name="send_command[comment]" required></textarea>
+                                </div>
+                            </div>
+                            <div id="sendcommentbutton"  class="actions">
+                                <input id="" class="btn btn-primary" type="submit" value="Send Report">
+                            </div>
+                        </form>
+
+                    </div>
+                    {# Form For Send Mail Ends  Here #}
+
+                    {# Form For Add Comment  Starts Here #}
+
+                    <div  id="commentform" >
+
+                        <form  class="form-horizontal no-style"  method="post">
+                            <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                            <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                            <div class="form-group">
+
+                                <div class="col-xs-10">
+                                    <textarea id="usermycommentid" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                                </div>
                             </div>
 
-                        </div>
-                    </form>
-                </fieldset>
-                <!--Form for Send Reports Ends Here  -->
+                            {# <div id="sendcommentbutton"  class="actions">#}
+                            <input class="btn btn-primary" id="addcommentid" type="submit" value="Save">
 
+                            {# </div>#}
+                        </form>
+
+                    </div>
+
+                </div>
             </div>
-
-
-        </div>
+        </section>
     </div>
 {% endblock %}
