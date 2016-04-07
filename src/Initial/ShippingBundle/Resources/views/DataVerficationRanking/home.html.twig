@@ -71,6 +71,7 @@
                             $('#shipname').text(shipname);
                             $('#nogroupselected').hide();
                             $('#kpiformforship').show();
+                            $('#verfiybuttonid').show();
                             var j=1;
                             var newtemp=0;
                             $.each(data.kpiNameArray, function(i, listkpi)
@@ -88,8 +89,9 @@
                                         {
 
                                             $('#updatebuttonid').show();
-                                            $('#savebuttonid').hide();
+                                            $('#savebuttonid').show();
                                             $('#adminbuttonid').show();
+
 
                                             if(temp==1)
                                             {
@@ -104,9 +106,10 @@
                                         }
                                         else
                                         {
-                                            $('#updatebuttonid').hide();
+                                            $('#updatebuttonid').show();
                                             $('#savebuttonid').show();
                                             $('#adminbuttonid').show();
+
                                             if(temp==1)
                                             {
                                                 $('<tr><td  class="kpi_lement_name">'+myvalue+'</td> <td class="kpi_lement_inputname"><input placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
@@ -188,6 +191,7 @@
                                     $('#addkpiformid').html('');
                                     $('#addkpiformid').text('');
                                     $('#shipname').text(' ');
+                                    $('#verfiybuttonid').show();
 
                                     if(data.shipid!=0)
                                     {
@@ -214,7 +218,7 @@
                                                     {
 
                                                         $('#updatebuttonid').show();
-                                                        $('#savebuttonid').hide();
+                                                        $('#savebuttonid').show();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
                                                             $('<tr><td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input value="'+data.elementvalues[newtemp]+'" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
@@ -225,7 +229,7 @@
                                                     }
                                                     else
                                                     {
-                                                        $('#updatebuttonid').hide();
+                                                        $('#updatebuttonid').show();
                                                         $('#savebuttonid').show();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
@@ -358,7 +362,7 @@
 
 
 
-                        {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                        {%  if  is_granted("ROLE_KPI_INFO PROVIDER") %}
 
                             <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
@@ -369,7 +373,7 @@
                         {% endif %}
 
                         {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
 
                         {% endif %}
 

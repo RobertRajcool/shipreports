@@ -226,7 +226,7 @@ class DataVerficationController extends Controller
         $k=0;
         $returnmsg='';
         $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$shipid));
-        if($buttonid=='updatebuttonid')
+        if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' ||$buttonid == 'verfiybuttonid')
         {
 
             $returnarrayids = $em->createQueryBuilder()
@@ -503,7 +503,7 @@ class DataVerficationController extends Controller
             $k = 0;
             $returnmsg = '';
             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid') {
+            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' ||$buttonid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
                     ->select('b.id')
