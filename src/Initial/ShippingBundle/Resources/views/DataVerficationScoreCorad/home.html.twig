@@ -88,7 +88,7 @@
                                             {
 
                                                 $('#updatebuttonid').show();
-                                                $('#savebuttonid').hide();
+                                                $('#savebuttonid').show();
                                                 $('#adminbuttonid').show();
 
                                                 if(temp==1)
@@ -104,7 +104,7 @@
                                             }
                                             else
                                             {
-                                                $('#updatebuttonid').hide();
+                                                $('#updatebuttonid').show();
                                                 $('#savebuttonid').show();
                                                 $('#adminbuttonid').show();
                                                 if(temp==1)
@@ -214,7 +214,7 @@
                                                     {
 
                                                         $('#updatebuttonid').show();
-                                                        $('#savebuttonid').hide();
+                                                        $('#savebuttonid').show();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
                                                             $('<tr><td  class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_inputname"><input value="'+data.elementvalues[newtemp]+'" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
@@ -333,7 +333,7 @@
                 <form id="kpiform" class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
-                            <label class="title">{{ 'dataverification.kpifor'|trans }} <span id="shipname"></span></label>
+                            <label class="title"> <span id="shipname"></span></label>
                             <label class="toolbar-title">
 
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
@@ -355,16 +355,20 @@
                     <input type="hidden" name="shipid" id="shipid">
                     <div class="actions_submit">
 
-                        {%  if is_granted("ROLE_ADMIN") %}
+                        {%  if  is_granted("ROLE_KPI_INFO PROVIDER") %}
 
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.upload'|trans }}">
-                        {% endif %}
-
-                        {%  if  not is_granted("ROLE_ADMIN") %}
                             <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                            <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
-                        <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                        {%  if  is_granted("ROLE_ADMIN") %}
+
+                            <input type="submit" class="submit_btn" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                        {% endif %}
+
+                        {%  if is_granted("ROLE_MANAGER") %}
+                            <input type="submit" class="submit_btn" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+
+                        {% endif %}
                     </div>
                 </form>
             </div>
