@@ -1,4 +1,7 @@
 {% extends 'base.html.twig' %}
+
+{%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") or is_granted("ROLE_USER") %}
+
 {% block body %}
     {% block javascripts %}
 
@@ -236,11 +239,11 @@
                         <th>Management Performance</th>
                     </tr>
                     </thead>
-                    <tbody>
+                   {# <tbody>
                     <tr>
                         <td>Scorecard: Minimum ~ Maximum: 0 ~ 3.0</td>
                     </tr>
-                    </tbody>
+                    </tbody>#}
                 </table>
                 <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
                     <thead>
@@ -272,8 +275,6 @@
                                         <img src="/images/03.png" alt="Loader Image"/>
                                     {% elseif kpicolorarray[j][i]=="Yellow" %}
                                         <img src="/images/02.png" alt="Loader Image"/>
-                                    {% else %}
-                                        <div class="nocolor"></div>
                                     {% endif %}
                                 </td>
 
@@ -309,7 +310,8 @@
                     {% endfor %}
                     {% set i1=0 %}
                     <tr>
-                        <td colspan="2" class="kpi_name_thtd"><strong>Average score</strong></td>
+                        <td colspan="" class="kpi_name_thtd"><strong>Average score</strong></td>
+                        <td>100</td>
                         {% for avg in avgscore %}
                             <td><strong>{{ avg }}</strong></td>
                             {% if i1 != 2 %}
@@ -370,3 +372,5 @@
 
 
 {% endblock %}
+
+{% endif %}

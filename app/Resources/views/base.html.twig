@@ -20,15 +20,15 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
 
-    {#<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>#}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
 
     <script>
         var app = angular.module('myApp', []);
 
-       /*app.config(function($interpolateProvider){
-           $interpolateProvider.startSymbol('[[').endSymbol(']]');
-       });*/
+        /*app.config(function($interpolateProvider){
+         $interpolateProvider.startSymbol('[[').endSymbol(']]');
+         });*/
 
         app.controller('myCtrl', function($scope) {
             $scope.showMe = false;
@@ -218,7 +218,7 @@
                     </li>
                 </ul>
 
-                <div class="x-btn-my-account-small">
+                {#<div class="x-btn-my-account-small">
                     <a ng-click="myFunc()">
             	<span class="x-btn-icon-el">
 
@@ -231,6 +231,19 @@
               </span>
                         <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
                     </a>
+                </div>#}
+                <div class="x-btn-my-account-small">
+                    <div class="menu_logout_button"><a href="{{ path('fos_user_security_logout') }}"><samp class="menu-item-icon ss-logout"></samp><span class="menu-item-text">{{ 'layout.menu.logout'|trans }}</span></a></div>
+                    <div class="user_setting_main" ng-click="myFunc()">
+  <span class="x-btn-icon-el">
+     <img src="/images/nouser.png">
+  </span>
+  <span class="x-btn-inner">
+    <div class="user-name">{{app.user.username }}</div>
+    <div class="company">Company Name</div>
+  </span>
+                        <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
+                    </div>
                 </div>
 
                 <div class="my-account-box" ng-show="showMe">

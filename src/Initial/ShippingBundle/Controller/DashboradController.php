@@ -364,7 +364,7 @@ class DashboradController extends Controller
         //loop for sending dates//
         for ($d = 0; $d < count($lastfivedatearray); $d++) {
             $time2 = strtotime($lastfivedatearray[$d]);
-            $monthinletter = date('F', $time2);
+            $monthinletter = date('M', $time2);
             array_push($newcategories, $monthinletter);
             $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
@@ -1934,6 +1934,19 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
+            for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+            {
+                $element_rule1 = $em->createQueryBuilder()
+                    ->select('a.rules','identity(a.elementDetailsId)')
+                    ->from('InitialShippingBundle:RankingRules', 'a')
+                    ->where('a.elementDetailsId = :element_id')
+                    ->setParameter('element_id', $listelement[$elementCount]['id'])
+                    ->getQuery()
+                    ->getResult();
+                $element_rule[$elementCount]=$element_rule1;
+            }
+
+
 
             if (count($listelement) == 0) {
 
@@ -2078,6 +2091,8 @@ class DashboradController extends Controller
                     );
                 }
 
+                $newcategories1 = array_reverse($newcategories);
+
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi_ranking.html.twig',
                     array(
@@ -2086,7 +2101,7 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'monthdetails' => $newcategories,
+                        'monthdetails' => $newcategories1,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
@@ -2095,7 +2110,8 @@ class DashboradController extends Controller
                         'kpi_color' => $kpi_rule_color_array,
                         'kpi_rule' => $rule_for_kpi_id,
                         'shipid'=>$shipid,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
                     )
                 );
 
@@ -2228,6 +2244,8 @@ class DashboradController extends Controller
                     );
                 }
 
+                $newcategories1 = array_reverse($newcategories);
+
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi_ranking.html.twig',
                     array(
@@ -2236,7 +2254,7 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'monthdetails' => $newcategories,
+                        'monthdetails' => $newcategories1,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
@@ -2245,7 +2263,8 @@ class DashboradController extends Controller
                         'kpi_color' => $kpi_rule_color_array,
                         'kpi_rule' => $rule_for_kpi_id,
                         'shipid'=>$shipid,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
                     )
                 );
             }

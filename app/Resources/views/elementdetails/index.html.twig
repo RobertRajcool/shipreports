@@ -75,10 +75,11 @@
         {% endjavascripts %}
 
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function()
+            {
 
                 var action_arr = new Array();
-
+                $('.box_icon').hide();
                 $('.show_element').hide();
                 $('.element_create_view').hide();
                 $('#element_list_view').hide();
@@ -93,14 +94,18 @@
                 $('.box_icon').click(function(){
                     $('#element_list_view').hide();
                     $('.show_element').hide();
+                    $('.box_icon').hide();
                     $('.grid_edit_element').hide();
                     $('#element_grid_view').show();
+                    $('.list_icon').show();
                 });
                 $('.list_icon').click(function(){
                     $('#element_grid_view').hide();
                     $('.show_element').hide();
                     $('.grid_edit_element').hide();
                     $('#element_list_view').show();
+                    $('.box_icon').show();
+                    $('.list_icon').hide();
                 });
 
                 $('.edit_element_button').live("click",function(){
@@ -117,13 +122,17 @@
                 });
                 $('.cancel_btn').live("click",function(){
                     $('.element_create_view').hide();
+                    $('.list_icon').hide();
                     $('#element_grid_view').show();
+                    $('.box_icon').show();
                 });
 
                 $('.edit_cancel_button').live("click",function(){
                     $('.grid_edit_element').hide();
+                    $('.list_icon').hide();
                     $('#element_grid_view').show();
                     $('.show_element').show();
+                    $('.box_icon').show();
                 });
 
                 $('#element_details_activatedDate_day').hide();
@@ -141,6 +150,8 @@
 
                 $('.element_class').live("click",function()
                 {
+                    $('.list_icon').hide();
+                    $('.box_icon').show();
                     $('.grid_edit_element').hide();
                     $('.rule_div').hide();
                     count++;
@@ -518,6 +529,37 @@
                     });
                 });
 
+                $('#weightageId').change(function()
+                {
+                    var currentId = $(this).val();
+                    var data = {
+                        kpiDetailsId : $('#kpi_id').val(),
+                        weightage : currentId
+                    };
+
+                    if($('#kpi_id').val() != null)
+                    {
+                        $.ajax({
+                            type: "POST",
+                            data: data,
+                            url: "element_ajax_weightage",
+                            success: function(data)
+                            {
+                                if(data.Weightage>100)
+                                {
+                                    var weight = data.Weightage - 100;
+                                    alert('Weightage value exceede - '+weight);
+                                }
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        })
+                    }
+                });
+
+
                 function splitfun(data){
                     var num = data.split('-');
                     return num[1];
@@ -579,8 +621,8 @@
                                 <span class="users_name_row">
                                     <span class="name"><a href="" class="element_class" id={{ elementDetail.id }}>{{ elementDetail.elementName }}</a> </span>
                                     <span class="text">{{ elementDetail.kpiDetailsId }}</span>
-                                    <span class="text">{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</span>
-                                    <span class="text">{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</span>
+                                    {#<span class="text">{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</span>
+                                    <span class="text">{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</span>#}
                                 </span>
                         </div>
                     {% endfor %}
@@ -609,10 +651,10 @@
                             <tr>
                                 <th>KpiName</th>
                                 <th>ElementName</th>
-                                <th>Description</th>
+                                {#<th>Description</th>#}
                                 <th>CellName</th>
                                 <th>CellDetails</th>
-                                <th>ActivatedDate</th>
+                                <th>StartDate</th>
                                 <th>EndDate</th>
                                 <th>Weightage</th>
                             </tr>
@@ -622,11 +664,63 @@
                                 <tr>
                                     <td>{{ elementDetail.kpiDetailsId }}</td>
                                     <td>{{ elementDetail.elementName }}</td>
-                                    <td>{{ elementDetail.description }}</td>
+                                    {#<td>{{ elementDetail.description }}</td>#}
                                     <td>{{ elementDetail.cellName }}</td>
                                     <td>{{ elementDetail.cellDetails }}</td>
-                                    <td>{% if elementDetail.activatedDate %}{{ elementDetail.activatedDate|date('Y-m-d') }}{% endif %}</td>
-                                    <td>{% if elementDetail.endDate %}{{ elementDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                                    <td>
+                                        {% if elementDetail.activatedDate|date('m') == 01 %}
+                                            Jan-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 02 %}
+                                            Feb-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 03 %}
+                                            Mar-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 04 %}
+                                            Apr-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 05 %}
+                                            May-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 06 %}
+                                            Jun-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 07 %}
+                                            Jul-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 08 %}
+                                            Aug-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 09 %}
+                                            Sep-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 10 %}
+                                            Oct-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 11 %}
+                                            Nov-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% elseif elementDetail.activatedDate|date('m') == 12 %}
+                                            Dec-{{ elementDetail.activatedDate|date('Y') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if elementDetail.endDate|date('m') == 01 %}
+                                            Jan-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 02 %}
+                                            Feb-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 03 %}
+                                            Mar-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 04 %}
+                                            Apr-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 05 %}
+                                            May-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 06 %}
+                                            Jun-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 07 %}
+                                            Jul-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 08 %}
+                                            Aug-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 09 %}
+                                            Sep-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 10 %}
+                                            Oct-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 11 %}
+                                            Nov-{{ elementDetail.endDate|date('Y') }}
+                                        {% elseif elementDetail.endDate|date('m') == 12 %}
+                                            Dec-{{ elementDetail.endDate|date('Y') }}
+                                        {% endif %}
+                                    </td>
                                     <td>{{ elementDetail.weightage }}</td>
                                 </tr>
                             {% endfor %}
@@ -652,7 +746,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Select KPI</label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.kpiDetailsId,{'label': ''}) }}
+                                        {{ form_widget(form.kpiDetailsId,{'id':'kpi_id','label': ''}) }}
                                     </div>
                                 </div>
 
@@ -666,7 +760,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Weightage</label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.weightage,{'label': ''}) }}
+                                        {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
                                 </div>
 
@@ -769,8 +863,8 @@
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
 
-                        <a href="" class="edit_btn edit_element_button"> Edit Element</a>
-                        <a href="" class="edit_btn">Archive</a>
+                        <a href="" class="edit_btn edit_element_button"> Edit</a>
+                        {#<a href="" class="edit_btn">Archive</a>#}
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic details</legend>
@@ -968,7 +1062,7 @@
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_element_submit_button" type="submit" value="Submit">Save Element</button>
+                            <button class="submit_btn edit_element_submit_button" type="submit" value="Submit">Save</button>
                             <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
                         </div>
 

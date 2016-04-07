@@ -59,7 +59,7 @@
         #kpi_details_endDate_year
         {
             display: inline;
-            width :60px;
+            width :70px;
         }
     </style>
 
@@ -73,8 +73,9 @@
         {% endjavascripts %}
 
         <script type="text/javascript">
-            $(document).ready(function(){
-
+            $(document).ready(function()
+            {
+                $('.box_icon').hide();
                 $('.create_kpi').hide();
                 $('.show_kpi').hide();
                 $('#list_view').hide();
@@ -97,17 +98,24 @@
 
                 $('.box_icon').click(function(){
                     $('#list_view').hide();
+                    $('.box_icon').hide();
+                    $('#nogroupselected').show();
                     $('.show_kpi').hide();
                     $('#grid_view').show();
+                    $('.list_icon').show();
                 });
                 $('.list_icon').click(function(){
+                    $('.box_icon').show();
                     $('#grid_view').hide();
+                    $('#nogroupselected').hide();
                     $('.show_kpi').hide();
                     $('.grid_edit_kpi').hide();
+                    $('.list_icon').hide();
                     $('#list_view').show();
                 });
                 $('.add_btn').live("click",function(){
                     $('#grid_view').hide();
+                    $('#nogroupselected').hide();
                     $('#list_view').hide();
                     $('.grid_edit_kpi').hide();
                     $('.show_kpi').hide();
@@ -122,11 +130,13 @@
 
                 $('.cancel_btn').live("click",function(){
                     $('.create_kpi').hide();
+                    $('#nogroupselected').show();
                     $('#grid_view').show();
                 });
 
                 $('.edit_cancel_button').live("click",function(){
                     $('.grid_edit_kpi').hide();
+                    $('#nogroupselected').hide();
                     $('#grid_view').show();
                     $('.show_kpi').show();
                 });
@@ -140,6 +150,7 @@
                 $('.kpi_class').live("click",function()
                 {
                     $('.grid_edit_kpi').hide();
+                    $('#nogroupselected').hide();
                     $('.create_kpi').hide();
                     $('.rule_div').hide();
                     count++;
@@ -279,6 +290,41 @@
                 $('#kpi_details_activeDate_day').hide();
                 $('#kpi_details_endDate_day').hide();
 
+                $('.check').live("click",function(){
+                    if($('.check').is(':checked')==true)
+                    {
+                        $('#shipId option').attr('selected', 'selected');
+                    }
+                    else
+                    {
+                        $('#shipId option').attr('selected', false);
+                    }
+                });
+
+                $('#weightageId').change(function()
+                {
+                    var currentId = $(this).val();
+                    var data = {weightage : currentId};
+
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "kpi_ajax_weightage",
+                        success: function(data)
+                        {
+                            if(data.Weightage>100)
+                            {
+                                var weight = data.Weightage - 100;
+                                alert('Weightage value exceede - '+weight);
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    })
+                });
+
 
                 function rule_operator(operator)
                 {
@@ -339,9 +385,60 @@
                         <div class="users_list_grid">
                                 <span class="users_name_row">
                                     <span class="name"><a href="" class="kpi_class" id={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</a> </span>
-                                    <span class="text">{{ kpiDetail.description }}</span>
-                                    <span class="text">{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</span>
-                                    <span class="text">{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</span>
+                                    {#<span class="text">{{ kpiDetail.description }}</span>#}
+                                    <span class="text">
+                                        {% if kpiDetail.activeDate|date('m') == 01 %}
+                                            Jan-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 02 %}
+                                            Feb-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 03 %}
+                                            Mar-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 04 %}
+                                            Apr-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 05 %}
+                                            May-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 06 %}
+                                            Jun-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 07 %}
+                                            Jul-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 08 %}
+                                            Aug-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 09 %}
+                                            Sep-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 10 %}
+                                            Oct-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 11 %}
+                                            Nov-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% elseif kpiDetail.activeDate|date('m') == 12 %}
+                                            Dec-{{ kpiDetail.activeDate|date('Y') }}
+                                        {% endif %}
+                                        To
+                                        {% if kpiDetail.endDate|date('m') == 01 %}
+                                            Jan-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 02 %}
+                                            Feb-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 03 %}
+                                            Mar-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 04 %}
+                                            Apr-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 05 %}
+                                            May-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 06 %}
+                                            Jun-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 07 %}
+                                            Jul-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 08 %}
+                                            Aug-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 09 %}
+                                            Sep-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 10 %}
+                                            Oct-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 11 %}
+                                            Nov-{{ kpiDetail.endDate|date('Y') }}
+                                        {% elseif kpiDetail.endDate|date('m') == 12 %}
+                                            Dec-{{ kpiDetail.endDate|date('Y') }}
+                                        {% endif %}
+                                    </span>
                                 </span>
                         </div>
                     {% endfor %}
@@ -349,6 +446,15 @@
             </div>
         </section>
     </div>
+
+    <section id="nogroupselected">
+        <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
+            <div class="text_image">
+                <img src="/images/no-user.png">
+                <label>No KPI Selected</label>
+            </div>
+        </div>
+    </section>
 
     <div id="list_view">
         <section>
@@ -370,7 +476,7 @@
                                 <tr>
                                     <th>KpiName</th>
                                     <th>Description</th>
-                                    <th>ActiveDate</th>
+                                    <th>StartDate</th>
                                     <th>EndDate</th>
                                     <th>CellName</th>
                                     <th>CellDetails</th>
@@ -381,8 +487,60 @@
                                     <tr>
                                         <td>{{ kpiDetail.kpiName }}</td>
                                         <td>{{ kpiDetail.description }}</td>
-                                        <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
-                                        <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
+                                        <td>
+                                            {% if kpiDetail.activeDate|date('m') == 01 %}
+                                                Jan-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 02 %}
+                                                Feb-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 03 %}
+                                                Mar-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 04 %}
+                                                Apr-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 05 %}
+                                                May-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 06 %}
+                                                Jun-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 07 %}
+                                                Jul-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 08 %}
+                                                Aug-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 09 %}
+                                                Sep-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 10 %}
+                                                Oct-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 11 %}
+                                                Nov-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% elseif kpiDetail.activeDate|date('m') == 12 %}
+                                                Dec-{{ kpiDetail.activeDate|date('Y') }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if kpiDetail.endDate|date('m') == 01 %}
+                                                Jan-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 02 %}
+                                                Feb-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 03 %}
+                                                Mar-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 04 %}
+                                                Apr-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 05 %}
+                                                May-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 06 %}
+                                                Jun-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 07 %}
+                                                Jul-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 08 %}
+                                                Aug-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 09 %}
+                                                Sep-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 10 %}
+                                                Oct-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 11 %}
+                                                Nov-{{ kpiDetail.endDate|date('Y') }}
+                                            {% elseif kpiDetail.endDate|date('m') == 12 %}
+                                                Dec-{{ kpiDetail.endDate|date('Y') }}
+                                            {% endif %}
+                                        </td>
                                         <td>{{ kpiDetail.cellName }}</td>
                                         <td>{{ kpiDetail.cellDetails }}</td>
                                     </tr>
@@ -415,7 +573,15 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Select ship</label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.shipDetailsId,{'id':'shipid','label': ''}) }}
+                                        {{ form_widget(form.shipDetailsId,{'id':'shipId','label': ''}) }}
+                                        <div class="select_all">
+                                            <label class="checkbox">
+                                                <input type="checkbox" class="check">
+                                            </label>
+                                            <label class="checkbox_text">
+                                                Select all
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -440,13 +606,6 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        {#<span>
-                                            {{ form_widget(form.activeDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
-                                        </span>
-                                                            To
-                                        <span>
-                                            {{ form_widget(form.endDate,{'class':'add_rule_basic_date_drop ','label': ''}) }}
-                                        </span>#}
                                         <span class="inlineinput">
                                             {{ form_widget(form.activeDate,{'class':'full-width-select ','label': ''}) }}
                                         </span>
@@ -523,8 +682,8 @@
             <div class="col-sm-11">
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
-                        <a href="" class="edit_btn edit_kpi_button"> Edit KPI</a>
-                        <a href="" class="edit_btn">Archive</a>
+                        <a href="" class="edit_btn edit_kpi_button"> Edit</a>
+                        {#<a href="" class="edit_btn">Archive</a>#}
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic details</legend>
@@ -1055,7 +1214,7 @@
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save KPI</button>
+                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save</button>
                             <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
                         </div>
 
