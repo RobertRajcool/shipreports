@@ -265,7 +265,7 @@
                     {% for kpi in kpi_list %}
 
                         <tr>
-                            <td class="kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id,'kpiname':kpi.kpiName}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                            <td class="kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
                             <td>{{ kpi.weightage }}</td>
                             {% for j in 0..2 %}
                                 <td>

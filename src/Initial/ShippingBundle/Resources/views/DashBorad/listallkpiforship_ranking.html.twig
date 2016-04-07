@@ -24,11 +24,13 @@
                 $('#addcomment').hide();
                 $('#viewcommentdiv').hide();
                 $('#hidecomment').hide();
+                $('#commentandreportdiv').hide();
 
                 $('#showcommentform').click(function()
                 {
                     $('#mailform').hide();
                     $('#viewcommentdiv').hide();
+                    $('#commentandreportdiv').show();
                     $('#commentform').show();
                     $('#usermycommentid').focus();
                     $('#buttonid').hide();
@@ -38,6 +40,7 @@
                 $('#viewcomment').click(function()
                 {
                     $('#mailform').hide();
+                    $('#commentandreportdiv').hide();
                     $('#commentform').hide();
                     $('#viewcommentdiv').show();
                     $('#viewcomment').hide();
@@ -48,6 +51,7 @@
                 {
                     $('#mailform').hide();
                     $('#commentform').hide();
+                    $('#commentandreportdiv').hide();
                     $('#viewcommentdiv').hide();
                     $('#viewcomment').show();
                     $('#hidecomment').hide();
@@ -58,6 +62,7 @@
                 {
                     $('#viewcommentdiv').hide();
                     $('#commentform').hide();
+                    $('#commentandreportdiv').show();
                     $('#mailform').show();
                     $('#livesearchdiv').hide();
                     $('#buttonid').hide();
@@ -89,6 +94,7 @@
                                 {
 
                                     $('#hiddenresult').val(data.returnresult);
+                                    $('#commentandreportdiv').show();
                                     $('#livesearchdiv').show();
                                     $("#livesearch").show();
                                     $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
@@ -149,10 +155,57 @@
                         type: "post",
                         url: Routing.generate('addcomment_ranking_kpi'),
                         beforeSend: function () {
-                            $(".modal").show();
+                            var text='Please Wait';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
                         },
                         complete: function () {
-                            $(".modal").hide();
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
                         }
                     });
 
@@ -177,7 +230,7 @@
 
                                 });
                             }
-
+                            $('#commentandreportdiv').hide();
                             $('#buttonid').show();
                             alert('Comment Added');
                         }
@@ -207,10 +260,57 @@
                         type: "post",
                         url: Routing.generate('addchart'),
                         beforeSend: function () {
-                            $(".modal").show();
+                            var text='Please Wait';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
                         },
                         complete: function () {
-                            $(".modal").hide();
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
                         }
                     });
                     $.ajax({
@@ -246,6 +346,7 @@
                             $('#addcomment').hide();
 
                             alert(data.updatemsg);
+                            $('#commentandreportdiv').hide();
                             $('#buttonid').show();
 
                         },
@@ -255,7 +356,14 @@
                         }
                     });
                 };
-
+            $('#mycommentid').click(function()
+            {
+                $('#livesearchdiv').hide();
+            });
+                $('#mycommentid').focus(function()
+                {
+                    $('#livesearchdiv').hide();
+                });
 
 
             });
@@ -287,7 +395,7 @@
                     <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
                     <td>{{ currentyear }}</td>
                     <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
-                    <td>10</td>
+                    <td>{{ ageofvessel }}</td>
                 </tr>
                 </tbody>
             </table>
@@ -343,7 +451,7 @@
         <table class="table table-striped normal_table">
             <thead>
             <tr>
-                <th>{{ 'kpiranking.graphtitle'|trans }}</th>
+                <th>{{ shipname }}</th>
             </tr>
             </thead>
             <tbody>
@@ -363,15 +471,21 @@
             </tr>
             </tbody>
         </table>
-        <div class="graph_send_comment">
+        <div id="buttonid">
+            <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
+            <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
+            <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
+            <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
+        </div>
+        <div id="commentandreportdiv" class="graph_send_comment">
 
 
-            <div id="buttonid">
+           {# <div id="buttonid">
                 <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
                 <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
                 <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
                 <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
-            </div>
+            </div>#}
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->
 
@@ -396,19 +510,13 @@
                 <fieldset id="mailform" class="fieldset_box_2">
                     <legend class="legend_name">{{ 'kpiranking.sendreport'|trans }}</legend>
                     <form id="chatform" class="form-horizontal no-style" method="post">
-                        {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
-                         <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
-                         <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
-                         <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
-                         <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
-                         <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
-                         <input type="hidden" name="countmonth" value="{{ countmonth }}">#}
+
 
                         <input id="imagefilename" type="hidden" name="send_command[filename]" >
                         <input id="lastid" type="hidden" name="send_command[lastid]" >
                         <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">{{ 'kpiranking.addcomment'|trans }}</label>
+                            <label class="control-label  col-xs-3">{{ 'kpiranking.addcomment'|trans }}</label>
                             <div class="col-xs-9">
                                 {#<div class="add_comment_checkbox">
                                     <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
@@ -417,7 +525,7 @@
                                     <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
                                 </div>#}
                                 <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'kpiranking.yes'|trans }}</label></div>
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'kpiranking.no'|trans }}</label></div>
+
                             </div>
                         </div>
                         <div class="form-group">
@@ -443,7 +551,7 @@
                             <label class="control-label col-xs-3">&nbsp;</label>
                             <div class="col-xs-9">
                                 {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
-                                <input id="" class="submit_btn_2" type="submit" value="{{ 'kpiranking.sendreport'|trans }}">
+                                <input id="" class="submit_btn_2" type="submit" value="{{ 'kpiranking.send'|trans }}">
                             </div>
 
                         </div>

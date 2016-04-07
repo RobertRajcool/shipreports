@@ -916,9 +916,9 @@ class DashboradController extends Controller
     /**
      * List all element for kpi
      *
-     * @Route("/{kpiid}/listelementforkpi?{kpiname}", name="listelementforkpi")
+     * @Route("/{kpiid}/listelementforkpi", name="listelementforkpi")
      */
-    public function listallelementforkpiAction($kpiid,$kpiname,Request $request)
+    public function listallelementforkpiAction($kpiid,Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -929,6 +929,8 @@ class DashboradController extends Controller
         else {
             $username = $user->getUsername();
             $email = $user->getEmail();
+            $firstnewkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
+            $kpiname=$firstnewkpiid->getKpiName();
 //Find Last Five Months Starts Here //
             $comanyiddetailarray = $em->createQueryBuilder()
                 ->select('b.id')
@@ -1741,6 +1743,22 @@ class DashboradController extends Controller
             $shipobject = new ShipDetails();
             $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             $shipname = $shipid->getShipName();
+            $man_year= $shipid->getManufacturingYear();
+            if($man_year=="")
+            {
+                $yearcount=0;
+            }
+            else
+            {
+                $currentdatestring=date('Y-01-01');
+                $d1 = new \DateTime($currentdatestring);
+                $man_datestring=$man_year.'-01-'.'01';
+                $d2=new \DateTime($man_datestring);
+
+                $diff = $d2->diff($d1);
+                $yearcount=$diff->y+1;
+            }
+
 
             $series = array
             (
@@ -1787,7 +1805,8 @@ class DashboradController extends Controller
                     'avgscore'=>$finalkpielementvaluearray,
                     'commentarray'=>$listofcomment,
                     'kpimonthdata'=>$overalkpivaluesmontyly,
-                    'currentyear'=>date('Y')
+                    'currentyear'=>date('Y'),
+                    'ageofvessel'=>$yearcount
                 );
             }
 
@@ -1806,7 +1825,8 @@ class DashboradController extends Controller
                     'commentarray'=>$listofcomment,
                     'shipid'=>$newshipid,
                     'kpimonthdata'=>$overalkpivaluesmontyly,
-                    'currentyear'=>date('Y')
+                    'currentyear'=>date('Y'),
+                    'ageofvessel'=>$yearcount
                 )
             );
         }
@@ -1838,22 +1858,22 @@ class DashboradController extends Controller
                 ->setParameter('username', $username)
                 ->getQuery()
                 ->getResult();
-           /* $monthinstring=date('Y-m-d');
-            $lastmonthdetail = new \DateTime($monthinstring);
-            $lastmonthdetail->modify('last day of this month');
-            $lastfivedatearray = array();
-            $mystringvaluedate = $lastmonthdetail->format('Y-M-d');
-            array_push($lastfivedatearray, $mystringvaluedate);
-            for ($i = 0; $i < 11; $i++) {
-                $mydatevalue = new \DateTime($mystringvaluedate);
+            /* $monthinstring=date('Y-m-d');
+             $lastmonthdetail = new \DateTime($monthinstring);
+             $lastmonthdetail->modify('last day of this month');
+             $lastfivedatearray = array();
+             $mystringvaluedate = $lastmonthdetail->format('Y-M-d');
+             array_push($lastfivedatearray, $mystringvaluedate);
+             for ($i = 0; $i < 11; $i++) {
+                 $mydatevalue = new \DateTime($mystringvaluedate);
 
-                $mydatevalue->modify("last day of previous month");
-                $myvalue = $mydatevalue->format("Y-M-d");
-                array_push($lastfivedatearray, $myvalue);
+                 $mydatevalue->modify("last day of previous month");
+                 $myvalue = $mydatevalue->format("Y-M-d");
+                 array_push($lastfivedatearray, $myvalue);
 
-                $mystringvaluedate = $myvalue;
+                 $mystringvaluedate = $myvalue;
 
-            }*/
+             }*/
             $lastfivedatearray=array();
             for ($m=1; $m<=12; $m++) {
                 $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
@@ -1945,6 +1965,9 @@ class DashboradController extends Controller
                     ->getResult();
                 $element_rule[$elementCount]=$element_rule1;
             }
+
+
+
 
 
 
@@ -2068,6 +2091,17 @@ class DashboradController extends Controller
 
                 //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
+                for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+                {
+                    $element_rule1 = $em->createQueryBuilder()
+                        ->select('a.rules','identity(a.elementDetailsId)')
+                        ->from('InitialShippingBundle:RankingRules', 'a')
+                        ->where('a.elementDetailsId = :element_id')
+                        ->setParameter('element_id', $listelement[$elementCount]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $element_rule[$elementCount]=$element_rule1;
+                }
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
@@ -2087,7 +2121,8 @@ class DashboradController extends Controller
                         'montharray'=>$newcategories,
                         'avgscore'=>$elementdetailvaluearray,
                         'commentarray'=>$listofcomment,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
                     );
                 }
 
@@ -2231,6 +2266,17 @@ class DashboradController extends Controller
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
                     ->getResult();
+                for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+                {
+                    $element_rule1 = $em->createQueryBuilder()
+                        ->select('a.rules','identity(a.elementDetailsId)')
+                        ->from('InitialShippingBundle:RankingRules', 'a')
+                        ->where('a.elementDetailsId = :element_id')
+                        ->setParameter('element_id', $listelement[$elementCount]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $element_rule[$elementCount]=$element_rule1;
+                }
                 if($mode=='pdftemplate_kpilevel')
                 {
                     return array(
@@ -2240,10 +2286,16 @@ class DashboradController extends Controller
                         'montharray'=>$newcategories,
                         'avgscore'=>$elementdetailvaluearray,
                         'commentarray'=>$listofcomment,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
+
                     );
                 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> eec3c0c4bfa2b96a91b118436bd1ddfb168340a9
                 $newcategories1 = array_reverse($newcategories);
 
                 return $this->render(
@@ -2307,14 +2359,17 @@ class DashboradController extends Controller
         $kpiid=$params['kpiid'];
 
         $comment = $params['comment'];
-        $checkboxvalue = $params['addcomment'];
-        if($checkboxvalue=="Yes")
+        $checkboxvalue='';
+        if(count($params)<6)
         {
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
+            $checkboxvalue='No';
+            $listofcommentarray=array();
+
         }
         else
         {
-            $listofcommentarray=array();
+            $checkboxvalue = $params['addcomment'];
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
         }
         $idforrecord = $params['lastid'];
 
@@ -2338,7 +2393,8 @@ class DashboradController extends Controller
             'avgscore'=> $returnvaluefrommonth['avgscore'],
             'monthlydata'=>$returnvaluefrommonth['monthlydata'],
             'commentarray'=>$listofcommentarray,
-            'datetime'=>$today
+            'datetime'=>$today,
+            'elementRule'=>$returnvaluefrommonth['elementRule']
         ));
         $client = new HighchartController();
         $client->setContainer($this->container);
@@ -2353,29 +2409,43 @@ class DashboradController extends Controller
         //assign file attachement for mail and Mailing Starts Here...u
         $useremaildid=$params['clientemail'];
 
-        $findsemail=$em->createQueryBuilder()
-            ->select('a.useremailid')
-            ->from('InitialShippingBundle:EmailUsers','a')
-            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-            ->where('b.groupname = :sq')
-            ->ORwhere('a.useremailid = :sb')
-            ->setParameter('sq',$useremaildid)
-            ->setParameter('sb',$useremaildid)
-            ->getQuery()
-            ->getResult();
-
-
-        //assign file attachement for mail and Mailing Starts Here...u
-        for($ma=0;$ma<count($findsemail);$ma++)
+        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
         {
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
                 ->setFrom($clientemailid)
-                ->setTo($findsemail[$ma]['useremailid'])
+                ->setTo($useremaildid)
                 ->setSubject($kpiname)
                 ->setBody($comment);
             $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
             $mailer->send($message);
+        }
+        else
+        {
+            $findsemail=$em->createQueryBuilder()
+                ->select('a.useremailid')
+                ->from('InitialShippingBundle:EmailUsers','a')
+                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+                ->where('b.groupname = :sq')
+                ->ORwhere('a.useremailid = :sb')
+                ->setParameter('sq',$useremaildid)
+                ->setParameter('sb',$useremaildid)
+                ->getQuery()
+                ->getResult();
+
+
+            //assign file attachement for mail and Mailing Starts Here...u
+            for($ma=0;$ma<count($findsemail);$ma++)
+            {
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom($clientemailid)
+                    ->setTo($findsemail[$ma]['emailid'])
+                    ->setSubject($kpiname)
+                    ->setBody($comment);
+                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                $mailer->send($message);
+            }
         }
         //Mailing Ends....
         //Update Process Starts Here...
@@ -2421,16 +2491,28 @@ class DashboradController extends Controller
         $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
         $kpiname=$newkpiid->getShipName();
         $comment = $params['comment'];
-        $checkboxvalue = $params['addcomment'];
-
-        if($checkboxvalue=="Yes")
+        $checkboxvalue='';
+        if(count($params)<6)
         {
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
+            $checkboxvalue='No';
+            $listofcommentarray=array();
+
         }
         else
         {
-            $listofcommentarray=array();
+            $checkboxvalue = $params['addcomment'];
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
         }
+
+
+       /* if($checkboxvalue=="Yes")
+        {
+
+        }
+        else
+        {
+
+        }*/
         $idforrecord = $params['lastid'];
 
         $today = date("Y-m-d H:i:s");
@@ -2464,31 +2546,46 @@ class DashboradController extends Controller
         file_put_contents($pdffilenamefullpath, $printPdf);
 
         $useremaildid=$params['clientemail'];
-
-        $findsemail=$em->createQueryBuilder()
-            ->select('a.useremailid')
-            ->from('InitialShippingBundle:EmailUsers','a')
-            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-            ->where('b.groupname = :sq')
-            ->ORwhere('a.useremailid = :sb')
-            ->setParameter('sq',$useremaildid)
-            ->setParameter('sb',$useremaildid)
-            ->getQuery()
-            ->getResult();
-
-
-        //assign file attachement for mail and Mailing Starts Here...u
-        for($ma=0;$ma<count($findsemail);$ma++)
+        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
         {
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
                 ->setFrom($clientemailid)
-                ->setTo($findsemail[$ma]['emailid'])
+                ->setTo($useremaildid)
                 ->setSubject($kpiname)
                 ->setBody($comment);
             $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
             $mailer->send($message);
         }
+        else
+        {
+            $findsemail=$em->createQueryBuilder()
+                ->select('a.useremailid')
+                ->from('InitialShippingBundle:EmailUsers','a')
+                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+                ->where('b.groupname = :sq')
+                ->ORwhere('a.useremailid = :sb')
+                ->setParameter('sq',$useremaildid)
+                ->setParameter('sb',$useremaildid)
+                ->getQuery()
+                ->getResult();
+
+
+            //assign file attachement for mail and Mailing Starts Here...u
+            for($ma=0;$ma<count($findsemail);$ma++)
+            {
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom($clientemailid)
+                    ->setTo($findsemail[$ma]['emailid'])
+                    ->setSubject($kpiname)
+                    ->setBody($comment);
+                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                $mailer->send($message);
+            }
+        }
+
+
         //Mailing Ends....
         //Update Process Starts Here...
 

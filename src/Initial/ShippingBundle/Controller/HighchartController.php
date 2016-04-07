@@ -277,7 +277,7 @@ class HighchartController extends Controller
         $kpiid=$params['kpiid'];
         $client = new DashboradController();
         $client->setContainer($this->container);
-        $returnvaluefrommonth = $client->listallkpiforshipAction($kpiid,$request,'pdftemplate_shiplevel');
+        $returnvaluefrommonth = $client->listallelementforkpiAction($kpiid,$request,'pdftemplate_kpilevl');
 
         //get Informaton From User
       /*  $monthcount=$request->request->get('countmonth');
@@ -329,7 +329,7 @@ class HighchartController extends Controller
             'countmonth' => count($returnvaluefrommonth['kpicolorarray']),
             'avgscore' => $returnvaluefrommonth['avgscore'],
             'commentarray'=>$listofcommentarray));*/
-      $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+      $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate_scorecard_kpi.html.twig', array(
             'link' => $filename,
             'screenName' => $screenName,
             'userName' => '',

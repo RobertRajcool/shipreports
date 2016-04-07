@@ -88,7 +88,7 @@
             </trans-unit>
             <trans-unit id='22'>
                  <source>elementranking.backlink</source>
-                 <target>Back to Score card</target>
+                 <target>Back</target>
             </trans-unit>
             <trans-unit id="23">
                 <source>elementranking.month</source>
@@ -270,7 +270,14 @@
                 <source>dataverification.kpifor</source>
                 <target>Kpi For</target>
             </trans-unit>
-
+            <trans-unit id="68">
+                 <source>kpiranking.send</source>
+                 <target>Send </target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>dataverification.verfiy</source>
+                <target>Verify</target>
+            </trans-unit>
 
 
         </body>

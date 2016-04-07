@@ -332,7 +332,7 @@
                 <form id="kpiform" class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
-                            <label class="title">{{ 'dataverification.kpifor'|trans }} <span id="shipname"></span></label>
+                            <label class="title">{#{{ 'dataverification.kpifor'|trans }}#} <span id="shipname"></span></label>
                             <label class="toolbar-title">
 
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
@@ -358,16 +358,21 @@
 
 
 
+                        {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                        {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 
                             <input type="submit" class="submit_btn" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
-                        {%  if  not is_granted("ROLE_ADMIN") %}
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                        {%  if is_granted("ROLE_MANAGER") %}
+                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+
                         {% endif %}
-                        <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
+
                     </div>
                 </form>
             </div>

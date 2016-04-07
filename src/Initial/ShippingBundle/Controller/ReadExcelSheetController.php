@@ -868,7 +868,7 @@ class ReadExcelSheetController extends Controller
 
     }
 
-    public function addAction(Request $request)
+    /*public function addAction(Request $request)
     {
         $excelobj = new Excel();
 
@@ -890,6 +890,6 @@ class ReadExcelSheetController extends Controller
             'form' => $form->createView(),
         ));
 
-    }
+    }*/
 
 }
