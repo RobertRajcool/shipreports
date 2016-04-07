@@ -11,6 +11,12 @@ body {
 /*
  * Global add-ons
  */
+.loading_img {
+    width:100%;
+    height:100%;
+    text-align:center;
+    vertical-align:middle;
+}
 .login_screen_bg {
     width:100%;
     height:100%;
@@ -105,7 +111,11 @@ body {
     list-style:none;
 }
 .menu-item-icon {
-    margin:1px 3px 0 0;
+    margin:1px 1px 0 0;
+    float:left;
+}
+.scorecard_icon {
+    margin:4px 1px 0 0;
     float:left;
 }
 .menu-item-text {
@@ -118,7 +128,7 @@ body {
 .logo {
     font-size:24px;
     padding:6px;
-    margin:-7px -7px -9px -9px;
+    margin:-6px -6px -8px -8px;
     color:#FFFFFF;
     background:#FFFFFF;
 }
@@ -196,6 +206,9 @@ body {
     background:#333333;
     color:#FFFFFF;
 }
+.nav > li > a:focus, .nav > li > a:hover {
+    background:none;
+}
 .navbar-nav li {
     line-height:50px;
 }
@@ -238,6 +251,10 @@ table thead th {
 
 table tbody tr td {
     padding: 4px 10px !important;
+    border-right: 1px solid #ddd;
+}
+.table_dividere thead tr th {
+    border-right: 1px solid #ddd !important;
 }
 table tbody tr td a {
     margin-right:8px;
@@ -311,7 +328,7 @@ select {
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 10px;
+    padding: 8px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #333333;
@@ -326,7 +343,7 @@ select {
     margin:0px;
     padding:0px;
     width:auto;
-    height:431px;
+    height:409px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -404,13 +421,13 @@ select {
     height: 273px;
 }
 .dashboard .widget .ship_name {
-    min-height:410px;
+    min-height:390px;
     padding:0px;
 }
 .dashboard .widget .chart-2 {
-    min-height:136px;
-    padding:25px 5px;
-    font-size:70px;
+    height:auto;
+    padding:9px 5px;
+    font-size:50px;
     font-weight:bold;
     text-align:center;
 }
@@ -430,7 +447,7 @@ select {
     color:#999999;
     cursor: pointer;
     float: left;
-    margin: 1px 6px 0 0;
+    margin: 1px 4px 0 0;
 }
 .menu_logout_button .menu-item-text {
     color:#999999;
@@ -442,34 +459,42 @@ select {
     padding: 0 0 10px 0;
     bottom:0px;
     position:fixed;
-    width:155px;
+    width:12.6%;
 }
+.user_setting_main {
+    float:left;
+    width: 100%;
+    cursor:pointer;
+}
+
 .x-btn-my-account-small a {
     cursor:pointer;
 }
-.x-btn-my-account-small .x-btn-icon-el {
+.user_setting_main .x-btn-icon-el {
     background-position: center top;
     background-repeat: no-repeat;
     background-size: cover;
     border-radius: 50%;
     display: inline-block;
-    height: 32px;
-    width: 32px;
+    height: 28px;
+    width: auto;
     float:left;
 }
-.x-btn-my-account-small .x-btn-icon-el img {
-    height: 32px;
-    width: 32px;
-    border-radius:32px;
+.user_setting_main .x-btn-icon-el img {
+    height: 28px;
+    width: 28px;
+    border-radius:28px;
+    float:left;
 }
-.x-btn-my-account-small .x-btn-inner {
+.user_setting_main .x-btn-inner {
     color: white;
     font-size: 86%;
     font-weight: normal;
-    padding: 0 4px 0 38px;
-    display: block;
+    padding: 0px;
+    margin:-4px 0 0 3px;
     white-space: nowrap;
     text-align: left;
+    float:left;
 }
 .x-btn-my-account-small .x-btn-icon-arrow {
     color: #999;
@@ -477,9 +502,9 @@ select {
     height: 15px;
     right: 9px;
     top: 10px;
-    width: 15px;
+    width: auto;
     float:right;
-    margin-top:-25px;
+    margin:5px 0 0 0;
 }
 .x-btn-my-account-small .user-name {
     color: #FFFFFF;
@@ -730,7 +755,7 @@ select {
 }
 .fieldset_box {
     width: 460px;
-    background:#fcfcfc;
+    background:#FFFFFF;
     border-radius: 5px;
     border: 1px solid #e6e6e6;
     padding: 20px 20px 15px 20px;
@@ -742,7 +767,7 @@ select {
 }
 .fieldset_box_right {
     width: 460px;
-    background:#fcfcfc;
+    background:#FFFFFF;
     border-radius: 5px;
     border: 1px solid #e6e6e6;
     padding: 20px 20px 15px 20px;
@@ -754,7 +779,7 @@ select {
 .legend_name {
     padding: 1px 3px ;
     margin:-42px 0 0 0;
-    background:#fcfcfc;
+    background:#FFFFFF;
     font-size:14px;
     color:#333333;
     font-weight:bold;
@@ -829,7 +854,7 @@ select {
     float:left;
 }
 .add_rule_basic_date_drop {
-    width:55px;
+    width:56.5px;
 }
 .add_rule_basic_year_drop {
     width:68px;
@@ -1092,7 +1117,7 @@ select {
     padding:0px;
 }
 .form_view_screen .form_view .form_labell {
-    width:30%;
+    width:32%;
     height:auto;
     float:left;
     margin:0px;
@@ -1100,7 +1125,7 @@ select {
     text-align:right;
 }
 .form_view_screen .form_view .form_input {
-    width:70%;
+    width:68%;
     height:auto;
     float:left;
     margin:0px;
@@ -1328,7 +1353,7 @@ select {
 }
 .fieldset_box_2 {
     width: 600px;
-    background:#fcfcfc;
+    background:#FFFFFF;
     border-radius: 5px;
     border: 1px solid #e6e6e6;
     padding: 20px 20px 15px 20px;
@@ -1433,7 +1458,7 @@ select {
     margin-bottom:-2px;
 }
 .graph_and_colour_coding_main_title_row thead th {
-    text-align:center;
+    text-align:left;
     font-weight:bold;
     font-size:17px;
 }
@@ -1520,7 +1545,7 @@ select {
     margin-bottom:-2px;
 }
 .element_ranking_main_title_row thead th {
-    text-align:center;
+    text-align:left;
     font-weight:bold;
     font-size:17px;
 }
@@ -1590,48 +1615,39 @@ select {
     border-right:none;
     border-top: none;
 }
+.rules_valus {
+    width: 33.3333%;
+    float:left;
+    margin-bottom:5px;
+}
+.rules_valus .title {
+    font-size:13px;
+    font-weight:bold;
+}
 .rules_valus .span_1 {
     width: 35%;
-    float:left;
+    float:left !important;
     margin-right:10px;
 }
 .rules_valus .span_2 {
     width: 60%;
-    float:left;
+    float:left !important;
 }
 
 
 
 
 
-
-
-
-
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-input[type="number"],
-input[type="email"],
-input[type="url"],
-input[type="search"],
-input[type="tel"],
-input[type="color"],
-.uneditable-input {
-    background: white none repeat-x scroll 0 0;
-    border-color: #d1d1d1 #e7e7e7 #e7e7e7 #d1d1d1;
-    border-style: solid;
-    border-width: 1px;
-    color: #383838;
-    height: 27px;
-    line-height: 19px;
-    padding: 3px 6px;
+form input[type="text"],
+.form_class input[type="text"],
+form input[type="number"],
+.form_class input[type="number"],
+form input[type="password"],
+.form_class input[type="password"],
+form input[type="email"],
+.form_class input[type="email"] {
+    height: 30px !important;
+    padding: 0 5px !important;
 }
 form fieldset,
 .form_class fieldset {
@@ -1666,7 +1682,7 @@ input[type="color"],
     color: #383838;
     height: 30px;
     line-height: 19px;
-    padding: 3px 6px;
+    padding: 3px 2px;
 }
 
 .graph_and_colour_coding_dashboard_main_title_row {
@@ -1674,7 +1690,7 @@ input[type="color"],
     margin-bottom:-2px;
 }
 .graph_and_colour_coding_dashboard_main_title_row thead th {
-    text-align:center;
+    text-align:left;
     font-weight:bold;
     font-size:14px;
     padding:3px 10px !important;
@@ -1685,10 +1701,12 @@ input[type="color"],
 
 .graph_and_colour_coding_dashboard_row {
     margin-bottom: 0px;
+    border:1px solid #dddddd;
 }
 .graph_and_colour_coding_dashboard_row thead th {
     text-align:center;
     background:#989898;
+    border-right:1px solid #dddddd;
     padding: 3px 10px !important;
 }
 .graph_and_colour_coding_dashboard_row tbody td {
@@ -1697,15 +1715,12 @@ input[type="color"],
 .graph_and_colour_coding_dashboard_row .kpi_name_thtd {
     text-align:left;
 }
-.graph_and_colour_coding_dashboard_row {
-    border:1px solid #f0f0f0 !important;
-}
 .graph_and_colour_coding_dashboard_row tr {
-    border-bottom: 1px solid #f0f0f0 !important;
+    border-bottom: 1px solid #dddddd !important;
 }
 .graph_and_colour_coding_dashboard_row tbody tr td {
-    border-right:1px solid #f0f0f0;
-    border-top: 1px solid #f0f0f0;
+    border-right:1px solid #dddddd;
+    border-top: 1px solid #dddddd;
     padding: 1px 10px !important;
 }
 .graph_and_colour_coding_dashboard_row .kpi_name {
