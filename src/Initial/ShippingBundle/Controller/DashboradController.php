@@ -1743,6 +1743,22 @@ class DashboradController extends Controller
             $shipobject = new ShipDetails();
             $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             $shipname = $shipid->getShipName();
+            $man_year= $shipid->getManufacturingYear();
+            if($man_year=="")
+            {
+                $yearcount=0;
+            }
+            else
+            {
+                $currentdatestring=date('Y-01-01');
+                $d1 = new \DateTime($currentdatestring);
+                $man_datestring=$man_year.'-01-'.'01';
+                $d2=new \DateTime($man_datestring);
+
+                $diff = $d2->diff($d1);
+                $yearcount=$diff->y+1;
+            }
+
 
             $series = array
             (
@@ -1789,7 +1805,8 @@ class DashboradController extends Controller
                     'avgscore'=>$finalkpielementvaluearray,
                     'commentarray'=>$listofcomment,
                     'kpimonthdata'=>$overalkpivaluesmontyly,
-                    'currentyear'=>date('Y')
+                    'currentyear'=>date('Y'),
+                    'ageofvessel'=>$yearcount
                 );
             }
 
@@ -1808,7 +1825,8 @@ class DashboradController extends Controller
                     'commentarray'=>$listofcomment,
                     'shipid'=>$newshipid,
                     'kpimonthdata'=>$overalkpivaluesmontyly,
-                    'currentyear'=>date('Y')
+                    'currentyear'=>date('Y'),
+                    'ageofvessel'=>$yearcount
                 )
             );
         }
