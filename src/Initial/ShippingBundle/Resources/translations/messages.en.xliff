@@ -88,7 +88,7 @@
             </trans-unit>
             <trans-unit id='22'>
                  <source>elementranking.backlink</source>
-                 <target>Back to Score card</target>
+                 <target>Back</target>
             </trans-unit>
             <trans-unit id="23">
                 <source>elementranking.month</source>

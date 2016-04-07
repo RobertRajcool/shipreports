@@ -1840,22 +1840,22 @@ class DashboradController extends Controller
                 ->setParameter('username', $username)
                 ->getQuery()
                 ->getResult();
-           /* $monthinstring=date('Y-m-d');
-            $lastmonthdetail = new \DateTime($monthinstring);
-            $lastmonthdetail->modify('last day of this month');
-            $lastfivedatearray = array();
-            $mystringvaluedate = $lastmonthdetail->format('Y-M-d');
-            array_push($lastfivedatearray, $mystringvaluedate);
-            for ($i = 0; $i < 11; $i++) {
-                $mydatevalue = new \DateTime($mystringvaluedate);
+            /* $monthinstring=date('Y-m-d');
+             $lastmonthdetail = new \DateTime($monthinstring);
+             $lastmonthdetail->modify('last day of this month');
+             $lastfivedatearray = array();
+             $mystringvaluedate = $lastmonthdetail->format('Y-M-d');
+             array_push($lastfivedatearray, $mystringvaluedate);
+             for ($i = 0; $i < 11; $i++) {
+                 $mydatevalue = new \DateTime($mystringvaluedate);
 
-                $mydatevalue->modify("last day of previous month");
-                $myvalue = $mydatevalue->format("Y-M-d");
-                array_push($lastfivedatearray, $myvalue);
+                 $mydatevalue->modify("last day of previous month");
+                 $myvalue = $mydatevalue->format("Y-M-d");
+                 array_push($lastfivedatearray, $myvalue);
 
-                $mystringvaluedate = $myvalue;
+                 $mystringvaluedate = $myvalue;
 
-            }*/
+             }*/
             $lastfivedatearray=array();
             for ($m=1; $m<=12; $m++) {
                 $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
@@ -1935,6 +1935,9 @@ class DashboradController extends Controller
                 ->setParameter('kpi_id', $kpi_id_array[0]['id'])
                 ->getQuery()
                 ->getResult();
+
+
+
 
 
             if (count($listelement) == 0) {
@@ -2057,6 +2060,17 @@ class DashboradController extends Controller
 
                 //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
+                for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+                {
+                    $element_rule1 = $em->createQueryBuilder()
+                        ->select('a.rules','identity(a.elementDetailsId)')
+                        ->from('InitialShippingBundle:RankingRules', 'a')
+                        ->where('a.elementDetailsId = :element_id')
+                        ->setParameter('element_id', $listelement[$elementCount]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $element_rule[$elementCount]=$element_rule1;
+                }
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
@@ -2076,9 +2090,12 @@ class DashboradController extends Controller
                         'montharray'=>$newcategories,
                         'avgscore'=>$elementdetailvaluearray,
                         'commentarray'=>$listofcomment,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
                     );
                 }
+
+                $newcategories1 = array_reverse($newcategories);
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi_ranking.html.twig',
@@ -2088,7 +2105,7 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'monthdetails' => $newcategories,
+                        'monthdetails' => $newcategories1,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
@@ -2097,7 +2114,8 @@ class DashboradController extends Controller
                         'kpi_color' => $kpi_rule_color_array,
                         'kpi_rule' => $rule_for_kpi_id,
                         'shipid'=>$shipid,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
                     )
                 );
 
@@ -2217,6 +2235,17 @@ class DashboradController extends Controller
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
                     ->getResult();
+                for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+                {
+                    $element_rule1 = $em->createQueryBuilder()
+                        ->select('a.rules','identity(a.elementDetailsId)')
+                        ->from('InitialShippingBundle:RankingRules', 'a')
+                        ->where('a.elementDetailsId = :element_id')
+                        ->setParameter('element_id', $listelement[$elementCount]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $element_rule[$elementCount]=$element_rule1;
+                }
                 if($mode=='pdftemplate_kpilevel')
                 {
                     return array(
@@ -2226,9 +2255,14 @@ class DashboradController extends Controller
                         'montharray'=>$newcategories,
                         'avgscore'=>$elementdetailvaluearray,
                         'commentarray'=>$listofcomment,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
+
                     );
                 }
+
+
+                $newcategories1 = array_reverse($newcategories);
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi_ranking.html.twig',
@@ -2238,7 +2272,7 @@ class DashboradController extends Controller
                         'chart' => $ob,
                         'shipname' => $shipname,
                         'elementweightage' => $elementweightagearray,
-                        'monthdetails' => $newcategories,
+                        'monthdetails' => $newcategories1,
                         'elementcolorarray' => $findelementcolorarray,
                         'countmonth' => count($findelementcolorarray),
                         'avgscore' => $elementdetailvaluearray,
@@ -2247,7 +2281,8 @@ class DashboradController extends Controller
                         'kpi_color' => $kpi_rule_color_array,
                         'kpi_rule' => $rule_for_kpi_id,
                         'shipid'=>$shipid,
-                        'monthlydata'=>$findoverallelementvalue
+                        'monthlydata'=>$findoverallelementvalue,
+                        'elementRule' => $element_rule
                     )
                 );
             }
@@ -2290,14 +2325,17 @@ class DashboradController extends Controller
         $kpiid=$params['kpiid'];
 
         $comment = $params['comment'];
-        $checkboxvalue = $params['addcomment'];
-        if($checkboxvalue=="Yes")
+        $checkboxvalue='';
+        if(count($params)<6)
         {
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
+            $checkboxvalue='No';
+            $listofcommentarray=array();
+
         }
         else
         {
-            $listofcommentarray=array();
+            $checkboxvalue = $params['addcomment'];
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
         }
         $idforrecord = $params['lastid'];
 
@@ -2321,7 +2359,8 @@ class DashboradController extends Controller
             'avgscore'=> $returnvaluefrommonth['avgscore'],
             'monthlydata'=>$returnvaluefrommonth['monthlydata'],
             'commentarray'=>$listofcommentarray,
-            'datetime'=>$today
+            'datetime'=>$today,
+            'elementRule'=>$returnvaluefrommonth['elementRule']
         ));
         $client = new HighchartController();
         $client->setContainer($this->container);
@@ -2336,29 +2375,43 @@ class DashboradController extends Controller
         //assign file attachement for mail and Mailing Starts Here...u
         $useremaildid=$params['clientemail'];
 
-        $findsemail=$em->createQueryBuilder()
-            ->select('a.useremailid')
-            ->from('InitialShippingBundle:EmailUsers','a')
-            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-            ->where('b.groupname = :sq')
-            ->ORwhere('a.useremailid = :sb')
-            ->setParameter('sq',$useremaildid)
-            ->setParameter('sb',$useremaildid)
-            ->getQuery()
-            ->getResult();
-
-
-        //assign file attachement for mail and Mailing Starts Here...u
-        for($ma=0;$ma<count($findsemail);$ma++)
+        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
         {
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
                 ->setFrom($clientemailid)
-                ->setTo($findsemail[$ma]['useremailid'])
+                ->setTo($useremaildid)
                 ->setSubject($kpiname)
                 ->setBody($comment);
             $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
             $mailer->send($message);
+        }
+        else
+        {
+            $findsemail=$em->createQueryBuilder()
+                ->select('a.useremailid')
+                ->from('InitialShippingBundle:EmailUsers','a')
+                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+                ->where('b.groupname = :sq')
+                ->ORwhere('a.useremailid = :sb')
+                ->setParameter('sq',$useremaildid)
+                ->setParameter('sb',$useremaildid)
+                ->getQuery()
+                ->getResult();
+
+
+            //assign file attachement for mail and Mailing Starts Here...u
+            for($ma=0;$ma<count($findsemail);$ma++)
+            {
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom($clientemailid)
+                    ->setTo($findsemail[$ma]['emailid'])
+                    ->setSubject($kpiname)
+                    ->setBody($comment);
+                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                $mailer->send($message);
+            }
         }
         //Mailing Ends....
         //Update Process Starts Here...

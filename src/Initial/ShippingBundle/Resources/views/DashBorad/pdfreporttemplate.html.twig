@@ -19,6 +19,77 @@
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+        var k = 0;
+        {% for element in listofelement %}
+
+        var abcdef='{{ element.elementName }}';
+
+        $('<div class="rules_valus" id="rules_valus_id'+k+'" >').appendTo('#rulePlaceId');
+        $('<div class="title">'+abcdef+'</div>').appendTo('#rules_valus_id'+k);
+        var rule_value = $('#'+{{ element.id }}).val();
+
+        if(rule_value.length != 0  )
+        {
+            var rule_value_array = splitfun(rule_value);
+
+            $.each(rule_value_array,function(i)
+            {
+                var condition_text = "";
+                var rule_obj = JSON.parse(rule_value_array[i]);
+
+                $.each(rule_obj.conditions.all, function(j)
+                {
+                    if(rule_obj.conditions.all[j].operator=='equalTo')
+                    {
+                        rule_obj.conditions.all[j].operator='=';
+                    }
+                    else if(rule_obj.conditions.all[j].operator=='notEqualTo')
+                    {
+                        rule_obj.conditions.all[j].operator='!=';
+                    }
+                    else if(rule_obj.conditions.all[j].operator=='greaterThan')
+                    {
+                        rule_obj.conditions.all[j].operator='>';
+                    }
+                    else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
+                    {
+                        rule_obj.conditions.all[j].operator='>=';
+                    }
+                    else if(rule_obj.conditions.all[j].operator=='lessThan')
+                    {
+                        rule_obj.conditions.all[j].operator='<';
+                    }
+                    else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
+                    {
+                        rule_obj.conditions.all[j].operator='<=';
+                    }
+                    var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
+                    if(j==0)
+                    {
+                        condition_text = condition_text_one;
+                    }
+                    if(j>0)
+                    {
+                        condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                    }
+                });
+                $('<div ><span class="span_1">'+condition_text+'</span><span class="span_1">'+rule_obj.actions.value+'</span></div>').appendTo('#rules_valus_id'+k);
+
+            });
+        }
+
+        $('</div>');
+        k++;
+        {% endfor %}
+
+        function splitfun(data){
+            var result = data.split('*');
+            return result;
+        }
+        });
+    </script>
 </head>
 <body>
 
@@ -41,8 +112,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>Yes
-                        </td>
+                  <td>&nbsp;</td>
                 </tr>
                 </tbody>
             </table>
@@ -110,50 +180,48 @@
         </section>
 
         <section class="data-row-section top-margin-space">
-            <table class="responsive-table certificates-table kpi_ranking_rules_pdf_show_row" ng-show="KpiRulesShow">
+            <table class="table table-striped-4 kpi_ranking_rules_show_row" >
                 <thead>
                 <tr>
-                    <th class="branding-colours" colspan="3">{{ 'elementranking.rule'|trans }}</th>
+                    <th colspan="3">Rules</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td><strong>Vessel performance</strong></td>
-                    <td><strong>Vessel performance</strong></td>
-                    <td><strong>Vessel performance</strong></td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="rules_valus_pdf">
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="rules_valus_pdf">
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="rules_valus_pdf">
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                            <div><span class="span_1">!=66&&>=75</span> <span class="span_2">Red</span></div>
-                        </div>
+                    <td id="rulePlaceId" class="rulePlace">
+
                     </td>
                 </tr>
                 </tbody>
             </table>
         </section>
+        <div id="">
+            {% set newcommandarray = {} %}
+            {% set jk=0 %}
+            {% set ik=0 %}
+            {% for kpiRules in elementRule %}
+                {% for kpi_rules in kpiRules %}
+                    {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
+                    {% set jk=jk+1 %}
+                {% endfor %}
+                {% if elementRule[ik] != NULL %}
+                    {% if elementRule[ik][0].1  != NULL %}
+                        <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
+                    {% else %}
+                        <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                    {% endif %}
+                {% endif %}
+
+                {% set ik=ik+1 %}
+                {% set newcommandarray = {} %}
+            {% endfor %}
+        </div>
 
         <section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table">
                 <thead>
                 <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ 'elementranking.graphtitle'|trans }}</th>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpiname }}</th>
                 </tr>
                 </thead>
                 <tbody>
