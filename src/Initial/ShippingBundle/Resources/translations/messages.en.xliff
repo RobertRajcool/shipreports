@@ -278,6 +278,14 @@
                 <source>dataverification.verfiy</source>
                 <target>Verify</target>
             </trans-unit>
+             <trans-unit id="70">
+                <source>dashboard.ranking</source>
+                <target>Ranking</target>
+            </trans-unit>
+             <trans-unit id="71">
+                <source>dashboard.score</source>
+                <target>Scorecard</target>
+            </trans-unit>
 
 
         </body>
