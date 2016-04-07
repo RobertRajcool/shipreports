@@ -1,4 +1,3 @@
-
 {% extends 'base.html.twig' %}
 {% block body %}
     {% block javascripts %}
@@ -323,180 +322,180 @@
     <div class="col-md-12 users_advanced_list_views_screen">
 
         <div class="table-responsive">
-                    <table class="table table-striped graph_and_colour_coding_main_title_row">
-                        <thead>
-                        <tr>
-                            <th>{{ kpiname }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Scorecard: Minimum ~ maximum: 0 ~ 3.0</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table class="table table-striped-2 graph_and_colour_coding_row">
-                        <thead>
-                        {% set i1=0 %}
-                        <tr>
-                            <th class="kpi_name kpi_name_thtd">Element Naame</th>
-                            <th class="weightage">Weightage</th>
-                            {% for monthname in montharray %}
-                                <th class="month">{{ monthname }}</th>
-                                {% if i1 != 2 %}
-                                    <th class="month_difference">&nbsp;</th>
+            <table class="table table-striped graph_and_colour_coding_main_title_row">
+                <thead>
+                <tr>
+                    <th>{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Scorecard: Minimum ~ maximum: 0 ~ 3.0</td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="table table-striped-2 graph_and_colour_coding_row">
+                <thead>
+                {% set i1=0 %}
+                <tr>
+                    <th class="kpi_name kpi_name_thtd">Element Naame</th>
+                    <th class="weightage">Weightage</th>
+                    {% for monthname in montharray %}
+                        <th class="month">{{ monthname }}</th>
+                        {% if i1 != 2 %}
+                            <th class="month_difference">&nbsp;</th>
+                        {% endif %}
+                        {% set i1 = i1+1 %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set newelementarray = {} %}
+                {% set newcolorarray = {} %}
+                {% set akj=0 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
+                    <tr>
+                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                        <td>{{ elementweightage[i] }}%</td>
+                        {% for j in 0..countmonth1 %}
+                            {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
+                            <td>
+                                {% if elementcolorarray[j][i]=="Green" %}
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
                                 {% endif %}
-                                {% set i1 = i1+1 %}
-                            {% endfor %}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% set countmonth1= countmonth-1 %}
-                        {% set newelementarray = {} %}
-                        {% set newcolorarray = {} %}
-                        {% set akj=0 %}
-                        {% set i=0 %}
-                        {% for element in listofelement %}
-                            {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
-                            <tr>
-                                <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
-                                <td>{{ elementweightage[i] }}%</td>
-                                {% for j in 0..countmonth1 %}
-                                    {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
-                                    <td>
-                                        {% if elementcolorarray[j][i]=="Green" %}
-                                            <img src="/images/01.png" alt="Loader Image"/>
-                                        {% elseif elementcolorarray[j][i]=="Red" %}
-                                            <img src="/images/03.png" alt="Loader Image"/>
-                                        {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                            <img src="/images/02.png" alt="Loader Image"/>
-                                        {% endif %}
-                                    </td>
-                                    {% if j != 2 %}
-                                        {% set j1=j+1 %}
-                                        <td>
-                                            {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Yellow" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Red" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Yellow" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% endif %}
-                                        </td>
-                                    {% endif %}
-                                    {% set akj=akj+1 %}
-                                {% endfor %}
-                            </tr>
-                            {% set i=i+1 %}
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    <table class="table table-striped-2 graph_and_colour_coding_row">
-                        {% set k=0 %}
-                        <tr>
-                            <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
-                            <td class="weightage">100%</td>
-                            {% for kpi_colors_first in kpi_color %}
-                                {% for kpi_colors in kpi_colors_first %}
-                                    <td class="month">
-                                        {% if kpi_colors_first[k] =="Green" %}
-                                            <img src="/images/01.png" alt="Loader Image"/>
-                                        {% elseif kpi_colors_first[k] =="Red" %}
-                                            <img src="/images/03.png" alt="Loader Image"/>
-                                        {% elseif kpi_colors_first[k] =="Yellow" %}
-                                            <img src="/images/02.png" alt="Loader Image"/>
-                                        {% endif %}
-                                    </td>
-                                    {% if k != 2 %}
-                                        {% set k1=k+1 %}
-                                        <td class="month_difference">
-                                            {% if kpi_colors=="Green" and kpi_colors_first[k1]=="Green" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif kpi_colors=="Green" and kpi_colors_first[k1]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif kpi_colors=="Green" and kpi_colors_first[k1]=="Yellow" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Red" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Yellow" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Yellow" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% endif %}
-                                        </td>
-                                    {% endif %}
-                                    {% set k=k+1 %}
-                                {% endfor %}
-                            {% endfor %}
-                        </tr>
-                    </table>
-
-                    <div >
-                        {% set newcommandarray = {} %}
-                        {% set jk=0 %}
-                        {% set ik=0 %}
-                        {% for kpiRules in elementRule %}
-                            {% for kpi_rules in kpiRules %}
-                                {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
-                                {% set jk=jk+1 %}
-                            {% endfor %}
-                            {% if elementRule[ik][0].1  != NULL %}
-                                <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
-                            {% else %}
-                                <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
-                            {% endif %}
-
-                            {% set ik=ik+1 %}
-                            {% set newcommandarray = {} %}
-                        {% endfor %}
-                    </div>
-
-                    <div class="rules_ranking"><a ng-click="myFuncKpiRulesShow()" class="rules_show_btn" href="">Rules show</a></div>
-                    <table class="table table-striped-4 kpi_ranking_rules_show_row" ng-show="KpiRulesShow">
-                        <thead>
-                        <tr>
-                            <th colspan="3">Rules</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td id="rulePlaceId" class="rulePlace">
-
                             </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            {% if j != 2 %}
+                                {% set j1=j+1 %}
+                                <td>
+                                    {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Yellow" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Red" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Yellow" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            {% set akj=akj+1 %}
+                        {% endfor %}
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <table class="table table-striped-2 graph_and_colour_coding_row">
+                {% set k=0 %}
+                <tr>
+                    <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
+                    <td class="weightage">100%</td>
+                    {% for kpi_colors_first in kpi_color %}
+                        {% for kpi_colors in kpi_colors_first %}
+                            <td class="month">
+                                {% if kpi_colors_first[k] =="Green" %}
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif kpi_colors_first[k] =="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif kpi_colors_first[k] =="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
+                            {% if k != 2 %}
+                                {% set k1=k+1 %}
+                                <td class="month_difference">
+                                    {% if kpi_colors=="Green" and kpi_colors_first[k1]=="Green" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif kpi_colors=="Green" and kpi_colors_first[k1]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif kpi_colors=="Green" and kpi_colors_first[k1]=="Yellow" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Red" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Yellow" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Yellow" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            {% set k=k+1 %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+            </table>
 
-                    <table class="table table-striped normal_table">
-                        <thead>
-                        <tr>
-                            <th>Graph Title</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td id="area"></td>
-                        </tr>
-                        </tbody>
-                    </table><table class="table table-striped normal_table">
+            <div >
+                {% set newcommandarray = {} %}
+                {% set jk=0 %}
+                {% set ik=0 %}
+                {% for kpiRules in elementRule %}
+                    {% for kpi_rules in kpiRules %}
+                        {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
+                        {% set jk=jk+1 %}
+                    {% endfor %}
+                    {% if elementRule[ik][0].1  != NULL %}
+                        <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
+                    {% else %}
+                        <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                    {% endif %}
+
+                    {% set ik=ik+1 %}
+                    {% set newcommandarray = {} %}
+                {% endfor %}
+            </div>
+
+            <div class="rules_ranking"><a ng-click="myFuncKpiRulesShow()" class="rules_show_btn" href="">Rules show</a></div>
+            <table class="table table-striped-4 kpi_ranking_rules_show_row" ng-show="KpiRulesShow">
+                <thead>
+                <tr>
+                    <th colspan="3">Rules</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="rulePlaceId" class="rulePlace">
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-striped normal_table">
+                <thead>
+                <tr>
+                    <th>Graph Title</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="area"></td>
+                </tr>
+                </tbody>
+            </table><table class="table table-striped normal_table">
                 <tbody>
                 <tr>
                     <td id="viewcommentdiv" >
@@ -514,91 +513,91 @@
                 </tr>
                 </tbody>
             </table>
-            </div>
-            <div class="graph_send_comment">
-
-
-                <div id="buttonid">
-                    <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
-                    <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
-                    <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'elementranking.viewcomment'|trans }}</button>
-                    <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'elementranking.hidecomment'|trans }}</button>
-                </div>
-                <div class="add_new_users_form">
-                    <!--Form for Add comment Starts Here  -->
-
-                    <fieldset id="commentform" class="fieldset_box_2">
-                        <legend class="legend_name">{{ 'elementranking.addcomment'|trans }}</legend>
-                        <form  class="form-horizontal no-style"  method="post">
-
-                            <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
-
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    {#<textarea class="add_comment_textarea" placeholder="Enter comment here..."> </textarea>#}
-                                    <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
-                                </div>
-                            </div>
-                            {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
-                            <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">
-                        </form>
-                    </fieldset>
-                    <!--Form for Add comment Ends Here  -->
-                    <!--Form for Send Reports Starts Here  -->
-                    <fieldset id="mailform" class="fieldset_box_2">
-                        <legend class="legend_name">{{ 'elementranking.sendreport'|trans }}</legend>
-                        <form id="chatform" class="form-horizontal no-style" method="post">
-
-                            <input id="imagefilename" type="hidden" name="send_command[filename]" >
-                            <input id="lastid" type="hidden" name="send_command[lastid]" >
-                            <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
-                                <div class="col-xs-9">
-                                    {#<div class="add_comment_checkbox">
-                                        <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
-                                    </div>
-                                    <div class="add_comment_checkbox">
-                                        <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
-                                    </div>#}
-                                    <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
-                                    <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'elementranking.no'|trans }}</label></div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
-                                <div class="col-xs-9">
-                                    {#<input type="text" class="send_reports_to_input" placeholder="">#}
-                                    <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
-                                    <div id="livesearchdiv"  class="send_reports_to_input_list">
-                                        <ul id="livesearch">
-
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
-                                <div class="col-xs-9">
-                                    {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
-                                    <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-xs-3">&nbsp;</label>
-                                <div class="col-xs-9">
-                                    {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
-                                    <input id="" class="submit_btn_2" type="submit" value="{{ 'elementranking.sendreport'|trans }}">
-                                </div>
-
-                            </div>
-                        </form>
-                    </fieldset>
-                    <!--Form for Send Reports Ends Here  -->
-
-                </div>
-
-
-            </div>
         </div>
-        {% endblock %}
+        <div class="graph_send_comment">
+
+
+            <div id="buttonid">
+                <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
+                <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
+                <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'elementranking.viewcomment'|trans }}</button>
+                <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'elementranking.hidecomment'|trans }}</button>
+            </div>
+            <div class="add_new_users_form">
+                <!--Form for Add comment Starts Here  -->
+
+                <fieldset id="commentform" class="fieldset_box_2">
+                    <legend class="legend_name">{{ 'elementranking.addcomment'|trans }}</legend>
+                    <form  class="form-horizontal no-style"  method="post">
+
+                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                {#<textarea class="add_comment_textarea" placeholder="Enter comment here..."> </textarea>#}
+                                <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                            </div>
+                        </div>
+                        {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
+                        <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">
+                    </form>
+                </fieldset>
+                <!--Form for Add comment Ends Here  -->
+                <!--Form for Send Reports Starts Here  -->
+                <fieldset id="mailform" class="fieldset_box_2">
+                    <legend class="legend_name">{{ 'elementranking.sendreport'|trans }}</legend>
+                    <form id="chatform" class="form-horizontal no-style" method="post">
+
+                        <input id="imagefilename" type="hidden" name="send_command[filename]" >
+                        <input id="lastid" type="hidden" name="send_command[lastid]" >
+                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
+                            <div class="col-xs-9">
+                                {#<div class="add_comment_checkbox">
+                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
+                                </div>
+                                <div class="add_comment_checkbox">
+                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
+                                </div>#}
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
+                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'elementranking.no'|trans }}</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
+                            <div class="col-xs-9">
+                                {#<input type="text" class="send_reports_to_input" placeholder="">#}
+                                <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
+                                <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                    <ul id="livesearch">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
+                            <div class="col-xs-9">
+                                {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
+                                <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-3">&nbsp;</label>
+                            <div class="col-xs-9">
+                                {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
+                                <input id="" class="submit_btn_2" type="submit" value="{{ 'elementranking.sendreport'|trans }}">
+                            </div>
+
+                        </div>
+                    </form>
+                </fieldset>
+                <!--Form for Send Reports Ends Here  -->
+
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}

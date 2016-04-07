@@ -359,27 +359,16 @@
         </div>
     </div>
 
-
-        <div class="col-sm-2 dashboard">
-            <div class="widget time">
-                <div class="x-header">
-                    <div class="x-panel-header-text">{{ 'dashboard.kpi'|trans }}{{ 'dashboard.ranking'|trans }}</div>
-                </div>
-                <div class="chart-2">
-                    {{ kpi_count }}
-                </div>
+    <div class="col-sm-2 dashboard">
+        <div class="widget time">
+            <div class="x-header">
+                <div class="x-panel-header-text">{{ 'dashboard.kpi'|trans }}</div>
+            </div>
+            <div class="chart-2">
+                {{ kpi_count }}
             </div>
         </div>
-        <div class="col-sm-2 dashboard">
-            <div class="widget time">
-                <div class="x-header">
-                    <div class="x-panel-header-text">{{ 'dashboard.kpi'|trans }}{{ 'dashboard.score'|trans }}</div>
-                </div>
-                <div class="chart-2">
-                    {{ kpi_count }}
-                </div>
-            </div>
-        </div>
+    </div>
 {% endif %}
 
 {% endblock %}

@@ -1763,3 +1763,12 @@ input[type="color"],
     opacity: 0;
     filter: alpha(opacity=0);
 }
+
+.select_all .checkbox {
+    margin: 0px;
+    float: left;
+}
+.select_all .checkbox_text {
+    margin: 7px 0 0 0;
+    float: left;
+}

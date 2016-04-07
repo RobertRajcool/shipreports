@@ -78,6 +78,7 @@ class KpiDetailsController extends Controller
                 ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
                 ->where('c.id = :userId')
                 ->groupby('a.kpiName')
+                ->orderby('a.id')
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
@@ -90,6 +91,7 @@ class KpiDetailsController extends Controller
                 ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = c.companyDetailsId')
                 ->where('b.id = :userId')
                 ->groupby('a.kpiName')
+                ->orderby('a.id')
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
@@ -100,6 +102,9 @@ class KpiDetailsController extends Controller
         $kpiDetail = new KpiDetails();
         $form = $this->createForm(new KpiDetailsType($userId,$role), $kpiDetail);
         $form->handleRequest($request);
+
+        $monthArray = array();
+
 
 
         return $this->render('kpidetails/index.html.twig', array(
@@ -349,6 +354,39 @@ class KpiDetailsController extends Controller
         {
             return $response;
         }
+
+        return $response;
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/kpi_ajax_weightage", name="kpidetails_kpi_ajax_weightage")
+     */
+    public function kpi_ajax_weightageAction(Request $request)
+    {
+
+        $weightage = $request->request->get('weightage');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.id','a.kpiName','a.weightage')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.shipDetailsId = :ship_id')
+            ->setParameter('ship_id',13)
+            ->getQuery()
+            ->getResult();
+
+        $sum = $weightage;
+
+        for($i=0;$i<count($query);$i++)
+        {
+            $sum = $sum + $query[$i]['weightage'];
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array('Weightage' => $sum));
 
         return $response;
     }

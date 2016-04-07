@@ -59,6 +59,7 @@ class RankingKpiDetailsController extends Controller
                 ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
                 ->where('c.id = :userId')
                 ->groupby('a.kpiName')
+                ->orderby('a.id')
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
@@ -71,6 +72,7 @@ class RankingKpiDetailsController extends Controller
                 ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = c.companyDetailsId')
                 ->where('b.id = :userId')
                 ->groupby('a.kpiName')
+                ->orderby('a.id')
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
@@ -277,6 +279,37 @@ class RankingKpiDetailsController extends Controller
         {
             return $response;
         }
+
+        return $response;
+    }
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ranking_kpi_ajax_weightage", name="kpidetails_ranking_kpi_ajax_weightage")
+     */
+    public function ranking_kpi_ajax_weightageAction(Request $request)
+    {
+        $weightage = $request->request->get('weightage');
+        $em = $this->getDoctrine()->getManager();
+
+        $query = $em->createQueryBuilder()
+            ->select('a.id','a.kpiName','a.weightage')
+            ->from('InitialShippingBundle:RankingKpiDetails','a')
+            ->where('a.shipDetailsId = :ship_id')
+            ->setParameter('ship_id',13)
+            ->getQuery()
+            ->getResult();
+
+        $sum = $weightage;
+
+        for($i=0;$i<count($query);$i++)
+        {
+            $sum = $sum + $query[$i]['weightage'];
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array('Weightage' => $sum));
 
         return $response;
     }

@@ -29,7 +29,7 @@ class KpiDetailsType extends AbstractType
                 'required' => true,
                 'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
                 'property' => 'ShipName',
-                'multiple' =>true,
+                'multiple' => 'multiple',
                 'query_builder' => function($er)
                 {
                     if ($this->role == true)

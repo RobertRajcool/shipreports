@@ -55,7 +55,9 @@
             {% endjavascripts %}
 
             <script type="text/javascript">
-                $(document).ready(function() {
+                $(document).ready(function()
+                {
+                    $('.box_icon').hide();
                     $('.create_view').hide();
                     $('#list_view').hide();
                     $('.show_view').hide();
@@ -72,23 +74,31 @@
                     $('.box_icon').click(function () {
                         $('#list_view').hide();
                         $('.show_ship_view').hide();
+                        $('.box_icon').hide();
                         $('#grid_view').show();
+                        $('.list_icon').show();
+                        $('#nogroupselected').show();
                     });
                     $('.list_icon').click(function () {
+                        $('#nogroupselected').hide();
+                        $('.box_icon').show();
                         $('#grid_view').hide();
                         $('#list_view').show();
                         $('.show_ship_view').hide();
                         $('.show_kpi').hide();
+                        $('.list_icon').hide();
                     });
                     $('.add_btn').live("click", function () {
                         $('#list_view').hide();
                         $('.show_ship_view').hide();
+                        $('#nogroupselected').hide();
                         $('.create_view').show();
                         $('#grid_view').show();
 
                     });
                     $('.cancel_btn').live("click", function () {
                         $('.create_view').hide();
+                        $('#nogroupselected').show();
                         $('#grid_view').show();
                     });
 
@@ -105,6 +115,7 @@
 
                     $('.edit_cancel_btn').live("click",function(){
                         $('.Edit_ship').hide();
+                        $('#nogroupselected').hide();
                         $('.show_ship_view').show();
                     });
 
@@ -113,6 +124,7 @@
 
                     $('.ship_class').live("click",function()
                     {
+                        $('#nogroupselected').hide();
                         count++;
                         var currentId = $(this).attr('id');
                         var data = {'Id':currentId};
@@ -258,6 +270,35 @@
                         $('.show_ship_view').show();
                     });
 
+
+                    /*$('.submit_btn').live("click",function()
+                    {
+                        alert('hi');
+                        var form = $('#shipForm');
+                        $.ajax({
+                            type: "post",
+                            data: form.serialize(),
+                            url: "ajax_create",
+                            success: function(data)
+                            {
+                                $('#registercontentid').hide();
+                                $('#viewcontentid').hide();
+                                $('#viewtabledata').text('');
+                                $('#tabledata').text('');
+                                $('#groupname').text('');
+                                $('#addgroupidhtml').val('')
+                                $('#groupid').val('');
+                                $('#inputforemailid').text('');
+                                alert(data.savemsg);
+
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    });*/
+
                     // Ship Active and Deactive Coding
 
                     $('.archive_btn').live("click",function()
@@ -337,9 +378,10 @@
                         <div class="initail_ship_name_show">
                             {% for shipDetail in shipDetails %}
                                 <div class="users_list_grid">
+                                {#<span class="user_image"><img src="/images/ship.png"></span>#}
                                 <span class="users_name_row">
                                     <span class="name"><a href="" class="ship_class" id={{ shipDetail.id }} ><span class="name_place">{{ shipDetail.shipName }}</span></a> </span>
-                                    <span class="text">{{ shipDetail.description }}</span>
+                                    <span class="text">{{ shipDetail.shipType }}</span>
                                  </span>
                                 </div>
                             {% endfor %}
@@ -354,6 +396,15 @@
                 </div>
             </section>
         </div>
+
+        <section id="nogroupselected">
+            <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
+                <div class="text_image">
+                    <img src="/images/no-user.png">
+                    <label>No Ship Selected</label>
+                </div>
+            </div>
+        </section>
 
         <div id="list_view">
             <section>
@@ -373,10 +424,10 @@
                                 <thead>
                                 <tr>
                                     <th>Ship Name</th>
-                                    <th>Description</th>
+                                    {#<th>Description</th>#}
                                     <th>Ship Type</th>
                                     <th>ImoNumber</th>
-                                    <th>Country</th>
+                                    {#<th>Country</th>#}
                                     <th>Location</th>
                                     <th>Built</th>
                                     <th>Size</th>
@@ -389,21 +440,15 @@
                                     {% for shipDetail in shipDetails %}
                                         <tr>
                                             <td>{{ shipDetail.shipName }}</td>
-                                            <td>{{ shipDetail.description }}</td>
+                                            {#<td>{{ shipDetail.description }}</td>#}
                                             <td>{{ shipDetail.shipType }}</td>
                                             <td>{{ shipDetail.imoNumber }}</td>
-                                            <td>{{ shipDetail.country }}</td>
+                                            {#<td>{{ shipDetail.country }}</td>#}
                                             <td>{{ shipDetail.location }}</td>
                                             <td>{{ shipDetail.built }}</td>
                                             <td>{{ shipDetail.size }}</td>
                                             <td>{{ shipDetail.gt }}</td>
                                             <td>{{ shipDetail.manufacturingYear }}</td>
-                                            {#<td>
-                                                <a href="" class="list_show_btn">show</a>
-                                                {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                                                    <a href="" class="list_edit_btn">edit</a>
-                                                {% endif %}
-                                            </td>#}
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -420,7 +465,7 @@
                 <div class="col-sm-12">
                     <div class="add_new_users_views_screen">
 
-                        <form class="form-horizontal no-style" action="{{ path('shipdetails_new1') }}" method="post">
+                        <form class="form-horizontal no-style" id="shipForm" action="{{ path('shipdetails_new1') }}" method="post">
 
                             <div class="kpi_basic_details">
                                 <fieldset class="fieldset_box add_rule_form">
@@ -495,7 +540,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="control-label required_field col-xs-4">Description</label>
+                                        <label class="control-label col-xs-4">Description</label>
                                         <div class="col-xs-8">
                                             {{ form_row(form.description,{'label': ' '}) }}
                                         </div>
@@ -505,7 +550,7 @@
                             </div>
 
                             <div class="actions_submit">
-                                <button class="submit_btn" id="submit_id"  type="submit" value="Submit">create</button>
+                                <button class="submit_btn" id="submit_id" type="submit"  value="Submit">create</button>
                                 <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
                             </div>
                         </form>
@@ -524,7 +569,7 @@
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
                         <a href="" class="edit_btn edit_ship_button"> Edit Ship</a>
-                        <a href="" class="edit_btn archive_btn">Archive</a>
+                        <a href="" class="edit_btn archive_btn">Active</a>
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Details</legend>
