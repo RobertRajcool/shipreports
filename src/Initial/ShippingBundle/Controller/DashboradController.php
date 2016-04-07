@@ -916,9 +916,9 @@ class DashboradController extends Controller
     /**
      * List all element for kpi
      *
-     * @Route("/{kpiid}/listelementforkpi?{kpiname}", name="listelementforkpi")
+     * @Route("/{kpiid}/listelementforkpi", name="listelementforkpi")
      */
-    public function listallelementforkpiAction($kpiid,$kpiname,Request $request)
+    public function listallelementforkpiAction($kpiid,$mode='',Request $request)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -929,6 +929,8 @@ class DashboradController extends Controller
         else {
             $username = $user->getUsername();
             $email = $user->getEmail();
+            $firstnewkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiid));
+            $kpiname=$firstnewkpiid->getKpiName();
 //Find Last Five Months Starts Here //
             $comanyiddetailarray = $em->createQueryBuilder()
                 ->select('b.id')
@@ -1163,6 +1165,20 @@ class DashboradController extends Controller
                 $newcategories1 = array_reverse($newcategories);
                 $kpi_rule_color_array_new = array();
                 array_push($kpi_rule_color_array_new,$kpi_rule_color_array);
+                if($mode=='pdftemplate_kpilevl')
+                {
+                    return array(
+                        'listofelement'=>$listelement,
+                        'kpiname'=>$kpiname,
+                        'elementweightage'=>$elementweightagearray,
+                        'montharray'=>$newcategories1,
+                        'avgscore'=>$elementdetailvaluearray,
+                        'commentarray'=>$listofcomment,
+                        'elementcolorarray'=>$findelementcolorarray,
+                        'kpi_color' => $kpi_rule_color_array_new,
+                        'kpi_rule' => $rule_for_kpi_id,
+                    );
+                }
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
@@ -1183,7 +1199,8 @@ class DashboradController extends Controller
                     )
                 );
 
-            } else {
+            }
+            else {
 
 
                 for ($d = 0; $d < count($lastfivedatearray); $d++) {
@@ -1295,6 +1312,20 @@ class DashboradController extends Controller
                 $newcategories1 = array_reverse($newcategories);
                 $kpi_rule_color_array_new = array();
                 array_push($kpi_rule_color_array_new,$kpi_rule_color_array);
+                if($mode=='pdftemplate_kpilevl')
+                {
+                    return array(
+                        'listofelement'=>$listelement,
+                        'kpiname'=>$kpiname,
+                        'elementweightage'=>$elementweightagearray,
+                        'montharray'=>$newcategories1,
+                        'avgscore'=>$elementdetailvaluearray,
+                        'commentarray'=>$listofcomment,
+                        'elementcolorarray'=>$findelementcolorarray,
+                        'kpi_color' => $kpi_rule_color_array_new,
+                        'kpi_rule' => $rule_for_kpi_id,
+                    );
+                }
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
