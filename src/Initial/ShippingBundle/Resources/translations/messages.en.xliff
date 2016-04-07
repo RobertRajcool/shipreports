@@ -270,7 +270,10 @@
                 <source>dataverification.kpifor</source>
                 <target>Kpi For</target>
             </trans-unit>
-
+            <trans-unit id="68">
+                 <source>kpiranking.send</source>
+                 <target>Send </target>
+            </trans-unit>
 
 
         </body>

@@ -2404,16 +2404,28 @@ class DashboradController extends Controller
         $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
         $kpiname=$newkpiid->getShipName();
         $comment = $params['comment'];
-        $checkboxvalue = $params['addcomment'];
-
-        if($checkboxvalue=="Yes")
+        $checkboxvalue='';
+        if(count($params)<6)
         {
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
+            $checkboxvalue='No';
+            $listofcommentarray=array();
+
         }
         else
         {
-            $listofcommentarray=array();
+            $checkboxvalue = $params['addcomment'];
+            $listofcommentarray=$returnvaluefrommonth['commentarray'];
         }
+
+
+       /* if($checkboxvalue=="Yes")
+        {
+
+        }
+        else
+        {
+
+        }*/
         $idforrecord = $params['lastid'];
 
         $today = date("Y-m-d H:i:s");
@@ -2447,31 +2459,46 @@ class DashboradController extends Controller
         file_put_contents($pdffilenamefullpath, $printPdf);
 
         $useremaildid=$params['clientemail'];
-
-        $findsemail=$em->createQueryBuilder()
-            ->select('a.useremailid')
-            ->from('InitialShippingBundle:EmailUsers','a')
-            ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-            ->where('b.groupname = :sq')
-            ->ORwhere('a.useremailid = :sb')
-            ->setParameter('sq',$useremaildid)
-            ->setParameter('sb',$useremaildid)
-            ->getQuery()
-            ->getResult();
-
-
-        //assign file attachement for mail and Mailing Starts Here...u
-        for($ma=0;$ma<count($findsemail);$ma++)
+        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
         {
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
                 ->setFrom($clientemailid)
-                ->setTo($findsemail[$ma]['emailid'])
+                ->setTo($useremaildid)
                 ->setSubject($kpiname)
                 ->setBody($comment);
             $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
             $mailer->send($message);
         }
+        else
+        {
+            $findsemail=$em->createQueryBuilder()
+                ->select('a.useremailid')
+                ->from('InitialShippingBundle:EmailUsers','a')
+                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
+                ->where('b.groupname = :sq')
+                ->ORwhere('a.useremailid = :sb')
+                ->setParameter('sq',$useremaildid)
+                ->setParameter('sb',$useremaildid)
+                ->getQuery()
+                ->getResult();
+
+
+            //assign file attachement for mail and Mailing Starts Here...u
+            for($ma=0;$ma<count($findsemail);$ma++)
+            {
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom($clientemailid)
+                    ->setTo($findsemail[$ma]['emailid'])
+                    ->setSubject($kpiname)
+                    ->setBody($comment);
+                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                $mailer->send($message);
+            }
+        }
+
+
         //Mailing Ends....
         //Update Process Starts Here...
 
