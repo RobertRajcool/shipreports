@@ -1,7 +1,6 @@
-
 /*
- * Base structure
- */
+   * Base structure
+   */
 
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
@@ -1674,6 +1673,7 @@ input[type="url"],
 input[type="search"],
 input[type="tel"],
 input[type="color"],
+input[type="color"],
 .uneditable-input {
     background: white none repeat-x scroll 0 0;
     border-color: #d1d1d1 #e7e7e7 #e7e7e7 #d1d1d1;
@@ -1684,6 +1684,8 @@ input[type="color"],
     line-height: 19px;
     padding: 3px 2px;
 }
+
+
 
 .graph_and_colour_coding_dashboard_main_title_row {
     border:1px solid #f0f0f0 !important;
@@ -1734,4 +1736,30 @@ input[type="color"],
 }
 .graph_and_colour_coding_dashboard_row .month_difference {
     width: 8%;
+}
+
+.file_upload {
+    background: white none repeat-x scroll 0 0;
+    border:1px solid #d1d1d1;
+    color: #383838;
+    height: 30px;
+    line-height: 19px;
+    padding: 3px 2px;
+    width:195px;
+    margin-right:7px;
+}
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
 }

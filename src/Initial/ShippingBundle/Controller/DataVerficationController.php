@@ -503,7 +503,7 @@ class DataVerficationController extends Controller
             $k = 0;
             $returnmsg = '';
             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbutton') {
+            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
                     ->select('b.id')
