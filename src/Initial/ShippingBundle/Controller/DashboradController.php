@@ -364,7 +364,7 @@ class DashboradController extends Controller
             //loop for sending dates//
             for ($d = 0; $d < count($lastfivedatearray); $d++) {
                 $time2 = strtotime($lastfivedatearray[$d]);
-                $monthinletter = date('F', $time2);
+                $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
