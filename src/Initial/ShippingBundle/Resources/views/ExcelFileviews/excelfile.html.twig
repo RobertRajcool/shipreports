@@ -9,45 +9,20 @@
        {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
          <script src="{{ asset_url }}"></script>
          {% endjavascripts %}
+         <script>
+             $(document).ready(function(){
+                 $('#fileid').val('');
+                 $('#uploadBtn').change(function(){
+                     var abc=$(this).val();
+                     $('#fileid').val(abc);
+                 });
+             });
+         </script>
 
 
 
       {% endblock %}
-   {# <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="page-header">
-            <h2>Upload File Here</h2>
-        </div>
 
-        <div class="modal" style="display: none">
-            <div class="center">
-                {% image '@InitialShippingBundle/Resources/public/img/loader5.gif' %}
-                <img src="{{ asset_url }}" alt="Loader Image"/>
-                {% endimage %}
-            </div>
-        </div>
-
-        <div class="bs-example">
-            {{ form_start(form, {'attr': {'id': 'form_excel','class':'form-horizontal no-style'}}) }}
-            <div class="form-group">
-                <label class="control-label col-xs-2">Choose File</label>
-                <div class="col-xs-10">
-                    {{ form_widget(form.filename,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-xs-2">    Choose Month</label>
-                <div class="col-xs-10">
-                    {{ form_widget(form.dataofmonth) }}
-                </div>
-            </div>
-
-            <div class="actions">
-
-
-            </div>
-            {{ form_end(form) }}
-       </div>
-        <div>#}
             <section>
                 <div class="col-sm-12">
                     <div class="add_kpi_views_screen">
@@ -60,6 +35,10 @@
                                         <label class="control-label col-xs-4">Select file</label>
                                         <div class="col-xs-8">
                                             {{ form_widget(form.filename,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}
+                                            <div class="fileUpload btn btn-primary">
+                                                <span>Upload</span>
+                                                <input id="uploadBtn" type="file" class="upload" />
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">

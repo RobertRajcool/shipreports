@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
+    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") or is_granted("ROLE_USER") %}
     {% block javascripts %}
 
-        {# {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
-         <script src="{{ asset_url }}"></script>
-         {% endjavascripts %}#}
+       {# {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}#}
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -22,212 +24,212 @@
             {{ chart(chart) }}
         </script>
         <script>
-            $(document).ready(function()
-            {
-                var newchart;
-                var nowdate=new Date(),
-                        locale = "en-us",
-                        month = nowdate.toLocaleString(locale, { month: "long" }),
-                        year=nowdate.getFullYear();
-                $('#currentid').text(month+'-'+year)
+          $(document).ready(function()
+          {
+              var newchart;
+              var nowdate=new Date(),
+              locale = "en-us",
+                      month = nowdate.toLocaleString(locale, { month: "long" }),
+                      year=nowdate.getFullYear();
+              $('#currentid').text(month+'-'+year)
 
-                $('#proviousmonth').click(function($e)
-                {
-                    $e.preventDefault();
-                    var currentdate=new Date($('#currentid').text());
-                    currentdate.setMonth(currentdate.getMonth() - 1);
-                    currentdate,locale = "en-us",
-                            month = currentdate.toLocaleString(locale, { month: "long" }),
-                            year=currentdate.getFullYear();
-                    $('#currentid').text(month+'-'+year)
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
-                        beforeSend: function () {
-                            var text='Please Wait';
+              $('#proviousmonth').click(function($e)
+              {
+                  $e.preventDefault();
+                  var currentdate=new Date($('#currentid').text());
+                  currentdate.setMonth(currentdate.getMonth() - 1);
+                  currentdate,locale = "en-us",
+                          month = currentdate.toLocaleString(locale, { month: "long" }),
+                          year=currentdate.getFullYear();
+                  $('#currentid').text(month+'-'+year)
+                  $.ajaxSetup({
+                      global: false,
+                      type: "post",
+                      'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
+                      beforeSend: function () {
+                          var text='Please Wait';
 
-                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                            }
+                          if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                              $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                          }
 
-                            $('#resultLoading').css({
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'fixed',
-                                'z-index':'10000000',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto'
-                            });
+                          $('#resultLoading').css({
+                              'width':'100%',
+                              'height':'100%',
+                              'position':'fixed',
+                              'z-index':'10000000',
+                              'top':'0',
+                              'left':'0',
+                              'right':'0',
+                              'bottom':'0',
+                              'margin':'auto'
+                          });
 
-                            $('#resultLoading .bg').css({
-                                'background':'#000000',
-                                'opacity':'0.7',
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'absolute',
-                                'top':'0'
-                            });
+                          $('#resultLoading .bg').css({
+                              'background':'#000000',
+                              'opacity':'0.7',
+                              'width':'100%',
+                              'height':'100%',
+                              'position':'absolute',
+                              'top':'0'
+                          });
 
-                            $('#resultLoading>div:first').css({
-                                'width': '250px',
-                                'height':'75px',
-                                'text-align': 'center',
-                                'position': 'fixed',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto',
-                                'font-size':'16px',
-                                'z-index':'10',
-                                'color':'#ffffff'
+                          $('#resultLoading>div:first').css({
+                              'width': '250px',
+                              'height':'75px',
+                              'text-align': 'center',
+                              'position': 'fixed',
+                              'top':'0',
+                              'left':'0',
+                              'right':'0',
+                              'bottom':'0',
+                              'margin':'auto',
+                              'font-size':'16px',
+                              'z-index':'10',
+                              'color':'#ffffff'
 
-                            });
+                          });
 
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeIn(300);
-                            $('body').css('cursor', 'wait');
+                          $('#resultLoading .bg').height('100%');
+                          $('#resultLoading').fadeIn(300);
+                          $('body').css('cursor', 'wait');
 
-                        },
-                        complete: function ()
-                        {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                        }
-                    });
-                    $.ajax({
-                        success: function(data)
-                        {
-                            $('#area').highcharts().series[0].setData(data.changechartdata);
+                      },
+                      complete: function ()
+                      {
+                          $('#resultLoading .bg').height('100%');
+                          $('#resultLoading').fadeOut(300);
+                          $('body').css('cursor', 'default');
+                      }
+                  });
+                  $.ajax({
+                      success: function(data)
+                      {
+                          $('#area').highcharts().series[0].setData(data.changechartdata);
 
-                            /*var chart = $('#area').highcharts();
-                             chart.series[0].update({
-                             name: month+'-'+year,
-                             data: data.changechartdata
-                             });
-
-
-                             */
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                            alert('Error : ' + errorThrown);
-
-                        }
-                    });
+                          /*var chart = $('#area').highcharts();
+                           chart.series[0].update({
+                           name: month+'-'+year,
+                           data: data.changechartdata
+                           });
 
 
-                });
-                $('#nextmonth').click(function($e)
-                {
-                    $e.preventDefault();
-                    var currentdate=new Date($('#currentid').text());
-                    currentdate.setMonth(currentdate.getMonth() + 1);
-                    currentdate,locale = "en-us",
-                            month = currentdate.toLocaleString(locale, { month: "long" }),
-                            year=currentdate.getFullYear();
+                           */
+                          $('#resultLoading .bg').height('100%');
+                          $('#resultLoading').fadeOut(300);
+                          $('body').css('cursor', 'default');
 
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
-                        beforeSend: function () {
-                            var text='Please Wait';
+                      },
+                      error: function(XMLHttpRequest, textStatus, errorThrown)
+                      {
+                          $('#resultLoading .bg').height('100%');
+                          $('#resultLoading').fadeOut(300);
+                          $('body').css('cursor', 'default');
+                          alert('Error : ' + errorThrown);
 
-                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                            }
-
-                            $('#resultLoading').css({
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'fixed',
-                                'z-index':'10000000',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto'
-                            });
-
-                            $('#resultLoading .bg').css({
-                                'background':'#000000',
-                                'opacity':'0.7',
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'absolute',
-                                'top':'0'
-                            });
-
-                            $('#resultLoading>div:first').css({
-                                'width': '250px',
-                                'height':'75px',
-                                'text-align': 'center',
-                                'position': 'fixed',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto',
-                                'font-size':'16px',
-                                'z-index':'10',
-                                'color':'#ffffff'
-
-                            });
-
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeIn(300);
-                            $('body').css('cursor', 'wait');
-                        },
-                        complete: function () {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                        }
-                    });
-                    $.ajax({
-                        success: function(data)
-                        {
-                            $('#area').highcharts().series[0].setData(data.changechartdata);
-
-                            /*var chart = $('#area').highcharts();
-                             chart.series[0].update({
-                             name: month+'-'+year,
-                             data: data.changechartdata
-                             });
+                      }
+                  });
 
 
-                             */
-                            $('#currentid').text(month+'-'+year)
+              });
+              $('#nextmonth').click(function($e)
+              {
+                  $e.preventDefault();
+                  var currentdate=new Date($('#currentid').text());
+                  currentdate.setMonth(currentdate.getMonth() + 1);
+                  currentdate,locale = "en-us",
+                          month = currentdate.toLocaleString(locale, { month: "long" }),
+                          year=currentdate.getFullYear();
+
+                  $.ajaxSetup({
+                      global: false,
+                      type: "post",
+                      'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
+                      beforeSend: function () {
+                          var text='Please Wait';
+
+                          if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                              $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                          }
+
+                          $('#resultLoading').css({
+                              'width':'100%',
+                              'height':'100%',
+                              'position':'fixed',
+                              'z-index':'10000000',
+                              'top':'0',
+                              'left':'0',
+                              'right':'0',
+                              'bottom':'0',
+                              'margin':'auto'
+                          });
+
+                          $('#resultLoading .bg').css({
+                              'background':'#000000',
+                              'opacity':'0.7',
+                              'width':'100%',
+                              'height':'100%',
+                              'position':'absolute',
+                              'top':'0'
+                          });
+
+                          $('#resultLoading>div:first').css({
+                              'width': '250px',
+                              'height':'75px',
+                              'text-align': 'center',
+                              'position': 'fixed',
+                              'top':'0',
+                              'left':'0',
+                              'right':'0',
+                              'bottom':'0',
+                              'margin':'auto',
+                              'font-size':'16px',
+                              'z-index':'10',
+                              'color':'#ffffff'
+
+                          });
+
+                          $('#resultLoading .bg').height('100%');
+                          $('#resultLoading').fadeIn(300);
+                          $('body').css('cursor', 'wait');
+                      },
+                      complete: function () {
+                          $('#resultLoading .bg').height('100%');
+                          $('#resultLoading').fadeOut(300);
+                          $('body').css('cursor', 'default');
+                      }
+                  });
+                  $.ajax({
+                      success: function(data)
+                      {
+                          $('#area').highcharts().series[0].setData(data.changechartdata);
+
+                          /*var chart = $('#area').highcharts();
+                           chart.series[0].update({
+                           name: month+'-'+year,
+                           data: data.changechartdata
+                           });
 
 
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            alert('Error : ' + errorThrown);
-
-                        }
-                    });
+                           */
+                          $('#currentid').text(month+'-'+year)
 
 
+                      },
+                      error: function(XMLHttpRequest, textStatus, errorThrown)
+                      {
+                          alert('Error : ' + errorThrown);
 
-                });
-            });
+                      }
+                  });
+
+
+
+              });
+          });
         </script>
     {% endblock %}
-    <div class="col-sm-10">
+ <div class="col-sm-10">
         <div class="dashboard">
             <div class="table-responsive">
                 <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
@@ -360,13 +362,23 @@
     <div class="col-sm-2 dashboard">
         <div class="widget time">
             <div class="x-header">
-                <div class="x-panel-header-text">{{ 'dashboard.kpi'|trans }}</div>
+                <div class="x-panel-header-text">{{ 'dashboard.ranking'|trans }} {{ 'dashboard.kpi'|trans }}</div>
             </div>
             <div class="chart-2">
                 {{ kpi_count }}
             </div>
         </div>
     </div>
-
+        <div class="col-sm-2 dashboard">
+            <div class="widget time">
+                <div class="x-header">
+                    <div class="x-panel-header-text">{{ 'dashboard.score'|trans }} {{ 'dashboard.kpi'|trans }}</div>
+                </div>
+                <div class="chart-2">
+                    {{ kpi_count }}
+                </div>
+            </div>
+        </div>
+{% endif %}
 
 {% endblock %}
