@@ -325,29 +325,65 @@
                         })
                     });
 
+                    $('.check').live("click",function(){
+                        if($('.check').is(':checked')==true)
+                        {
+                            $('#shipId option').attr('selected', 'selected');
+                        }
+                        else
+                        {
+                            $('#shipId option').attr('selected', false);
+                        }
+                    });
+
                     $('.status_active').live("click",function()
                     {
-                        $.ajax({
-                            type:"POST",
-                            url:"ajax_status_show",
-                            data:1,
-                            success: function(data)
-                            {
-                                $('.initail_ship_name_show').empty();
-                                alert('success');
-                                console.log(data);
-                                $.each(data.ship_details, function(i)
+                        if($('.status_active').is(':checked')==true)
+                        {
+                            var data = {'Id' : 1};
+                            $.ajax({
+                                type:"POST",
+                                url:"ajax_status_show",
+                                data:data,
+                                success: function(data)
                                 {
-                                    $('.name_select').html('<a href="" class="ship_class" id=" '+data.ship_details[i][0]['id']+' ">' +data.ship_details[i][0]['shipName']+ '</a>');
-                                    $('.text_select').text(data.ship_details[i][0]['description']);
-                                });
-                            },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
-                                alert('Error : ' + errorThrown);
-                            }
-                        })
+                                    $('.initail_ship_name_show').empty();
+                                    $.each(data.ship_details, function(i)
+                                    {
+                                        $('.name_select').html('<a href="" class="ship_class" id=" '+data.ship_details[i][0]['id']+' ">' +data.ship_details[i][0]['shipName']+ '</a>');
+                                        $('.text_select').text(data.ship_details[i][0]['description']);
+                                    });
+                                },
+                                error: function(XMLHttpRequest, textStatus, errorThrown)
+                                {
+                                    alert('Error : ' + errorThrown);
+                                }
+                            })
+                        }
+                        else
+                        {
+                            var data1 = {'Id' : 2};
+                            $.ajax({
+                                type:"POST",
+                                url:"ajax_status_show",
+                                data:data1,
+                                success: function(data)
+                                {
+                                    $('.users_list_grid_main').empty();
+                                    $.each(data.ship_details, function(i)
+                                    {
+                                        $('.name_select').html('<a href="" class="ship_class" id=" '+data.ship_details[i][0]['id']+' ">' +data.ship_details[i][0]['shipName']+ '</a>');
+                                        $('.text_select').text(data.ship_details[i][0]['description']);
+                                    });
+                                },
+                                error: function(XMLHttpRequest, textStatus, errorThrown)
+                                {
+                                    alert('Error : ' + errorThrown);
+                                }
+                            })
+                        }
                     });
+
 
                 });
 
@@ -476,35 +512,30 @@
 
                                     <legend class="legend_name">Details</legend>
                                     <div class="form-group">
-                                        <label class="control-label required_field col-xs-4">Ship name</label>
+                                        <label class="control-label required_field col-xs-4">vessel Name</label>
                                         <div class="col-xs-8">
 
                                             {{ form_row(form.shipName,{'label': ' '}) }}
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label required_field col-xs-4">Ship Type</label>
+                                        <label class="control-label required_field col-xs-4">Vessel Type</label>
                                         <div class="col-xs-8">
                                             {{ form_row(form.shipType,{'label': ' '}) }}
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label required_field col-xs-4">ImoNumber</label>
+                                        <label class="control-label col-xs-4">IMO Number</label>
                                         <div class="col-xs-8">
                                             {{ form_row(form.imoNumber,{'label': ' '}) }}
                                         </div>
                                     </div>
-                                </fieldset>
-
-                                <fieldset class="fieldset_box">
-                                    <legend class="legend_name">Address</legend>
                                     <div class="form-group">
                                         <label class="control-label required_field col-xs-4">Country</label>
                                         <div class="col-xs-8">
                                             {{ form_row(form.country,{'label': ' '}) }}
                                         </div>
                                     </div>
-
                                     <div class="form-group">
                                         <label class="control-label required_field col-xs-4">Location</label>
                                         <div class="col-xs-8">
@@ -514,9 +545,9 @@
                                 </fieldset>
 
                                 <fieldset class="fieldset_box">
-                                    <legend class="legend_name">Capacity</legend>
+                                    <legend class="legend_name">Specification</legend>
                                     <div class="form-group">
-                                        <label class="control-label required_field col-xs-4">Built</label>
+                                        <label class="control-label required_field col-xs-4">Ship Yard</label>
                                         <div class="col-xs-8">
                                             {{ form_row(form.built,{'label': ' '}) }}
                                         </div>
@@ -577,7 +608,7 @@
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Details</legend>
                         <div class="form_view">
-                            <label class="form_labell">Ship :</label>
+                            <label class="form_labell">Vessel :</label>
                             <label class="form_input ship_name "></label>
                         </div>
                         <div class="form_view">
@@ -585,12 +616,9 @@
                             <label class="form_input ship_type"></label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">ImoNumber :</label>
+                            <label class="form_labell">IMO Number :</label>
                             <label class="form_input ship_ImoNumber"></label>
                         </div>
-                    </fieldset>
-                    <fieldset class="fieldset_box">
-                        <legend class="legend_name">Address</legend>
                         <div class="form_view">
                             <label class="form_labell">Countrty:</label>
                             <label class="form_input ship_Country"></label>
@@ -600,11 +628,16 @@
                             <label class="form_input ship_Location"></label>
                         </div>
                     </fieldset>
+                    {#<fieldset class="fieldset_box">
+                        <legend class="legend_name">Address</legend>
+
+
+                    </fieldset>#}
 
                     <fieldset class="fieldset_box">
-                        <legend class="legend_name">Capacity</legend>
+                        <legend class="legend_name">Specification</legend>
                         <div class="form_view">
-                            <label class="form_labell">Built:</label>
+                            <label class="form_labell">Ship Yard:</label>
                             <label class="form_input ship_Built"></label>
                         </div>
                         <div class="form_view">
@@ -635,12 +668,12 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
-                    <h2>Edit Ship</h2>
+                    <h2>Vessel Edit</h2>
                         <div class="add_new_users_form">
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Basic Info</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4">Ship name</label>
+                                    <label class="control-label required_field col-xs-4">Vessel Name</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_name" value="" placeholder="">
                                         <input type="hidden" class="edit_ship_id" value="" placeholder="">
@@ -648,23 +681,20 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4">Ship Type</label>
+                                    <label class="control-label required_field col-xs-4">Vessel Type</label>
                                     <div class="col-xs-8">
                                         <select class="edit_ship_type">
-                                            <option selected>--Select shipType--</option>
+                                            <option selected>--Select Vessel Type--</option>
                                         </select>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4">ImoNumber</label>
+                                    <label class="control-label required_field col-xs-4">IMO Number</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_imoNumber" value="" placeholder="">
                                     </div>
                                 </div>
-                            </fieldset>
-                            <fieldset class="fieldset_box">
-                                <legend class="legend_name">Address</legend>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4">Country</label>
                                     <div class="col-xs-8">
@@ -681,11 +711,15 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            {#<fieldset class="fieldset_box">
+                                <legend class="legend_name">Address</legend>
+
+                            </fieldset>#}
 
                             <fieldset class="fieldset_box">
-                                <legend class="legend_name">Capacity</legend>
+                                <legend class="legend_name">Specification</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4">Built</label>
+                                    <label class="control-label required_field col-xs-4">Ship Yard</label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_built" value="" placeholder="">
                                     </div>
