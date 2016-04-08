@@ -40,7 +40,7 @@ class RankingKpiDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="Description", type="string", length=255)
+     * @ORM\Column(name="Description", type="string", length=255, nullable=true)
      */
     private $description;
 
@@ -68,7 +68,7 @@ class RankingKpiDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="CellDetails", type="string", length=255)
+     * @ORM\Column(name="CellDetails", type="string", length=255, nullable=true)
      */
     private $cellDetails;
 

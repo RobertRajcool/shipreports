@@ -62,7 +62,7 @@ class ShipDetailsController extends Controller
      * @Route("/select1", name="shipdetails_select1")
      * @Method("GET")
      */
-    public function select1Action(Request $request)
+    public function select1Action(Request $request,$status = '')
     {
         $user = $this->getUser();
         $userId = $user->getId();
@@ -92,17 +92,45 @@ class ShipDetailsController extends Controller
         }
         $shipDetails = $query->getResult();
 
+        /*$ship_id_value = $em->createQueryBuilder()
+            ->select ('identity(a.shipDetailsId)')
+            ->from('InitialShippingBundle:ShipStatusDetails','a')
+            ->where('a.status = :status')
+            ->setParameter('status',1)
+            ->distinct()
+            ->getQuery()
+            ->getResult();
+        $index = count($ship_id_value);
+
+        for($i=0;$i<$index;$i++)
+        {
+            $ship_detail_query = $em->createQueryBuilder()
+                ->select ('a')
+                ->from('InitialShippingBundle:ShipDetails','a')
+                ->where('a.id = :ship_id')
+                ->setParameter('ship_id',$ship_id_value[$i][1])
+                ->getQuery()
+                ->getResult();
+            $ship_details[$i] = $ship_detail_query;
+        }*/
+
         $count = count($shipDetails);
 
         $shipDetail = new shipDetails();
         $form = $this->createForm(new shipDetailsType($userId,$role), $shipDetail);
         $form->handleRequest($request);
 
+        if($status == 'status')
+        {
+            return $shipDetail;
+        }
+
         return $this->render('shipdetails/index.html.twig', array(
             'shipDetails' => $shipDetails,
             'shipDetail' => $shipDetail,
             'form' => $form->createView(),
             'ship_count' => $count,
+            /*'activeShip' => $ship_details*/
 
         ));
     }
@@ -390,9 +418,19 @@ class ShipDetailsController extends Controller
             $em->flush();
         }
 
+        $lastId = $shipstatusdetails->getId();
+
+        $statusValue = $em->createQueryBuilder()
+            ->select ('a.status')
+            ->from('InitialShippingBundle:ShipStatusDetails','a')
+            ->where('a.id = :status_id')
+            ->setParameter('status_id',$lastId)
+            ->getQuery()
+            ->getResult();
+
         $response = new JsonResponse();
         $response->setData(array(
-            'Ship_id' => $id
+            'status' => $statusValue
         ));
         return $response;
 
@@ -405,33 +443,89 @@ class ShipDetailsController extends Controller
      */
     public function ajax_status_showAction(Request $request)
     {
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
+
+        $id = $request->request->get('Id');
+
+        $activeIndex = 0;
+        $inactiveIndex = 0;
 
         $ship_id_value = $em->createQueryBuilder()
             ->select ('identity(a.shipDetailsId)')
             ->from('InitialShippingBundle:ShipStatusDetails','a')
             ->where('a.status = :status')
             ->setParameter('status',1)
+            ->distinct()
             ->getQuery()
             ->getResult();
         $index = count($ship_id_value);
 
         for($i=0;$i<$index;$i++)
         {
+            $findShipActiveQuery = $em->createQueryBuilder()
+                ->select ('a.id','a.status')
+                ->from('InitialShippingBundle:ShipStatusDetails','a')
+                ->where('a.shipDetailsId = :ship_id')
+                ->setParameter('ship_id',$ship_id_value[$i][1])
+                ->orderby('a.id')
+                ->getQuery()
+                ->getResult();
+
+            $shipCount = count($findShipActiveQuery)-1;
+            $shipStatusValue = $findShipActiveQuery[$shipCount]['status'];
+
             $ship_detail_query = $em->createQueryBuilder()
-                ->select ('a.id','a.shipName','a.description','a.location','a.size','a.built','a.gt','a.manufacturingYear','a.imoNumber')
+                ->select ('a.id','a.shipName','a.description','a.location','a.size','a.built','a.gt','a.manufacturingYear','a.imoNumber','identity(a.shipType)')
                 ->from('InitialShippingBundle:ShipDetails','a')
                 ->where('a.id = :ship_id')
                 ->setParameter('ship_id',$ship_id_value[$i][1])
                 ->getQuery()
                 ->getResult();
             $ship_details[$i] = $ship_detail_query;
+
+            $shipType = $em->createQueryBuilder()
+                ->select ('a.shipType')
+                ->from('InitialShippingBundle:ShipTypes','a')
+                ->where('a.id = :shipType_id')
+                ->setParameter('shipType_id',$ship_detail_query[0][1])
+                ->getQuery()
+                ->getResult();
+            $ship_types[$i] = $shipType;
+
+            if($shipStatusValue == 1)
+            {
+                $activeShipDetails[$activeIndex] = $ship_detail_query;
+                $activeShipType[$activeIndex] = $shipType;
+                $activeIndex++;
+            }
+            else
+            {
+                $inactiveShipDetails[$inactiveIndex] = $ship_detail_query;
+                $inactiveShipType[$inactiveIndex] = $shipType;
+                $inactiveIndex++;
+            }
         }
 
-        $response = new JsonResponse();
-        $response->setData(array(
-            'ship_details' => $ship_details
-        ));
+        if($id == 1)
+        {
+            $response = new JsonResponse();
+            $response->setData(array(
+                'ship_details' => $activeShipDetails,
+                'ship_type' => $activeShipType
+            ));
+        }
+        else if($id == 0)
+        {
+            $response = new JsonResponse();
+            $response->setData(array(
+                'ship_details' => $inactiveShipDetails,
+                'ship_type' => $inactiveShipType
+            ));
+        }
+
         return $response;
     }
 

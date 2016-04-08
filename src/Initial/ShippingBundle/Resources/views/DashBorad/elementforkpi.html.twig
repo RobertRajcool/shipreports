@@ -251,58 +251,62 @@
 
                 elements.push(['{{ element.elementName }}','{{ element.id }}']);
                 var abcdef='{{ element.elementName }}';
-
-                $('<div class="rules_valus" id="rules_valus_id'+k+'" >').appendTo('#rulePlaceId');
-                $('<div class="title">'+abcdef+'</div>').appendTo('#rules_valus_id'+k);
                 var rule_value = $('#'+{{ element.id }}).val();
                 var rule_value_array = splitfun(rule_value);
 
-                $.each(rule_value_array,function(i)
+                if(rule_value != null)
                 {
-                    var condition_text = "";
-                    var rule_obj = JSON.parse(rule_value_array[i]);
+                    $('<div class="rules_valus" id="rules_valus_id'+k+'" >').appendTo('#rulePlaceId');
+                    $('<div class="title">'+abcdef+'</div>').appendTo('#rules_valus_id'+k);
 
-                    $.each(rule_obj.conditions.all, function(j)
+                    $.each(rule_value_array,function(i)
                     {
-                        if(rule_obj.conditions.all[j].operator=='equalTo')
+                        var condition_text = "";
+                        var rule_obj = JSON.parse(rule_value_array[i]);
+
+                        $.each(rule_obj.conditions.all, function(j)
                         {
-                            rule_obj.conditions.all[j].operator='=';
-                        }
-                        else if(rule_obj.conditions.all[j].operator=='notEqualTo')
-                        {
-                            rule_obj.conditions.all[j].operator='!=';
-                        }
-                        else if(rule_obj.conditions.all[j].operator=='greaterThan')
-                        {
-                            rule_obj.conditions.all[j].operator='>';
-                        }
-                        else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
-                        {
-                            rule_obj.conditions.all[j].operator='>=';
-                        }
-                        else if(rule_obj.conditions.all[j].operator=='lessThan')
-                        {
-                            rule_obj.conditions.all[j].operator='<';
-                        }
-                        else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
-                        {
-                            rule_obj.conditions.all[j].operator='<=';
-                        }
-                        var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
-                        if(j==0)
-                        {
-                            condition_text = condition_text_one;
-                        }
-                        if(j>0)
-                        {
-                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
-                        }
+                            if(rule_obj.conditions.all[j].operator=='equalTo')
+                            {
+                                rule_obj.conditions.all[j].operator='=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='notEqualTo')
+                            {
+                                rule_obj.conditions.all[j].operator='!=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='greaterThan')
+                            {
+                                rule_obj.conditions.all[j].operator='>';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
+                            {
+                                rule_obj.conditions.all[j].operator='>=';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='lessThan')
+                            {
+                                rule_obj.conditions.all[j].operator='<';
+                            }
+                            else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
+                            {
+                                rule_obj.conditions.all[j].operator='<=';
+                            }
+                            var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
+                            if(j==0)
+                            {
+                                condition_text = condition_text_one;
+                            }
+                            if(j>0)
+                            {
+                                condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                            }
+                        });
+                        $('<div ><span class="span_1">'+condition_text+'</span><span class="span_1">'+rule_obj.actions.value+'</span></div>').appendTo('#rules_valus_id'+k);
+
                     });
-                    $('<div ><span class="span_1">'+condition_text+'</span><span class="span_1">'+rule_obj.actions.value+'</span></div>').appendTo('#rules_valus_id'+k);
 
-                });
+                    $('</div>');
+                }
 
-                $('</div>');
                 k++;
                 {% endfor %}
 
@@ -457,10 +461,12 @@
                         {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
                         {% set jk=jk+1 %}
                     {% endfor %}
-                    {% if elementRule[ik][0].1  != NULL %}
-                        <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
-                    {% else %}
-                        <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                    {% if elementRule[ik] != NULL %}
+                        {% if elementRule[ik][0].1  != NULL %}
+                            <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
+                        {% else %}
+                            <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                        {% endif %}
                     {% endif %}
 
                     {% set ik=ik+1 %}

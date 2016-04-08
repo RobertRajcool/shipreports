@@ -136,12 +136,15 @@ class RankingElementDetailsController extends Controller
         $description   = $params['description'];
         $cellName      = $params['cellName'];
         $cellDetails   = $params['cellDetails'];
-        $activatedDate = $params['activeDate'];
-        $endDate       = $params['endDate'];
+        $activeMonth = $request->request->get('activeMonth');
+        $activeYear = $request->request->get('activeYear');;
+        $endMonth = $request->request->get('endMonth');;
+        $endYear = $request->request->get('endYear');;
+        $day = 1;
 
-        $monthtostring=$activatedDate['year'].'-'.$activatedDate['month'].'-'.$activatedDate['day'];
+        $monthtostring=$activeYear.'-'.$activeMonth.'-'.$day;
         $new_date=new \DateTime($monthtostring);
-        $monthtostring1=$endDate['year'].'-'.$endDate['month'].'-'.$endDate['day'];
+        $monthtostring1=$endYear.'-'.$endMonth.'-'.$day;
         $new_date1=new \DateTime($monthtostring1);
 
         $weightage     = $params['weightage'];

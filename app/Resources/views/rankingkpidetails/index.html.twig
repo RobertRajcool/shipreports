@@ -398,9 +398,6 @@
                         <div class="users_list_grid">
                                 <span class="users_name_row">
                                     <span class="name"><a href="" class="kpi_class" id={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</a> </span>
-                                    {#<span class="text">{{ kpiDetail.description }}</span>#}
-                                    {#<span class="text">{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</span>
-                                    <span class="text">{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</span>#}
                                     <span class="text">
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
                                             Jan-{{ kpiDetail.activeDate|date('Y') }}
@@ -621,24 +618,57 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        {#<span>
-                                            <select class="add_rule_basic_date_drop" name="type" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option>Jan</option>
-                                            </select>
-                                        </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="type" class="full-width-select">
+                                            <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
                                                 <option selected="selected">--</option>
-                                                <option>2016</option>
+                                                <option value="1">Jan</option>
+                                                <option value="2">Feb</option>
+                                                <option value="3">Mar</option>
+                                                <option value="4">Apr</option>
+                                                <option value="5">May</option>
+                                                <option value="6">Jun</option>
+                                                <option value="7">Jul</option>
+                                                <option value="8">Aug</option>
+                                                <option value="9">Sep</option>
+                                                <option value="10">Oct</option>
+                                                <option value="11">Nov</option>
+                                                <option value="12">Dec</option>
                                             </select>
-                                        </span>#}
-                                        <span class="inlineinput">
-                                            {{ form_widget(form.activeDate,{'class':'full-width-select ','label': ''}) }}
-                                        </span>
-                                        <span class="inlineinput">
-                                            To{{ form_widget(form.endDate,{'class':'full-width-select ','label': ''}) }}
-                                        </span>
+                                            </span>
+                                            <span>
+                                            <select class="add_rule_basic_year_drop" name="activeyear" class="full-width-select">
+                                                <option selected="selected">--</option>
+                                                {% for i in 2000..2020 %}
+                                                    <option value={{ i }}>{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            </span>
+                                        To
+                                            <span>
+                                            <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
+                                                <option selected="selected">--</option>
+                                                <option value="1">Jan</option>
+                                                <option value="2">Feb</option>
+                                                <option value="3">Mar</option>
+                                                <option value="4">Apr</option>
+                                                <option value="5">May</option>
+                                                <option value="6">Jun</option>
+                                                <option value="7">Jul</option>
+                                                <option value="8">Aug</option>
+                                                <option value="9">Sep</option>
+                                                <option value="10">Oct</option>
+                                                <option value="11">Nov</option>
+                                                <option value="12">Dec</option>
+                                            </select>
+                                            </span>
+                                            <span>
+                                            <select class="add_rule_basic_year_drop" name="endYear" class="full-width-select">
+                                                <option selected="selected">--</option>
+                                                {% for i in 2000..2020 %}
+                                                    <option value={{ i }}>{{ i }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            </span>
                                     </div>
                                 </div>
                             </fieldset>
