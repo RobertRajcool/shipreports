@@ -238,7 +238,8 @@ class DashboradController extends Controller
                 //  $drilldownarray[$kj]['data']=$alterdrildownarray;//assign drilldown array values  for shipdetails drill down array
                 $mykpivaluearray[$kj]['name']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown(name) from kpivalues
                 $mykpivaluearray[$kj]['y'] = array_sum($drildowndataarray);//assign shipdrilldown(values) from kpivalues
-                $mykpivaluearray[$kj]['url'] = '/dashboard/'.$listallshipforcompany[$kj]['id'].'/listallkpiforship_ranking';//assign shipdrilldown(values) from kpivalues
+                $yearchange = $lastmonthdetail->format('Y');
+                $mykpivaluearray[$kj]['url'] = '/dashboard/'.$listallshipforcompany[$kj]['id'].'/'.$yearchange.'/listallkpiforship_ranking';//assign shipdrilldown(values) from kpivalues
 
 
             }
@@ -272,6 +273,7 @@ class DashboradController extends Controller
             $ob->chart->hieght(250);
             $ob->title->text('',array('style'=>array('color' => 'red')));
             $ob->xAxis->type('category');
+            $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
             $ob->yAxis->title(array('text'=>'Values'));
             $ob->legend->enabled(false);
             $ob->plotOptions->series(array('borderWidth'=>0,'dataLabels'=>array('enabled'=>false),
@@ -552,7 +554,8 @@ class DashboradController extends Controller
                     'kpi_list' => $listallkpi,
                     'month_name' => $newcategories1,
                     'kpicolorarray' => $datescolorarray1,
-                    'avgscore' => $finalkpielementvaluearray1
+                    'avgscore' => $finalkpielementvaluearray1,
+                    'currentyear'=>$yearchange
 
                 )
             );
@@ -1490,9 +1493,9 @@ class DashboradController extends Controller
     /**
      * List all kpi for ship
      *
-     * @Route("/{shipid}/listallkpiforship_ranking", name="listallkpiforship_ranking")
+     * @Route("/{shipid}/{year}/listallkpiforship_ranking", name="listallkpiforship_ranking")
      */
-    public function listallkpiforship_rankingAction($shipid,Request $request,$mode='')
+    public function listallkpiforship_rankingAction($shipid,$year='',Request $request,$mode='')
     {
         $newshipid=$shipid;
 
@@ -1541,10 +1544,25 @@ class DashboradController extends Controller
             //$lastmonthdetail = new \DateTime($monthinstring);
             //$lastmonthdetail->modify('last day of this month');
             $lastfivedatearray=array();
-            for ($m=1; $m<=12; $m++) {
-                $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
-                array_push($lastfivedatearray,$month);
+            if($year==' ')
+            {
+                for ($m=1; $m<=12; $m++)
+                {
+                    $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
+                    array_push($lastfivedatearray,$month);
+                }
+                $currentyear=date('Y');
             }
+            if($year!=' ')
+            {
+                for ($m=1; $m<=12; $m++)
+                {
+                    $month = date('Y-m-d', mktime(0,0,0,$m, 1, date($year)));
+                    array_push($lastfivedatearray,$month);
+                }
+                $currentyear=date($year);
+            }
+
 //Find Last Five Months Ends Here//
 
             $listallkpi = $em->createQueryBuilder()
@@ -1805,7 +1823,7 @@ class DashboradController extends Controller
                     'avgscore'=>$finalkpielementvaluearray,
                     'commentarray'=>$listofcomment,
                     'kpimonthdata'=>$overalkpivaluesmontyly,
-                    'currentyear'=>date('Y'),
+                    'currentyear'=>$currentyear,
                     'ageofvessel'=>$yearcount
                 );
             }
@@ -1825,7 +1843,7 @@ class DashboradController extends Controller
                     'commentarray'=>$listofcomment,
                     'shipid'=>$newshipid,
                     'kpimonthdata'=>$overalkpivaluesmontyly,
-                    'currentyear'=>date('Y'),
+                    'currentyear'=>$currentyear,
                     'ageofvessel'=>$yearcount
                 )
             );
