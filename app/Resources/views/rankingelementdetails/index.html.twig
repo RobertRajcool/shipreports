@@ -82,7 +82,7 @@
                 var action_arr = new Array();
                 $('.box_icon').hide();
                 $('.show_element').hide();
-                $('.element_create_view').hide();
+                //$('.element_create_view').hide();
                 $('#element_list_view').hide();
                 $('.grid_edit_element').hide();
 
@@ -102,6 +102,7 @@
                 });
                 $('.list_icon').click(function(){
                     $('#element_grid_view').hide();
+                    $('.element_create_view').hide();
                     $('.show_element').hide();
                     $('.grid_edit_element').hide();
                     $('#element_list_view').show();
@@ -116,7 +117,7 @@
                 });
 
                 $('.add_btn').live("click",function(){
-                    $('#element_grid_view').hide();
+                    //$('#element_grid_view').hide();
                     $('#element_list_view').hide();
                     $('.show_element').hide();
                     $('.element_create_view').show();
@@ -151,6 +152,7 @@
 
                 $('.element_class').live("click",function()
                 {
+                    $('.element_create_view').hide();
                     $('.rule_div').hide();
                     count++;
                     var currentId = $(this).attr('id');
@@ -734,8 +736,8 @@
     <div class="element_create_view">
 
         <section>
-            <div class="col-sm-12">
-                <div class="add_kpi_views_screen">
+            <div class="col-sm-11">
+                <div class="add_new_users_views_screen">
                     <form class="form-horizontal no-style" action="{{ path('rankingelementdetails_new1') }}" method="post">
 
                         <div class="kpi_basic_details">
@@ -843,39 +845,37 @@
                                         {{ form_widget(form.rules,{'label': '','id':'element_details_rules'}) }}
                                     </div>
                                 </div>
-
-
                             </fieldset>
-                        </div>
-                        <div class="kpi_rules">
-                            <fieldset class="fieldset_box_right add_rule_right_form">
-                                <legend class="legend_name">Rules</legend>
-                                <div class="form-group button">
-                                    <div class="col-xs-12">
-                                        <div id="conditions"></div>
-                                        <div id="actions"></div>
-                                        <p id="text_box"></p>
-                                        <input type="hidden" id="result" name="value">
+                            <div class="kpi_rules">
+                                <fieldset class="fieldset_box ">
+                                    <legend class="legend_name">Rules Create</legend>
+                                    <div class="form-group button">
+                                        <div class="col-xs-12">
+                                            <div id="conditions"></div>
+                                            <div id="actions"></div>
+                                            <p id="text_box"></p>
+                                            <input type="hidden" id="result" name="value">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9 add_button_place">
+                                    <div class="form-group button">
+                                        <div class="col-xs-9 add_button_place">
 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table add_rule_conditions" id="rule-table">
-                                        <thead>
+                                    <div class="table-responsive">
+                                        <table class="table add_rule_conditions" id="rule-table">
+                                            <thead>
                                             <tr id="row_id">
                                                 <th class="conditions">Conditions</th>
                                                 <th class="color">Color</th>
                                                 <th class="action">&nbsp;</th>
                                             </tr>
-                                        </thead>
-                                    </table>
-                                    <div class="small"></div>
-                                </div>
-                            </fieldset>
+                                            </thead>
+                                        </table>
+                                        <div class="small"></div>
+                                    </div>
+                                </fieldset>
+                            </div>
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="get_value"  type="submit" value="Submit">Create</button>
