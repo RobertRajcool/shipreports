@@ -66,7 +66,7 @@ class ShipDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="description", type="string", length=125)
+     * @ORM\Column(name="description", type="string", length=125, nullable=true)
      */
     private $description;
 

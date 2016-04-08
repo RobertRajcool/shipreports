@@ -398,9 +398,6 @@
                         <div class="users_list_grid">
                                 <span class="users_name_row">
                                     <span class="name"><a href="" class="kpi_class" id={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</a> </span>
-                                    {#<span class="text">{{ kpiDetail.description }}</span>#}
-                                    {#<span class="text">{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</span>
-                                    <span class="text">{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</span>#}
                                     <span class="text">
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
                                             Jan-{{ kpiDetail.activeDate|date('Y') }}

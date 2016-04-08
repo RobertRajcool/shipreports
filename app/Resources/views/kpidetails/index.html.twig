@@ -606,12 +606,6 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        {#<span class="inlineinput">
-                                            {{ form_widget(form.activeDate,{'class':'full-width-select ','label': ''}) }}
-                                        </span>
-                                        <span class="inlineinput">
-                                            To{{ form_widget(form.endDate,{'class':'full-width-select ','label': ''}) }}
-                                        </span>#}
                                         <span>
                                             <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
                                                 <option selected="selected">--</option>
@@ -791,7 +785,7 @@
 
     <div class="grid_edit_kpi">
 
-        <script src="../js/rules/conditions-builder.js"></script>
+        {#<script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/action-builder.js"></script>
 
         <script type="text/javascript">
@@ -1113,7 +1107,7 @@
                 }
             });
 
-        </script>
+        </script>#}
 
 
         <section>

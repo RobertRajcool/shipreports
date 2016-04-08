@@ -40,7 +40,7 @@ class ElementDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="Description", type="string", length=75)
+     * @ORM\Column(name="Description", type="string", length=75, nullable=true)
      */
     private $description;
 
@@ -54,7 +54,7 @@ class ElementDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="CellDetails", type="string", length=75)
+     * @ORM\Column(name="CellDetails", type="string", length=75, nullable=true)
      */
     private $cellDetails;
 

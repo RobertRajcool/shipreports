@@ -58,7 +58,7 @@
                 $(document).ready(function()
                 {
                     $('.box_icon').hide();
-                    $('.create_view').hide();
+                    $('.create_view').show();
                     $('#list_view').hide();
                     $('.show_view').hide();
                     $('.show_kpi').hide();
@@ -77,6 +77,7 @@
                         $('.box_icon').hide();
                         $('#grid_view').show();
                         $('.list_icon').show();
+                        $('.create_view').show();
                         $('#nogroupselected').show();
                     });
                     $('.list_icon').click(function () {
@@ -87,6 +88,7 @@
                         $('.show_ship_view').hide();
                         $('.show_kpi').hide();
                         $('.list_icon').hide();
+                        $('.create_view').hide();
                     });
                     $('.add_btn').live("click", function () {
                         $('#list_view').hide();
@@ -124,6 +126,7 @@
 
                     $('.ship_class').live("click",function()
                     {
+                        $('.create_view').hide();
                         $('#nogroupselected').hide();
                         count++;
                         var currentId = $(this).attr('id');
@@ -357,7 +360,7 @@
             <section>
                 <div class="col-sm-3 users_views">
                     <div class="add_user_btn_main">
-                        <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Ship</a></span>
+                        <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Vessel</a></span>
                         <span class="user_btn_main"><a href="" class="show_btn" ng-click="myFunc3()">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
@@ -397,21 +400,21 @@
             </section>
         </div>
 
-        <section id="nogroupselected">
+        {#<section id="nogroupselected">
             <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
                 <div class="text_image">
                     <img src="/images/no-user.png">
                     <label>No Ship Selected</label>
                 </div>
             </div>
-        </section>
+        </section>#}
 
         <div id="list_view">
             <section>
                 <div class="users_advanced_list_views_screen">
                     <div class="">
                         <div class="add_user_btn_main">
-                            <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Ship</a></span>
+                            <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Vessel</a></span>
                             <span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
@@ -568,7 +571,7 @@
             <div class="col-sm-11">
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
-                        <a href="" class="edit_btn edit_ship_button"> Edit Ship</a>
+                        <a href="" class="edit_btn edit_ship_button"> Edit</a>
                         <a href="" class="edit_btn archive_btn">Active</a>
                     </div>
                     <fieldset class="fieldset_box">
