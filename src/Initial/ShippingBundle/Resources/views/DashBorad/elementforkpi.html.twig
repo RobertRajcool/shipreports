@@ -457,10 +457,12 @@
                         {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
                         {% set jk=jk+1 %}
                     {% endfor %}
-                    {% if elementRule[ik][0].1  != NULL %}
-                        <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
-                    {% else %}
-                        <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                    {% if elementRule[ik] != NULL %}
+                        {% if elementRule[ik][0].1  != NULL %}
+                            <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
+                        {% else %}
+                            <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                        {% endif %}
                     {% endif %}
 
                     {% set ik=ik+1 %}
