@@ -1788,8 +1788,8 @@ class DashboradController extends Controller
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
-            $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
-            $ob->subtitle->text($shipname);
+            $ob->title->text($shipname, array('style' => array('color' => 'red')));
+            //$ob->subtitle->text($shipname);
             $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
             $ob->xAxis->categories($newcategories);
             $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
@@ -2085,8 +2085,8 @@ class DashboradController extends Controller
                 $ob = new Highchart();
                 $ob->chart->renderTo('area');
                 $ob->chart->type('line');
-                $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
-                $ob->subtitle->text($shipname);
+                $ob->title->text($shipname, array('style' => array('color' => 'red')));
+                //$ob->subtitle->text($shipname);
                 $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
                 $ob->xAxis->categories($newcategories);
                 $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
@@ -2251,8 +2251,8 @@ class DashboradController extends Controller
                 $ob = new Highchart();
                 $ob->chart->renderTo('area');
                 $ob->chart->type('line');
-                $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
-                $ob->subtitle->text($shipname);
+                $ob->title->text($shipname, array('style' => array('color' => 'red')));
+                ///$ob->subtitle->text($shipname);
                 $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
                 $ob->xAxis->categories($newcategories);
                 $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
