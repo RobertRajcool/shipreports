@@ -270,7 +270,7 @@ class DashboradController extends Controller
             $ob->chart->renderTo('area');
             $ob->chart->type('column');
             $ob->chart->hieght(250);
-            $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
+            $ob->title->text('',array('style'=>array('color' => 'red')));
             $ob->xAxis->type('category');
             $ob->yAxis->title(array('text'=>'Values'));
             $ob->legend->enabled(false);
@@ -364,7 +364,7 @@ class DashboradController extends Controller
             //loop for sending dates//
             for ($d = 0; $d < count($lastfivedatearray); $d++) {
                 $time2 = strtotime($lastfivedatearray[$d]);
-                $monthinletter = date('F', $time2);
+                $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
