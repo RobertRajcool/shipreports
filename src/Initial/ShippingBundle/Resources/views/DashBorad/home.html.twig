@@ -362,13 +362,23 @@
     <div class="col-sm-2 dashboard">
         <div class="widget time">
             <div class="x-header">
-                <div class="x-panel-header-text">{{ 'dashboard.kpi'|trans }}</div>
+                <div class="x-panel-header-text">{{ 'dashboard.ranking'|trans }} {{ 'dashboard.kpi'|trans }}</div>
             </div>
             <div class="chart-2">
                 {{ kpi_count }}
             </div>
         </div>
     </div>
+        <div class="col-sm-2 dashboard">
+            <div class="widget time">
+                <div class="x-header">
+                    <div class="x-panel-header-text">{{ 'dashboard.score'|trans }} {{ 'dashboard.kpi'|trans }}</div>
+                </div>
+                <div class="chart-2">
+                    {{ kpi_count }}
+                </div>
+            </div>
+        </div>
 {% endif %}
 
 {% endblock %}
