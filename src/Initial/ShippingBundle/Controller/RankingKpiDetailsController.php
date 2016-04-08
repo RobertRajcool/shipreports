@@ -139,17 +139,19 @@ class RankingKpiDetailsController extends Controller
         $val = count($shipDetailsId);
 
         $description = $params['description'];
-        $activeDate = $params['activeDate'];
-        $endDate = $params['endDate'];
+        $activeMonth = $request->request->get('activeMonth');
+        $activeYear = $request->request->get('activeYear');;
+        $endMonth = $request->request->get('endMonth');;
+        $endYear = $request->request->get('endYear');;
         $cellName = $params['cellName'];
         $cellDetails = $params['cellDetails'];
         $weightage = $params['weightage'];
+        $day = 1;
 
-        $monthtostring=$activeDate['year'].'-'.$activeDate['month'].'-'.$activeDate['day'];
+        $monthtostring=$activeYear.'-'.$activeMonth.'-'.$day;
         $new_date=new \DateTime($monthtostring);
-        $monthtostring1=$endDate['year'].'-'.$endDate['month'].'-'.$endDate['day'];
+        $monthtostring1=$endYear.'-'.$endMonth.'-'.$day;
         $new_date1=new \DateTime($monthtostring1);
-
         $em = $this->getDoctrine()->getManager();
 
         for($i=0;$i<$val;$i++)
