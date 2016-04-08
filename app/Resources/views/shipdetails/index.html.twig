@@ -306,7 +306,6 @@
 
                     $('.archive_btn').live("click",function()
                     {
-                        alert('hi');
                         var data = {'Id' : $('.edit_ship_id').val()};
 
                         $.ajax({
@@ -315,7 +314,15 @@
                             data: data,
                             success: function(data)
                             {
-                                alert('success');
+                                if(data.status[0].status == 1)
+                                {
+                                    alert('Vessel Activated');
+                                }
+                                else if(data.status[0].status == 0)
+                                {
+                                    alert('Vessel InActivated');
+                                }
+
 
                             },
                             error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -336,8 +343,13 @@
                         }
                     });
 
+                    var activeCount = 0;
                     $('.status_active').live("click",function()
                     {
+                        if(activeCount>0)
+                        {
+                            $('.activePlace').empty();
+                        }
                         if($('.status_active').is(':checked')==true)
                         {
                             var data = {'Id' : 1};
@@ -347,11 +359,21 @@
                                 data:data,
                                 success: function(data)
                                 {
-                                    $('.initail_ship_name_show').empty();
+                                    $('.name_select').empty();
+                                    $('.text_select').empty();
+                                    $('.main_vessels_show').hide();
+                                    $('.active_vessels').show();
+
                                     $.each(data.ship_details, function(i)
                                     {
-                                        $('.name_select').html('<a href="" class="ship_class" id=" '+data.ship_details[i][0]['id']+' ">' +data.ship_details[i][0]['shipName']+ '</a>');
-                                        $('.text_select').text(data.ship_details[i][0]['description']);
+                                        var spanPlace = $('<div>').attr({'class':'users_list_grid'}).append(
+                                                $('<span>').attr({'class':'users_name_row'}).append(
+                                                        $('<span>').attr({'class':'name'}).append(
+                                                                $('<a>'+data.ship_details[i][0]['shipName']+'</a>').attr({'class':'ship_class','id':data.ship_details[i][0]['id']})
+                                                        ),
+                                                        $('<span>').attr({'class':'text'}).text(data.ship_type[i][0]['shipType'])
+                                                )
+                                        ).appendTo('.activePlace');
                                     });
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -362,18 +384,45 @@
                         }
                         else
                         {
-                            var data1 = {'Id' : 2};
+                            $('.active_vessels').hide();
+                            $('.main_vessels_show').show();
+                        }
+
+                        activeCount ++;
+                    });
+
+
+                    var inactiveCount = 0;
+                    $('.status_inactive').live("click",function()
+                    {
+                        if(inactiveCount>0)
+                        {
+                            $('.activePlace').empty();
+                        }
+                        if($('.status_inactive').is(':checked')==true)
+                        {
+                            var data = {'Id' : 0};
                             $.ajax({
                                 type:"POST",
                                 url:"ajax_status_show",
-                                data:data1,
+                                data:data,
                                 success: function(data)
                                 {
-                                    $('.users_list_grid_main').empty();
+                                    $('.name_select').empty();
+                                    $('.text_select').empty();
+                                    $('.main_vessels_show').hide();
+                                    $('.active_vessels').show();
+
                                     $.each(data.ship_details, function(i)
                                     {
-                                        $('.name_select').html('<a href="" class="ship_class" id=" '+data.ship_details[i][0]['id']+' ">' +data.ship_details[i][0]['shipName']+ '</a>');
-                                        $('.text_select').text(data.ship_details[i][0]['description']);
+                                        var spanPlace = $('<div>').attr({'class':'users_list_grid'}).append(
+                                                $('<span>').attr({'class':'users_name_row'}).append(
+                                                        $('<span>').attr({'class':'name'}).append(
+                                                                $('<a>'+data.ship_details[i][0]['shipName']+'</a>').attr({'class':'ship_class','id':data.ship_details[i][0]['id']})
+                                                        ),
+                                                        $('<span>').attr({'class':'text'}).text(data.ship_type[i][0]['shipType'])
+                                                )
+                                        ).appendTo('.activePlace');
                                     });
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -382,7 +431,15 @@
                                 }
                             })
                         }
+                        else
+                        {
+                            $('.active_vessels').hide();
+                            $('.main_vessels_show').show();
+                        }
+
+                        inactiveCount ++;
                     });
+
 
 
                 });
@@ -414,22 +471,28 @@
                     </div>
 
                     <div class="users_list_grid_main">
-                        <div class="initail_ship_name_show">
-                            {% for shipDetail in shipDetails %}
-                                <div class="users_list_grid">
-                                {#<span class="user_image"><img src="/images/ship.png"></span>#}
-                                <span class="users_name_row">
+                        <div class="main_vessels_show">
+                            <div class="initail_ship_name_show">
+                                {% for shipDetail in shipDetails %}
+                                    <div class="users_list_grid">
+                                        {#<span class="user_image"><img src="/images/ship.png"></span>#}
+                                        <span class="users_name_row">
                                     <span class="name"><a href="" class="ship_class" id={{ shipDetail.id }} ><span class="name_place">{{ shipDetail.shipName }}</span></a> </span>
                                     <span class="text">{{ shipDetail.shipType }}</span>
                                  </span>
-                                </div>
-                            {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                        <div class="users_list_grid">
-                                <span class="users_name_row">
+                        <div class="active_vessels">
+                            <div class="initail_ship_name_show activePlace">
+                                <div class="users_list_grid">
+                                {#<span class="users_name_row ">
                                     <span class="name name_select"> </span>
                                     <span class="text text_select"></span>
-                                 </span>
+                                 </span>#}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -510,7 +573,7 @@
                                 <fieldset class="fieldset_box add_rule_form">
 
 
-                                    <legend class="legend_name">Details</legend>
+                                    <legend class="legend_name">Basic Info</legend>
                                     <div class="form-group">
                                         <label class="control-label required_field col-xs-4">vessel Name</label>
                                         <div class="col-xs-8">
@@ -603,10 +666,11 @@
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
                         <a href="" class="edit_btn edit_ship_button"> Edit</a>
-                        <a href="" class="edit_btn archive_btn">Active</a>
+                        <a href="" class="edit_btn active_btn archive_btn">Active / Inactive</a>
+                        {#<a href="" class="edit_btn inactive_btn archive_btn">Inactive</a>#}
                     </div>
                     <fieldset class="fieldset_box">
-                        <legend class="legend_name">Details</legend>
+                        <legend class="legend_name">Basic Info</legend>
                         <div class="form_view">
                             <label class="form_labell">Vessel :</label>
                             <label class="form_input ship_name "></label>
