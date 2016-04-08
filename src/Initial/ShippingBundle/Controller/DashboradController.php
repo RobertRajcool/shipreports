@@ -270,7 +270,7 @@ class DashboradController extends Controller
             $ob->chart->renderTo('area');
             $ob->chart->type('column');
             $ob->chart->hieght(250);
-            $ob->title->text('Star Systems Reporting Tool ',array('style'=>array('color' => 'red')));
+            $ob->title->text('',array('style'=>array('color' => 'red')));
             $ob->xAxis->type('category');
             $ob->yAxis->title(array('text'=>'Values'));
             $ob->legend->enabled(false);
