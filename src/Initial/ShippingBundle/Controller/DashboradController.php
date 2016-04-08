@@ -27,7 +27,7 @@ class DashboradController extends Controller
      *
      * @Route("/", name="dashboardhome")
      */
-    public function indexAction(Request $request,$mode='',$dataofmonth='')
+    public function indexAction(Request $request,$mode='',$dataofmonth='', $year=' ')
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -291,7 +291,7 @@ class DashboradController extends Controller
 
             // Scorecard or Traffic light  Color coding starts here
 
-            if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+            /*if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
             {
                 $company_details_id_query = $em->createQueryBuilder()
                     ->select('b.id')
@@ -331,21 +331,29 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
-            $lastmonthdetail=$lastdate[0]['dataOfMonth'];
+            $lastmonthdetail=$lastdate[0]['dataOfMonth'];*/
+
             $lastfivedatearray=array();
-            $mystringvaluedate=$lastmonthdetail->format('Y-m-d');
-            array_push($lastfivedatearray,$mystringvaluedate);
-            for($i=0;$i<2;$i++)
+
+            if($year==' ')
             {
-                $mydatevalue=new \DateTime($mystringvaluedate);
-
-                $mydatevalue->modify("last day of previous month");
-                $myvalue=$mydatevalue->format("Y-m-d");
-                array_push($lastfivedatearray,$myvalue);
-
-                $mystringvaluedate=$myvalue;
-
+                for ($m=1; $m<=12; $m++)
+                {
+                    $month = date('Y-m-d', mktime(0,0,0,$m, 1, date('Y')));
+                    array_push($lastfivedatearray,$month);
+                }
+                $currentyear=date('Y');
             }
+            if($year!=' ')
+            {
+                for ($m=1; $m<=12; $m++)
+                {
+                    $month = date('Y-m-d', mktime(0,0,0,$m, 1, date($year)));
+                    array_push($lastfivedatearray,$month);
+                }
+                $currentyear=date($year);
+            }
+            
             //Find Last three Months Ends Here//
 
             // Finding kpiName to display
@@ -542,6 +550,19 @@ class DashboradController extends Controller
             $newcategories1 = array_reverse($newcategories);
             $finalkpielementvaluearray1 = array_reverse($finalkpielementvaluearray);
 
+            $currentMonth = date('n');
+            $mon = $currentMonth-1;
+
+            $quaterMonth = array();
+            $quaterMonthColor = array();
+            $quaterMonthValue = array();
+            for($a=0;$a<3;$a++)
+            {
+                array_push($quaterMonth,$newcategories[$mon]);
+                array_push($quaterMonthColor,$datescolorarray[$mon]);
+                array_push($quaterMonthValue,$finalkpielementvaluearray[$mon]);
+                $mon--;
+            }
 
 
             return $this->render(
@@ -552,10 +573,13 @@ class DashboradController extends Controller
                     'ship_count'=>count($listallshipforcompany),
                     'kpi_count'=>count($findkpilist),
                     'kpi_list' => $listallkpi,
-                    'month_name' => $newcategories1,
-                    'kpicolorarray' => $datescolorarray1,
-                    'avgscore' => $finalkpielementvaluearray1,
-                    'currentyear'=>$yearchange
+                    'month_name' => $quaterMonth,
+                    'kpicolorarray' => $quaterMonthColor,
+                    'avgscore' => $quaterMonthValue,
+                    'currentyear'=>$yearchange,
+                    'yearKpiColorArray' => $datescolorarray,
+                    'yearAvgScore' => $finalkpielementvaluearray,
+                    'yearMonthName' => $newcategories
 
                 )
             );

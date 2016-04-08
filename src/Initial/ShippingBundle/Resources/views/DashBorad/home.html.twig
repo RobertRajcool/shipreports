@@ -223,37 +223,58 @@
                             }
                         });
 
-
-
                     });
+
+                    $('.yearViewContent').hide();
+
+                    $('.yearView').click(function()
+                    {
+                        $('.wholeContent').hide();
+                        $('.yearViewContent').show();
+                    })
+
+                    $('.quaterView').click(function(){
+
+                        $('.yearViewContent').hide();
+                        $('.wholeContent').show();
+                    })
                 });
             </script>
         {% endblock %}
+
+        <div class="wholeContent">
         <div class="col-sm-10">
             <div class="dashboard">
                 <div class="table-responsive">
                     <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
                         <thead>
                         <tr>
-                            <th>Management Performance</th>
+                            <th>
+                                Management Performance
+                                <div class="year_view_btn">
+                                    <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                    <a href=""><span class="item yearView">2016</span></a>
+                                    <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
+                                </div>
+                            </th>
                         </tr>
                         </thead>
-                        {#<tbody>
+                        <tbody>
                         <tr>
-                            <td>Scorecard: Minimum ~ Maximum: 0 ~ 3.0</td>
+                            {#<td>Year-2016</td>#}
                         </tr>
-                        </tbody>#}
+                        </tbody>
                     </table>
                     <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
                         <thead>
                         <tr>
-                            <th class="kpi_name kpi_name_thtd">Keep Performance Index</th>
+                            <th class="kpi_name kpi_name_thtd">KPI</th>
                             <th class="weightage">Weightage</th>
                             {% set i2=0 %}
                             {% for month in month_name %}
                                 <th class="month">{{ month }}</th>
                                 {% if i2 != 2 %}
-                                    <th class="month_difference">&nbsp;</th>
+                                    <th class="month_difference">status</th>
                                 {% endif %}
                                 {% set i2=i2+1 %}
                             {% endfor %}
@@ -346,8 +367,7 @@
         <div class="col-sm-2 dashboard">
             <div class="widget time">
                 <div class="x-header">
-                    <div class="x-panel-header-text">{{ 'dashboard.shipname'|trans }}  </div>
-                    <div class="vessels_number"> {{ ship_count }}</div>
+                    <div class="x-panel-header-text">{{ 'dashboard.shipname'|trans }}  {{ ship_count }}</div>
                 </div>
                 <div class="ship_name">
                     <div class="dashboard_ship_list">
@@ -381,5 +401,97 @@
             </div>
         </div>
     {% endif %}
+    </div>
+
+    <div class="yearViewContent">
+        <section>
+            <div class="">
+                <div class="col-sm-12">
+                    <div class="dashboard">
+                        <div>
+                            <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                                <thead>
+                                <tr>
+                                    <th>Management Performance
+                                        <div class="year_view_btn">
+                                            <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                            <a href=""><span class="item yearView quaterView">2016</span></a>
+                                            <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
+                                        </div>
+                                    </th>
+                                    {#<th class="quaterView">Quater view </th>#}
+                                </tr>
+                                </thead>
+                            </table>
+
+                            <table class="table table-striped-2 year_view_score_card_row">
+                                <thead>
+                                <tr>
+                                    <th class="kpi_name_thtd">KPI</th>
+                                    <th>Weightage</th>
+                                    {% for monthName in yearMonthName %}
+                                        <th colspan="2">{{ monthName }}</th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% set i=0 %}
+                                {% for kpi in kpi_list %}
+                                    <tr>
+                                        <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                                        <td class="weightage">{{ kpi.weightage }}</td>
+                                        {% for j in 0..11 %}
+                                            <td class="month">
+                                                {% if yearKpiColorArray[j][i]=="Green" %}
+                                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                {% elseif yearKpiColorArray[j][i]=="Red" %}
+                                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                {% elseif yearKpiColorArray[j][i]=="Yellow" %}
+                                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                {% else %}
+                                                    <div class="nocolor"></div>
+                                                {% endif %}
+
+                                            </td>
+
+                                            {% if j != 11 %}
+                                                {% set j1=j+1 %}
+                                                <td class="month_difference">
+                                                    {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
+                                                        <img src="/images/straight_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
+                                                        <img src="/images/down_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                        <img src="/images/down_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
+                                                        <img src="/images/up_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
+                                                        <img src="/images/straight_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                        <img src="/images/up_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
+                                                        <img src="/images/up_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
+                                                        <img src="/images/down_arrow.png">
+                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                        <img src="/images/straight_arrow.png">
+                                                    {% endif %}
+                                                    {#<img src="/images/down_arrow.png">#}
+                                                </td>
+                                            {% endif %}
+
+                                        {% endfor %}
+                                        {% set i=i+1 %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
 
 {% endblock %}
