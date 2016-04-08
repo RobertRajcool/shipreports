@@ -1,11 +1,24 @@
 /*
-   * Base structure
-   */
-
+ * Base structure
+ */
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
     background:#FFFFFF;
     font-size: 13px !important;
+}
+video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    transform: translateX(-50%) translateY(-50%);
+    background: url('//demosthenes.info/assets/images/polina.jpg') no-repeat;
+    background-size: cover;
+    transition: 1s opacity;
 }
 /*
  * Global add-ons
@@ -342,7 +355,7 @@ select {
     margin:0px;
     padding:0px;
     width:auto;
-    height:409px;
+    height:399px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -393,6 +406,13 @@ select {
     float:left;
     padding:1px 0px;
 }
+.dashboard .widget .x-header .vessels_number {
+    color: #383838;
+    font-size: 14px;
+    font-weight: bold;
+    float:right;
+    padding:1px 0px;
+}
 .dashboard .widget .toolbar-title {
     color: #383838;
     font-size: 14px;
@@ -420,7 +440,7 @@ select {
     height: 273px;
 }
 .dashboard .widget .ship_name {
-    min-height:390px;
+    min-height:380px;
     padding:0px;
 }
 .dashboard .widget .chart-2 {
@@ -1171,6 +1191,10 @@ select {
     border-top: 1px solid #555555;
     list-style:none;
 }
+.views_kpi_form_list_main ui li img {
+    float:right;
+    margin:-25px 5px 0 0;
+}
 .views_kpi_form_list_main ui li a.active {
     background:#FFFFFF;
     color:#666666;
@@ -1632,6 +1656,71 @@ select {
     width: 60%;
     float:left !important;
 }
+/* Users screen */
+.year_view_btn {
+    color: #FFFFFF;
+    font-weight: bold;
+    float:right;
+    padding:1px 0px;
+    margin:2px -10px 0 0;
+}
+.year_view_btn .left-arrow {
+    margin:1px 4px 0 0;
+    float:left;
+    font-size: 12px;
+}
+.year_view_btn .right-arrow {
+    margin:1px 0 0 6px;
+    float:right;
+    font-size: 12px;
+}
+.year_view_btn .item {
+    padding:0px 2px;
+    font-size: 13px;
+    float:left;
+    margin-top:-1px;
+}
+
+.year_view_score_card_row {
+    margin-bottom: 0px;
+    border:1px solid #dddddd;
+}
+.year_view_score_card_row thead th {
+    text-align:center;
+    background:#989898;
+    border-right:1px solid #dddddd;
+    padding: 3px 7px !important;
+}
+.year_view_score_card_row tbody td {
+    text-align:center;
+}
+.year_view_score_card_row .kpi_name_thtd {
+    text-align:left;
+}
+.year_view_score_card_row tr {
+    border-bottom: 1px solid #dddddd !important;
+}
+.year_view_score_card_row tbody tr td {
+    border-right:1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+    padding: 2px 7px !important;
+}
+.year_view_score_card_row .kpi_name {
+    width: 26%;
+}
+.year_view_score_card_row .weightage {
+    width: 5%;
+}
+.year_view_score_card_row .month {
+    width: 3%;
+}
+.year_view_score_card_row .month_difference {
+    width: 3%;
+}
+
+
+
+
 
 
 
@@ -1700,6 +1789,11 @@ input[type="color"],
 .graph_and_colour_coding_dashboard_main_title_row tbody td {
     padding:2px 10px !important;
 }
+.graph_and_colour_coding_dashboard_main_title_row thead th a:hover {
+    color:#CCCCCC;
+}
+
+
 
 .graph_and_colour_coding_dashboard_row {
     margin-bottom: 0px;
@@ -1764,11 +1858,45 @@ input[type="color"],
     filter: alpha(opacity=0);
 }
 
-.select_all .checkbox {
-    margin: 0px;
-    float: left;
+
+
+
+.graph_and_colour_coding_dashboard_row_new {
+    margin-bottom: 0px;
+    border:1px solid #dddddd;
+    width: 100%;
+    display:block;
 }
-.select_all .checkbox_text {
-    margin: 7px 0 0 0;
-    float: left;
+.graph_and_colour_coding_dashboard_row_new tbody .kpi_name {
+    width: 50%;
+}
+.graph_and_colour_coding_dashboard_row_new tbody .weightage {
+    width: 10%;
+}
+.graph_and_colour_coding_dashboard_row_new tbody .month {
+    width: 8%;
+}
+
+.graph_and_colour_coding_dashboard_row_new tbody .month_difference {
+    width: 8%;
+}
+.graph_and_colour_coding_dashboard_row_new thead {
+    display: inline-block;
+    width: 100%;
+}
+.graph_and_colour_coding_dashboard_row_new thead tr {
+    display: inline-block;
+    width: 100%;
+}
+.graph_and_colour_coding_dashboard_row_new thead tr th {
+    border-right:1px solid #dddddd;
+    background:#989898;
+}
+
+
+.graph_and_colour_coding_dashboard_row_new tbody {
+    height: 200px;
+    display: inline-block;
+    width: 100%;
+    overflow: auto;
 }
