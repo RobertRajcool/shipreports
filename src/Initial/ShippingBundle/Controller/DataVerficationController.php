@@ -520,13 +520,13 @@ class DataVerficationController extends Controller
                 }
             }
             $returnmsg = ' Data Saved...';
-            $url=$_SERVER['REQUEST_URI'];
+            $fullurl="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
                 ->setFrom('lawrance@commusoft.co.uk')
                 ->setTo("doss.cclawranc226@gmail.com")
                 ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
-                ->setBody("This Web Url:".$url);
+                ->setBody("This Web Url:".$fullurl);
 
             $mailer->send($message);
         }
@@ -1236,13 +1236,13 @@ class DataVerficationController extends Controller
                     ->where('b.id = :userId')
                     ->setParameter('userId', $userId)
                     ->getQuery();*/
-                $url=$_SERVER['REQUEST_URI'];
+                $fullurl="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
                 $mailer = $this->container->get('mailer');
                 $message = \Swift_Message::newInstance()
                     ->setFrom('lawrance@commusoft.co.uk')
                     ->setTo("doss.cclawranc226@gmail.com")
                     ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
-                    ->setBody("This Web Url:".$url);
+                    ->setBody("This Web Url:".$fullurl);
 
                 $mailer->send($message);
 
