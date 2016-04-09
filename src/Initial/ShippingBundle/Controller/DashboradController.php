@@ -146,6 +146,7 @@ class DashboradController extends Controller
                                 ->andwhere('a.kpiDetailsId = :kpiDetailsId')
                                 ->andWhere('a.elementDetailsId = :Elementid')
                                 ->andWhere('a.monthdetail =:dataofmonth')
+                                ->andWhere('a.status = 3 ')
                                 ->setParameter('shipid', $listallshipforcompany[$kj]['id'])
                                 ->setParameter('kpiDetailsId', $newkpiid[0]['id'])
                                 ->setParameter('Elementid', $findelementidarray[$jk]['id'])
