@@ -261,12 +261,13 @@ class DashboradController extends Controller
             // Assign values of element drilldown to graph drill down array Ends Here
 
             //Finding details for series and drildown Ends Here//
+            $monthinletter = $lastmonthdetail->format('M-Y');
             if($mode=='getnextmonthchart')
             {
-                return array("data" =>$mykpivaluearray);
+                return array("data" =>$mykpivaluearray,'currentmonth'=>$monthinletter);
             }
 
-            $monthinletter = $lastmonthdetail->format('M-Y');
+
             // Adding data to javascript chart function starts Here.. //
             $ob = new Highchart();
             $ob->chart->renderTo('area');

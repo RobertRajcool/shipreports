@@ -105,16 +105,17 @@
                         $.ajax({
                             success: function(data)
                             {
-                                $('#area').highcharts().series[0].setData(data.changechartdata);
+                               /* $('#area').highcharts().series[0].setData(data.changechartdata);*/
 
-                                /*var chart = $('#area').highcharts();
+
+                                var chart = $('#area').highcharts();
                                  chart.series[0].update({
                                  name: month+'-'+year,
                                  data: data.changechartdata
                                  });
 
 
-                                 */
+
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
