@@ -276,7 +276,7 @@
             </trans-unit>
             <trans-unit id="69">
                 <source>dataverification.verfiy</source>
-                <target>Verify</target>
+                <target>Verified</target>
             </trans-unit>
              <trans-unit id="70">
                 <source>dashboard.ranking</source>

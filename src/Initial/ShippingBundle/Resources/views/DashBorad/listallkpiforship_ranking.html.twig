@@ -382,6 +382,7 @@
                 <thead>
                 <tr>
                     <th colspan="4">{{ 'kpiranking.header'|trans }}</th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -417,7 +418,7 @@
                 {% for kpi in listofkpi %}
                     <tr>
                         <td class="kpi_name_thtd"><a
-                                    href="{{ path('listelementforkpi_ranking', { 'kpiid': kpi.id}) }}"
+                                    href="{{ path('listelementkpi_ranking', { 'kpiid': kpi.id }) }}"
                                     title="{{ kpi.kpiName }}">
                                 {{ kpi.kpiName }}
                             </a></td>
