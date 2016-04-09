@@ -81,7 +81,7 @@
                 var action_arr = new Array();
                 $('.box_icon').hide();
                 $('.show_element').hide();
-                $('.element_create_view').hide();
+                //$('.element_create_view').hide();
                 $('#element_list_view').hide();
                 $('.grid_edit_element').hide();
 
@@ -98,10 +98,12 @@
                     $('.grid_edit_element').hide();
                     $('#element_grid_view').show();
                     $('.list_icon').show();
+                    $('.element_create_view').show();
                 });
                 $('.list_icon').click(function(){
                     $('#element_grid_view').hide();
                     $('.show_element').hide();
+                    $('.element_create_view').hide();
                     $('.grid_edit_element').hide();
                     $('#element_list_view').show();
                     $('.box_icon').show();
@@ -150,6 +152,7 @@
 
                 $('.element_class').live("click",function()
                 {
+                    $('.element_create_view').hide();
                     $('.list_icon').hide();
                     $('.box_icon').show();
                     $('.grid_edit_element').hide();
@@ -735,8 +738,8 @@
     <div class="element_create_view">
 
         <section>
-            <div class="col-sm-12">
-                <div class="add_kpi_views_screen">
+            <div class="col-sm-11">
+                <div class="add_new_users_views_screen">
                     <form class="form-horizontal no-style" action="{{ path('elementdetails_new1') }}" method="post">
 
                         <div class="kpi_basic_details">
@@ -774,12 +777,6 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        {#<span class="inlineinput">
-                                            {{ form_widget(form.activatedDate,{'class':'full-width-select ','label': ''}) }}
-                                        </span>
-                                        <span class="inlineinput">
-                                            To{{ form_widget(form.endDate,{'class':'full-width-select ','label': ''}) }}
-                                        </span>#}
                                         <span>
                                             <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
                                                 <option selected="selected">--</option>
@@ -853,48 +850,44 @@
                                 </div>
 
                             </fieldset>
-                        </div>
-
-                        <div class="kpi_rules">
-                            <fieldset class="fieldset_box_right add_rule_right_form">
-                                <legend class="legend_name">Rules</legend>
-                                <div class="form-group button">
-                                    <div class="col-xs-12">
-                                        {#<a href="">Add rule</a> <a href="">Sub condition</a>#}
-                                        <div id="conditions"></div>
-                                        <div id="actions"></div>
-                                        <p id="text_box"></p>
-                                        <input type="hidden" id="result" name="value">
-
+                            <div class="kpi_rules">
+                                <fieldset class="fieldset_box ">
+                                    <legend class="legend_name">Rules</legend>
+                                    <div class="form-group button">
+                                        <div class="col-xs-12">
+                                            {#<a href="">Add rule</a> <a href="">Sub condition</a>#}
+                                            <div id="conditions"></div>
+                                            <div id="actions"></div>
+                                            <p id="text_box"></p>
+                                            <input type="hidden" id="result" name="value">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-12">
-
-                                        {#<a href="" id="actions">add action</a>#}
+                                    <div class="form-group button">
+                                        <div class="col-xs-12">
+                                            {#<a href="" id="actions">add action</a>#}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9 add_button_place">
+                                    <div class="form-group button">
+                                        <div class="col-xs-9 add_button_place">
 
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="table-responsive">
-                                    <table class="table add_rule_conditions" id="rule-table">
-                                        <thead>
-                                        <tr id="row_id">
-                                            <th class="conditions">Conditions</th>
-                                            <th class="color">Color</th>
-                                            <th class="action">&nbsp;</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="small"></div>
-                                </div>
-                            </fieldset>
+                                    <div class="table-responsive">
+                                        <table class="table add_rule_conditions" id="rule-table">
+                                            <thead>
+                                            <tr id="row_id">
+                                                <th class="conditions">Conditions</th>
+                                                <th class="color">Color</th>
+                                                <th class="action">&nbsp;</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <div class="small"></div>
+                                    </div>
+                                </fieldset>
+                            </div>
                         </div>
 
                         <div class="actions_submit">

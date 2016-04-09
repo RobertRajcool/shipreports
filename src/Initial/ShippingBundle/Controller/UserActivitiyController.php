@@ -24,8 +24,6 @@ class UserActivitiyController extends Controller
         ));
     }
 
-
-
     public function edit1Action(Request $request, User $user, $id)
     {
 
