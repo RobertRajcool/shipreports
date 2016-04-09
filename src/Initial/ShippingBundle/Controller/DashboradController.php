@@ -60,6 +60,7 @@ class DashboradController extends Controller
 
 
             $listallshipforcompany = $query->getResult();
+
             //Finding Number of Ships For particular company Ends Here//
 
             //Finding Lastmonthdetail date Starts Here//
@@ -287,52 +288,6 @@ class DashboradController extends Controller
 
             // Adding data to javascript chart function  Ends Here.. //
 
-
-
-
-            // Scorecard or Traffic light  Color coding starts here
-
-            /*if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
-            {
-                $company_details_id_query = $em->createQueryBuilder()
-                    ->select('b.id')
-                    ->from('InitialShippingBundle:CompanyDetails','b')
-                    ->where('b.adminName = :username')
-                    ->setParameter('username',$username)
-                    ->getQuery()
-                    ->getResult();
-                $company_details_id = $company_details_id_query[0]['id'];
-            }
-            else
-            {
-                $company_details_id_query = $em->createQueryBuilder()
-                    ->select('identity(a.companyid)')
-                    ->from('InitialShippingBundle:User','a')
-                    ->where('a.id = :user_id')
-                    ->setParameter('user_id',$userId)
-                    ->getQuery()
-                    ->getResult();
-                $company_details_id = $company_details_id_query[0][1];
-            }
-
-            //Find Last three Months Starts Here //
-            $comanyiddetailarray = $em->createQueryBuilder()
-                ->select('b.id')
-                ->from('InitialShippingBundle:CompanyDetails','b')
-                ->where('b.adminName = :username')
-                ->setParameter('username',$username)
-                ->getQuery()
-                ->getResult();
-            $lastdate = $em->createQueryBuilder()
-                ->select('a.dataOfMonth')
-                ->from('InitialShippingBundle:Excel_file_details','a')
-                ->where('a.company_id = :company_id')
-                ->setParameter('company_id',$company_details_id)
-                ->addOrderBy('a.id', 'DESC')
-                ->getQuery()
-                ->getResult();
-
-            $lastmonthdetail=$lastdate[0]['dataOfMonth'];*/
 
             $lastfivedatearray=array();
 
@@ -577,6 +532,21 @@ class DashboradController extends Controller
 
             }
 
+            $rankinKpiCountQuery = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->groupby('a.kpiName')
+                ->getQuery()
+                ->getResult();
+            $KpiCountQuery = $em->createQueryBuilder()
+                ->select('a')
+                ->from('InitialShippingBundle:KpiDetails', 'a')
+                ->groupby('a.kpiName')
+                ->getQuery()
+                ->getResult();
+            $rankingKpiCount = count($rankinKpiCountQuery);
+            $kpiCount = count($KpiCountQuery);
+
             return $this->render(
                 'InitialShippingBundle:DashBorad:home.html.twig',
                 array('allships'=>$listallshipforcompany,
@@ -592,7 +562,9 @@ class DashboradController extends Controller
                     'yearKpiColorArray' => $datescolorarray,
                     'yearAvgScore' => $finalkpielementvaluearray,
                     'yearMonthName' => $newcategories,
-                    'currentYear' => $currentyear
+                    'currentYear' => $currentyear,
+                    'rankinKpiCount' => $rankingKpiCount,
+                    'kpiCount' => $kpiCount
 
                 )
             );
