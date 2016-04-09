@@ -243,6 +243,7 @@
                 $("#kpiform").submit(function($e)
                         {
                             var preshipid=$('#shipid').val();
+
                             var btn= $(this).find("input[type=submit]:focus").attr('id');
                             $e.preventDefault();
                             var formid = $('#kpiform');
@@ -311,7 +312,7 @@
                                     success: function(data)
                                     {
                                         var valuearray=data.elementvalues;
-                                        $('#preshipid').append('<img src="/images/tick_icon.png">');
+                                        $('#'+preshipid).after('<img src="/images/tick_icon.png">');
                                         $('#shipid').val('');
                                         $('#addkpiformid').html('');
                                         $('#addkpiformid').text('');

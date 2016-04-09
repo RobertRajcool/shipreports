@@ -307,8 +307,9 @@
                             $.ajax({
                                 success: function(data)
                                 {
+
                                     var valuearray=data.elementvalues;
-                                    $('#preshipid').append('<img src="/images/tick_icon.png">');
+                                    $('#'+preshipid).after('<img src="/images/tick_icon.png">');
                                     var valuearray=data.elementvalues;
                                     $('#shipid').val('');
                                     $('#addkpiformid').html('');
