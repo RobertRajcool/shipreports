@@ -3,8 +3,10 @@
  */
 $(document).ready(function()
 {
-    $('#registercontentid').hide();
+    $('#nogroupselected').hide();
+    $('#registercontentid').show();
     $('#viewcontentid').hide();
+    $('#updatebuttonid').hide();
     var defalutchecboxid = 'activecheckbox';
     $('#activecheckbox').prop('checked', true);
     $('#activecheckbox').attr("disabled", true);
@@ -275,9 +277,11 @@ $(document).ready(function()
     $('#cancelbuttonid').click(function($event)
         {
             $event.preventDefault();
-            $('#registercontentid').hide();
+            $('#nogroupselected').hide();
+            $('#savegroupid').show();
+            $('#registercontentid').show();
             $('#viewcontentid').hide();
-            $('#nogroupselected').show();
+            $('#updatebuttonid').hide();
         }
     );
     //While click cancel button do remove the from Ends Here
