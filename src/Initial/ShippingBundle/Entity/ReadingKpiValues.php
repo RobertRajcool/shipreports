@@ -61,6 +61,12 @@ class ReadingKpiValues
      * })
      */
     private $elementDetailsId;
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="status", type="integer")
+     */
+    private $status;
 
 
     /**
@@ -186,6 +192,22 @@ class ReadingKpiValues
     public function getElementDetailsId()
     {
         return $this->elementDetailsId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param int $status
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
     }
 
 

@@ -101,7 +101,7 @@ $(document).ready(function()
                 $.ajax({
                     type: "post",
                     data: form.serialize(),
-                    url: "/mailing/emailgroup",
+                    url: Routing.generate('emailgroup'),
                     success: function(data)
                     {
                         $('#registercontentid').hide();

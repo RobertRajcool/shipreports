@@ -262,7 +262,7 @@ class MailingController extends Controller
     /**
      * Add Account.
      *
-     * @Route("/emailgroup", name="emailgroup")
+     * @Route("/addemailgroup", name="emailgroup")
      * @Method("Post")
      */
     public function emailgroupAction(Request $request)
@@ -301,6 +301,7 @@ class MailingController extends Controller
         $groupobject=new EmailGroup();
         $groupobject->setGroupname($groupname);
         $groupobject->setCompanyid($newcompanyid);
+        $groupobject->setGroupstatus(1);
         $em->persist($groupobject);
         $em->flush();
         $lastid= $groupobject->getId();
