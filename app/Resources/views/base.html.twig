@@ -31,12 +31,12 @@
        });*/
 
         app.controller('myCtrl', function($scope) {
-            $scope.showMe = false;
+            /*$scope.showMe = false;
             $scope.myFunc = function() {
                 $scope.showMe = !$scope.showMe;
                 $scope.ScoreCard = false;
                 $scope.VesselRanking = false;
-            }
+            }*/
             $scope.showMe3 = false;
             $scope.myFunc3 = function() {
                 $scope.showMe3 = !$scope.showMe3;
@@ -58,6 +58,12 @@
             $scope.myFuncKpiRulesShow = function() {
                 $scope.KpiRulesShow = !$scope.KpiRulesShow;
             }
+            $scope.SettingsFor = false;
+             $scope.mySettingsFun = function() {
+             $scope.SettingsFor = !$scope.SettingsFor;
+             $scope.ScoreCard = false;
+             $scope.VesselRanking = false;
+             }
         });
     </script>
     <script type="text/javascript">
@@ -254,7 +260,7 @@
                     </div>
                 </div>
 
-                <div class="my-account-box" ng-show="showMe">
+                <div class="my-account-box" ng-show="mySettingsFun()">
                     <div class="my-account-box-inner">
                         <div class="settings"><samp class="ss-settings"><a href={{ path('fos_user_change_password') }}>{{ 'layout.menu.settingsfor'|trans }} {{app.user.username }}</a></samp></div>
                         <div class="logout"><samp class="ss-logout"><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.menu.logout'|trans }}</a></samp></div>

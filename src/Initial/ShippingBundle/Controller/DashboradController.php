@@ -238,7 +238,27 @@ class DashboradController extends Controller
                 //  $mykpivaluearray[$kj]['drilldown']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown from kpivalues
                 //  $drilldownarray[$kj]['data']=$alterdrildownarray;//assign drilldown array values  for shipdetails drill down array
                 $mykpivaluearray[$kj]['name']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown(name) from kpivalues
-                $mykpivaluearray[$kj]['y'] = array_sum($drildowndataarray);//assign shipdrilldown(values) from kpivalues
+                $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $listallshipforcompany[$kj]['id']));
+                $shipname = $shipid->getShipName();
+                $man_year= $shipid->getManufacturingYear();
+                $vesselage=0;
+
+                if($man_year=="")
+                {
+                    $yearcount=0;
+                }
+                else
+                {
+                    $currentdatestring=date('Y-01-01');
+                    $d1 = new \DateTime($currentdatestring);
+                    $man_datestring=$man_year.'-01-'.'01';
+                    $d2=new \DateTime($man_datestring);
+                    $diff = $d2->diff($d1);
+                    $yearcount=$diff->y+1;
+                    $vesselage=20/$yearcount;
+                }
+
+                $mykpivaluearray[$kj]['y'] = array_sum($drildowndataarray)+$vesselage;//assign shipdrilldown(values) from kpivalues
                 $yearchange = $lastmonthdetail->format('Y');
                 $mykpivaluearray[$kj]['url'] = '/dashboard/'.$listallshipforcompany[$kj]['id'].'/'.$yearchange.'/listallkpiforship_ranking';//assign shipdrilldown(values) from kpivalues
 
@@ -1879,7 +1899,7 @@ class DashboradController extends Controller
     /**
      * List all element for kpi
      *
-     * @Route("/{kpiid}/listelementforkpi_ranking", name="listelementforkpi_ranking")
+     * @Route("/{kpiid}/listelementforkpi_ranking", name="listelementkpi_ranking")
      */
     public function listallelementforkpi_rankingAction($kpiid,Request $request,$mode='')
     {
@@ -1949,7 +1969,7 @@ class DashboradController extends Controller
 
             // Getting kpi_color value from ship_kpi_listAction function/controller
 
-            $kpi_color_array = $this->listallkpiforship_rankingAction($shipid, $request, 'kpi_id');
+            $kpi_color_array = $this->listallkpiforship_rankingAction($shipid,date('Y'), $request, 'kpi_id');
 
             // Finding index of the kpi from $kpi_color_array
 
@@ -2177,7 +2197,8 @@ class DashboradController extends Controller
                         'kpi_rule' => $rule_for_kpi_id,
                         'shipid'=>$shipid,
                         'monthlydata'=>$findoverallelementvalue,
-                        'elementRule' => $element_rule
+                        'elementRule' => $element_rule,
+                        'currentyear'=>date('Y')
                     )
                 );
 
@@ -2344,7 +2365,9 @@ class DashboradController extends Controller
                         'kpi_rule' => $rule_for_kpi_id,
                         'shipid'=>$shipid,
                         'monthlydata'=>$findoverallelementvalue,
-                        'elementRule' => $element_rule
+                        'elementRule' => $element_rule,
+                        'currentyear'=>date('Y')
+
                     )
                 );
             }
