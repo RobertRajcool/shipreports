@@ -106,6 +106,7 @@ class DashboradController extends Controller
                     $kpiidvalue = $findkpilist[$element]['id'];
                     $kpiweightage = $findkpilist[$element]['weightage'];
                     $kpiname = $findkpilist[$element]['kpiName'];
+
                     $findelementidarray = $em->createQueryBuilder()
                         ->select('c.id','c.elementName', 'c.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'c')
@@ -343,6 +344,7 @@ class DashboradController extends Controller
                     $kpiidvalue = $listallkpi[$element]['id'];
                     $kpiweightage = $listallkpi[$element]['weightage'];
                     $kpiname = $listallkpi[$element]['kpiName'];
+
                     $findelementidarray = $em->createQueryBuilder()
                         ->select('c.id', 'c.weightage')
                         ->from('InitialShippingBundle:ElementDetails', 'c')
@@ -1571,6 +1573,7 @@ class DashboradController extends Controller
 
     }
 
+
     /**
      * List all kpi for ship
      *
@@ -2004,7 +2007,7 @@ class DashboradController extends Controller
 
             // Getting kpi_color value from ship_kpi_listAction function/controller
 
-            $kpi_color_array = $this->listallkpiforship_rankingAction($shipid, $request, 'kpi_id');
+            $kpi_color_array = $this->listallkpiforship_rankingAction($shipid,$year=' ', $request, 'kpi_id');
 
             // Finding index of the kpi from $kpi_color_array
 
@@ -2055,6 +2058,7 @@ class DashboradController extends Controller
 
 
 
+            $element_rule = "";
 
 
             if (count($listelement) == 0) {
