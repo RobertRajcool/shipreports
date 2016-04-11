@@ -117,6 +117,7 @@ class DashboradController extends Controller
 
 
                     $finalkpivalue = 0;
+
                     if (count($findelementidarray) == 0)
                     {
                         $newkpiid = $em->createQueryBuilder()
@@ -340,7 +341,6 @@ class DashboradController extends Controller
 
                 for ($element = 0; $element < count($listallkpi); $element++)
                 {
-
                     $kpiidvalue = $listallkpi[$element]['id'];
                     $kpiweightage = $listallkpi[$element]['weightage'];
                     $kpiname = $listallkpi[$element]['kpiName'];
@@ -353,7 +353,8 @@ class DashboradController extends Controller
                         ->getQuery()
                         ->getResult();
 
-                    $finalkpivalue = 0;
+                    $gh = count($findelementidarray);
+                    $finalKpiValue = 0;
                     if (count($findelementidarray) == 0)
                     {
                         $newkpiid = $em->createQueryBuilder()
@@ -392,16 +393,18 @@ class DashboradController extends Controller
 
                             if (count($dbvalueforelement) == 0) {
                                 $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
+                                $finalKpiValue += $finddbvaluefomula;
                             }
                             else {
                                 $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
+                                $finalKpiValue += $finddbvaluefomula;
                             }
 
 
                         }
                         // Kpi color Finding starts Here//
+
+                        $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
 
                         $kpi_rules = $em->createQueryBuilder()
                             ->select('a.rules')
@@ -418,7 +421,7 @@ class DashboradController extends Controller
                             $rule = $kpi_rules[$kpi_rules_count];
                             /*
                                                 $rule_obj = json_encode($rule);*/
-                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
                             $jsfilename = 'node ' . $jsfiledirectry;
                             $handle = popen($jsfilename, 'r');
                             $read = fread($handle, 2096);
@@ -454,16 +457,19 @@ class DashboradController extends Controller
 
                             if (count($dbvalueforelement) == 0) {
                                 $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
+                                $finalKpiValue += $finddbvaluefomula;
+                                //$finalKpiValue = null;
                             }
                             else {
                                 $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
+                                $finalKpiValue += $finddbvaluefomula;
                             }
 
 
                         }
                         // Kpi color Finding starts Here//
+
+                        $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
 
                         $kpi_rules = $em->createQueryBuilder()
                             ->select('a.rules')
@@ -480,7 +486,7 @@ class DashboradController extends Controller
                             $rule = $kpi_rules[$kpi_rules_count];
                             /*
                                                 $rule_obj = json_encode($rule);*/
-                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
+                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
                             $jsfilename = 'node ' . $jsfiledirectry;
                             $handle = popen($jsfilename, 'r');
                             $read = fread($handle, 2096);
@@ -495,7 +501,7 @@ class DashboradController extends Controller
                     array_push($findingcolorarray, $read1);
                     array_push($kpiweightagearray, $kpiweightage);
                     // Kpi color Finding Ends Here//
-                    $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
+                    $findkpivalue = $finalKpiValue * (((int)$kpiweightage) / 100);
                     $finalkpielementvalue += $findkpivalue;
                 }
                 array_push($datescolorarray, $findingcolorarray);
