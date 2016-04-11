@@ -1011,13 +1011,17 @@ class DashboradController extends Controller
                 ->addOrderBy('a.id', 'DESC')
                 ->getQuery()
                 ->getResult();
-            
-            $lastmonthdetail = $lastdate[0]['dataOfMonth'];
 
-            if($lastmonthdetail==null)
+            if($lastdate==null)
             {
                 $lastmonthdetail = date("Y-m-d");
             }
+            else
+            {
+                $lastmonthdetail = $lastdate[0]['dataOfMonth'];
+            }
+
+
             $lastfivedatearray = array();
             $mystringvaluedate = $lastmonthdetail->format('Y-m-d');
             array_push($lastfivedatearray, $mystringvaluedate);
