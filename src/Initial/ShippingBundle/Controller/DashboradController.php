@@ -547,6 +547,10 @@ class DashboradController extends Controller
             $rankingKpiCount = count($rankinKpiCountQuery);
             $kpiCount = count($KpiCountQuery);
 
+            $quaterMonth = array_reverse($quaterMonth);
+            $quaterMonthColor = array_reverse($quaterMonthColor);
+            $quaterMonthValue = array_reverse($quaterMonthValue);
+
             return $this->render(
                 'InitialShippingBundle:DashBorad:home.html.twig',
                 array('allships'=>$listallshipforcompany,

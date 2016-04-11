@@ -266,11 +266,48 @@
                                 $('#scorePreviousCurrentYear').val(data.currentYear);
                                 $('#scoreCurrentYear').val(data.currentYear);
 
+                                if(data.currentYear==2016)
+                                {
+                                    var monthCount1 = 0;
+                                    var currentMonth = (new Date).getMonth() + 1;
+                                    $.each(data.yearKpiColorArray,function(i){
+                                        if(monthCount1>currentMonth)
+                                        {
+                                            $.each(data.kpiNameList, function(j){
+                                                data.yearKpiColorArray[i][j]="";
+                                            })
+                                        }
+                                        monthCount1++;
+                                    })
+                                }
+
+                                if(data.currentYear==2015)
+                                {
+                                    var monthCount = 0;
+                                    $.each(data.yearKpiColorArray,function(i){
+                                        if(monthCount<8)
+                                        {
+                                            $.each(data.kpiNameList, function(j){
+                                                data.yearKpiColorArray[i][j]="";
+                                            })
+                                        }
+                                        monthCount++;
+                                    })
+                                }
+                                if(data.currentYear<2015)
+                                {
+                                    $.each(data.yearKpiColorArray,function(i){
+                                        $.each(data.kpiNameList, function(j){
+                                            data.yearKpiColorArray[i][j]="";
+                                        })
+                                    })
+                                }
+
                                 $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
                                 $.each(data.yearMonthName, function(i){
                                     $('<th colspan="2">'+data.yearMonthName[i]+'</th>').appendTo('#previousRowPlace');
                                 });
-                                console.log(data.yearKpiColorArray);
+                                //console.log(data.yearKpiColorArray);
                                 var inn =0;
                                 {% for kpi in kpi_list %}
                                 $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
@@ -399,11 +436,47 @@
                                     $('#scorePreviousCurrentYear').val(data.currentYear);
                                     $('#scoreCurrentYear').val(data.currentYear);
 
+                                    if(data.currentYear==2016)
+                                    {
+                                        var monthCount1 = 0;
+                                        var currentMonth = (new Date).getMonth() + 1;
+                                        $.each(data.yearKpiColorArray,function(i){
+                                            if(monthCount1>currentMonth)
+                                            {
+                                                $.each(data.kpiNameList, function(j){
+                                                    data.yearKpiColorArray[i][j]="";
+                                                })
+                                            }
+                                            monthCount1++;
+                                        })
+                                    }
+
+                                    if(data.currentYear==2015)
+                                    {
+                                        var monthCount = 0;
+                                        $.each(data.yearKpiColorArray,function(i){
+                                            if(monthCount<8)
+                                            {
+                                                $.each(data.kpiNameList, function(j){
+                                                    data.yearKpiColorArray[i][j]="";
+                                                })
+                                            }
+                                            monthCount++;
+                                        })
+                                    }
+                                    if(data.currentYear<2015 )
+                                    {
+                                        $.each(data.yearKpiColorArray,function(i){
+                                            $.each(data.kpiNameList, function(j){
+                                                data.yearKpiColorArray[i][j]="";
+                                            })
+                                        })
+                                    }
+
                                     $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
                                     $.each(data.yearMonthName, function(i){
                                         $('<th colspan="2">'+data.yearMonthName[i]+'</th>').appendTo('#previousRowPlace');
                                     });
-                                    console.log(data.yearKpiColorArray);
                                     var inn =0;
                                     {% for kpi in kpi_list %}
                                     $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
@@ -607,7 +680,7 @@
                             {% endfor %}
                             {% set i1=0 %}
                             <tr>
-                                <td colspan="2" class="kpi_name_thtd"><strong>Average score</strong></td>
+                                <td colspan="2" class="average_score_2_td kpi_name_thtd"><strong>Average score</strong></td>
                                 {% for avg in avgscore %}
                                     <td><strong>{{ avg }}</strong></td>
                                     {% if i1 != 2 %}
@@ -717,23 +790,28 @@
                                     <tr>
                                         <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
                                         <td class="weightage">{{ kpi.weightage }}</td>
-                                        {% for j in 0..11 %}
-                                            <td class="month">
-                                                {% if yearKpiColorArray[j][i]=="Green" %}
-                                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                                {% elseif yearKpiColorArray[j][i]=="Red" %}
-                                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                                {% elseif yearKpiColorArray[j][i]=="Yellow" %}
-                                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                                {% else %}
-                                                    <div class="nocolor"></div>
-                                                {% endif %}
 
+                                        {% for j in 0..11 %}
+
+                                            <td class="month">
+                                                {% if j<5 %}
+                                                    {% if yearKpiColorArray[j][i]=="Green" %}
+                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                    {% elseif yearKpiColorArray[j][i]=="Red" %}
+                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" %}
+                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                    {% else %}
+                                                        <div class="nocolor"></div>
+                                                    {% endif %}
+                                            {% endif %}
                                             </td>
 
                                             {% if j != 11 %}
                                                 {% set j1=j+1 %}
+
                                                 <td class="month_difference">
+                                                {% if j<4 %}
                                                     {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
@@ -754,7 +832,9 @@
                                                         <img src="/images/straight_arrow.png">
                                                     {% endif %}
                                                     {#<img src="/images/down_arrow.png">#}
+                                                {% endif %}
                                                 </td>
+
                                             {% endif %}
 
                                         {% endfor %}
