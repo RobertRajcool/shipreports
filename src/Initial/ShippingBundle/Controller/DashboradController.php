@@ -1011,8 +1011,13 @@ class DashboradController extends Controller
                 ->addOrderBy('a.id', 'DESC')
                 ->getQuery()
                 ->getResult();
-
+            
             $lastmonthdetail = $lastdate[0]['dataOfMonth'];
+
+            if($lastmonthdetail==null)
+            {
+                $lastmonthdetail = date("Y-m-d");
+            }
             $lastfivedatearray = array();
             $mystringvaluedate = $lastmonthdetail->format('Y-m-d');
             array_push($lastfivedatearray, $mystringvaluedate);
@@ -1100,16 +1105,27 @@ class DashboradController extends Controller
                 ->setParameter('kpi_id', $kpi_id_array[0]['id'])
                 ->getQuery()
                 ->getResult();
-            for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+
+            $element_rule="";
+
+            if($listelement==0)
             {
-                $element_rule1 = $em->createQueryBuilder()
-                    ->select('a.rules','identity(a.elementDetailsId)')
-                    ->from('InitialShippingBundle:Rules', 'a')
-                    ->where('a.elementDetailsId = :element_id')
-                    ->setParameter('element_id', $listelement[$elementCount]['id'])
-                    ->getQuery()
-                    ->getResult();
-                $element_rule[$elementCount]=$element_rule1;
+                $element_rule = "";
+            }
+            else
+            {
+                for($elementCount=0;$elementCount<count($listelement);$elementCount++)
+                {
+                    $element_rule_query = $em->createQueryBuilder()
+                        ->select('a.rules','identity(a.elementDetailsId)')
+                        ->from('InitialShippingBundle:Rules', 'a')
+                        ->where('a.elementDetailsId = :element_id')
+                        ->setParameter('element_id', $listelement[$elementCount]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $element_rule[$elementCount]=$element_rule_query;
+                }
+
             }
 
 
