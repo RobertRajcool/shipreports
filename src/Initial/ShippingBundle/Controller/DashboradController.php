@@ -323,11 +323,13 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
+            $monthKpiWeightageArray = array();
             $newcategories=array();
             $finalkpielementvaluearray=array();
             $datescolorarray=array();
             $kpiweightagearray=array();
-
+            $monthAllKpiAverage = array();
+            /*$kpiWeightageTotal=0;*/
 
             //loop for sending dates//
             for ($d = 0; $d < count($lastfivedatearray); $d++) {
@@ -355,6 +357,7 @@ class DashboradController extends Controller
 
                     $gh = count($findelementidarray);
                     $finalKpiValue = 0;
+
                     if (count($findelementidarray) == 0)
                     {
                         $newkpiid = $em->createQueryBuilder()
@@ -436,34 +439,38 @@ class DashboradController extends Controller
                             }
 
                         }
-                        // Kpi color Finding starts Here//
+                    }
 
-                        $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
+                    // Kpi color Finding starts Here//
 
-                        $kpi_rules = $em->createQueryBuilder()
-                            ->select('a.rules')
-                            ->from('InitialShippingBundle:KpiRules', 'a')
-                            ->where('a.kpiDetailsId = :kpi_id')
-                            ->setParameter('kpi_id', $kpiidvalue)
-                            ->getQuery()
-                            ->getResult();
-                        $read1 = "";
+                    $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
 
-                        //Find the color based on kpi rules
-                        for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
-                        {
-                            $rule = $kpi_rules[$kpi_rules_count];
-                            /*
-                                                $rule_obj = json_encode($rule);*/
-                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
-                            $jsfilename = 'node ' . $jsfiledirectry;
-                            $handle = popen($jsfilename, 'r');
-                            $read = fread($handle, 2096);
-                            $read1 = str_replace("\n", '', $read);
+                    /*$kpiWeightageTotal+=$finaRuleValue;*/
+                    array($monthAllKpiAverage,$finaRuleValue);
 
-                            if ($read1 != "false") {
-                                break;
-                            }
+                    $kpi_rules = $em->createQueryBuilder()
+                        ->select('a.rules')
+                        ->from('InitialShippingBundle:KpiRules', 'a')
+                        ->where('a.kpiDetailsId = :kpi_id')
+                        ->setParameter('kpi_id', $kpiidvalue)
+                        ->getQuery()
+                        ->getResult();
+                    $read1 = "";
+
+                    //Find the color based on kpi rules
+                    for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
+                    {
+                        $rule = $kpi_rules[$kpi_rules_count];
+                        /*
+                                            $rule_obj = json_encode($rule);*/
+                        $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
+                        $jsfilename = 'node ' . $jsfiledirectry;
+                        $handle = popen($jsfilename, 'r');
+                        $read = fread($handle, 2096);
+                        $read1 = str_replace("\n", '', $read);
+
+                        if ($read1 != "false") {
+                            break;
                         }
                     }
 
@@ -473,10 +480,13 @@ class DashboradController extends Controller
                     $findkpivalue = $finalKpiValue * (((int)$kpiweightage) / 100);
                     $finalkpielementvalue += $findkpivalue;
                 }
+
+                $overallKpiWeightageForMonth = array_sum($monthAllKpiAverage);
                 array_push($datescolorarray, $findingcolorarray);
                 array_push($finalkpielementvaluearray, $finalkpielementvalue);
-
+                array_push($monthKpiWeightageArray,$overallKpiWeightageForMonth);
             }
+
 
 
             $datescolorarray1 = array_reverse($datescolorarray);
@@ -489,11 +499,13 @@ class DashboradController extends Controller
             $quaterMonth = array();
             $quaterMonthColor = array();
             $quaterMonthValue = array();
+            $quaterMonthKpiWeightageArray = array();
             for($a=0;$a<3;$a++)
             {
                 array_push($quaterMonth,$newcategories[$mon]);
                 array_push($quaterMonthColor,$datescolorarray[$mon]);
                 array_push($quaterMonthValue,$finalkpielementvaluearray[$mon]);
+                array_push($quaterMonthKpiWeightageArray,$monthKpiWeightageArray[$mon]);
                 $mon--;
             }
 
@@ -504,7 +516,8 @@ class DashboradController extends Controller
                     'yearAvgScore' => $finalkpielementvaluearray,
                     'yearMonthName' => $newcategories,
                     'kpi_list' => $listallkpi,
-                    'currentYear' => $year
+                    'currentYear' => $year,
+                    'kpiAverageScore' => $monthKpiWeightageArray
                 );
 
             }
@@ -545,7 +558,8 @@ class DashboradController extends Controller
                     'yearMonthName' => $newcategories,
                     'currentYear' => $currentyear,
                     'rankinKpiCount' => $rankingKpiCount,
-                    'kpiCount' => $kpiCount
+                    'kpiCount' => $kpiCount,
+                    'kpiAverageScore' => $quaterMonthKpiWeightageArray
 
                 )
             );
