@@ -114,6 +114,7 @@ class DashboradController extends Controller
                         ->getResult();
 
                     $elementcolorarray=array();
+                    $finalKpiWeightageArray=array();
 
                     $finalkpivalue = 0;
                     if (count($findelementidarray) == 0)
@@ -134,7 +135,6 @@ class DashboradController extends Controller
                             ->getQuery()
                             ->getResult();
 
-                        $finalKpiWeightageArray=array();
                         for ($jk = 0; $jk < count($findelementidarray); $jk++)
                         {
 
@@ -221,6 +221,7 @@ class DashboradController extends Controller
                             $avgElementValue = array_sum($elementcolorarray)/count($elementcolorarray);
                         }
                         $kpiWeightageForship=($kpiweightage*$avgElementValue)/100;
+
                         array_push($finalKpiWeightageArray,$kpiWeightageForship);
 
                         // $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
@@ -311,6 +312,7 @@ class DashboradController extends Controller
                             $avgElementValue = array_sum($elementcolorarray)/count($elementcolorarray);
                         }
                         $kpiWeightageForship=($kpiweightage*$avgElementValue)/100;
+
                         array_push($finalKpiWeightageArray,$kpiWeightageForship);
 
 
