@@ -402,38 +402,8 @@ class DashboradController extends Controller
 
 
                         }
-                        // Kpi color Finding starts Here//
-
-                        $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
-
-                        $kpi_rules = $em->createQueryBuilder()
-                            ->select('a.rules')
-                            ->from('InitialShippingBundle:KpiRules', 'a')
-                            ->where('a.kpiDetailsId = :kpi_id')
-                            ->setParameter('kpi_id', $newkpiid[0]['id'])
-                            ->getQuery()
-                            ->getResult();
-                        $read1 = "";
-
-                        //Find the color based on kpi rules
-                        for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
-                        {
-                            $rule = $kpi_rules[$kpi_rules_count];
-                            /*
-                                                $rule_obj = json_encode($rule);*/
-                            $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
-                            $jsfilename = 'node ' . $jsfiledirectry;
-                            $handle = popen($jsfilename, 'r');
-                            $read = fread($handle, 2096);
-                            $read1 = str_replace("\n", '', $read);
-
-                            if ($read1 != "false") {
-                                break;
-                            }
-
-                        }
-
                     }
+
                     if (count($findelementidarray) > 0)
                     {
                         for ($jk = 0; $jk < count($findelementidarray); $jk++)
@@ -464,7 +434,6 @@ class DashboradController extends Controller
                                 $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                             }
-
 
                         }
                         // Kpi color Finding starts Here//
