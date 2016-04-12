@@ -315,17 +315,10 @@ class DashboradController extends Controller
 
                         array_push($finalKpiWeightageArray,$kpiWeightageForship);
 
-
-
-                        // $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
                     }
 
 
-                    ///$findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
-                    // $finalkpielementvalue += $findkpivalue;
                     array_push($drildowndataarray,$finalKpiWeightageArray);
-
-
 
                 }
 
@@ -437,7 +430,7 @@ class DashboradController extends Controller
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
-                $finalkpielementvalue1 = 0;
+
                 $findingcolorarray = array();
 
                 for ($element = 0; $element < count($listallkpi); $element++)
@@ -456,9 +449,11 @@ class DashboradController extends Controller
 
                     //$gh = count($findelementidarray);
                     $finalKpiValue = 0;
+                    $finalkpielementvalue1 = 0;
 
                     if (count($findelementidarray) == 0)
                     {
+
                         $newkpiid = $em->createQueryBuilder()
                             ->select('b.id')
                             ->from('InitialShippingBundle:KpiDetails', 'b')
@@ -476,7 +471,7 @@ class DashboradController extends Controller
                             ->getResult();
                         for ($jk = 0; $jk < count($findelementidarray); $jk++)
                         {
-
+                            $elementIdValue = $findelementidarray[$jk]['id'];
                             $weightage = $findelementidarray[$jk]['weightage'];
                             //Finding value based on element id and dates from user//
                             for ($h=0;$h<count($listallshipforcompany);$h++)
@@ -496,16 +491,6 @@ class DashboradController extends Controller
                                     ->getResult();
                                 array_push($shipElementValueArray,$dbvalueforelement);
                             }
-
-/*
-                            if (count($dbvalueforelement) == 0) {
-                                $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                                $finalKpiValue += $finddbvaluefomula;
-                            }
-                            else {
-                                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                                $finalKpiValue += $finddbvaluefomula;
-                            }*/
 
                             $finalAverageValueForShips = array_sum($shipElementValueArray)/count($listallshipforcompany);
 
