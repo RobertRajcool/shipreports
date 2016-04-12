@@ -82,6 +82,7 @@ class DashboradController extends Controller
             //Finding details for series and drildown starts Here//
 
             $mykpivaluearray = array();
+            $finalShipKpiWeightage = array();
             /* $drilldownarray=array();*/
             for($kj=0;$kj<count($listallshipforcompany);$kj++)
             {
@@ -95,9 +96,7 @@ class DashboradController extends Controller
                     ->getResult();
                 $drildowndataarray=array();
                 $finalkpielementvalue = 0;
-                /* $alterdrildownarray = array();
-                 $elementleveldrildown=array();
-                 $elementleveldrildownkpi=array()*/;
+
 
 
                 for ($element = 0; $element < count($findkpilist); $element++)
@@ -106,7 +105,6 @@ class DashboradController extends Controller
                     $kpiidvalue = $findkpilist[$element]['id'];
                     $kpiweightage = $findkpilist[$element]['weightage'];
                     $kpiname = $findkpilist[$element]['kpiName'];
-
                     $findelementidarray = $em->createQueryBuilder()
                         ->select('c.id','c.elementName', 'c.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'c')
@@ -115,9 +113,10 @@ class DashboradController extends Controller
                         ->getQuery()
                         ->getResult();
 
+                    $elementcolorarray=array();
+                    $finalKpiWeightageArray=array();
 
                     $finalkpivalue = 0;
-
                     if (count($findelementidarray) == 0)
                     {
                         $newkpiid = $em->createQueryBuilder()
@@ -141,6 +140,7 @@ class DashboradController extends Controller
 
                             $weightage = $findelementidarray[$jk]['weightage'];
                             $elementname=$findelementidarray[$jk]['elementName'];
+                            $elementId = $findelementidarray[$jk]['id'];
                             //Finding value based on element id and dates from user//
                             $dbvalueforelement = $em->createQueryBuilder()
                                 ->select('a.value')
@@ -157,20 +157,73 @@ class DashboradController extends Controller
                                 ->getQuery()
                                 ->getResult();
 
-                            if (count($dbvalueforelement) == 0) {
-                                $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
-                            }
-                            else {
-                                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
-                            }
-                            // $elementleveldrildown[$jk]['name']=$elementname;//assign drill down name for element
-                            // $elementleveldrildown[$jk]['y']=$finalkpivalue;//assign drill down value for element
-                            // $elementleveldrildown[$jk]['drilldown']=null;//assign drill down for element
 
+                            if (count($dbvalueforelement) == 0)
+                            {
+                                $finddbvaluefomula = 0 ;
+                            }
+                            else
+                            {
+                                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value']));
+
+                            }
+
+                            $element_rules = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:RankingRules', 'a')
+                                ->where('a.elementDetailsId = :element_id')
+                                ->setParameter('element_id', $elementId)
+                                ->getQuery()
+                                ->getResult();
+
+                            for($c=0;$c<count($element_rules);$c++)
+                            {
+                                $rule = $element_rules[$c];
+                                /*
+                                                    $rule_obj = json_encode($rule);*/
+                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finddbvaluefomula;
+                                $jsfilename = 'node ' . $jsfiledirectry;
+                                $handle = popen($jsfilename, 'r');
+                                $read = fread($handle, 2096);
+                                $read1 = str_replace("\n", '', $read);
+
+                                if ($read1 != "false")
+                                {
+                                    break;
+                                }
+
+                                $tempValue =0;
+
+                                if($read1=='Green')
+                                {
+                                    $tempValue = $weightage;
+                                }
+                                else if($read1 == 'Yellow')
+                                {
+                                    $tempValue = $weightage/2;
+                                }
+                                else if($read1 == 'Red')
+                                {
+                                    $tempValue = 0;
+                                }
+                                array_push($elementcolorarray,$tempValue);
+
+                            }
 
                         }
+                        //$avgElementValue = array_sum($elementcolorarray)/count($elementcolorarray);
+                        if(count($elementcolorarray)==0)
+                        {
+                            $avgElementValue=0;
+                        }
+                        else
+                        {
+                            $avgElementValue = array_sum($elementcolorarray)/count($elementcolorarray);
+                        }
+                        $kpiWeightageForship=($kpiweightage*$avgElementValue)/100;
+
+                        array_push($finalKpiWeightageArray,$kpiWeightageForship);
+
                         // $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
 
                     }
@@ -180,7 +233,7 @@ class DashboradController extends Controller
                         for ($kk = 0; $kk < count($findelementidarray); $kk++)
                         {
                             $elementname=$findelementidarray[$kk]['elementName'];
-
+                            $elementId=$findelementidarray[$kk]['elementName'];
                             $weightage = $findelementidarray[$kk]['weightage'];
                             //Finding value based on element id and dates from user//
                             $dbvalueforelement = $em->createQueryBuilder()
@@ -197,79 +250,122 @@ class DashboradController extends Controller
                                 ->getQuery()
                                 ->getResult();
 
-                            if (count($dbvalueforelement) == 0) {
-                                $finddbvaluefomula = 0 * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
+                            if (count($dbvalueforelement) == 0)
+                            {
+                                $finddbvaluefomula = 0 ;
                             }
                             else
                             {
-                                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
-                                $finalkpivalue += $finddbvaluefomula;
+                                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value']));
+
                             }
 
+                            $element_rules = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:RankingRules', 'a')
+                                ->where('a.elementDetailsId = :element_id')
+                                ->setParameter('element_id', $elementId)
+                                ->getQuery()
+                                ->getResult();
 
-                            // $elementleveldrildown[$kk]['name']=$elementname;//assign drill down name for element
-                            // $elementleveldrildown[$kk]['y']=$finalkpivalue;//assign drill down value for element
-                            // $elementleveldrildown[$kk]['drilldown']=null;//assign drill down for element
+                            for($c=0;$c<count($element_rules);$c++)
+                            {
+                                $rule = $element_rules[$c];
+                                /*
+                                                    $rule_obj = json_encode($rule);*/
+                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finddbvaluefomula;
+                                $jsfilename = 'node ' . $jsfiledirectry;
+                                $handle = popen($jsfilename, 'r');
+                                $read = fread($handle, 2096);
+                                $read1 = str_replace("\n", '', $read);
+
+                                if ($read1 != "false")
+                                {
+                                    break;
+                                }
+
+                                $tempValue =0;
+
+                                if($read1=='Green')
+                                {
+                                    $tempValue = $weightage;
+                                }
+                                else if($read1 == 'Yellow')
+                                {
+                                    $tempValue = $weightage/2;
+                                }
+                                else if($read1 == 'Red')
+                                {
+                                    $tempValue = 0;
+                                }
+                                array_push($elementcolorarray,$tempValue);
 
 
+                            }
                         }
+                        if(count($elementcolorarray)==0)
+                        {
+                            $avgElementValue=0;
+                        }
+                        else
+                        {
+                            $avgElementValue = array_sum($elementcolorarray)/count($elementcolorarray);
+                        }
+                        $kpiWeightageForship=($kpiweightage*$avgElementValue)/100;
+
+                        array_push($finalKpiWeightageArray,$kpiWeightageForship);
+
 
 
                         // $elementleveldrildownkpi[$kpiname]=$elementleveldrildown;//assign values to elementleveldrildownkpi array
                     }
 
 
-                    $findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
-                    $finalkpielementvalue += $findkpivalue;
-
-
-
-
-                    // $alterdrildownarray[$element]['name']=$kpiname;//assign drill down name for kpi
-                    // $alterdrildownarray[$element]['y']=$finalkpielementvalue;//assign drill down value for kpi
-                    // $alterdrildownarray[$element]['drilldown']=$kpiname;//assign drill down  for kpi
-
-                    array_push($drildowndataarray,$finalkpielementvalue);//assign values to shipdetails  array value
+                    ///$findkpivalue = $finalkpivalue * (((int)$kpiweightage) / 100);
+                    // $finalkpielementvalue += $findkpivalue;
+                    array_push($drildowndataarray,$finalKpiWeightageArray);
 
 
 
                 }
 
-                // $drilldownarray[$kj]['name']=$listallshipforcompany[$kj]['shipName'];//assign drill down name for ship
-                // $drilldownarray[$kj]['id']=$listallshipforcompany[$kj]['shipName'];//assign drill down id for ship
-                //  $mykpivaluearray[$kj]['drilldown']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown from kpivalues
-                //  $drilldownarray[$kj]['data']=$alterdrildownarray;//assign drilldown array values  for shipdetails drill down array
                 $mykpivaluearray[$kj]['name']=$listallshipforcompany[$kj]['shipName'];//assign shipdrilldown(name) from kpivalues
-                $mykpivaluearray[$kj]['y'] = array_sum($drildowndataarray);//assign shipdrilldown(values) from kpivalues
+                $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $listallshipforcompany[$kj]['id']));
+                $shipname = $shipid->getShipName();
+                $man_year= $shipid->getManufacturingYear();
+                $vesselage=0;
+
+                if($man_year=="")
+                {
+                    $yearcount=0;
+                }
+                else
+                {
+                    $currentdatestring=date('Y-01-01');
+                    $d1 = new \DateTime($currentdatestring);
+                    $man_datestring=$man_year.'-01-'.'01';
+                    $d2=new \DateTime($man_datestring);
+                    $diff = $d2->diff($d1);
+                    $yearcount=$diff->y+1;
+                    $vesselage=20/$yearcount;
+                }
+                ///array_push($mykpivaluearray,(array_sum($finalKpiWeightageArray)+$vesselage));
+                $mykpivaluearray[$kj]['y'] = (array_sum($finalKpiWeightageArray)+$vesselage);//assign shipdrilldown(values) from kpivalues
                 $yearchange = $lastmonthdetail->format('Y');
                 $mykpivaluearray[$kj]['url'] = '/dashboard/'.$listallshipforcompany[$kj]['id'].'/'.$yearchange.'/listallkpiforship_ranking';//assign shipdrilldown(values) from kpivalues
 
 
+
             }
-            // Assign values of element drilldown to graph drill down array starts Here
-            //$temp=count($drilldownarray);
 
-            /* foreach($elementleveldrildownkpi as $kpikey => $kpipvalue)
-             {
-                 $drilldownarray[$temp]['name']=$kpikey;
-                 $drilldownarray[$temp]['id']=$kpikey;
-
-                 $drilldownarray[$temp]['data']=$kpipvalue;
-
-
-                 $temp++;
-
-             }*/
-            // Assign values of element drilldown to graph drill down array Ends Here
-
-            //Finding details for series and drildown Ends Here//
-            if($mode=='getnextmonthchart')
-            {
-                return array("data" =>$mykpivaluearray);
-            }
 
             $monthinletter = $lastmonthdetail->format('M-Y');
+            if($mode=='getnextmonthchart')
+            {
+                return array("data" =>$mykpivaluearray,'currentmonth'=>$monthinletter);
+            }
+
+
             // Adding data to javascript chart function starts Here.. //
             $ob = new Highchart();
             $ob->chart->renderTo('area');
@@ -287,6 +383,7 @@ class DashboradController extends Controller
 
             /* $ob->drilldown->series($drilldownarray);*/
             $ob->exporting->enabled(false);
+
 
             // Adding data to javascript chart function  Ends Here.. //
 
@@ -442,13 +539,18 @@ class DashboradController extends Controller
                                     ->andwhere('a.kpiDetailsId = :kpiDetailsId')
                                     ->andWhere('a.elementDetailsId = :Elementid')
                                     ->andWhere('a.monthdetail =:dataofmonth')
+                                    ->andwhere('a.status =:statusValue')
                                     ->setParameter('shipid', $listallshipforcompany[$h]['id'])
                                     ->setParameter('kpiDetailsId', $listallkpi[$element]['id'])
                                     ->setParameter('Elementid', $findelementidarray[$jk]['id'])
                                     ->setParameter('dataofmonth', $new_monthdetail_date)
+                                    ->setParameter('statusValue', 3)
                                     ->getQuery()
                                     ->getResult();
-                                array_push($shipElementValueArray,$dbvalueforelement);
+                                if(!empty($dbvalueforelement))
+                                {
+                                    array_push($shipElementValueArray,$dbvalueforelement);
+                                }
                             }
 
                             $finalAverageValueForShips = array_sum($shipElementValueArray)/count($listallshipforcompany);
