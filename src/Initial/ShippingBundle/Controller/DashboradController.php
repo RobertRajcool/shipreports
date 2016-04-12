@@ -329,6 +329,7 @@ class DashboradController extends Controller
             $datescolorarray=array();
             $kpiweightagearray=array();
             $monthAllKpiAverage = array();
+            $shipElementValueArray = array();
             /*$kpiWeightageTotal=0;*/
 
             //loop for sending dates//
@@ -380,26 +381,43 @@ class DashboradController extends Controller
 
                             $weightage = $findelementidarray[$jk]['weightage'];
                             //Finding value based on element id and dates from user//
-                            $dbvalueforelement = $em->createQueryBuilder()
-                                ->select('a.value')
-                                ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                                //->where('a.shipDetailsId = :shipid')
-                                ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                                ->andWhere('a.elementDetailsId = :Elementid')
-                                ->andWhere('a.monthdetail =:dataofmonth')
-                                //->setParameter('shipid', $shipid)
-                                ->setParameter('kpiDetailsId', $newkpiid[0]['id'])
-                                ->setParameter('Elementid', $findelementidarray[$jk]['id'])
-                                ->setParameter('dataofmonth', $new_monthdetail_date)
-                                ->getQuery()
-                                ->getResult();
+                            for ($h=0;$h<count($listallshipforcompany);$h++)
+                            {
+                                $dbvalueforelement = $em->createQueryBuilder()
+                                    ->select('a.value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                                    ->where('a.shipDetailsId = :shipid')
+                                    ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                                    ->andWhere('a.elementDetailsId = :Elementid')
+                                    ->andWhere('a.monthdetail =:dataofmonth')
+                                    ->setParameter('shipid', $listallshipforcompany[$h]['id'])
+                                    ->setParameter('kpiDetailsId', $listallkpi[$element]['id'])
+                                    ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                                    ->setParameter('dataofmonth', $new_monthdetail_date)
+                                    ->getQuery()
+                                    ->getResult();
+                                array_push($shipElementValueArray,$dbvalueforelement);
+                            }
 
+/*
                             if (count($dbvalueforelement) == 0) {
                                 $finddbvaluefomula = 0 * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                             }
                             else {
                                 $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                                $finalKpiValue += $finddbvaluefomula;
+                            }*/
+
+                            $finalAverageValueForShips = array_sum($shipElementValueArray)/count($listallshipforcompany);
+
+                            if (count($finalAverageValueForShips) == 0) {
+                                $finddbvaluefomula = 0 * (((int)$weightage) / 100);
+                                $finalKpiValue += $finddbvaluefomula;
+                                //$finalKpiValue = null;
+                            }
+                            else {
+                                $finddbvaluefomula = ((float)($finalAverageValueForShips)) * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                             }
 
@@ -414,27 +432,34 @@ class DashboradController extends Controller
 
                             $weightage = $findelementidarray[$jk]['weightage'];
                             //Finding value based on element id and dates from user//
-                            $dbvalueforelement = $em->createQueryBuilder()
-                                ->select('a.value')
-                                ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                                //->where('a.shipDetailsId = :shipid')
-                                ->andwhere('a.kpiDetailsId = :kpiDetailsId')
-                                ->andWhere('a.elementDetailsId = :Elementid')
-                                ->andWhere('a.monthdetail =:dataofmonth')
-                                //->setParameter('shipid', $shipid)
-                                ->setParameter('kpiDetailsId', $listallkpi[$element]['id'])
-                                ->setParameter('Elementid', $findelementidarray[$jk]['id'])
-                                ->setParameter('dataofmonth', $new_monthdetail_date)
-                                ->getQuery()
-                                ->getResult();
 
-                            if (count($dbvalueforelement) == 0) {
+                            for ($h=0;$h<count($listallshipforcompany);$h++)
+                            {
+                                $dbvalueforelement = $em->createQueryBuilder()
+                                    ->select('a.value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                                    ->where('a.shipDetailsId = :shipid')
+                                    ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                                    ->andWhere('a.elementDetailsId = :Elementid')
+                                    ->andWhere('a.monthdetail =:dataofmonth')
+                                    ->setParameter('shipid', $listallshipforcompany[$h]['id'])
+                                    ->setParameter('kpiDetailsId', $listallkpi[$element]['id'])
+                                    ->setParameter('Elementid', $findelementidarray[$jk]['id'])
+                                    ->setParameter('dataofmonth', $new_monthdetail_date)
+                                    ->getQuery()
+                                    ->getResult();
+                                array_push($shipElementValueArray,$dbvalueforelement);
+                            }
+
+                            $finalAverageValueForShips = array_sum($shipElementValueArray)/count($listallshipforcompany);
+
+                            if (count($finalAverageValueForShips) == 0) {
                                 $finddbvaluefomula = 0 * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                                 //$finalKpiValue = null;
                             }
                             else {
-                                $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
+                                $finddbvaluefomula = ((float)($finalAverageValueForShips)) * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                             }
 
