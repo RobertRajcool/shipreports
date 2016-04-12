@@ -431,6 +431,7 @@ class DashboradController extends Controller
                 $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
 
+                $finalkpielementvalue1 = 0;
                 $findingcolorarray = array();
 
                 for ($element = 0; $element < count($listallkpi); $element++)
@@ -449,11 +450,10 @@ class DashboradController extends Controller
 
                     //$gh = count($findelementidarray);
                     $finalKpiValue = 0;
-                    $finalkpielementvalue1 = 0;
 
                     if (count($findelementidarray) == 0)
                     {
-
+                        $finalkpielementvalue1 = 0;
                         $newkpiid = $em->createQueryBuilder()
                             ->select('b.id')
                             ->from('InitialShippingBundle:KpiDetails', 'b')
@@ -471,6 +471,7 @@ class DashboradController extends Controller
                             ->getResult();
                         for ($jk = 0; $jk < count($findelementidarray); $jk++)
                         {
+                            $elementValueWithWeightage =0;
                             $elementIdValue = $findelementidarray[$jk]['id'];
                             $weightage = $findelementidarray[$jk]['weightage'];
                             //Finding value based on element id and dates from user//
@@ -552,8 +553,10 @@ class DashboradController extends Controller
 
                     if (count($findelementidarray) > 0)
                     {
+                        $finalkpielementvalue1 = 0;
                         for ($jk = 0; $jk < count($findelementidarray); $jk++)
                         {
+                            $elementValueWithWeightage =0;
                             $elementIdValue = $findelementidarray[$jk]['id'];
                             $weightage = $findelementidarray[$jk]['weightage'];
                             //Finding value based on element id and dates from user//
