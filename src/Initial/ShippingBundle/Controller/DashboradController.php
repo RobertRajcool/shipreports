@@ -160,7 +160,7 @@ class DashboradController extends Controller
 
                             if (count($dbvalueforelement) == 0)
                             {
-                                $finddbvaluefomula = 0 ;
+                                $finddbvaluefomula = null ;
                             }
                             else
                             {
@@ -252,7 +252,7 @@ class DashboradController extends Controller
 
                             if (count($dbvalueforelement) == 0)
                             {
-                                $finddbvaluefomula = 0 ;
+                                $finddbvaluefomula = null ;
                             }
                             else
                             {
@@ -375,6 +375,7 @@ class DashboradController extends Controller
             $ob->xAxis->type('category');
             $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
             $ob->yAxis->title(array('text'=>'Values'));
+            $ob->yAxis->max(100);
             $ob->legend->enabled(false);
             $ob->plotOptions->series(array('borderWidth'=>0,'dataLabels'=>array('enabled'=>false),
                 'point'=>array('events'=>array('click'=>new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
@@ -436,7 +437,7 @@ class DashboradController extends Controller
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($lastfivedatearray[$d]);
 
-                $finalkpielementvalue = 0;
+                $finalkpielementvalue1 = 0;
                 $findingcolorarray = array();
 
                 for ($element = 0; $element < count($listallkpi); $element++)
@@ -517,7 +518,49 @@ class DashboradController extends Controller
                                 $finddbvaluefomula = ((float)($finalAverageValueForShips)) * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                             }
+                            $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
 
+                            $kpi_element_rules = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:Rules', 'a')
+                                ->where('a.elementDetailsId = :element_id')
+                                ->setParameter('element_id', $elementIdValue)
+                                ->getQuery()
+                                ->getResult();
+                            $read1 = "";
+
+                            for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_element_rules); $kpi_rules_count++)
+                            {
+                                $rule = $kpi_element_rules[$kpi_rules_count];
+                                /*
+                                                    $rule_obj = json_encode($rule);*/
+                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
+                                $jsfilename = 'node ' . $jsfiledirectry;
+                                $handle = popen($jsfilename, 'r');
+                                $read = fread($handle, 2096);
+                                $read1 = str_replace("\n", '', $read);
+
+                                if ($read1 != "false") {
+                                    break;
+                                }
+                            }
+
+                            $tempKpiValue = 0;
+                            if($read1=="Green")
+                            {
+                                $tempKpiValue=3;
+                            }
+                            else if($read1=="Yellow")
+                            {
+                                $tempKpiValue=2;
+                            }
+                            else if($read1=="Red")
+                            {
+                                $tempKpiValue=1;
+                            }
+
+                            $elementValueWithWeightage = $tempKpiValue * (((int)$weightage) / 100);
+                            $finalkpielementvalue1 += $elementValueWithWeightage;
 
                         }
                     }
@@ -526,7 +569,7 @@ class DashboradController extends Controller
                     {
                         for ($jk = 0; $jk < count($findelementidarray); $jk++)
                         {
-
+                            $elementIdValue = $findelementidarray[$jk]['id'];
                             $weightage = $findelementidarray[$jk]['weightage'];
                             //Finding value based on element id and dates from user//
 
@@ -565,47 +608,57 @@ class DashboradController extends Controller
                                 $finalKpiValue += $finddbvaluefomula;
                             }
 
-                        }
-                    }
+                            $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
 
-                    // Kpi color Finding starts Here//
+                            $kpi_element_rules = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:Rules', 'a')
+                                ->where('a.elementDetailsId = :element_id')
+                                ->setParameter('element_id', $elementIdValue)
+                                ->getQuery()
+                                ->getResult();
+                            $read1 = "";
 
-                    $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
+                            for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_element_rules); $kpi_rules_count++)
+                            {
+                                $rule = $kpi_element_rules[$kpi_rules_count];
+                                /*
+                                                    $rule_obj = json_encode($rule);*/
+                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
+                                $jsfilename = 'node ' . $jsfiledirectry;
+                                $handle = popen($jsfilename, 'r');
+                                $read = fread($handle, 2096);
+                                $read1 = str_replace("\n", '', $read);
 
-                    /*$kpiWeightageTotal+=$finaRuleValue;*/
-                    array_push($monthAllKpiAverage,$finaRuleValue);
+                                if ($read1 != "false") {
+                                    break;
+                                }
+                            }
 
-                    $kpi_rules = $em->createQueryBuilder()
-                        ->select('a.rules')
-                        ->from('InitialShippingBundle:KpiRules', 'a')
-                        ->where('a.kpiDetailsId = :kpi_id')
-                        ->setParameter('kpi_id', $kpiidvalue)
-                        ->getQuery()
-                        ->getResult();
-                    $read1 = "";
+                            $tempKpiValue = 0;
+                            if($read1=="Green")
+                            {
+                                $tempKpiValue=3;
+                            }
+                            else if($read1=="Yellow")
+                            {
+                                $tempKpiValue=2;
+                            }
+                            else if($read1=="Red")
+                            {
+                                $tempKpiValue=1;
+                            }
 
-                    //Find the color based on kpi rules
-                    for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
-                    {
-                        $rule = $kpi_rules[$kpi_rules_count];
-                        /*
-                                            $rule_obj = json_encode($rule);*/
-                        $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finaRuleValue;
-                        $jsfilename = 'node ' . $jsfiledirectry;
-                        $handle = popen($jsfilename, 'r');
-                        $read = fread($handle, 2096);
-                        $read1 = str_replace("\n", '', $read);
-
-                        if ($read1 != "false") {
-                            break;
+                            $elementValueWithWeightage = $tempKpiValue * (((int)$weightage) / 100);
+                            $finalkpielementvalue1 += $elementValueWithWeightage;
                         }
                     }
 
                     array_push($findingcolorarray, $read1);
                     array_push($kpiweightagearray, $kpiweightage);
-                    // Kpi color Finding Ends Here//
-                    $findkpivalue = $finalKpiValue * (((int)$kpiweightage) / 100);
-                    $finalkpielementvalue += $findkpivalue;
+
+                    $finalkpielementvalue2 = $finalkpielementvalue1 * (((int)$kpiweightage) / 100);
+                    array_push($monthAllKpiAverage,$finalkpielementvalue2);
                 }
 
                 $overallKpiWeightageForMonth = array_sum($monthAllKpiAverage);

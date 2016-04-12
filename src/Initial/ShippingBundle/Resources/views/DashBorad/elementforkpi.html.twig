@@ -369,6 +369,7 @@
                         {% for j in 0..countmonth1 %}
                             {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                             <td>
+                            {% if j <1 %}
                                 {% if elementcolorarray[j][i]=="Green" %}
                                     <img src="/images/01.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[j][i]=="Red" %}
@@ -376,10 +377,12 @@
                                 {% elseif elementcolorarray[j][i]=="Yellow" %}
                                     <img src="/images/02.png" alt="Loader Image"/>
                                 {% endif %}
+                            {% endif %}
                             </td>
                             {% if j != 2 %}
                                 {% set j1=j+1 %}
                                 <td>
+                                {% if j <0 %}
                                     {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
                                         <img src="/images/straight_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
@@ -399,6 +402,7 @@
                                     {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
                                         <img src="/images/straight_arrow.png">
                                     {% endif %}
+                                {% endif %}
                                 </td>
                             {% endif %}
                             {% set akj=akj+1 %}
