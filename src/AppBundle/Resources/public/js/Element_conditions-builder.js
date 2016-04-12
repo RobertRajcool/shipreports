@@ -78,7 +78,7 @@
             else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional form-group " + kind},{"id":"conditionalid"});
+            var div = $("<div>", {"class": "conditional kpi_new_style form-group " + kind},{"id":"conditionalid"});
             var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"},{"id": "all-any-none-wrapper-id"});
             var select = $("<select>", {"class": "all-any-none"},{"id":"all-any-none-id"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
@@ -129,7 +129,7 @@
             else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditionalid"});
+            var div = $("<div>", {"class": "conditional kpi_new_style " + kind},{"id":"conditionalid"});
 
             var addConditionLink = $("<a>", {"href": "#", "class": "form-group add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {

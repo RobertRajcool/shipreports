@@ -247,7 +247,7 @@
                     $('.previousYear').click(function($e)
                     {
                         $e.preventDefault();
-                        alert('Wait for a moment');
+                        //alert('Wait for a moment');
 
                         var data = {
                             Year : $('#scoreCurrentYear').val()
@@ -259,7 +259,7 @@
                             url: " previousYearChange",
                             success: function(data)
                             {
-                                alert('success');
+                                //alert('success');
                                 $('#previousYearShow').empty();
                                 $('#previousScorecardTable').empty();
                                 $('#previousYearShow').append(data.currentYear);
@@ -412,7 +412,7 @@
                     $('.nextYear').click(function($e)
                     {
                         $e.preventDefault();
-                        alert('Wait for a moment');
+                        //alert('Wait for a moment');
 
                         var data = {
                             Year : $('#scoreCurrentYear').val()
@@ -429,7 +429,7 @@
                                 url: " nextYearChange",
                                 success: function(data)
                                 {
-                                    alert('success');
+                                    //alert('success');
                                     $('#previousYearShow').empty();
                                     $('#previousScorecardTable').empty();
                                     $('#previousYearShow').append(data.currentYear);

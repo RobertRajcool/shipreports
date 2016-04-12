@@ -356,7 +356,7 @@ class DashboradController extends Controller
                         ->getQuery()
                         ->getResult();
 
-                    $gh = count($findelementidarray);
+                    //$gh = count($findelementidarray);
                     $finalKpiValue = 0;
 
                     if (count($findelementidarray) == 0)
@@ -411,7 +411,7 @@ class DashboradController extends Controller
 
                             $finalAverageValueForShips = array_sum($shipElementValueArray)/count($listallshipforcompany);
 
-                            if (count($finalAverageValueForShips) == 0) {
+                            if ($finalAverageValueForShips == 0) {
                                 $finddbvaluefomula = 0 * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                                 //$finalKpiValue = null;
@@ -453,7 +453,7 @@ class DashboradController extends Controller
 
                             $finalAverageValueForShips = array_sum($shipElementValueArray)/count($listallshipforcompany);
 
-                            if (count($finalAverageValueForShips) == 0) {
+                            if ($finalAverageValueForShips == 0) {
                                 $finddbvaluefomula = 0 * (((int)$weightage) / 100);
                                 $finalKpiValue += $finddbvaluefomula;
                                 //$finalKpiValue = null;
@@ -471,7 +471,7 @@ class DashboradController extends Controller
                     $finaRuleValue = ($finalKpiValue*$kpiweightage)/100;
 
                     /*$kpiWeightageTotal+=$finaRuleValue;*/
-                    array($monthAllKpiAverage,$finaRuleValue);
+                    array_push($monthAllKpiAverage,$finaRuleValue);
 
                     $kpi_rules = $em->createQueryBuilder()
                         ->select('a.rules')

@@ -1910,4 +1910,28 @@ input[type="color"],
     filter: alpha(opacity=0);
 }
 
+.select_all .checkbox {
+    float: left;
+    margin: 2px 4px 0 0;
+
+}
+.select_all .checkbox_text {
+    float: left;
+    margin: 9px 0 0 0;
+}
+
+.conditional {
+    margin-left: 20px !important;
+}
+.conditional .add_rule_drop {
+    margin-left: 4px !important;
+}
+.conditional .add_rule_input {
+    margin-left: 4px !important;
+}
+.conditional .delete_icon_btn {
+    margin: 4px 0 0 4px !important;
+}
+
+
 

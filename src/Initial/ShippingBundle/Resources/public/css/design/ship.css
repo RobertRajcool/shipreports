@@ -1,15 +1,34 @@
-
 /*
  * Base structure
  */
-
 /* Move down content because we have a fixed navbar that is 50px tall */
 body {
     background:#FFFFFF;
+    font-size: 13px !important;
+}
+video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    transform: translateX(-50%) translateY(-50%);
+    background: url('//demosthenes.info/assets/images/polina.jpg') no-repeat;
+    background-size: cover;
+    transition: 1s opacity;
 }
 /*
  * Global add-ons
  */
+.loading_img {
+    width:100%;
+    height:100%;
+    text-align:center;
+    vertical-align:middle;
+}
 .login_screen_bg {
     width:100%;
     height:100%;
@@ -104,7 +123,12 @@ body {
     list-style:none;
 }
 .menu-item-icon {
-    margin:0px;
+    margin:1px 1px 0 0;
+    float:left;
+}
+.scorecard_icon {
+    margin:4px 1px 0 0;
+    float:left;
 }
 .menu-item-text {
     margin:-2px 0 0 0;
@@ -116,7 +140,7 @@ body {
 .logo {
     font-size:24px;
     padding:6px;
-    margin:-7px -7px -9px -9px;
+    margin:-6px -6px -8px -8px;
     color:#FFFFFF;
     background:#FFFFFF;
 }
@@ -194,6 +218,9 @@ body {
     background:#333333;
     color:#FFFFFF;
 }
+.nav > li > a:focus, .nav > li > a:hover {
+    background:none;
+}
 .navbar-nav li {
     line-height:50px;
 }
@@ -236,6 +263,10 @@ table thead th {
 
 table tbody tr td {
     padding: 4px 10px !important;
+    border-right: 1px solid #ddd;
+}
+.table_dividere thead tr th {
+    border-right: 1px solid #ddd !important;
 }
 table tbody tr td a {
     margin-right:8px;
@@ -309,7 +340,7 @@ select {
     left: 0;
     z-index: 1000;
     display: block;
-    padding: 10px;
+    padding: 8px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #333333;
@@ -324,7 +355,7 @@ select {
     margin:0px;
     padding:0px;
     width:auto;
-    height:431px;
+    height:369px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -340,7 +371,7 @@ select {
 }
 .dashboard_ship_list ul li a {
     margin:0px;
-    padding:2px 0px 2px 5px;
+    padding:2px 0px 2px 10px;
     color:#333333;
     display:block;
     font-size:12px;
@@ -364,7 +395,7 @@ select {
     border-top: 2px solid #40bad9;
 }
 .dashboard .widget .x-header {
-    padding: 5px 15px;
+    padding: 5px 10px;
     height: 30px;
     border-bottom: 1px solid #e9e9e8;
 }
@@ -373,6 +404,13 @@ select {
     font-size: 14px;
     font-weight: bold;
     float:left;
+    padding:1px 0px;
+}
+.dashboard .widget .x-header .vessels_number {
+    color: #383838;
+    font-size: 14px;
+    font-weight: bold;
+    float:right;
     padding:1px 0px;
 }
 .dashboard .widget .toolbar-title {
@@ -402,52 +440,80 @@ select {
     height: 273px;
 }
 .dashboard .widget .ship_name {
-    min-height:410px;
+    min-height:350px;
     padding:0px;
 }
 .dashboard .widget .chart-2 {
-    min-height:136px;
-    padding:25px 5px;
-    font-size:70px;
+    height:auto;
+    padding:9px 5px;
+    font-size:50px;
     font-weight:bold;
     text-align:center;
 }
 /*.dashboard .widget .chart.large_chart {*/
 /*min-height:273px;*/
 /*}*/
+.menu_logout_button {
+    margin:3px 0px 10px 0px;
+}
+.menu_logout_button a {
+    color:#999999;
+}
+.menu_logout_button a:hover {
+    color:#FFFFFF;
+}
+.menu_logout_button .menu-item-icon {
+    color:#999999;
+    cursor: pointer;
+    float: left;
+    margin: 1px 4px 0 0;
+}
+.menu_logout_button .menu-item-text {
+    color:#999999;
+    cursor: pointer;
+    margin:-2px 0 0 0;
+}
 .x-btn-my-account-small {
     border-radius: 0;
     padding: 0 0 10px 0;
     bottom:0px;
     position:fixed;
-    width:155px;
+    width:12.6%;
 }
+.user_setting_main {
+    float:left;
+    width: 100%;
+    cursor:pointer;
+}
+
 .x-btn-my-account-small a {
     cursor:pointer;
 }
-.x-btn-my-account-small .x-btn-icon-el {
+.user_setting_main .x-btn-icon-el {
     background-position: center top;
     background-repeat: no-repeat;
     background-size: cover;
     border-radius: 50%;
     display: inline-block;
-    height: 32px;
-    width: 32px;
+    height: 28px;
+    width: auto;
     float:left;
 }
-.x-btn-my-account-small .x-btn-icon-el img {
-    height: 32px;
-    width: 32px;
-    border-radius:32px;
+.user_setting_main .x-btn-icon-el img {
+    height: 28px;
+    width: 28px;
+    border-radius:28px;
+    float:left;
 }
-.x-btn-my-account-small .x-btn-inner {
+.user_setting_main .x-btn-inner {
     color: white;
     font-size: 86%;
     font-weight: normal;
-    padding: 0 4px 0 38px;
-    display: block;
+    padding: 0px;
+    margin:-4px 0 0 3px;
     white-space: nowrap;
     text-align: left;
+    float:left;
 }
 .x-btn-my-account-small .x-btn-icon-arrow {
     color: #999;
@@ -455,9 +521,9 @@ select {
     height: 15px;
     right: 9px;
     top: 10px;
-    width: 15px;
+    width: auto;
     float:right;
-    margin-top:-25px;
+    margin:5px 0 0 0;
 }
 .x-btn-my-account-small .user-name {
     color: #FFFFFF;
@@ -708,7 +774,7 @@ select {
 }
 .fieldset_box {
     width: 460px;
-    background:#fcfcfc;
+    background:#FFFFFF;
     border-radius: 5px;
     border: 1px solid #e6e6e6;
     padding: 20px 20px 15px 20px;
@@ -720,7 +786,7 @@ select {
 }
 .fieldset_box_right {
     width: 460px;
-    background:#fcfcfc;
+    background:#FFFFFF;
     border-radius: 5px;
     border: 1px solid #e6e6e6;
     padding: 20px 20px 15px 20px;
@@ -732,7 +798,7 @@ select {
 .legend_name {
     padding: 1px 3px ;
     margin:-42px 0 0 0;
-    background:#fcfcfc;
+    background:#FFFFFF;
     font-size:14px;
     color:#333333;
     font-weight:bold;
@@ -807,7 +873,7 @@ select {
     float:left;
 }
 .add_rule_basic_date_drop {
-    width:55px;
+    width:56.5px;
 }
 .add_rule_basic_year_drop {
     width:68px;
@@ -877,16 +943,13 @@ select {
     position:relative;
 }
 .edit_screen_show_button .show_btn {
-    background-color: #f4f4f4;
+    background: #103a71 none repeat scroll 0 0;
+    border: 1px solid #062d60;
     border-radius: 3px;
-    border-style: solid;
-    border-width: 1px;
-    padding: 5px 15px;
-    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06);
-    border-color: #ddd #e4e2dd #cbcac9;
-    color:#383838;
-    font-size:12px;
-    font-weight:bold;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
 }
 .edit_screen_show_button_2 {
     width:100%;
@@ -1073,7 +1136,7 @@ select {
     padding:0px;
 }
 .form_view_screen .form_view .form_labell {
-    width:30%;
+    width:32%;
     height:auto;
     float:left;
     margin:0px;
@@ -1081,7 +1144,7 @@ select {
     text-align:right;
 }
 .form_view_screen .form_view .form_input {
-    width:70%;
+    width:68%;
     height:auto;
     float:left;
     margin:0px;
@@ -1128,6 +1191,10 @@ select {
     border-top: 1px solid #555555;
     list-style:none;
 }
+.views_kpi_form_list_main ui li img {
+    float:right;
+    margin:-25px 5px 0 0;
+}
 .views_kpi_form_list_main ui li a.active {
     background:#FFFFFF;
     color:#666666;
@@ -1153,7 +1220,7 @@ select {
     margin: 0 0 70px 0;
     position: relative;
     top: 0;
-    width: 800px;
+    width: 500px;
 }
 .add_new_kpi_top_title {
     padding: 9px 24px;
@@ -1208,8 +1275,22 @@ select {
 }
 
 .kpi_table_form_section {
-    margin-bottom:2px;
+    margin-bottom:3px;
     border:1px solid #f1f1f1;
+}
+.kpi_table_form_section input[type="text"]{
+    height:18px !important;
+}
+.kpi_table_form_section thead tr th {
+    background:#d2d2d2;
+    padding:3px 2px 3px 4px !important;
+    color:#505b65;
+    font-weight:bold !important;
+    font-size:13px;
+}
+.kpi_table_form_section tbody tr td {
+    padding:3px 2px 3px 4px !important;
+    border-top: 1px solid #eaeaea;
 }
 .kpi_table_form_section.second_dark {
     background:#e5e5e5;
@@ -1218,10 +1299,6 @@ select {
 .kpi_table_form_section.first_light {
     background:#f4f4f4;
     border:1px solid #f4f4f4;
-}
-.kpi_table_form_section thead tr th {
-    margin:0px;
-    padding:1px 2px;
 }
 .kpi_table_form_section tbody tr {
     border-bottom: none;
@@ -1232,19 +1309,21 @@ select {
 .kpi_table_form_section tbody tr:hover {
     background: none;
 }
-.kpi_table_form_section tbody tr td {
-    margin:0px;
-    padding:3px 2px;
-    border-top:none !important;
-}
 .kpi_table_form_section .kpi_name {
     width:30%;
 }
 .kpi_table_form_section .kpi_lement_name {
-    width:60%;
+    width:78%;
+}
+.kpi_table_form_section .kpi_lement_number {
+    width:8%;
+    padding:3px 4px 3px 4px !important;
+    color:#949494;
+    text-align:center;
 }
 .kpi_table_form_section .kpi_lement_inputname {
-    width:10%;
+    width:14%;
+    padding-left:30px !important;
 }
 
 .mailing_email_list {
@@ -1303,7 +1382,7 @@ select {
 }
 .fieldset_box_2 {
     width: 600px;
-    background:#fcfcfc;
+    background:#FFFFFF;
     border-radius: 5px;
     border: 1px solid #e6e6e6;
     padding: 20px 20px 15px 20px;
@@ -1408,7 +1487,7 @@ select {
     margin-bottom:-2px;
 }
 .graph_and_colour_coding_main_title_row thead th {
-    text-align:center;
+    text-align:left;
     font-weight:bold;
     font-size:17px;
 }
@@ -1453,6 +1532,197 @@ select {
     width: 8%;
 }
 
+.kpi_ranking_row {
+    border:1px solid #f0f0f0 !important;
+}
+.kpi_ranking_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+}
+.kpi_ranking_row thead th {
+    background:#989898;
+}
+.kpi_ranking_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.kpi_ranking_row .kpi_name {
+    width: 22%;
+}
+.kpi_ranking_row .weightage {
+    width: 6%;
+}
+.kpi_ranking_row .month {
+    width: 6%;
+}
+
+.table-striped-3 tbody tr:nth-child(odd) td,
+.table-striped-3 tbody tr:nth-child(odd) th {
+    background-color: #fbfbfb !important;
+}
+.table-striped-4 tbody tr:nth-child(odd) td,
+.table-striped-4 tbody tr:nth-child(odd) th {
+    background-color: #FFFFFF !important;
+}
+.element_ranking_main_title_row tr:nth-child(odd) {
+    background: none;
+}
+.element_ranking_main_title_row tbody tr:hover {
+    background: none;
+}
+.element_ranking_main_title_row {
+    border:1px solid #f0f0f0 !important;
+    margin-bottom:-2px;
+}
+.element_ranking_main_title_row thead th {
+    text-align:left;
+    font-weight:bold;
+    font-size:17px;
+}
+.element_ranking_main_title_row tbody td {
+    padding:4px 10px !important;
+}
+.element_ranking_main_title_row tbody .sub_title_element_ranking {
+    background:#989898 !important;
+    color:#FFFFFF;
+    border-right:none;
+    border-top: none;
+}
+.element_ranking_main_title_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.element_ranking_row tbody .element_name_title {
+    vertical-align: middle;
+}
+.element_ranking_row {
+    border:1px solid #f0f0f0 !important;
+}
+.element_ranking_row tr {
+    border-bottom: 1px solid #f0f0f0 !important;
+    background:none !important;
+}
+.element_ranking_row thead th {
+    background:#989898;
+}
+.element_ranking_row tbody tr td {
+    border-right:1px solid #f0f0f0;
+    border-top: 1px solid #f0f0f0;
+}
+.element_ranking_row .kpi_name {
+    width: 28%;
+}
+.element_ranking_row .month {
+    width: 6%;
+}
+.rules_ranking  {
+    margin-bottom:20px;
+}
+.rules_ranking .rules_show_btn {
+    background: #103a71 none repeat scroll 0 0;
+    border: 1px solid #062d60;
+    border-radius: 3px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 10px;
+    text-decoration:none;
+}
+.kpi_ranking_rules_show_row .rules_show_1 {
+    width: 34%;
+}
+.kpi_ranking_rules_show_row .rules_show_2 {
+    width: 33%;
+}
+.kpi_ranking_rules_show_row .rules_show_3 {
+    width: 33%;
+}
+.kpi_ranking_rules_show_row tr {
+    border-bottom: none !important;
+    background:none !important;
+}
+.kpi_ranking_rules_show_row tbody tr td {
+    border-right:none;
+    border-top: none;
+}
+.rules_valus {
+    width: 33.3333%;
+    float:left;
+    margin-bottom:5px;
+}
+.rules_valus .title {
+    font-size:13px;
+    font-weight:bold;
+}
+.rules_valus .span_1 {
+    width: 35%;
+    float:left !important;
+    margin-right:10px;
+}
+.rules_valus .span_2 {
+    width: 60%;
+    float:left !important;
+}
+/* Users screen */
+.year_view_btn {
+    color: #FFFFFF;
+    font-weight: bold;
+    float:right;
+    padding:1px 0px;
+    margin:2px -10px 0 0;
+}
+.year_view_btn .left-arrow {
+    margin:1px 4px 0 0;
+    float:left;
+    font-size: 12px;
+}
+.year_view_btn .right-arrow {
+    margin:1px 0 0 6px;
+    float:right;
+    font-size: 12px;
+}
+.year_view_btn .item {
+    padding:0px 2px;
+    font-size: 13px;
+    float:left;
+    margin-top:-1px;
+}
+
+.year_view_score_card_row {
+    margin-bottom: 0px;
+    border:1px solid #dddddd;
+}
+.year_view_score_card_row thead th {
+    text-align:center;
+    background:#989898;
+    border-right:1px solid #dddddd;
+    padding: 3px 7px !important;
+}
+.year_view_score_card_row tbody td {
+    text-align:center;
+}
+.year_view_score_card_row .kpi_name_thtd {
+    text-align:left;
+}
+.year_view_score_card_row tr {
+    border-bottom: 1px solid #dddddd !important;
+}
+.year_view_score_card_row tbody tr td {
+    border-right:1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+    padding: 2px 7px !important;
+}
+.year_view_score_card_row .kpi_name {
+    width: 26%;
+}
+.year_view_score_card_row .weightage {
+    width: 5%;
+}
+.year_view_score_card_row .month {
+    width: 3%;
+}
+.year_view_score_card_row .month_difference {
+    width: 3%;
+}
 
 
 
@@ -1461,30 +1731,17 @@ select {
 
 
 
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-input[type="number"],
-input[type="email"],
-input[type="url"],
-input[type="search"],
-input[type="tel"],
-input[type="color"],
-.uneditable-input {
-    background: white none repeat-x scroll 0 0;
-    border-color: #d1d1d1 #e7e7e7 #e7e7e7 #d1d1d1;
-    border-style: solid;
-    border-width: 1px;
-    color: #383838;
-    height: 27px;
-    line-height: 19px;
-    padding: 3px 6px;
+
+form input[type="text"],
+.form_class input[type="text"],
+form input[type="number"],
+.form_class input[type="number"],
+form input[type="password"],
+.form_class input[type="password"],
+form input[type="email"],
+.form_class input[type="email"] {
+    height: 30px !important;
+    padding: 0 5px !important;
 }
 form fieldset,
 .form_class fieldset {
@@ -1511,6 +1768,7 @@ input[type="url"],
 input[type="search"],
 input[type="tel"],
 input[type="color"],
+input[type="color"],
 .uneditable-input {
     background: white none repeat-x scroll 0 0;
     border-color: #d1d1d1 #e7e7e7 #e7e7e7 #d1d1d1;
@@ -1519,5 +1777,164 @@ input[type="color"],
     color: #383838;
     height: 30px;
     line-height: 19px;
-    padding: 3px 6px;
+    padding: 3px 2px;
 }
+
+
+
+.graph_and_colour_coding_dashboard_main_title_row {
+    border:1px solid #dddddd !important;
+    margin-bottom:-2px;
+}
+.graph_and_colour_coding_dashboard_main_title_row thead th {
+    text-align:left;
+    font-weight:bold;
+    font-size:14px;
+    padding:3px 10px !important;
+}
+.graph_and_colour_coding_dashboard_main_title_row tbody td {
+    padding:2px 10px !important;
+}
+.graph_and_colour_coding_dashboard_main_title_row thead th a:hover {
+    color:#CCCCCC;
+}
+
+
+/* Management Performance */
+.table_container_dashboard {
+    height:260px;
+}
+.graph_and_colour_coding_dashboard_row {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+    padding:0px;
+    margin:0px;
+    border:1px solid #dddddd;
+}
+.graph_and_colour_coding_dashboard_row thead {
+    /* head takes the height it requires,
+    and it's not scaled when table is resized */
+    flex: 0 0 auto;
+    width: calc(100% - 0px);
+}
+.graph_and_colour_coding_dashboard_row thead th {
+    text-align:center;
+    background:#989898;
+    border-right:1px solid #dddddd;
+    padding: 3px 10px !important;
+}
+.graph_and_colour_coding_dashboard_row thead th.last {
+    border-right:1px solid #989898;
+}
+.graph_and_colour_coding_dashboard_row .kpi_name_th {
+    width: 48.9%;
+}
+.graph_and_colour_coding_dashboard_row .weightage_th {
+    width: 9.8%;
+}
+.graph_and_colour_coding_dashboard_row .month_th_1 {
+    width: 15.7%;
+}
+.graph_and_colour_coding_dashboard_row .month_th_2 {
+    width: 15.7%;
+}
+.graph_and_colour_coding_dashboard_row .month_th_3 {
+    width: 9.7%;
+}
+.graph_and_colour_coding_dashboard_row .kpi_name_thtd {
+    text-align:left;
+}
+.graph_and_colour_coding_dashboard_row tbody {
+    /* body takes all the remaining available space */
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+.graph_and_colour_coding_dashboard_row tr {
+    border-bottom: 1px solid #dddddd !important;
+    width: 100%;
+}
+.graph_and_colour_coding_dashboard_row tbody td {
+    text-align:center;
+}
+.graph_and_colour_coding_dashboard_row tbody tr td {
+    border-right:1px solid #dddddd;
+    border-top: none;
+    padding: 1px 10px !important;
+}
+.graph_and_colour_coding_dashboard_row .kpi_name_td {
+    width: 50%;
+}
+.graph_and_colour_coding_dashboard_row .weightage_td {
+    width: 10%;
+}
+.graph_and_colour_coding_dashboard_row .month_td {
+    width: 8%;
+}
+.graph_and_colour_coding_dashboard_row .month_difference_td{
+    width: 8%;
+}
+.graph_and_colour_coding_dashboard_row .average_score_2_td {
+    width: 60%;
+}
+.graph_and_colour_coding_dashboard_row thead, .graph_and_colour_coding_dashboard_row tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+
+.file_upload {
+    background: white none repeat-x scroll 0 0;
+    border:1px solid #d1d1d1;
+    color: #383838;
+    height: 30px;
+    line-height: 19px;
+    padding: 3px 2px;
+    width:195px;
+    margin-right:7px;
+}
+.fileUpload {
+    position: relative;
+    overflow: hidden;
+}
+.fileUpload input.upload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+
+.select_all .checkbox {
+    float: left;
+    margin: 2px 4px 0 0;
+
+}
+.select_all .checkbox_text {
+    float: left;
+    margin: 9px 0 0 0;
+}
+
+.kpi_new_style {
+    margin-left: 20px;
+}
+.kpi_new_style a {
+    margin-left: 5px;
+}
+.kpi_new_style .add_rule_drop {
+    margin-left: 4px;
+}
+.kpi_new_style .add_rule_input {
+    margin-left: 4px;
+}
+.kpi_new_style .delete_icon_btn {
+    margin: 4px 0 0 0;
+}
+
+
+
