@@ -88,7 +88,7 @@ class DashboradController extends Controller
                     ->select('b.kpiName','b.id','b.weightage')
                     ->from('InitialShippingBundle:RankingKpiDetails','b')
                     ->where('b.shipDetailsId = :shipid')
-                    ->setParameter('shipid',$listallshipforcompany[$kj]['id'])
+                    ->setParameter('shipid',$listallshipforcompany[0]['id'])
                     ->getQuery()
                     ->getResult();
                 $drildowndataarray=array();
