@@ -58,12 +58,7 @@ class DashboradController extends Controller
                     ->getQuery();
             }
 
-
             $listallshipforcompany = $query->getResult();
-
-            //Finding Number of Ships For particular company Ends Here//
-
-            //Finding Lastmonthdetail date Starts Here//
 
             if($dataofmonth=='')
             {
@@ -78,16 +73,16 @@ class DashboradController extends Controller
                 $lastmonthdetail->modify('last day of this month');
             }
 
-            //Finding Lastmonthdetail date Ends Here//
-            //Finding details for series and drildown starts Here//
-
             $mykpivaluearray = array();
-            $finalShipKpiWeightage = array();
-            /* $drilldownarray=array();*/
+            //$finalShipKpiWeightage = array();
+
+            $shipRankingValueArray = array();
             for($kj=0;$kj<count($listallshipforcompany);$kj++)
             {
+                $rankingKpiValueCountArray =array();
                 $shipname = $listallshipforcompany[$kj]['shipName'];
                 $man_year = $listallshipforcompany[$kj]['manufacturingYear'];
+                $rankingShipId = $listallshipforcompany[$kj]['id'];
 
                 $findkpilist=$em -> createQueryBuilder()
                     ->select('b.kpiName','b.id','b.weightage')
@@ -99,11 +94,9 @@ class DashboradController extends Controller
                 $drildowndataarray=array();
                 $finalkpielementvalue = 0;
 
-
-
                 for ($element = 0; $element < count($findkpilist); $element++)
                 {
-
+                    $rankingElementValueTotal = 0;
                     $kpiidvalue = $findkpilist[$element]['id'];
                     $kpiweightage = $findkpilist[$element]['weightage'];
                     $kpiname = $findkpilist[$element]['kpiName'];
@@ -111,10 +104,11 @@ class DashboradController extends Controller
                         ->select('c.id','c.elementName', 'c.weightage', 'a.value')
                         ->from('InitialShippingBundle:RankingElementDetails', 'c')
                         ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with',  'c.id = a.elementDetailsId')
-                        ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth')
-                        ->orderBy('c.kpiDetailsId')
+                        ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
                         ->setParameter('kpiid', $kpiidvalue)
                         ->setParameter('datamonth', $lastmonthdetail )
+                        ->setParameter('rankingStatusValue',3,1,2,0)
+                        ->setParameter('shipId',$rankingShipId)
                         ->getQuery()
                         ->getResult();
 
@@ -125,19 +119,18 @@ class DashboradController extends Controller
 
                     if (count($findelementidarray) > 0)
                     {
-
                         for ($kk = 0; $kk < count($findelementidarray); $kk++)
                         {
                             $elementname=$findelementidarray[$kk]['elementName'];
-                            $elementId=$findelementidarray[$kk]['elementName'];
+                            $elementId=$findelementidarray[$kk]['id'];
                             $weightage = $findelementidarray[$kk]['weightage'];
                             $value = $findelementidarray[$kk]['value'];
 
-                            if ($value) {
-                                $value = ((float) $value);
+                           /* if ($value) {
+                                $value1 = ((float) $value);
                             } else {
-                                $value = null;
-                            }
+                                $value1 = null;
+                            }*/
 
                             $element_rules = $em->createQueryBuilder()
                                 ->select('a.rules')
@@ -147,22 +140,23 @@ class DashboradController extends Controller
                                 ->getQuery()
                                 ->getResult();
 
+                            $tempValue =0;
+
                             for($c=0;$c<count($element_rules);$c++)
                             {
                                 $rule = $element_rules[$c];
 
-                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finddbvaluefomula;
+                                $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $value;
                                 $jsfilename = 'node ' . $jsfiledirectry;
                                 $handle = popen($jsfilename, 'r');
                                 $read = fread($handle, 2096);
                                 $read1 = str_replace("\n", '', $read);
 
-                                if ($read1 != "false")
+                                if ($read1 == "false")
                                 {
-                                    break;
+                                    continue;
                                 }
 
-                                $tempValue =0;
 
                                 if($read1=='Green')
                                 {
@@ -176,12 +170,12 @@ class DashboradController extends Controller
                                 {
                                     $tempValue = 0;
                                 }
-                                array_push($elementcolorarray,$tempValue);
-
-
+                                //array_push($elementcolorarray,$tempValue);
                             }
+
+                            $rankingElementValueTotal+=$tempValue;
                         }
-                        if(count($elementcolorarray)==0)
+                        /*if(count($elementcolorarray)==0)
                         {
                             $avgElementValue=0;
                         }
@@ -190,8 +184,9 @@ class DashboradController extends Controller
                             $avgElementValue = array_sum($elementcolorarray)/count($elementcolorarray);
                         }
                         $kpiWeightageForship=($kpiweightage*$avgElementValue)/100;
-                        array_push($finalKpiWeightageArray,$kpiWeightageForship);
+                        array_push($finalKpiWeightageArray,$kpiWeightageForship);*/
                     }
+                    array_push($rankingKpiValueCountArray,($rankingElementValueTotal*$kpiweightage/100));
                     array_push($drildowndataarray,$finalKpiWeightageArray);
                 }
 
@@ -213,7 +208,7 @@ class DashboradController extends Controller
                     $vesselage=20/$yearcount;
                 }
                 ///array_push($mykpivaluearray,(array_sum($finalKpiWeightageArray)+$vesselage));
-                $mykpivaluearray[$kj]['y'] = (array_sum($finalKpiWeightageArray)+$vesselage);//assign shipdrilldown(values) from kpivalues
+                $mykpivaluearray[$kj]['y'] = (array_sum($rankingKpiValueCountArray));//assign shipdrilldown(values) from kpivalues
                 $yearchange = $lastmonthdetail->format('Y');
                 $mykpivaluearray[$kj]['url'] = '/dashboard/'.$listallshipforcompany[$kj]['id'].'/'.$yearchange.'/listallkpiforship_ranking';//assign shipdrilldown(values) from kpivalues
             }
