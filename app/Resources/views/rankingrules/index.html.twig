@@ -1,48 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{#{% block body %}
-    <h1>RankingRules list</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Kpidetailsid</th>
-                <th>Elementdetailsid</th>
-                <th>Rules</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for rankingRule in rankingRules %}
-            <tr>
-                <td><a href="{{ path('rankingrules_show', { 'id': rankingRule.id }) }}">{{ rankingRule.id }}</a></td>
-                <td>{{ rankingRule.kpiDetailsId }}</td>
-                <td>{{ rankingRule.elementDetailsId }}</td>
-                <td>{{ rankingRule.rules }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('rankingrules_show', { 'id': rankingRule.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('rankingrules_edit', { 'id': rankingRule.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('rankingrules_new') }}">Create a new entry</a>
-        </li>
-    </ul>
-{% endblock %}#}
-
-
 {% block body %}
 
     {% block javascripts %}
@@ -61,7 +18,7 @@
         <script type="text/javascript">
             $(document).ready(function()
             {
-                $('.rules_create_view').hide();
+                /*$('.rules_create_view').hide();
                 $('#rules_list_view').hide();
                 $('.show_rules').hide();
                 $('.grid_edit_rules').hide();
@@ -90,6 +47,44 @@
                 $('.cancel_btn').live("click",function(){
                     $('.rules_create_view').hide();
                     $('#rules_grid_view').show();
+                });*/
+
+                //$('.rules_create_view').hide();
+                $('#rules_list_view').hide();
+                $('.show_rules').hide();
+                $('.grid_edit_rules').hide();
+                $('.box_icon').hide();
+
+                $('.add-rule').live("click",function()
+                {
+                    $('.field').hide();
+                });
+                $('.add-condition').live("click",function(){
+                    $('.field').hide();
+                });
+                $('.box_icon').click(function(){
+                    $('.box_icon').hide();
+                    $('.list_icon').show();
+                    $('.rules_create_view').show();
+                    $('#rules_list_view').hide();
+                    $('#rules_grid_view').show();
+                });
+                $('.list_icon').click(function(){
+                    $('.list_icon').hide();
+                    $('.box_icon').show();
+                    $('#rules_grid_view').hide();
+                    $('.rules_create_view').hide();
+                    $('#rules_list_view').show();
+                });
+                $('.add_btn').live("click",function(){
+                    //$('#rules_grid_view').hide();
+                    $('#rules_list_view').hide();
+                    $('.show_rules').hide();
+                    $('.rules_create_view').show();
+                });
+                $('.cancel_btn').live("click",function(){
+                    $('.rules_create_view').hide();
+                    $('#rules_grid_view').show();
                 });
 
                 var condition_text = "";
@@ -97,7 +92,7 @@
                 var i = 0;
                 $('.rule_class').live("click",function()
                 {
-
+                    $('.rules_create_view').hide();
                     $('.rule_div').hide();
                     count++;
                     var currentId = $(this).attr('id');
@@ -330,8 +325,8 @@
     <div class="rules_create_view">
 
         <section>
-            <div class="col-sm-12">
-                <div class="add_kpi_views_screen">
+            <div class="col-sm-11">
+                <div class="add_new_users_views_screen">
                     <form class="form-horizontal no-style" action="{{ path('rankingrules_new1') }}" method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
@@ -349,47 +344,51 @@
                                     </div>
                                 </div>
                             </fieldset>
-                        </div>
-                        <div class="kpi_rules">
-                            <fieldset class="fieldset_box_right add_rule_right_form">
-                                <legend class="legend_name">Rules</legend>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                                        <div id="conditions"></div>
 
-                                        <p id="text_box"></p>
-                                        <input type="hidden" id="result" name="value">
+                            <div class="kpi_rules">
+                                <fieldset class="fieldset_box add_rule_form">
+                                    <legend class="legend_name">Rules</legend>
+                                    <div class="form-group button">
+                                        <div class="col-xs-9">
+                                            {#<a href="">Add rule</a> <a href="">Sub condition</a>#}
+                                            <div id="conditions"></div>
 
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                                        <a href="" id="actions">add action</a>
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9 add_button_place">
+                                            <p id="text_box"></p>
+                                            <input type="hidden" id="result" name="value">
 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table add_rule_conditions" id="rule-table">
-                                        <thead>
-                                        <tr id="row_id">
-                                            <th class="conditions">Conditions</th>
-                                            <th class="color">Color</th>
-                                            <th class="action">&nbsp;</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="small"></div>
-                                </div>
-                            </fieldset>
+                                    <div class="form-group button">
+                                        <div class="col-xs-9">
+                                            {#<div id="actions"></div>#}
+                                            <a href="" id="actions">add action</a>
+                                        </div>
+                                    </div>
+                                    <div class="form-group button">
+                                        <div class="col-xs-9 add_button_place">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table add_rule_conditions" id="rule-table">
+                                            <thead>
+                                            <tr id="row_id">
+                                                <th class="conditions">Conditions</th>
+                                                <th class="color">Color</th>
+                                                <th class="action">&nbsp;</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        <div class="small"></div>
+                                    </div>
+                                </fieldset>
+                            </div>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id"  type="submit" value="Submit">Save user</button>
+                            <button class="submit_btn" id="submit_id"  type="submit" value="Submit">Crete</button>
                             <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
                         </div>
                     </form>
@@ -404,8 +403,8 @@
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
 
-                        <a href="" class="edit_btn edit_rules_button"> Edit Element</a>
-                        <a href="" class="edit_btn">Archive</a>
+                        <a href="" class="edit_btn edit_rules_button"> Edit</a>
+                        {#<a href="" class="edit_btn">Archive</a>#}
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic details</legend>
@@ -439,7 +438,7 @@
 
     <div class="grid_edit_rules">
 
-        <script src="../js/rules/conditions-builder.js"></script>
+       {# <script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/action-builder.js"></script>
 
         <script type="text/javascript">
@@ -723,7 +722,7 @@
             });
 
         </script>
-
+#}
 
         <section>
             <div class="col-sm-11">
@@ -788,7 +787,7 @@
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save KPI</button>
+                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save</button>
                             <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
                         </div>
 
