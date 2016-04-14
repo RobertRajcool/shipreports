@@ -98,11 +98,7 @@
                                     $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
 
                                 });
-
                             }
-
-
-
                         }
                         ,
                         error: function()
@@ -344,7 +340,7 @@
                 <thead>
                 {% set i1=0 %}
                 <tr>
-                    <th class="kpi_name kpi_name_thtd">Element Naame</th>
+                    <th class="kpi_name kpi_name_thtd">Element Name</th>
                     <th class="weightage">Weightage</th>
                     {% for monthname in montharray %}
                         <th class="month">{{ monthname }}</th>
@@ -364,12 +360,12 @@
                 {% for element in listofelement %}
                     {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
                     <tr>
-                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  {#href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"#}> {{ element.elementName }}</a></td>
-                        <td>{{ elementweightage[i] }}%</td>
+                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                        <td>{{ element.weightage }}</td>
                         {% for j in 0..countmonth1 %}
-                            {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                             <td>
                             {% if j <1 %}
+                                {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                                 {% if elementcolorarray[j][i]=="Green" %}
                                     <img src="/images/01.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[j][i]=="Red" %}
@@ -416,38 +412,39 @@
                 {% set k=0 %}
                 <tr>
                     <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
-                    <td class="weightage">100%</td>
+                    <td class="weightage">100</td>
                     {% for kpi_colors_first in kpi_color %}
                         {% for kpi_colors in kpi_colors_first %}
                             <td class="month">
-                                {% if kpi_colors_first[k] =="Green" %}
+                                {% if kpi_colors_first[0] =="Green" %}
                                     <img src="/images/01.png" alt="Loader Image"/>
-                                {% elseif kpi_colors_first[k] =="Red" %}
+                                {% elseif kpi_colors_first[0] =="Red" %}
                                     <img src="/images/03.png" alt="Loader Image"/>
-                                {% elseif kpi_colors_first[k] =="Yellow" %}
+                                {% elseif kpi_colors_first[0] =="Yellow" %}
                                     <img src="/images/02.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if k != 2 %}
-                                {% set k1=k+1 %}
+                                {% set k1=0 %}
+                                {#<td>{{ kpi_color[2][0] }}</td>#}
                                 <td class="month_difference">
-                                    {% if kpi_colors=="Green" and kpi_colors_first[k1]=="Green" %}
+                                    {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/straight_arrow.png">
-                                    {% elseif kpi_colors=="Green" and kpi_colors_first[k1]=="Red" %}
+                                    {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Red" %}
                                         <img src="/images/down_arrow.png">
-                                    {% elseif kpi_colors=="Green" and kpi_colors_first[k1]=="Yellow" %}
+                                    {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Yellow" %}
                                         <img src="/images/down_arrow.png">
-                                    {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Green" %}
+                                    {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/up_arrow.png">
-                                    {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Red" %}
+                                    {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Red" %}
                                         <img src="/images/straight_arrow.png">
-                                    {% elseif kpi_colors=="Red" and kpi_colors_first[k1]=="Yellow" %}
+                                    {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Yellow" %}
                                         <img src="/images/up_arrow.png">
-                                    {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Green" %}
+                                    {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/up_arrow.png">
-                                    {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Red" %}
+                                    {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Red" %}
                                         <img src="/images/down_arrow.png">
-                                    {% elseif kpi_colors=="Yellow" and kpi_colors_first[k1]=="Yellow" %}
+                                    {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Yellow" %}
                                         <img src="/images/straight_arrow.png">
                                     {% endif %}
                                 </td>
@@ -468,8 +465,8 @@
                         {% set jk=jk+1 %}
                     {% endfor %}
                     {% if elementRule[ik] != NULL %}
-                        {% if elementRule[ik][0].1  != NULL %}
-                            <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
+                        {% if elementRule[ik][0]['rules']  != NULL %}
+                            <input type="hidden" name="listofcomments" id={{ listofelement[ik]['id'] }} value="{{ newcommandarray|join('*') }}">
                         {% else %}
                             <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
                         {% endif %}
