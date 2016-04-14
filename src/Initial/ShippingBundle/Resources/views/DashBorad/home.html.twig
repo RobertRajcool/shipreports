@@ -47,7 +47,7 @@
                             type: "post",
                             'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
                             beforeSend: function () {
-                                var text='Please Wait';
+                                var text='';
 
                                 if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
                                     $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
@@ -146,7 +146,7 @@
                             type: "post",
                             'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
                             beforeSend: function () {
-                                var text='Please Wait';
+                                var text='';
 
                                 if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
                                     $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
@@ -639,11 +639,11 @@
                                         <td class="month_td">
                                         {% if j <1 %}
                                             {% if kpicolorarray[j][i]=="Green" %}
-                                                <img src="/images/01.png" alt="Loader Image"/>
+                                                <img src="/images/01_score_card.png" alt="Loader Image"/>
                                             {% elseif kpicolorarray[j][i]=="Red" %}
-                                                <img src="/images/03.png" alt="Loader Image"/>
+                                                <img src="/images/03_score_card.png" alt="Loader Image"/>
                                             {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                <img src="/images/02.png" alt="Loader Image"/>
+                                                <img src="/images/02_score_card.png" alt="Loader Image"/>
                                             {% else %}
                                                 <div class="nocolor"></div>
                                             {% endif %}
