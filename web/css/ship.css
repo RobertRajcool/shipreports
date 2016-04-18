@@ -355,7 +355,7 @@ select {
     margin:0px;
     padding:0px;
     width:auto;
-    height:369px;
+    height:349px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -445,7 +445,7 @@ select {
 }
 .dashboard .widget .chart-2 {
     height:auto;
-    padding:9px 5px;
+    padding:13px 5px;
     font-size:50px;
     font-weight:bold;
     text-align:center;
@@ -1802,7 +1802,7 @@ input[type="color"],
 
 /* Management Performance */
 .table_container_dashboard {
-    height:260px;
+    height:283px;
 }
 .graph_and_colour_coding_dashboard_row {
     display: flex;
