@@ -1,55 +1,5 @@
 {% extends 'base.html.twig' %}
 
-{#{% block body %}
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-    <div class="page-header">
-        <h2>Kpi Details</h2>
-        <a href="{{ path('kpidetails_new') }}">Add KPI</a>
-    </div>
-    <div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>KpiName</th>
-            <th>Description</th>
-            <th>ActiveDate</th>
-            <th>EndDate</th>
-            <th>CellName</th>
-            <th>CellDetails</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for kpiDetail in kpiDetails %}
-            <tr>
-                <td>{{ kpiDetail.kpiName }}</td>
-                <td>{{ kpiDetail.description }}</td>
-                <td>{% if kpiDetail.activeDate %}{{ kpiDetail.activeDate|date('Y-m-d') }}{% endif %}</td>
-                <td>{% if kpiDetail.endDate %}{{ kpiDetail.endDate|date('Y-m-d') }}{% endif %}</td>
-                <td>{{ kpiDetail.cellName }}</td>
-                <td>{{ kpiDetail.cellDetails }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('kpidetails_show1', { 'id': kpiDetail.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('kpidetails_edit1', { 'id': kpiDetail.id }) }}">edit</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('elementdetails_select', { 'id': kpiDetail.id }) }}">Kpi_Elements</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-  </div>
-    </div>
-{% endblock %}#}
-
-
 {% block body %}
     <style>
         .inlineinput div {
@@ -76,7 +26,6 @@
             $(document).ready(function()
             {
                 $('.box_icon').hide();
-                //$('.create_kpi').hide();
                 $('.show_kpi').hide();
                 $('#list_view').hide();
                 $('.grid_edit_kpi').hide();
@@ -788,7 +737,7 @@
 
     <div class="grid_edit_kpi">
 
-        {#<script src="../js/rules/conditions-builder.js"></script>
+        <script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/action-builder.js"></script>
 
         <script type="text/javascript">
@@ -1110,7 +1059,7 @@
                 }
             });
 
-        </script>#}
+        </script>
 
 
         <section>
