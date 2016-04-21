@@ -2640,7 +2640,14 @@ class DashboradController extends Controller
                 'enableMouseTracking' => false,
                 'shadow' => false
             ));
-            $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+           /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                'shipid' => $shipid,
+                'screenName' => 'Ranking Report',
+                'userName' => '',
+                'date' => date('Y-m-d'),
+                'chart' => $ob,
+            ));*/
+          $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $shipid,
                 'screenName' => 'Ranking Report',
                 'userName' => '',
