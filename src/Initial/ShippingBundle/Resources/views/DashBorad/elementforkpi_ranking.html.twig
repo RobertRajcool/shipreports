@@ -553,8 +553,8 @@
                     {% set jk=jk+1 %}
                 {% endfor %}
                 {% if elementRule[ik] != NULL %}
-                    {% if elementRule[ik][0].1  != NULL %}
-                        <input type="hidden" name="listofcomments" id={{ elementRule[ik][0].1 }} value="{{ newcommandarray|join('*') }}">
+                    {% if elementRule[ik][0].rules  != NULL %}
+                        <input type="hidden" name="listofcomments" id={{ listofelement[ik]['id'] }} value="{{ newcommandarray|join('*') }}">
                     {% else %}
                         <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
                     {% endif %}
@@ -619,13 +619,6 @@
                 <fieldset id="mailform" class="fieldset_box_2">
                     <legend class="legend_name">{{ 'elementranking.sendreport'|trans }}</legend>
                     <form id="chatform" class="form-horizontal no-style" method="post">
-                        {# <input type="hidden" name="montharrayinstring" value="{{ montharray|join(', ') }}">
-                         <input type="hidden" name="listofcomments" value="{{ newcommandarray|join(', ') }}">
-                         <input type="hidden" name="listofelments" value="{{ newelementarray|join(', ') }}">
-                         <input type="hidden" name="elementweightage" value="{{ kpiweightage|join(', ') }}">
-                         <input type="hidden" name="elementcolorarray" value="{{ newcolorarray|join(', ') }}">
-                         <input type="hidden" name="avgscore" value="{{ avgscore|join(', ') }}">
-                         <input type="hidden" name="countmonth" value="{{ countmonth }}">#}
 
                         <input id="imagefilename" type="hidden" name="send_command[filename]" >
                         <input id="lastid" type="hidden" name="send_command[lastid]" >
@@ -633,12 +626,7 @@
                         <div class="form-group">
                             <label class="control-label  col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
                             <div class="col-xs-9">
-                                {#<div class="add_comment_checkbox">
-                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
-                                </div>
-                                <div class="add_comment_checkbox">
-                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
-                                </div>#}
+
                                 <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
 
                             </div>
@@ -646,7 +634,7 @@
                         <div class="form-group">
                             <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
                             <div class="col-xs-9">
-                                {#<input type="text" class="send_reports_to_input" placeholder="">#}
+
                                 <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
                                 <div id="livesearchdiv"  class="send_reports_to_input_list">
                                     <ul id="livesearch">

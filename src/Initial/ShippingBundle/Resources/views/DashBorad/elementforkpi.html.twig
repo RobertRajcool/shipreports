@@ -101,10 +101,9 @@
                             }
                         }
                         ,
-                        error: function()
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error While Generating Image as pdf');
-
+                            alert('Error : ' + errorThrown);
                         }
                     });
 
@@ -115,6 +114,14 @@
                 {
                     var b=$(this).text();
                     $('#toemail').val(b);
+                    $('#livesearchdiv').hide();
+                });
+                $('#mycommentid').click(function()
+                {
+                    $('#livesearchdiv').hide();
+                });
+                $('#mycommentid').focus(function()
+                {
                     $('#livesearchdiv').hide();
                 });
 
@@ -133,10 +140,58 @@
                         type: "post",
                         url: Routing.generate('runtimecommentforkpi'),
                         beforeSend: function () {
-                            $(".modal").show();
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
                         },
                         complete: function () {
-                            $(".modal").hide();
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                            $('#commentandreportdiv').hide();
                         }
                     });
                     $.ajax({
@@ -162,7 +217,7 @@
                             }
 
                             $('#buttonid').show();
-                            alert('Comment Added');
+                            $("<div title='Basic dialog'>Test message</div>").dialog();
                         }
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -190,10 +245,58 @@
                         type: "post",
                         url: Routing.generate('addchart'),
                         beforeSend: function () {
-                            $(".modal").show();
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
                         },
                         complete: function () {
-                            $(".modal").hide();
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                            $('#commentandreportdiv').hide();
                         }
                     });
                     $.ajax({
@@ -206,10 +309,9 @@
 
                         }
                         ,
-                        error: function()
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error While Generating Image as pdf');
-
+                            alert('Error : ' + errorThrown);
                         }
                     });
 
@@ -218,10 +320,66 @@
                 {
 
                     var form=$('#chatform');
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "post",
+                        url: Routing.generate('addcommentkpi_scorecard'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                        }
+                    });
+                    $.ajax({
                         data: form.serialize(),
-                        url: Routing.generate('addcommentkpi'),
                         success: function (data)
                         {
                             $('#commentform').hide();
@@ -313,6 +471,27 @@
                     var result = data.split('*');
                     return result;
                 }
+
+                var Example = (function() {
+                    "use strict";
+
+                    var elem,
+                            hideHandler,
+                            that = {};
+
+                    that.init = function(options) {
+                        elem = $(options.selector);
+                    };
+
+                    that.show = function(text) {
+                        clearTimeout(hideHandler);
+
+                        elem.find("span").html(text);
+                        elem.delay(200).fadeIn().delay(4000).fadeOut();
+                    };
+
+                    return that;
+                }());
 
             });
 
@@ -561,16 +740,10 @@
                         <input id="lastid" type="hidden" name="send_command[lastid]" >
                         <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
+                            <label class="control-label  col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
                             <div class="col-xs-9">
-                                {#<div class="add_comment_checkbox">
-                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> Yes</label>
-                                </div>
-                                <div class="add_comment_checkbox">
-                                    <label><input type="checkbox" name="send_command[addcomment]" class="inline-checkbox"> No</label>
-                                </div>#}
                                 <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
-                                <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="No"> {{ 'elementranking.no'|trans }}</label></div>
+
                             </div>
                         </div>
                         <div class="form-group">

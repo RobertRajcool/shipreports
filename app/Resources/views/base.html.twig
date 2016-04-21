@@ -13,12 +13,16 @@
     <link href="/css/ss-standard.css" rel="stylesheet">
     <link href="/css/font-awesome.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
     <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery-ui.js"></script>
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
+
+
 
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
@@ -96,7 +100,7 @@
                                 <span class="menu-item-text" >{{ 'layout.menu.vessel'|trans }}</span>
                             </a>
                         </li>
-                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") or is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                             <li id="Scorecard1">
                                 <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
                                     <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
@@ -145,7 +149,6 @@
                                 </ul>
                             </li>
 
-
                             <li id="Vessel_Ranking1">
                                 <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
                                     <span class="menu-item-icon ss-warehouse">&nbsp;</span>
@@ -186,7 +189,7 @@
                                         </a>
                                     </li>
                                     <li  id="Ranking_Reports1">
-                                        <a id="Ranking_Reports" class="layout_name" href="">
+                                        <a id="Ranking_Reports" class="layout_name" href="{{ path('ranking_reports') }}">
                                             <span class="menu-item-icon ss-barchart">&nbsp;</span>
                                             <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
                                         </a>
@@ -195,6 +198,40 @@
                             </li>
                         {% endif %}
                     {% endif %}
+
+                    {%  if is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                        <li id="Scorecard1">
+                            <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
+                                <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
+                                <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="ScoreCard">
+                                <li id="data_verification1">
+                                    <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
+                                        <span class="menu-item-icon ss-check">&nbsp;</span>
+                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li id="Vessel_Ranking1">
+                            <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
+                                <span class="menu-item-icon ss-warehouse">&nbsp;</span>
+                                <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="VesselRanking">
+                                <li id="ranking_data_verification1">
+                                    <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
+                                        <span class="menu-item-icon ss-check">&nbsp;</span>
+                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+
                     {%  if is_granted("ROLE_ADMIN") %}
                         <li id="fos_user_registration_show21">
                             <a class="layout_name" id="fos_user_registration_show" href="{{ path('fos_user_registration_show') }}">

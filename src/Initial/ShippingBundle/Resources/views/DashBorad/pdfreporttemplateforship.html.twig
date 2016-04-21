@@ -27,7 +27,7 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">{{ 'kpipdf.title'|trans }}</div>
+                <div class="title">Vessel Ranking {{ shipname }}</div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
@@ -74,7 +74,7 @@
                     <tr><td>
                             {{ kpi.kpiName }}
                         </td>
-                        <td>{{ kpiweightage[i] }}%</td>
+                        <td>{{ kpiweightage[i] }}</td>
                         {% for j in 0..countmonth1 %}
 
                             <td>

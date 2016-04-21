@@ -1,0 +1,360 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script type="text/javascript">
+            {{ chart(chart) }}
+        </script>
+        <script>
+            $(document).ready(function()
+            {
+                $('#resultofreport').hide();
+                $('#reportform').submit(function()
+                {
+                    var form=$('#reportform');
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: Routing.generate('view_ranking_reports'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                            $('#formcontentid').hide();
+                            $('#resultofreport').show();
+                            $('#listalltable').show();
+                        }
+                    });
+
+                    $.ajax({
+                        data: form.serialize(),
+                        success: function (data)
+                        {
+
+                            $('#area').highcharts().series[0].setData(data.avgscore);
+                            $('#area').highcharts().xAxis[0].setCategories(data.montharray);
+                            $('#graphtitle').text(data.shipname);
+                           $('#shipnameid').text(data.shipname);
+                            $('#currentyearid').text(data.currentyear);
+                            $('#ageofvesselid').text(data.ageofvessel);
+                            $('<table class="table table-striped-2 kpi_ranking_row secondtable"><thead ><tr id="headertable"><th>KPI</th><th class="tableheader">Weightage</th></tr></thead><tbody id="tablebodyid"></tbody></table>').appendTo('#tableofcontent');
+                            $.each(data.montharray, function(i)
+                            {
+                                $('<th class="month">'+data.montharray[i]+'</th>').appendTo('#headertable');
+
+
+                            });
+
+
+
+                            $.each(data.listofkpi,function(i)
+                                    {
+                                        $('<div id="score_color_'+data.listofkpi[i]['id']+'"></div> <table class="table table-striped normal_table"><thead><tr ><th>'+data.listofkpi[i]['kpiName']+'</th></tr></thead><tbody><tr><td id="'+data.listofkpi[i]['id']+'"></td></tr></tbody></table>').appendTo('#kpigraphlist')
+                                        $('<tr id="secondtabletr'+i+'"></tr>').appendTo('#tablebodyid');
+                                     $('<td id="'+i+'" class="kpi_name_thtd">'+data.listofkpi[i]['kpiName']+'</td><td>'+data.kpiweightage[i]+'</td>').appendTo('#secondtabletr'+i);
+                                        var k=0;
+                                        for(k = 0; k <data.countmonth ; k++)
+                                        {
+                                            $('<td>'+data.kpimonthdata[k][i]+'</td>').appendTo('#secondtabletr'+i);
+                                        }
+
+                                    });
+
+                            $('<tr class="newtempclass"><td class="kpi_name_thtd">Score</td><td>100</td></tr>').appendTo('#tablebodyid');
+                            $.each(data.avgscore, function(j)
+                            {
+                                $('<td>'+data.avgscore[j]+'</td>').appendTo('.newtempclass');
+
+
+                            });
+                            var tempcount=0;
+                           /* <tr id="elementcolor'+key+'"></tr><tr id="elementavgscor'+key+'"></tr>*/
+                            var elementtrdynamic=0;
+
+                            $.each(data.kpigraph, function(key, listofelementvalues)
+                            {
+                                $('<table class="table table-striped graph_and_colour_coding_main_title_row"><thead><tr><th>'+data.listofkpi[tempcount]['kpiName']+'</th></tr></thead><tbody><tr><td></td></tr></tbody></table>').appendTo('#score_color_'+key);
+                                $('<table class="table table-striped-3 element_ranking_row"><thead><tr id="tableheader_'+key+'"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_'+key+'"></tbody></table>').appendTo('#score_color_'+key)
+
+                                $.each(data.montharray, function(z)
+                                {
+                                    $('<th class="month">'+data.montharray[z]+'</th>').appendTo('#tableheader_'+key);
+
+                                });
+
+                                $.each(data.listofelement[key],function(b)
+                                {
+                                    $('<tr id="elementid_'+elementtrdynamic+'"></tr>').appendTo('#scoretablebodyid_'+key);
+                                    $('<td  rowspan="2" class="element_name_title">'+data.listofelement[key][b]['elementName']+'</td>').appendTo('#elementid_'+elementtrdynamic);
+                                    $('<tr id="elementcolor_'+elementtrdynamic+'"></tr>').appendTo('#scoretablebodyid_'+key);
+
+                                    var monthcount=0
+                                    for(monthcount = 0; monthcount < data.countmonth ; monthcount++)
+                                    {
+                                        var ranking_value='';
+                                        if(data.monthlydata[key][b].length!=0)
+                                        {
+
+                                            ranking_value = data.monthlydata[key][monthcount][b];
+                                        }
+                                        if (ranking_value != 'false' && ranking_value != '' && ranking_value != null && ranking_value != 'undefined')
+                                        {
+                                            $('<td>'+ranking_value+'</td>').appendTo('#elementid_'+elementtrdynamic);
+                                        }
+                                        else
+                                        {
+                                            $('<td></td>').appendTo('#elementid_'+elementtrdynamic);
+                                        }
+
+                                       /* $('<td>green</td>').appendTo('#elementcolor_'+elementtrdynamic);*/
+                                        var ranking_color = '';
+                                        if(data.elementcolorarray[key][b].length!=0)
+                                        {
+                                            ranking_color = data.elementcolorarray[key][monthcount][b];
+
+                                        }
+
+                                        if (ranking_color != 'false' && ranking_color != '')
+                                        {
+                                            if (ranking_color == 'Green') {
+                                                $('<td><img src="/images/box_green.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                            }
+                                            else if (ranking_color == 'Red') {
+                                                $('<td><img src="/images/box_red.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                            }
+                                            else if (ranking_color == 'Yellow') {
+                                                $('<td><img src="/images/box_yellow.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $('<td></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                        }
+                                    }
+                                    elementtrdynamic++;
+                                });
+                                $('<tr id="elementavgscore_'+elementtrdynamic+'"></tr>').appendTo('#scoretablebodyid_'+key);
+                                $('<td class="kpi_name_thtd"><strong>Score</strong></td>').appendTo('#elementavgscore_'+elementtrdynamic);
+                                var avgscore=0
+                                for(avgscore = 0; avgscore < data.countmonth ; avgscore++)
+                                {
+                                    $('<td>'+data.kpigraph[key][avgscore]+'</td>').appendTo('#elementavgscore_'+elementtrdynamic);
+                                }
+
+
+                                $('#'+key).highcharts({
+                                    chart: {
+                                        type: 'line',
+                                        width: 1065
+                                    },
+                                    title: {
+                                        text: ''
+
+                                    },
+                                    xAxis: {
+                                        categories: data.montharray
+                                    },
+                                    plotOptions: {"series":{"allowPointSelect":true,"dataLabels":{"enabled":true}}},
+                                    series: [{
+                                        name: data.listofkpi[tempcount]['kpiName'],
+                                        showInLegend:false,
+                                        data: listofelementvalues
+                                    }]
+                                });
+                                tempcount++;
+
+                            });
+
+
+
+
+
+                        }
+                        ,
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+
+                        }
+                    });
+
+                });
+
+            });
+        </script>
+
+
+
+
+    {% endblock %}
+
+    <section>
+        <div id="formcontentid" class="col-sm-12">
+            <div class="add_kpi_views_screen">
+                <form id="reportform" class="form-horizontal no-style"  method="post">
+
+                <div class="kpi_basic_details">
+                    <fieldset class="fieldset_box add_rule_form">
+                        <legend class="legend_name">Reports</legend>
+                        <div class="form-group">
+                            <label class="control-label col-xs-4">Choose Vessels</label>
+                            <div class="col-xs-8">
+                            <select name="shipid">
+                                <option value=" ">Select</option>
+                                {% for shipobject in listofships %}
+                                    <option value="{{ shipobject.id }} ">{{ shipobject.shipName }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-4">Choose Year</label>
+                            <div class="col-xs-8">
+                                <select class="add_rule_basic_drop" name="year">
+                                    <option selected="selected">--</option>
+                                    <option value=2000>2000</option>
+                                    <option value=2001>2001</option>
+                                    <option value=2002>2002</option>
+                                    <option value=2003>2003</option>
+                                    <option value=2004>2004</option>
+                                    <option value=2005>2005</option>
+                                    <option value=2006>2006</option>
+                                    <option value=2007>2007</option>
+                                    <option value=2008>2008</option>
+                                    <option value=2009>2009</option>
+                                    <option value=2010>2010</option>
+                                    <option value=2011>2011</option>
+                                    <option value=2012>2012</option>
+                                    <option value=2013>2013</option>
+                                    <option value=2014>2014</option>
+                                    <option value=2015>2015</option>
+                                    <option value=2016>2016</option>
+                                    <option value=2017>2017</option>
+                                    <option value=2018>2018</option>
+                                    <option value=2019>2019</option>
+                                    <option value=2020>2020</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="actions_submit">
+                    <input type="submit" class="submit_btn" id="viewreportid" value="View Report" />
+                </div>
+            </form>
+            </div>
+
+        </div>
+    </section>
+    <section >
+
+        <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen">
+            <div class="actions_submit">
+                <button class="submit_btn" id="sendreportid" >Send Report</button>
+                <button class="submit_btn" id="printreportid" >Print</button>
+            </div>
+            <div id="listalltable" class="table-responsive">
+
+                <table class="table table-striped-4 element_ranking_main_title_row">
+                    <thead>
+                    <tr>
+                        <th colspan="4">
+                            {{ 'kpiranking.header'|trans }}
+                            {#<a class="linkclass" href="{{ path('dashboardhome', { 'year':currentyear}) }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a>#}
+
+                        </th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
+                        <td id="shipnameid"></td>
+                        <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
+                        <td>V-ships</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
+                        <td id="currentyearid"></td>
+                        <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
+                        <td id="ageofvesselid"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div id="tableofcontent"></div>
+            <table id="shipchart" class="table table-striped normal_table">
+                <thead>
+                <tr>
+                    <th id="graphtitle">Title</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="area"></td>
+                </tr>
+                </tbody>
+            </table>
+                <div id="kpigraphlist">
+
+                </div>
+                </div>
+
+        </div>
+    </section>
+
+{% endblock %}
