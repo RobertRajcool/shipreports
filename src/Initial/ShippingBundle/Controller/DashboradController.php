@@ -2576,6 +2576,7 @@ class DashboradController extends Controller
                 $diff = $d2->diff($d1);
                 $yearcount=$diff->y+1;
             }
+            //$lookstatusobject = $em->getRepository('InitialShippingBundle:ShipDetails')->findBy(array('id' => $shipid,'shipName'=>$shipname,));
 
 
             $response = new JsonResponse();
@@ -2599,6 +2600,62 @@ class DashboradController extends Controller
                     'listofelement' => $ElementName_Weightage,
                 )
             );
+            return $response;
+
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+    /**
+     * Send Reports For Ranking
+     *
+     * @Route("/send_rankingreports", name="send_rankingreports")
+     */
+    public function sendreports_rankingAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null)
+        {
+            $userId = $user->getId();
+            $userName = $user->getUsername();
+            $shipid = $request->request->get('shipid');
+            $series = array(
+                array("name" => "Data Serie Name",
+                    "data" => array(1,2,4,5,6,3,8),
+                    // @see http://blog.psyrendust.com/2012/12/03/wkhtmltopdf-setup-guide-with-knplabs-snappy-support-on-debian/
+                    'animation' => false // important?
+                )
+            );
+            $ob = new Highchart(); // uses zend components? json, stdlib
+            $ob->chart->renderTo('linechart');  // The #id of the div where to render the chart
+            $ob->title->text('Simple Chart');
+            $ob->xAxis->title(array('text'  => "Horizontal axis title"));
+            $ob->yAxis->title(array('text'  => "Vertical axis title"));
+            $ob->series($series);
+            $ob->plotOptions->pie(array(
+                'animation' => false,
+                'enableMouseTracking' => false,
+                'shadow' => false
+            ));
+            $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                'shipid' => $shipid,
+                'screenName' => 'Ranking Report',
+                'userName' => '',
+                'date' => date('Y-m-d'),
+                'chart' => $ob,
+            ));
+
+            $client = new HighchartController();
+            $client->setContainer($this->container);
+            $printPdf = $client->createPdf($customerListDesign, 'Ranking Report');
+
+            $response = new Response();
+            $response->setContent($printPdf);
+            $response->headers->set('Content-Type', 'application/pdf');
+
             return $response;
 
         }

@@ -1170,9 +1170,11 @@ class DataVerficationController extends Controller
         $user = $this->getUser();
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
-        } else
+        }
+        else
         {
-        ;
+            $userid=$user->getId();
+
             $shipid = $request->request->get('shipid');
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
@@ -1222,6 +1224,22 @@ class DataVerficationController extends Controller
 
                 }
                 $returnmsg = ' Data Updated...';
+                if($buttonid == 'adminbuttonid')
+                {
+
+                    $rankinglookuptable=array('shipid'=>$newshipid,'dataofmonth'=>$new_date,'userid'=>$userid,'status'=>3,'datetime'=>new \DateTime());
+                }
+                if($buttonid == 'verfiybuttonid')
+                {
+                    $rankinglookuptable=array('shipid'=>$newshipid,'dataofmonth'=>$new_date,'userid'=>$userid,'status'=>2,'datetime'=>new \DateTime());
+                }
+                if($buttonid == 'updatebuttonid')
+                {
+
+                    $rankinglookuptable=array('shipid'=>$newshipid,'dataofmonth'=>$new_date,'userid'=>$userid,'status'=>1,'datetime'=>new \DateTime());
+                }
+                $gearman = $this->get('gearman');       //$datafromuser=array();
+                $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addrankinglookupdataupdate', json_encode($rankinglookuptable));
 
             }
             if ($buttonid == 'savebuttonid') {
@@ -1229,7 +1247,8 @@ class DataVerficationController extends Controller
 
 
                     $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpikey));
-                    foreach ($kpipvalue as $elementkey => $elementvalue) {
+                    foreach ($kpipvalue as $elementkey => $elementvalue)
+                    {
                         $newelementid = $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $elementvalue));
 
                         $readingkpivalue = new RankingMonthlyData();
@@ -1262,6 +1281,9 @@ class DataVerficationController extends Controller
                     ->setBody("This Web Url:".$fullurl);
 
                 $mailer->send($message);
+                $rankinglookuptable=array('shipid'=>$newshipid,'userid'=>$userid,'dataofmonth'=>$new_date,'status'=>1,'datetime'=>new \DateTime());
+                $gearman = $this->get('gearman');       //$datafromuser=array();
+                $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addrankinglookupdata', json_encode($rankinglookuptable));
 
             }
 

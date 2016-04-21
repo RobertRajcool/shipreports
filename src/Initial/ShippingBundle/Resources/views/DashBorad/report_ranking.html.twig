@@ -87,6 +87,7 @@
                             $('#area').highcharts().series[0].setData(data.avgscore);
                             $('#area').highcharts().xAxis[0].setCategories(data.montharray);
                             $('#graphtitle').text(data.shipname);
+                            $('#sendreportshipid').val(data.shipid);
                            $('#shipnameid').text(data.shipname);
                             $('#currentyearid').text(data.currentyear);
                             $('#ageofvesselid').text(data.ageofvessel);
@@ -233,6 +234,31 @@
 
                 });
 
+           /*     $('#sendreportid').click(function(e)
+                {
+                    var shipid=$('#sendreportshipid').val();
+                    alert(shipid);
+                    var data = {shipid :shipid};
+                    alert('afterdata');
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "/dashboard/send_rankingreports",
+                        success: function(data)
+                        {
+
+                           alert('Sucess');
+
+                        }
+                        ,
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+
+                });*/
+
             });
         </script>
 
@@ -305,8 +331,16 @@
 
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_edit_button">
-                <button class="submit_btn" id="sendreportid" >Send Report</button>
+                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}"  method="post">
+                    <input type="hidden" id="sendreportshipid" name="shipid">
+                    <button type="submit" class="submit_btn" id="sendreportid" >Send Report</button>
+                </form>
+
+
+
+
                 <button  class="submit_btn" id="printreportid" >Print</button>
+                <a href="{{ path('ranking_reports') }}" class="submit_btn">Back</a>
             </div>
             <div id="listalltable" class="table-responsive rankingreport">
 

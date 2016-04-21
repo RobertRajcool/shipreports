@@ -13,6 +13,8 @@ use Symfony\Component\Console\Output\NullOutput;
 use Mmoreram\GearmanBundle\Command\Util\GearmanOutputAwareInterface;
 use Mmoreram\GearmanBundle\Driver\Gearman;
 use Initial\ShippingBundle\Entity\ReadingKpiValues;
+use Initial\ShippingBundle\Entity\Ranking_LookupStatus;
+use Initial\ShippingBundle\Entity\Ranking_LookupData;
 use PHPExcel;
 use PHPExcel_IOFactory;
 use PHPExcel_Reader_Excel2007;
@@ -663,5 +665,259 @@ class ReadExcelWorker
 
 
     }
+    /**
+     * Ranking Lookup Data Add
+     *
+     * @param \GearmanJob $job Insert after reading kpi values
+     *
+     * @return boolean
+     *
+     * @Gearman\Job(
+     *     iterations = 1,
+     *     name = "addrankinglookupdataadd"
+     * )
+     */
+    public function RankingLookupDataAdd(\GearmanJob $job)
+    {
+        $em= $this->doctrine->getManager();
+        $parametervalues = json_decode($job->workload());
+        $shipid = $parametervalues['shipid'];
+        $dataofmonth = $parametervalues['dataofmonth'];
+        $userid = $parametervalues['userid'];
+        $status = $parametervalues['status'];
+        $datetime=$parametervalues['datetime'];
+
+        $lookupstatusobject=new Ranking_LookupStatus();
+        $lookupstatusobject->setShipid($shipid);
+        $lookupstatusobject->setStatus($status);
+        $lookupstatusobject->setDataofmonth($dataofmonth);
+        $lookupstatusobject->setDatetime($datetime);
+        $lookupstatusobject->setUserid($userid);
+        $em->persist($lookupstatusobject);
+        $em->flush();
+        return true;
+
+
+    }
+    /**
+     * Ranking Lookup Data Update
+     *
+     * @param \GearmanJob $job Insert after reading kpi values
+     *
+     * @return boolean
+     *
+     * @Gearman\Job(
+     *     iterations = 1,
+     *     name = "addrankinglookupdataupdate"
+     * )
+     */
+    public function RankingLookupDataUpdate(\GearmanJob $job)
+    {
+        $em= $this->doctrine->getManager();
+        //$mailer = $this->container->get('mailer');
+        $parametervalues = json_decode($job->workload());
+        $shipid = $parametervalues['shipid'];
+        $dataofmonth = $parametervalues['dataofmonth'];
+        $userid = $parametervalues['userid'];
+        $status = $parametervalues['status'];
+        $datetime=$parametervalues['datetime'];
+        $lookstatusobject = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $shipid,'dataofmonth'=>$dataofmonth,));
+        $lookstatusobject->setStatus($status);
+        $lookstatusobject->setDatetime($datetime);
+        $em->flush();
+        if($status==3)
+        {
+            $rankingKpiList = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id', 'b.weightage')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.shipDetailsId = :shipid')
+                ->setParameter('shipid', $shipid)
+                ->getQuery()
+                ->getResult();
+            for($rankingKpiCount=0;$rankingKpiCount<count($rankingKpiList);$rankingKpiCount++)
+            {
+                $rankingElementValueTotal = 0;
+                $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
+                $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
+                $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
+
+                $elementForKpiList = $em->createQueryBuilder()
+                    ->select('a.elementName', 'a.id', 'a.weightage')
+                    ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                    ->where('a.kpiDetailsId = :kpiid')
+                    ->setParameter('kpiid', $rankingKpiId)
+                    ->getQuery()
+                    ->getResult();
+
+                if(count($elementForKpiList)>0)
+                {
+                    for($elementCount=0;$elementCount<count($elementForKpiList);$elementCount++)
+                    {
+                        $scorecardElementId = $elementForKpiList[$elementCount]['id'];
+                        $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
+
+                        $elementDbValue = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:RankingMonthlyData', 'a')
+                            ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
+                            ->setParameter('elementId', $scorecardElementId)
+                            ->setParameter('monthName',$dataofmonth)
+                            ->setParameter('shipId',$shipid)
+                            ->setParameter('statusvalue',3)
+                            ->setParameter('kpiId',$rankingKpiId)
+                            ->getQuery()
+                            ->getResult();
+
+                        $rankingElementRulesArray = $em->createQueryBuilder()
+                            ->select('a.rules')
+                            ->from('InitialShippingBundle:RankingRules', 'a')
+                            ->where('a.elementDetailsId = :elementId')
+                            ->setParameter('elementId', $scorecardElementId)
+                            ->getQuery()
+                            ->getResult();
+                        $elementResultColor = "";
+                        $elementColorValue=0;
+                        if(count($elementDbValue)!=0)
+                        {
+                            for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
+                            {
+                                $elementRule = $rankingElementRulesArray[$elementRulesCount];
+                                $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . $elementDbValue[0]['value'];
+                                $elementJsFileName = 'node ' . $elementJsFileDirectory;
+                                $handle = popen($elementJsFileName, 'r');
+                                $elementColor = fread($handle, 2096);
+                                $elementResultColor = str_replace("\n", '', $elementColor);
+
+                                if ($elementResultColor == "false") {
+                                    continue;
+                                }
+
+                                if ($elementResultColor == "Green") {
+                                    $elementColorValue = $scorecardElementWeight;
+                                    break;
+                                } else if ($elementResultColor == "Yellow") {
+                                    $elementColorValue = $scorecardElementWeight/2;
+                                    break;
+                                } else if ($elementResultColor == "Red") {
+                                    $elementColorValue = 0;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $elementDbValue[0]['value']=null;
+                        }
+                        array_push($kpiElementColorArray,$elementResultColor);
+                        //$elementValueWithWeight = $elementColorValue ;
+                        $lookupdataobject=new Ranking_LookupData();
+                        $lookupdataobject->setShipid($shipid);
+                        $lookupdataobject->setElementcolor($elementResultColor);
+                        $lookupdataobject->setDataofmonth($dataofmonth);
+                        $lookupdataobject->setElementdata($elementColorValue);
+                        $lookupdataobject->setElementDetailsId($scorecardElementId);
+                        $lookupdataobject->setKpiDetailsId($rankingKpiId);
+                        $em->persist($lookupdataobject);
+                        $em->flush();
+
+                    }
+
+                }
+                if(count($elementForKpiList)==0)
+                {
+                    $newkpiid = $em->createQueryBuilder()
+                        ->select('b.id')
+                        ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                        ->where('b.kpiName = :kpiName')
+                        ->setParameter('kpiName', $rankingKpiName)
+                        ->groupby('b.kpiName')
+                        ->getQuery()
+                        ->getResult();
+                    $elementForKpiList = $em->createQueryBuilder()
+                        ->select('a.elementName', 'a.id', 'a.weightage')
+                        ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                        ->where('a.kpiDetailsId = :kpiid')
+                        ->setParameter('kpiid', $newkpiid[0]['id'])
+                        ->getQuery()
+                        ->getResult();
+
+                    for($elementCount=0;$elementCount<count($elementForKpiList);$elementCount++)
+                    {
+                        $scorecardElementId = $elementForKpiList[$elementCount]['id'];
+                        $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
+
+                        $elementDbValue = $em->createQueryBuilder()
+                            ->select('a.value')
+                            ->from('InitialShippingBundle:RankingMonthlyData', 'a')
+                            ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
+                            ->setParameter('elementId', $scorecardElementId)
+                            ->setParameter('monthName',$dataofmonth)
+                            ->setParameter('shipId',$shipid)
+                            ->setParameter('statusvalue',3)
+                            ->setParameter('kpiId',$newkpiid[0]['id'])
+                            ->getQuery()
+                            ->getResult();
+
+                        $rankingElementRulesArray = $em->createQueryBuilder()
+                            ->select('a.rules')
+                            ->from('InitialShippingBundle:RankingRules', 'a')
+                            ->where('a.elementDetailsId = :elementId')
+                            ->setParameter('elementId', $scorecardElementId)
+                            ->getQuery()
+                            ->getResult();
+                        $elementResultColor = "";
+                        $elementColorValue=0;
+                        if(count($elementDbValue)!=0)
+                        {
+                            for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
+                            {
+                                $elementRule = $rankingElementRulesArray[$elementRulesCount];
+                                $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . $elementDbValue[0]['value'];
+                                $elementJsFileName = 'node ' . $elementJsFileDirectory;
+                                $handle = popen($elementJsFileName, 'r');
+                                $elementColor = fread($handle, 2096);
+                                $elementResultColor = str_replace("\n", '', $elementColor);
+
+                                if ($elementResultColor == "false") {
+                                    continue;
+                                }
+
+                                if ($elementResultColor == "Green") {
+                                    $elementColorValue = $scorecardElementWeight;
+                                    break;
+                                } else if ($elementResultColor == "Yellow") {
+                                    $elementColorValue = $scorecardElementWeight/2;
+                                    break;
+                                } else if ($elementResultColor == "Red") {
+                                    $elementColorValue = 0;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $elementDbValue[0]['value']=null;
+                        }
+                        array_push($kpiElementColorArray,$elementResultColor);
+                        //$elementValueWithWeight = $elementColorValue ;
+                        $lookupdataobject=new Ranking_LookupData();
+                        $lookupdataobject->setShipid($shipid);
+                        $lookupdataobject->setElementcolor($elementResultColor);
+                        $lookupdataobject->setDataofmonth($dataofmonth);
+                        $lookupdataobject->setElementdata($elementColorValue);
+                        $lookupdataobject->setElementDetailsId($scorecardElementId);
+                        $lookupdataobject->setKpiDetailsId($newkpiid[0]['id']);
+                        $em->persist($lookupdataobject);
+                        $em->flush();
+                    }
+                }
+            }
+
+        }
+        return true;
+
+
+    }
+
 
 }
