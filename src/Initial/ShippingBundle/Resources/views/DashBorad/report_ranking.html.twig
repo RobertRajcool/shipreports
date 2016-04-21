@@ -102,9 +102,9 @@
 
                             $.each(data.listofkpi,function(i)
                                     {
-                                        $('<div id="score_color_'+data.listofkpi[i]['id']+'"></div> <table class="table table-striped normal_table"><thead><tr ><th>'+data.listofkpi[i]['kpiName']+'</th></tr></thead><tbody><tr><td id="'+data.listofkpi[i]['id']+'"></td></tr></tbody></table>').appendTo('#kpigraphlist')
+                                        $('<div id="score_color_'+data.listofkpi[i]['id']+'"></div> <table id="table_'+data.listofkpi[i]['id']+'" class="table table-striped normal_table"><thead><tr ><th>'+data.listofkpi[i]['kpiName']+'</th></tr></thead><tbody><tr><td id="'+data.listofkpi[i]['id']+'"></td></tr></tbody></table>').appendTo('#kpigraphlist')
                                         $('<tr id="secondtabletr'+i+'"></tr>').appendTo('#tablebodyid');
-                                     $('<td id="'+i+'" class="kpi_name_thtd">'+data.listofkpi[i]['kpiName']+'</td><td>'+data.kpiweightage[i]+'</td>').appendTo('#secondtabletr'+i);
+                                     $('<td id="'+i+'" class="kpi_name_thtd"><a href="#score_color_'+data.listofkpi[i]['id']+'"> '+data.listofkpi[i]['kpiName']+'</a></td><td>'+data.kpiweightage[i]+'</td>').appendTo('#secondtabletr'+i);
                                         var k=0;
                                         for(k = 0; k <data.countmonth ; k++)
                                         {
@@ -252,8 +252,8 @@
                         <div class="form-group">
                             <label class="control-label col-xs-4">Choose Vessels</label>
                             <div class="col-xs-8">
-                            <select name="shipid">
-                                <option value=" ">Select</option>
+                            <select required name="shipid" >
+                                <option value="">Select</option>
                                 {% for shipobject in listofships %}
                                     <option value="{{ shipobject.id }} ">{{ shipobject.shipName }}</option>
                                 {% endfor %}
@@ -263,8 +263,8 @@
                         <div class="form-group">
                             <label class="control-label col-xs-4">Choose Year</label>
                             <div class="col-xs-8">
-                                <select class="add_rule_basic_drop" name="year">
-                                    <option selected="selected">--</option>
+                                <select required class="add_rule_basic_drop"  name="year">
+                                    <option value="">Select</option>
                                     <option value=2000>2000</option>
                                     <option value=2001>2001</option>
                                     <option value=2002>2002</option>
@@ -303,12 +303,12 @@
     </section>
     <section >
 
-        <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen">
-            <div class="actions_submit">
+        <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
+            <div class="actions_edit_button">
                 <button class="submit_btn" id="sendreportid" >Send Report</button>
-                <button class="submit_btn" id="printreportid" >Print</button>
+                <button  class="submit_btn" id="printreportid" >Print</button>
             </div>
-            <div id="listalltable" class="table-responsive">
+            <div id="listalltable" class="table-responsive rankingreport">
 
                 <table class="table table-striped-4 element_ranking_main_title_row">
                     <thead>
