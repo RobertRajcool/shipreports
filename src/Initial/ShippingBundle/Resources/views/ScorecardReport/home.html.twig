@@ -1,0 +1,351 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% block javascripts %}
+
+        {% javascripts '@AppBundle/Resources/public/js/AAA.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/drilldown.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+        <script type="text/javascript">
+            {{ chart(chart) }}
+        </script>
+
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.reportShow').hide();
+                $('.reportElementShow').hide();
+                $('.submit_btn').live("click",function(){
+                    var aM = $('.activeMonth').val();
+                    var aY = $('.activeYear').val();
+                    var eM = $('.endMonth').val();
+                    var eY = $('.endYear').val();
+                    if(parseInt(aY)>parseInt(eY) || parseInt(aY)==parseInt(eY) && parseInt(aM)>parseInt(eM))
+                    {
+                        alert('Choose the valid date');
+                        return false;
+                    }
+                    var data = {
+                        activeMonth : aM,
+                        activeYear : aY,
+                        endMonth : eM,
+                        endYear : eY
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "reportGenerate",
+                        success: function(data)
+                        {
+                            alert('success');
+                            console.log(data);
+                            $('.reportGenerate').hide();
+                            $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
+                            $.each(data.monthName, function(i){
+                                $('<th colspan="2">'+data.monthName[i]+'</th>').appendTo('#previousRowPlace');
+                            });
+                            var inn =0;
+                            $.each(data.kpiNameList, function(i){
+                                $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> '+data.kpiNameList[inn]['kpiName']+' </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
+                                $.each(data.yearKpiColorArray, function(j)
+                                {
+                                    var color = '';
+                                    color = data.yearKpiColorArray[j][inn];
+
+                                    if(color != 'false' && color != '')
+                                    {
+                                        if(color == 'Green')
+                                        {
+                                           $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                           else if(color == 'Red')
+                                           {
+                                               $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                           }
+                                           else if(color == 'Yellow')
+                                           {
+                                               $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                           }
+                                    }else
+                                    {
+                                        $('<td class="month"></td>').appendTo('#praviousRowId'+inn);
+                                    }
+
+                                    if(j<data.monthName.length-1)
+                                    {
+                                        var status = data.yearKpiColorArray[j+1][inn];
+
+                                        if(color=='Green' && status=='Green' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Green' && status=='Yellow' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Green' && status=='Red' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Yellow' && status=='Green' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Yellow' && status=='Yellow' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Yellow' && status=='Red' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Red' && status=='Green' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Red' && status=='Yellow' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else if(color=='Red' && status=='Red' )
+                                        {
+                                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                        else
+                                        {
+                                            $('<td class="month_difference"></td>').appendTo('#praviousRowId'+inn);
+                                        }
+                                    }
+                                });
+                                inn++;
+                            });
+                            $('<tr id="averageScoreRowId"> <td class="average_score_2_td kpi_name_thtd">Average Score</td> <td class="weightage"><strong>100</strong> </td> ').appendTo('#previousTableBody');
+                            $.each(data.kpiAvgScore, function(i){
+                                $('<td colspan="2"><strong>'+data.kpiAvgScore[i]+'</strong></td>').appendTo('#averageScoreRowId');
+                            });
+                            $('#area').highcharts().series[0].setData(data.changeChartData);
+                            $('#area').highcharts().xAxis[0].setCategories(data.monthName);
+
+                            $.each(data.kpiNameList, function(i){
+                                $('<section id="section'+i+'"> </section>').appendTo('.reportElementShow');
+                                $('<div class="col-sm-12" id="divOne'+i+'"> </div>').appendTo('#section'+i);
+                                $('<div class="dashboard" id="dashboard'+i+'"> </div>').appendTo('#divOne'+i);
+                                $('<div id="elementScorecardTable'+i+'"> </div>').appendTo('#dashboard'+i);
+                                $('<table class="table table-striped graph_and_colour_coding_dashboard_main_title_row"><thead><tr><th> '+data.kpiNameList[i]['kpiName']+' </th></tr></thead></table>').appendTo('#elementScorecardTable'+i);
+                                $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="elementRowPlace'+i+'"><th class="kpi_name_thtd"> Element </th> <th>Weightage</th></tr> </thead> <tbody id="elementTableBody'+i+'"> </tbody></table>').appendTo('#elementScorecardTable'+i);
+                                $.each(data.monthName, function(month){
+                                    $('<th colspan="2">'+data.monthName[month]+'</th>').appendTo('#elementRowPlace'+i);
+                                });
+                                $.each(data.elementNameList[i], function(j){
+                                    $('<tr id="elementRowId'+i+j+'"> <td class="kpi_name kpi_name_thtd"> '+data.elementNameList[i][j]['elementName']+' </td> <td class="weightage">'+data.elementNameList[i][j]['weightage']+' </td> </tr> ').appendTo('#elementTableBody'+i);
+                                    $.each(data.monthName,function(k){
+                                        var color = '';
+                                        if(data.elementColorArray[k][i].length!= 0)
+                                        {
+                                            color = data.elementColorArray[k][i][j];
+                                        }
+                                        if(color != 'false' && color != '')
+                                        {
+                                            if(color == 'Green')
+                                            {
+                                                $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color == 'Red')
+                                            {
+                                                $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color == 'Yellow')
+                                            {
+                                                $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                        }else
+                                        {
+                                            $('<td class="month"></td>').appendTo('#elementRowId'+i+j);
+                                        }
+                                        /*$('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);*/
+                                        if(k<data.monthName.length-1)
+                                        {
+                                            var status = data.elementColorArray[k+1][i][j];
+
+                                            if(color=='Green' && status=='Green' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Green' && status=='Yellow' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Green' && status=='Red' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Yellow' && status=='Green' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Yellow' && status=='Yellow' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Yellow' && status=='Red' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Red' && status=='Green' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Red' && status=='Yellow' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else if(color=='Red' && status=='Red' )
+                                            {
+                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                            else
+                                            {
+                                                $('<td class="month_difference"></td>').appendTo('#elementRowId'+i+j);
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+
+                            $('.reportShow').show();
+                            $('.reportElementShow').show();
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    })
+                })
+            });
+        </script>
+
+    {% endblock %}
+
+    <section class="reportGenerate">
+        <div class="col-sm-11">
+            <div class="add_kpi_views_screen">
+                <form class="form-horizontal no-style"  method="post">
+                    <div class="kpi_basic_details">
+                        <fieldset class="fieldset_box add_rule_form">
+                            <legend class="legend_name">Basic Info</legend>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">Report</label>
+                                <div class="col-xs-8">
+                                    <span>
+                                        <select class="add_rule_basic_date_drop activeMonth" name="activeMonth" >
+                                            <option>--</option>
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4">Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop activeYear" name="activeYear" >
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                        To
+                                    <span>
+                                        <select class="add_rule_basic_date_drop endMonth" name="endMonth" >
+                                            <option>--</option>
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4">Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop endYear" name="endYear" >
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="actions_submit">
+                        <input type="submit" class="submit_btn" value="View Data" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="reportShow">
+        <div class="col-sm-12">
+            <div class="dashboard">
+                <div>
+                    <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                        <thead>
+                            <tr>
+                                <th>Management Performance</th>
+                            </tr>
+                        </thead>
+                    </table>
+
+                    <div id="previousScorecardTable">
+
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard">
+                <table class="table table-striped normal_table">
+                    <thead>
+                        <tr>
+                            <th>Management Performance - Graph</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="area"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div class="reportElementShow"></div>
+{% endblock %}
