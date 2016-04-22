@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +19,84 @@
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            var elements = [];
+
+            var k = 0;
+            {% for element in listofelement %}
+
+            elements.push(['{{ element.elementName }}','{{ element.id }}']);
+            var abcdef='{{ element.elementName }}';
+            var rule_value = $('#'+{{ element.id }}).val();
+            var rule_value_array = splitfun(rule_value);
+
+            if(rule_value != null)
+            {
+                $('<div class="rules_valus" id="rules_valus_id'+k+'" >').appendTo('#rulePlaceId');
+                $('<div class="title">'+abcdef+'</div>').appendTo('#rules_valus_id'+k);
+
+                $.each(rule_value_array,function(i)
+                {
+                    var condition_text = "";
+                    var rule_obj = JSON.parse(rule_value_array[i]);
+
+                    $.each(rule_obj.conditions.all, function(j)
+                    {
+                        if(rule_obj.conditions.all[j].operator=='equalTo')
+                        {
+                            rule_obj.conditions.all[j].operator='=';
+                        }
+                        else if(rule_obj.conditions.all[j].operator=='notEqualTo')
+                        {
+                            rule_obj.conditions.all[j].operator='!=';
+                        }
+                        else if(rule_obj.conditions.all[j].operator=='greaterThan')
+                        {
+                            rule_obj.conditions.all[j].operator='>';
+                        }
+                        else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
+                        {
+                            rule_obj.conditions.all[j].operator='>=';
+                        }
+                        else if(rule_obj.conditions.all[j].operator=='lessThan')
+                        {
+                            rule_obj.conditions.all[j].operator='<';
+                        }
+                        else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
+                        {
+                            rule_obj.conditions.all[j].operator='<=';
+                        }
+                        var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
+                        if(j==0)
+                        {
+                            condition_text = condition_text_one;
+                        }
+                        if(j>0)
+                        {
+                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                        }
+                    });
+                    $('<div ><span class="span_1">'+condition_text+'</span><span class="span_1">'+rule_obj.actions.value+'</span></div>').appendTo('#rules_valus_id'+k);
+
+                });
+
+                $('</div>');
+            }
+
+            k++;
+            {% endfor %}
+
+
+            /*Displaying the rules above the graph*/
+
+            function splitfun(data){
+                var result = data.split('*');
+                return result;
+            }
+
+        });
+    </script>
 </head>
 <body>
 
@@ -26,7 +105,7 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">KPI ranking pdf</div>
+                <div class="title">Score Card {{ kpiname }}</div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
@@ -35,219 +114,188 @@
             <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_main_title_row">
                 <thead>
                 <tr>
-                    <th class="branding-colours" colspan="4">Lorem ipsum dolor sit amet</th>
+                    <th>{{ kpiname }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td class="vessel_name_1"><strong>Vessel name</strong></td>
-                    <td class="vessel_name_2">Azure bay</td>
-                    <td class="vessel_name_3"><strong>Tech manager</strong></td>
-                    <td class="vessel_name_4">V-ships</td>
-                </tr>
-                <tr>
-                    <td><strong>Year</strong></td>
-                    <td>2016</td>
-                    <td><strong>Age of vessel</strong></td>
-                    <td>10</td>
+                    {#<td>Scorecard: Minimum ~ maximum: 0 ~ 3.0</td>#}
+                    <td>
+                        <a class="linkclass" href="{{ path('dashboardhome') }}" style="float: right"  >Back</a></td>
                 </tr>
                 </tbody>
             </table>
-            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_row">
+            <table class="responsive-table certificates-table element_ranking_12_month_pdf_row">
+                <thead>
+                {% set i1=0 %}
+                <tr>
+                    <th class="kpi_name kpi_name_thtd">Element Name</th>
+                    <th class="weightage">Weightage</th>
+                    {% for monthname in montharray %}
+                        <th class="month">{{ monthname }}</th>
+                        {% if i1 != 2 %}
+                            <th class="month_difference">&nbsp;</th>
+                        {% endif %}
+                        {% set i1 = i1+1 %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set newelementarray = {} %}
+                {% set newcolorarray = {} %}
+                {% set akj=0 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
+                    <tr>
+                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                        <td>{{ element.weightage }}</td>
+                        {% for j in 0..countmonth1 %}
+                            <td>
+                                {% if j <1 %}
+                                    {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
+                                    {% if elementcolorarray[j][i]=="Green" %}
+                                        <img src="/images/01.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[j][i]=="Red" %}
+                                        <img src="/images/03.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                        <img src="/images/02.png" alt="Loader Image"/>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            {% if j != 2 %}
+                                {% set j1=j+1 %}
+                                <td>
+                                    {% if j <0 %}
+                                        {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Yellow" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Green" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Red" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Yellow" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Green" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Red" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            {% set akj=akj+1 %}
+                        {% endfor %}
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                </tbody>
+            </table>
+            </section>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table element_ranking_12_month_pdf_row">
+                {% set k=0 %}
+                <tr>
+                    <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
+                    <td class="weightage">100</td>
+                    {% for kpi_colors_first in kpi_color %}
+                        {% for kpi_colors in kpi_colors_first %}
+                            <td class="month">
+                                {% if kpi_colors_first[0] =="Green" %}
+                                    <img src="/images/01.png" alt="Loader Image"/>
+                                {% elseif kpi_colors_first[0] =="Red" %}
+                                    <img src="/images/03.png" alt="Loader Image"/>
+                                {% elseif kpi_colors_first[0] =="Yellow" %}
+                                    <img src="/images/02.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
+                            {% if k != 2 %}
+                                {% set k1=0 %}
+                                {#<td>{{ kpi_color[2][0] }}</td>#}
+                                <td class="month_difference">
+                                    {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Yellow" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Red" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Yellow" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Yellow" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            {% set k=k+1 %}
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+            </table>
+        </section>
+
+
+        <section class="data-row-section top-margin-space">
+            <table class="table table-striped-4 kpi_ranking_rules_show_row">
                 <thead>
                 <tr>
-                    <th class="branding-colours kpi_name kpi_name_thtd">Keep Performance Index</th>
-                    <th class="branding-colours weightage">Weightage</th>
-                    <th class="branding-colours month">Jan</th>
-                    <th class="branding-colours month">Feb</th>
-                    <th class="branding-colours month">Mar</th>
-                    <th class="branding-colours month">Apr</th>
-                    <th class="branding-colours month">May</th>
-                    <th class="branding-colours month">Jun</th>
-                    <th class="branding-colours month">Jul</th>
-                    <th class="branding-colours month">Aug</th>
-                    <th class="branding-colours month">Sep</th>
-                    <th class="branding-colours month">Oct</th>
-                    <th class="branding-colours month">Nov</th>
-                    <th class="branding-colours month">Dec</th>
+                    <th colspan="3">Rules</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
+                    <td id="rulePlaceId" class="rulePlace">
+
+                    </td>
                 </tr>
+                </tbody>
+            </table>
+        </section>
+        <div>
+            {% set newcommandarray = {} %}
+            {% set jk=0 %}
+            {% set ik=0 %}
+            {% for kpiRules in elementRule %}
+                {% for kpi_rules in kpiRules %}
+                    {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
+                    {% set jk=jk+1 %}
+                {% endfor %}
+                {% if elementRule[ik] != NULL %}
+                    {% if elementRule[ik][0]['rules']  != NULL %}
+                        <input type="hidden" name="listofcomments" id={{ listofelement[ik]['id'] }} value="{{ newcommandarray|join('*') }}">
+                    {% else %}
+                        <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                    {% endif %}
+                {% endif %}
+
+                {% set ik=ik+1 %}
+                {% set newcommandarray = {} %}
+            {% endfor %}
+        </div>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
                 <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpiname }}</th>
                 </tr>
+                </thead>
+                <tbody>
                 <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td>Vessel performance</td>
-                    <td>10%</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                    <td>3.5</td>
-                </tr>
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
-                    <td><strong>10</strong></td>
+                    <td><img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
                 </tr>
                 </tbody>
             </table>
@@ -257,27 +305,22 @@
             <table class="responsive-table certificates-table">
                 <thead>
                 <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">Graph colour</th>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ 'elementpdf.commands'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td><img src="images/graph_colour.jpg"></td>
-                </tr>
-                </tbody>
-            </table>
-        </section>
+                    <td id="viewcommentdiv" >
+                        {% if commentarray|length <= 0 %}
+                            {{ 'elementranking.nocommands'|trans }}
+                        {% endif %}
+                        {% if commentarray|length > 0 %}
+                            {% for comobject in commentarray %}
+                                {{ comobject.comment }}
 
-        <section class="data-row-section top-margin-space">
-            <table class="responsive-table certificates-table">
-                <thead>
-                <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">Send comment</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum in pharetra nisi. Nullam eleifend aliquam leo eu volutpat. Sed ac cursus ligula, nec scelerisque nibh. Suspendisse porttitor eget justo non bibendum. Integer pharetra tempor nisl id convallis. In ut magna pretium, sodales sapien eu, commodo lacus. Morbi eu dolor nunc. Sed tristique ligula ac quam eleifend sollicitudin. Praesent consequat ante sit amet lacus vestibulum gravida. Maecenas cursus erat sit amet consectetur eleifend. Sed id vestibulum sapien. Donec facilisis est ut tellus porttitor consequat. Aliquam erat volutpat. </td>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
                 </tr>
                 </tbody>
             </table>

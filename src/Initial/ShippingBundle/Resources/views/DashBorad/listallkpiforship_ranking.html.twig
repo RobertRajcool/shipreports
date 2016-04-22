@@ -72,7 +72,6 @@
                 });
                 $('#toemail').keyup(function()
                 {
-
                     var searchstring=$(this).val();
                     var data = {searchstring :searchstring} ;
                     $.ajaxSetup({
@@ -87,6 +86,7 @@
                         data: data,
                         success: function (data)
                         {
+                            //alert('sucess')
 
                             if($.isArray(data.returnresult))
                             {
@@ -260,7 +260,7 @@
                         type: "post",
                         url: Routing.generate('addchart'),
                         beforeSend: function () {
-                            var text='Please Wait';
+                            var text='';
 
                             if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
                                 $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
@@ -335,15 +335,73 @@
                 {
 
                     var form=$('#chatform');
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "post",
-                        data: form.serialize(),
                         url: Routing.generate('addcomment_ship'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                        }
+                    });
+                    $.ajax({
+                        data: form.serialize(),
                         success: function (data)
                         {
                             $('#commentform').hide();
                             $('#mailform').hide();
                             $('#addcomment').hide();
+                            $('#mycommentid').val(' ');
+                            $('#toemail').val(' ');
 
                             alert(data.updatemsg);
                             $('#commentandreportdiv').hide();
@@ -381,7 +439,11 @@
             <table class="table table-striped-4 element_ranking_main_title_row">
                 <thead>
                 <tr>
-                    <th colspan="4">{{ 'kpiranking.header'|trans }}</th>
+                    <th colspan="4">
+                        {{ 'kpiranking.header'|trans }}
+                        {#<a class="linkclass" href="{{ path('dashboardhome', { 'year':currentyear}) }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a>#}
+
+                    </th>
 
                 </tr>
                 </thead>
@@ -422,7 +484,7 @@
                                     title="{{ kpi.kpiName }}">
                                 {{ kpi.kpiName }}
                             </a></td>
-                        <td>{{ kpiweightage[i] }}%</td>
+                        <td>{{ kpiweightage[i] }}</td>
 
                         {% for j in 0..countmonth1 %}
                             {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
@@ -494,7 +556,7 @@
                     <legend class="legend_name">{{ 'kpiranking.addcomment'|trans }}</legend>
                     <form  class="form-horizontal no-style"  method="post">
 
-                        <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">
+                       {# <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ shipid }}">#}
 
                         <div class="form-group">
                             <div class="col-xs-12">

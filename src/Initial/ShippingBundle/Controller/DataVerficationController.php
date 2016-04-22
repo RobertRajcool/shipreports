@@ -13,6 +13,8 @@ use Initial\ShippingBundle\Entity\RankingMonthlyData;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\PHPNodeJs;
+use Initial\ShippingBundle\Entity\Ranking_LookupStatus;
+use Initial\ShippingBundle\Entity\Ranking_LookupData;
 use Initial\ShippingBundle\Form\AddExcelFileType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -101,13 +103,14 @@ class DataVerficationController extends Controller
                 $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
 
             }
-            if(count($finddatawithstatus)==3)
+            if(count($finddatawithstatus)==4)
             {
                 return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
                         'elementvalues'=>$finddatawithstatus['elementvalues'],
+                        'elementweightage'=>$finddatawithstatus['elementweightage'],
                         'currentshipid'=>$shipid,'currentshipname'=>$shipname
                     ));
             }
@@ -355,6 +358,7 @@ class DataVerficationController extends Controller
 
         $elementvalues=array();
         $returnarray=array();
+        $elementweightage=array();
 
         $resularray = $em->createQueryBuilder()
             ->select('b.value')
@@ -382,7 +386,7 @@ class DataVerficationController extends Controller
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id')
+                ->select('b.elementName', 'b.id','b.weightage')
                 ->from('InitialShippingBundle:ElementDetails', 'b')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->setParameter('kpidetailsid', $kpiid)
@@ -402,7 +406,7 @@ class DataVerficationController extends Controller
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id')
+                    ->select('b.elementName', 'b.id','b.weightage')
                     ->from('InitialShippingBundle:ElementDetails', 'b')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $newkpiid)
@@ -415,6 +419,7 @@ class DataVerficationController extends Controller
                 for ($j = 0; $j < count($elementids); $j++) {
                     // $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage,$elementids[$j]['weightage']);
                 }
             }
             else {
@@ -424,6 +429,7 @@ class DataVerficationController extends Controller
                 for ($j = 0; $j < count($elementids); $j++) {
                     // $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage,$elementids[$j]['weightage']);
                 }
             }
         }
@@ -432,7 +438,7 @@ class DataVerficationController extends Controller
             array_push($elementvalues, $resularray[$kkk]['value']);
         }
 
-        return array('elementvalues'=>$elementvalues,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
+        return array('elementvalues'=>$elementvalues,'elementweightage'=>$elementweightage,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
     }
 
 
@@ -567,7 +573,7 @@ class DataVerficationController extends Controller
 
         }
         $response = new JsonResponse();
-        if(count($finddatawithstatus)==3)
+        if(count($finddatawithstatus)==4)
         {
 
 
@@ -576,6 +582,7 @@ class DataVerficationController extends Controller
                 'shipid' => $nextshipid,
                 'kpiNameArray' =>$finddatawithstatus['elementnamekpiname'],
                 'elementcount' => $finddatawithstatus['maxelementcount'],
+                'elementweightage'=>$finddatawithstatus['elementweightage'],
                 'elementvalues' => $finddatawithstatus['elementvalues']));
             return $response;
         }
@@ -661,6 +668,7 @@ class DataVerficationController extends Controller
         $maxelementcount = 0;
 
         $returnarray = array();
+        $elementweightage=array();
         $sessionkpielementid = array();
         $k = 0;
         for ($i = 0; $i < count($ids); $i++) {
@@ -668,8 +676,8 @@ class DataVerficationController extends Controller
             $kpiname = $ids[$i]['kpiName'];
 
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id')
-                ->from('InitialShippingBundle:ElementDetails', 'b')
+                ->select('b.elementName', 'b.id','b.weightage')
+                ->from('InitialShippingBundle:ElementDetails','b')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
@@ -689,7 +697,7 @@ class DataVerficationController extends Controller
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id')
+                    ->select('b.elementName', 'b.id','b.weightage')
                     ->from('InitialShippingBundle:ElementDetails', 'b')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $newkpiid)
@@ -702,6 +710,7 @@ class DataVerficationController extends Controller
                 for ($j = 0; $j < count($elementids); $j++) {
                     $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage,$elementids[$j]['weightage']);
 
 
                 }
@@ -713,6 +722,7 @@ class DataVerficationController extends Controller
                 for ($j = 0; $j < count($elementids); $j++) {
                     $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage,$elementids[$j]['weightage']);
 
                 }
             }
@@ -724,10 +734,10 @@ class DataVerficationController extends Controller
             array_push($elementvalues, $resularray[$kkk]['value']);
         }
         if ($mode == 'listkpielement') {
-            return array('returnarray' => $returnarray, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
+            return array('returnarray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
         }
         $response = new JsonResponse();
-        $response->setData(array('kpiNameArray' => $returnarray, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
+        $response->setData(array('kpiNameArray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
         return $response;
     }
 
@@ -802,13 +812,14 @@ class DataVerficationController extends Controller
                 $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid);
 
             }
-            if(count($finddatawithstatus)==3)
+            if(count($finddatawithstatus)==4)
             {
                 return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
                         'elementvalues'=>$finddatawithstatus['elementvalues'],
+                        'elementweightage'=>$finddatawithstatus['elementweightage'],
                         'currentshipid'=>$shipid,'currentshipname'=>$shipname
                     ));
             }
@@ -1058,6 +1069,7 @@ class DataVerficationController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $elementvalues=array();
+        $elementweightage=array();
         $returnarray=array();
 
         $resularray = $em->createQueryBuilder()
@@ -1086,14 +1098,15 @@ class DataVerficationController extends Controller
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id')
+                ->select('b.elementName', 'b.id','b.weightage')
                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
                 ->getQuery();
             $elementids = $query->getResult();
-            if (count($elementids) == 0) {
+            if (count($elementids) == 0)
+            {
                 $query1 = $em->createQueryBuilder()
                     ->select('b.kpiName', 'b.id')
                     ->from('InitialShippingBundle:RankingKpiDetails', 'b')
@@ -1106,28 +1119,34 @@ class DataVerficationController extends Controller
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id')
+                    ->select('b.elementName', 'b.id','b.weightage')
                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
                     ->getQuery();
                 $elementids = $query->getResult();
-                if ($maxelementcount < count($elementids)) {
+
+                if ($maxelementcount < count($elementids))
+                {
                     $maxelementcount = count($elementids);
                 }
-                for ($j = 0; $j < count($elementids); $j++) {
+                for ($j = 0; $j < count($elementids); $j++)
+                {
                     // $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage,$elementids[$j]['weightage']);
                 }
             }
             else {
                 if ($maxelementcount < count($elementids)) {
                     $maxelementcount = count($elementids);
                 }
-                for ($j = 0; $j < count($elementids); $j++) {
+                for ($j = 0; $j < count($elementids); $j++)
+                {
                     // $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage,$elementids[$j]['weightage']);
                 }
             }
         }
@@ -1136,7 +1155,7 @@ class DataVerficationController extends Controller
             array_push($elementvalues, $resularray[$kkk]['value']);
         }
 
-        return array('elementvalues'=>$elementvalues,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
+        return array('elementvalues'=>$elementvalues,'elementweightage'=>$elementweightage,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
     }
 
 
@@ -1153,9 +1172,11 @@ class DataVerficationController extends Controller
         $user = $this->getUser();
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
-        } else
+        }
+        else
         {
-        ;
+            $userid=$user->getId();
+
             $shipid = $request->request->get('shipid');
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
@@ -1206,13 +1227,43 @@ class DataVerficationController extends Controller
                 }
                 $returnmsg = ' Data Updated...';
 
+                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                $newlookupstatus=$lookstatus[0];
+                if($buttonid == 'adminbuttonid')
+                {
+
+                    $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
+                   // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(3);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
+                    $gearman = $this->get('gearman');
+                    $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addrankinglookupdataupdate', json_encode($rankinglookuptable));
+                }
+                if($buttonid == 'verfiybuttonid')
+                {
+                    //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(2);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
+                }
+                if($buttonid == 'updatebuttonid')
+                {
+                    //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(1);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
+                }
+
+
             }
             if ($buttonid == 'savebuttonid') {
                 foreach ($kpiandelementids as $kpikey => $kpipvalue) {
 
 
                     $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpikey));
-                    foreach ($kpipvalue as $elementkey => $elementvalue) {
+                    foreach ($kpipvalue as $elementkey => $elementvalue)
+                    {
                         $newelementid = $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $elementvalue));
 
                         $readingkpivalue = new RankingMonthlyData();
@@ -1236,7 +1287,7 @@ class DataVerficationController extends Controller
                     ->where('b.id = :userId')
                     ->setParameter('userId', $userId)
                     ->getQuery();*/
-                $fullurl="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+                $fullurl="http://shipreports/login";
                 $mailer = $this->container->get('mailer');
                 $message = \Swift_Message::newInstance()
                     ->setFrom('lawrance@commusoft.co.uk')
@@ -1245,6 +1296,14 @@ class DataVerficationController extends Controller
                     ->setBody("This Web Url:".$fullurl);
 
                 $mailer->send($message);
+                $lookupstatusobject=new Ranking_LookupStatus();
+                $lookupstatusobject->setShipid($newshipid);
+                $lookupstatusobject->setStatus(1);
+                $lookupstatusobject->setDataofmonth($new_date);
+                $lookupstatusobject->setDatetime(new \DateTime());
+                $lookupstatusobject->setUserid($userid);
+                $em->persist($lookupstatusobject);
+                $em->flush();
 
             }
 
@@ -1285,7 +1344,7 @@ class DataVerficationController extends Controller
 
             }
             $response = new JsonResponse();
-            if(count($finddatawithstatus)==3)
+            if(count($finddatawithstatus)==4)
             {
 
 
@@ -1294,6 +1353,7 @@ class DataVerficationController extends Controller
                     'shipid' => $nextshipid,
                     'kpiNameArray' =>$finddatawithstatus['elementnamekpiname'],
                     'elementcount' => $finddatawithstatus['maxelementcount'],
+                    'elementweightage'=>$finddatawithstatus['elementweightage'],
                     'elementvalues' => $finddatawithstatus['elementvalues']));
                 return $response;
             }
@@ -1398,6 +1458,7 @@ class DataVerficationController extends Controller
             $maxelementcount = 0;
 
             $returnarray = array();
+            $elementweightage=array();
             $sessionkpielementid_ranking = array();
             $k = 0;
             for ($i = 0; $i < count($ids); $i++) {
@@ -1405,7 +1466,7 @@ class DataVerficationController extends Controller
                 $kpiname = $ids[$i]['kpiName'];
 
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id')
+                    ->select('b.elementName', 'b.id','b.weightage')
                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $kpiid)
@@ -1426,7 +1487,7 @@ class DataVerficationController extends Controller
                     $newkpiid = $ids1[0]['id'];
                     $newkpiname = $ids1[0]['kpiName'];
                     $query = $em->createQueryBuilder()
-                        ->select('b.elementName', 'b.id')
+                        ->select('b.elementName', 'b.id','b.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'b')
                         ->where('b.kpiDetailsId = :kpidetailsid')
                         ->setParameter('kpidetailsid', $newkpiid)
@@ -1439,17 +1500,22 @@ class DataVerficationController extends Controller
                     for ($j = 0; $j < count($elementids); $j++) {
                         $sessionkpielementid_ranking[$newkpiid][$j] = $elementids[$j]['id'];
                         $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+                        array_push($elementweightage,$elementids[$j]['weightage']);
 
 
                     }
-                } else {
-                    if ($maxelementcount < count($elementids)) {
+                }
+                else
+                {
+                    if ($maxelementcount < count($elementids))
+                    {
                         $maxelementcount = count($elementids);
                     }
 
                     for ($j = 0; $j < count($elementids); $j++) {
                         $sessionkpielementid_ranking[$kpiid][$j] = $elementids[$j]['id'];
                         $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+                        array_push($elementweightage,$elementids[$j]['weightage']);
 
                     }
                 }
@@ -1461,10 +1527,10 @@ class DataVerficationController extends Controller
                 array_push($elementvalues, $resularray[$kkk]['value']);
             }
             if ($mode == 'listkpielement') {
-                return array('returnarray' => $returnarray, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
+                return array('returnarray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
             }
             $response = new JsonResponse();
-            $response->setData(array('kpiNameArray' => $returnarray, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
+            $response->setData(array('kpiNameArray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
             return $response;
         }
     }

@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="http://shipreports/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://shipreports/css/app.css" rel="stylesheet">
+    <link href="http://shipreports/css/pdf.css" rel="stylesheet">
+
+    <link href="http://shipreports/css/ss-standard.css" rel="stylesheet">
+    <link href="http://shipreports/css/font-awesome.css" rel="stylesheet">
+    <link href="http://shipreports/css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://shipreports/js/jquery.min.js"></script>
+    <script src="http://shipreports/js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://shipreports/js/bootstrap.min.js"></script>
+    <script src="http://shipreports/js/highchart/highcharts.js"></script>
+    <script type="text/javascript">
+        {{ chart(chart) }}
+    </script>
+</head>
+<body>
+
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">Ranking Report_{{ shipid }} </div>
+            </div>
+            <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
+        </div>
+
+
+        <section class="data-row-section top-margin-space">
+            <table class="table table-striped-4 kpi_ranking_rules_show_row" >
+                <thead>
+                <tr>
+                    <th colspan="3">Rules</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="rulePlaceId" class="rulePlace">
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ shipid }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="linechart"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+    </div>
+</div>
+</body>
+</html>

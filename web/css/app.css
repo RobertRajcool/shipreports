@@ -620,7 +620,7 @@ body {
   font-size: 14px;
   line-height: 20px;
   color: #505b65;
-  background: #f7faff;
+  background: #ffffff;
 }
 body.add_dropzone_tint {
   background: rgba(0, 0, 0, 0.2);
