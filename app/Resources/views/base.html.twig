@@ -22,7 +22,6 @@
 
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
-
     <script>
         var app = angular.module('myApp', []);
 
@@ -137,7 +136,7 @@
                                         </a>
                                     </li>
                                     <li id="reports1">
-                                        <a class="layout_name" id="reports" href="">
+                                        <a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}">
                                             <span class="menu-item-icon ss-barchart">&nbsp;</span>
                                             <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
                                         </a>
