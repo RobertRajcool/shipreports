@@ -665,40 +665,7 @@ class ReadExcelWorker
 
 
     }
-    /**
-     * Ranking Lookup Data Add
-     *
-     * @param \GearmanJob $job Insert after reading kpi values
-     *
-     * @return boolean
-     *
-     * @Gearman\Job(
-     *     iterations = 1,
-     *     name = "addrankinglookupdataadd"
-     * )
-     */
-    public function RankingLookupDataAdd(\GearmanJob $job)
-    {
-        $em= $this->doctrine->getManager();
-        $parametervalues = json_decode($job->workload());
-        $shipid = $parametervalues['shipid'];
-        $dataofmonth = $parametervalues['dataofmonth'];
-        $userid = $parametervalues['userid'];
-        $status = $parametervalues['status'];
-        $datetime=$parametervalues['datetime'];
 
-        $lookupstatusobject=new Ranking_LookupStatus();
-        $lookupstatusobject->setShipid($shipid);
-        $lookupstatusobject->setStatus($status);
-        $lookupstatusobject->setDataofmonth($dataofmonth);
-        $lookupstatusobject->setDatetime($datetime);
-        $lookupstatusobject->setUserid($userid);
-        $em->persist($lookupstatusobject);
-        $em->flush();
-        return true;
-
-
-    }
     /**
      * Ranking Lookup Data Update
      *
@@ -714,17 +681,33 @@ class ReadExcelWorker
     public function RankingLookupDataUpdate(\GearmanJob $job)
     {
         $em= $this->doctrine->getManager();
-        //$mailer = $this->container->get('mailer');
         $parametervalues = json_decode($job->workload());
-        $shipid = $parametervalues['shipid'];
-        $dataofmonth = $parametervalues['dataofmonth'];
-        $userid = $parametervalues['userid'];
-        $status = $parametervalues['status'];
-        $datetime=$parametervalues['datetime'];
-        $lookstatusobject = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $shipid,'dataofmonth'=>$dataofmonth,));
-        $lookstatusobject->setStatus($status);
-        $lookstatusobject->setDatetime($datetime);
-        $em->flush();
+        $shipid = $parametervalues->{'shipid'};
+        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+        $dataofmonth = $parametervalues->{'dataofmonth'};
+        $time = strtotime($dataofmonth);
+        $newformat = date('Y-m-d', $time);
+        $new_date = new \DateTime($newformat);
+        $new_date->modify('last day of this month');
+        $newlookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupData')->findBy(array('shipDetailsId' => $newshipid,'monthdetail'=>$new_date));
+        for($count=0;$count<count($newlookstatus);$count++)
+        {
+            $mylookstatus=$newlookstatus[$count];
+            $id=$mylookstatus->getId();
+            $qb = $em->createQueryBuilder()
+                ->delete('InitialShippingBundle:Ranking_LookupData', 'd')
+                ->where('d.id = :useremailid')
+                ->setParameter(':useremailid', $id)
+                ->getQuery()
+                ->getResult();
+        }
+        $userid = $parametervalues->{'userid'};
+        $status = $parametervalues->{'status'};
+        $datetime=$parametervalues->{'datetime'};
+        $currenttime = strtotime($datetime);
+        $currentnewformat = date('Y-m-d H:i:s', $currenttime);
+        $current_new_date = new \DateTime($currentnewformat);
+        //print_r($parametervalues);
         if($status==3)
         {
             $rankingKpiList = $em->createQueryBuilder()
@@ -761,7 +744,7 @@ class ReadExcelWorker
                             ->from('InitialShippingBundle:RankingMonthlyData', 'a')
                             ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
                             ->setParameter('elementId', $scorecardElementId)
-                            ->setParameter('monthName',$dataofmonth)
+                            ->setParameter('monthName',$new_date)
                             ->setParameter('shipId',$shipid)
                             ->setParameter('statusvalue',3)
                             ->setParameter('kpiId',$rankingKpiId)
@@ -808,15 +791,18 @@ class ReadExcelWorker
                         {
                             $elementDbValue[0]['value']=null;
                         }
-                        array_push($kpiElementColorArray,$elementResultColor);
+                        //array_push($kpiElementColorArray,$elementResultColor);
                         //$elementValueWithWeight = $elementColorValue ;
+
                         $lookupdataobject=new Ranking_LookupData();
-                        $lookupdataobject->setShipid($shipid);
+                        $lookupdataobject->setShipDetailsId($newshipid);
                         $lookupdataobject->setElementcolor($elementResultColor);
-                        $lookupdataobject->setDataofmonth($dataofmonth);
+                        $lookupdataobject->setMonthdetail($new_date);
                         $lookupdataobject->setElementdata($elementColorValue);
-                        $lookupdataobject->setElementDetailsId($scorecardElementId);
-                        $lookupdataobject->setKpiDetailsId($rankingKpiId);
+                        $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' =>$rankingKpiId));
+                        $newelementid = $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $scorecardElementId));
+                        $lookupdataobject->setElementDetailsId($newelementid);
+                        $lookupdataobject->setKpiDetailsId($newkpiid);
                         $em->persist($lookupdataobject);
                         $em->flush();
 
@@ -832,12 +818,12 @@ class ReadExcelWorker
                         ->setParameter('kpiName', $rankingKpiName)
                         ->groupby('b.kpiName')
                         ->getQuery()
-                        ->getResult();
+                        ->getSingleScalarResult();
                     $elementForKpiList = $em->createQueryBuilder()
                         ->select('a.elementName', 'a.id', 'a.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'a')
                         ->where('a.kpiDetailsId = :kpiid')
-                        ->setParameter('kpiid', $newkpiid[0]['id'])
+                        ->setParameter('kpiid', $newkpiid)
                         ->getQuery()
                         ->getResult();
 
@@ -845,16 +831,17 @@ class ReadExcelWorker
                     {
                         $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                         $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
+                       // $Alternewkpiid=$newkpiid[0]['id'];
 
                         $elementDbValue = $em->createQueryBuilder()
                             ->select('a.value')
                             ->from('InitialShippingBundle:RankingMonthlyData', 'a')
                             ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
                             ->setParameter('elementId', $scorecardElementId)
-                            ->setParameter('monthName',$dataofmonth)
+                            ->setParameter('monthName',$new_date)
                             ->setParameter('shipId',$shipid)
                             ->setParameter('statusvalue',3)
-                            ->setParameter('kpiId',$newkpiid[0]['id'])
+                            ->setParameter('kpiId',$newkpiid)
                             ->getQuery()
                             ->getResult();
 
@@ -865,10 +852,12 @@ class ReadExcelWorker
                             ->setParameter('elementId', $scorecardElementId)
                             ->getQuery()
                             ->getResult();
+
                         $elementResultColor = "";
                         $elementColorValue=0;
                         if(count($elementDbValue)!=0)
                         {
+                           // echo $elementDbValue[0]['value'];
                             for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
                             {
                                 $elementRule = $rankingElementRulesArray[$elementRulesCount];
@@ -898,15 +887,18 @@ class ReadExcelWorker
                         {
                             $elementDbValue[0]['value']=null;
                         }
-                        array_push($kpiElementColorArray,$elementResultColor);
+                       // array_push($kpiElementColorArray,$elementResultColor);
                         //$elementValueWithWeight = $elementColorValue ;
+                       // echo $elementColorValue;
                         $lookupdataobject=new Ranking_LookupData();
-                        $lookupdataobject->setShipid($shipid);
+                        $lookupdataobject->setShipDetailsId($newshipid);
                         $lookupdataobject->setElementcolor($elementResultColor);
-                        $lookupdataobject->setDataofmonth($dataofmonth);
+                        $lookupdataobject->setMonthdetail($new_date);
                         $lookupdataobject->setElementdata($elementColorValue);
-                        $lookupdataobject->setElementDetailsId($scorecardElementId);
-                        $lookupdataobject->setKpiDetailsId($newkpiid[0]['id']);
+                        $newkpiidobject = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $newkpiid));
+                        $newelementid = $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $scorecardElementId));
+                        $lookupdataobject->setElementDetailsId($newelementid);
+                        $lookupdataobject->setKpiDetailsId($newkpiidobject);
                         $em->persist($lookupdataobject);
                         $em->flush();
                     }
@@ -914,6 +906,12 @@ class ReadExcelWorker
             }
 
         }
+        $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+        $newlookupstatus=$lookstatus[0];
+        $newlookupstatus->setStatus(4);
+        $newlookupstatus->setDatetime(new \DateTime());
+        $em->flush();
+        echo "Data inserted";
         return true;
 
 

@@ -24,7 +24,7 @@ class Ranking_LookupData
     /**
      * @var string
      *
-     * @ORM\Column(name="shipid", type="string", length=255)
+     * @ORM\Column(name="elementdata", type="string", length=255)
      */
 
     private $elementdata;

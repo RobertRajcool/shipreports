@@ -13,6 +13,8 @@ use Initial\ShippingBundle\Entity\RankingMonthlyData;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\PHPNodeJs;
+use Initial\ShippingBundle\Entity\Ranking_LookupStatus;
+use Initial\ShippingBundle\Entity\Ranking_LookupData;
 use Initial\ShippingBundle\Form\AddExcelFileType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -1224,22 +1226,35 @@ class DataVerficationController extends Controller
 
                 }
                 $returnmsg = ' Data Updated...';
+
+                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                $newlookupstatus=$lookstatus[0];
                 if($buttonid == 'adminbuttonid')
                 {
 
-                    $rankinglookuptable=array('shipid'=>$newshipid,'dataofmonth'=>$new_date,'userid'=>$userid,'status'=>3,'datetime'=>new \DateTime());
+                    $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
+                   // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(3);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
+                    $gearman = $this->get('gearman');
+                    $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addrankinglookupdataupdate', json_encode($rankinglookuptable));
                 }
                 if($buttonid == 'verfiybuttonid')
                 {
-                    $rankinglookuptable=array('shipid'=>$newshipid,'dataofmonth'=>$new_date,'userid'=>$userid,'status'=>2,'datetime'=>new \DateTime());
+                    //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(2);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
                 }
                 if($buttonid == 'updatebuttonid')
                 {
-
-                    $rankinglookuptable=array('shipid'=>$newshipid,'dataofmonth'=>$new_date,'userid'=>$userid,'status'=>1,'datetime'=>new \DateTime());
+                    //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(1);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
                 }
-                $gearman = $this->get('gearman');       //$datafromuser=array();
-                $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addrankinglookupdataupdate', json_encode($rankinglookuptable));
+
 
             }
             if ($buttonid == 'savebuttonid') {
@@ -1272,7 +1287,7 @@ class DataVerficationController extends Controller
                     ->where('b.id = :userId')
                     ->setParameter('userId', $userId)
                     ->getQuery();*/
-                $fullurl="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+                $fullurl="http://shipreports/login";
                 $mailer = $this->container->get('mailer');
                 $message = \Swift_Message::newInstance()
                     ->setFrom('lawrance@commusoft.co.uk')
@@ -1281,9 +1296,14 @@ class DataVerficationController extends Controller
                     ->setBody("This Web Url:".$fullurl);
 
                 $mailer->send($message);
-                $rankinglookuptable=array('shipid'=>$newshipid,'userid'=>$userid,'dataofmonth'=>$new_date,'status'=>1,'datetime'=>new \DateTime());
-                $gearman = $this->get('gearman');       //$datafromuser=array();
-                $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addrankinglookupdata', json_encode($rankinglookuptable));
+                $lookupstatusobject=new Ranking_LookupStatus();
+                $lookupstatusobject->setShipid($newshipid);
+                $lookupstatusobject->setStatus(1);
+                $lookupstatusobject->setDataofmonth($new_date);
+                $lookupstatusobject->setDatetime(new \DateTime());
+                $lookupstatusobject->setUserid($userid);
+                $em->persist($lookupstatusobject);
+                $em->flush();
 
             }
 
