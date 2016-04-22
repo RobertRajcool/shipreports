@@ -1726,6 +1726,44 @@ select {
 
 
 
+.kpi_year_view_score_card_row {
+    margin-bottom: 10px;
+    border:1px solid #dddddd;
+}
+.kpi_year_view_score_card_row thead th {
+    text-align:center;
+    background:#989898;
+    border-right:1px solid #dddddd;
+    padding: 3px 7px !important;
+}
+.kpi_year_view_score_card_row tbody td {
+    text-align:center;
+}
+.kpi_year_view_score_card_row .kpi_name_thtd {
+    text-align:left;
+}
+.kpi_year_view_score_card_row tr {
+    border-bottom: 1px solid #dddddd !important;
+}
+.kpi_year_view_score_card_row tbody tr td {
+    border-right:1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+    padding: 2px 7px !important;
+}
+.kpi_year_view_score_card_row .kpi_name {
+    width: 35%;
+}
+.kpi_year_view_score_card_row .weightage {
+    width: 11%;
+}
+.kpi_year_view_score_card_row .month {
+    width: auto;
+}
+.kpi_year_view_score_card_row .month_difference {
+    width: auto;
+}
+
+
 
 
 

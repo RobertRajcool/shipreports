@@ -58,7 +58,7 @@ class ScorecardReportController extends Controller
      *
      * @Route("/reportGenerate", name="scorecard_report_report")
      */
-    public function reportGenerateAction(Request $request)
+    public function reportGenerateAction(Request $request, $pdfMode="")
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -116,8 +116,10 @@ class ScorecardReportController extends Controller
         $monthlyKpiAverageValueTotal = array();
         $overallElementListArray = array();
         $overallMonthlyElementColorArray = array();
+        $overallMonthlyKpiSumValue = array();
         for ($dateCount=0; $dateCount<count($monthArray);$dateCount++)
         {
+            $monthlyKpiSumValue = array();
             $monthlyScorecardElementColorArray = array();
             $scorecardKpiColorArray = array();
             $date = strtotime($monthArray[$dateCount]);
@@ -239,10 +241,12 @@ class ScorecardReportController extends Controller
                 array_push($scorecardKpiColorArray,$kpiResultColor);
                 $monthlyScorecardKpiWeightAverageValueTotal+=$kpiSumValue*($scorecardKpiWeight/100);
                 array_push($monthlyScorecardElementColorArray,$scorecardElementColorArray);
+                array_push($monthlyKpiSumValue,$kpiSumValue);
             }
             array_push($monthlyScorecardKpiColorArray,$scorecardKpiColorArray);
             array_push($monthlyKpiAverageValueTotal,$monthlyScorecardKpiWeightAverageValueTotal);
             array_push($overallMonthlyElementColorArray,$monthlyScorecardElementColorArray);
+            array_push($overallMonthlyKpiSumValue,$monthlyKpiSumValue);
         }
 
         $series = array
@@ -261,6 +265,20 @@ class ScorecardReportController extends Controller
         $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
         $ob->exporting->enabled(false);
 
+        if($pdfMode==1)
+        {
+            return array(
+                'yearKpiColorArray' => $monthlyScorecardKpiColorArray,
+                'kpiAvgScore' => $monthlyKpiAverageValueTotal,
+                'monthName' => $monthLetterArray,
+                'kpiNameList' => $scorecardKpiList,
+                'elementNameList' => $overallElementListArray,
+                'elementColorArray' => $overallMonthlyElementColorArray,
+                'changeChartData' => $monthlyKpiAverageValueTotal,
+                'elementLevelChartData' => $overallMonthlyKpiSumValue
+            );
+        }
+
         $response = new JsonResponse();
         $response->setData(array(
             'yearKpiColorArray' => $monthlyScorecardKpiColorArray,
@@ -269,8 +287,77 @@ class ScorecardReportController extends Controller
             'kpiNameList' => $scorecardKpiList,
             'elementNameList' => $overallElementListArray,
             'elementColorArray' => $overallMonthlyElementColorArray,
-            'changeChartData' => $monthlyKpiAverageValueTotal
+            'changeChartData' => $monthlyKpiAverageValueTotal,
+            'elementLevelChartData' => $overallMonthlyKpiSumValue
         ));
         return $response;
     }
+
+    /**
+     * ScorecardReport pdfReport.
+     *
+     * @Route("/pdfReport", name="scorecard_report_pdfReport")
+     */
+    public function pdfReportAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $returnObject = $this->reportGenerateAction( $request,1);
+        $series = array
+        (
+            array("name" => "Management Performance", 'color' => '#103a71', "data" => $returnObject['changeChartData']),
+        );
+        $ob = new Highchart();
+        $ob->chart->renderTo('area');
+        $ob->chart->type('line');
+        $ob->title->text(' ', array('style' => array('color' => 'red')));
+        $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
+        $ob->xAxis->categories($returnObject['monthName']);
+        $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
+        $ob->yAxis->max(3);
+        $ob->series($series);
+        $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
+        $ob->exporting->enabled(false);
+
+        $customerListDesign= $this->renderView('InitialShippingBundle:ScorecardReport:reportPdfTemplate.html.twig',
+            array(
+                'chart'=>$ob,
+                'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
+                'kpiAvgScore' => $returnObject['kpiAvgScore'],
+                'monthName' => $returnObject['monthName'],
+                'kpiNameList' => $returnObject['kpiNameList'],
+                'elementNameList' => $returnObject['elementNameList'],
+                'elementColorArray' => $returnObject['elementColorArray'],
+                'changeChartData' => $returnObject['changeChartData'],
+                'elementLevelChartData' => $returnObject['elementLevelChartData']
+            ));
+        $client = new HighchartController();
+        $client->setContainer($this->container);
+        $printPdf = $client->createPdf($customerListDesign, 'Scorecard Report');
+
+        $response = new Response();
+        $response->setContent($printPdf);
+        $response->headers->set('Content-Type', 'application/pdf');
+
+        return $response;
+
+        /*$customerListDesign= $this->renderView('InitialShippingBundle:ScorecardReport:reportPdfTemplate.html.twig', array(
+            'shipid' => $shipid,
+            'screenName' => 'Ranking Report',
+            'userName' => '',
+            'date' => date('Y-m-d'),
+            'chart' => $ob,
+        ));
+
+        $client = new HighchartController();
+        $client->setContainer($this->container);
+        $printPdf = $client->createPdf($customerListDesign, 'Ranking Report');
+
+        $response = new Response();
+        $response->setContent($printPdf);
+        $response->headers->set('Content-Type', 'application/pdf');
+
+        return $response;*/
+    }
 }
+
