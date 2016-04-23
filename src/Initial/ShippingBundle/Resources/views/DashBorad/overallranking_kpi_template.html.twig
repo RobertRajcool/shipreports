@@ -74,7 +74,7 @@
                         {#<td>{{ elementweightage[i] }}%</td>#}
 
                         {% for j in 0..countmonth1 %}
-                            {% for k in 0..elementcountvalue %}
+                            {#{% for k in 0..elementcountvalue %}#}
                             {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
 
                                 {% if monthlydata[j][0] == NULL %}
@@ -84,12 +84,12 @@
                                 {% if monthlydata[j][0] != NULL %}
                                     <td>
 
-                                        {{ monthlydata[k][j]  }}
+                                        {{ monthlydata[j][i]  }}
                                     </td>
                                 {% endif %}
 
                             {# {% set akj=akj+1 %}#}
-                            {% endfor %}
+                            {#{% endfor %}#}
 
                         {% endfor %}
 
@@ -97,17 +97,17 @@
 
                     <tr>
                         {% for m in 0..countmonth1 %}
-                        {% for bc in 0..elementcountvalue %}
+                       {# {% for bc in 0..elementcountvalue %}#}
                             {% if elementcolorarray[m][0] == "" %}
                                 <td></td>
                             {% endif %}
                             {% if elementcolorarray[m][0] != "" %}
                                 <td>
-                                    {% if elementcolorarray[bc][m]=="Green" %}
+                                    {% if elementcolorarray[m][i]=="Green" %}
                                         <img src="/images/box_green.png" alt="Loader Image"/>
-                                    {% elseif elementcolorarray[bc][m]=="Red" %}
+                                    {% elseif elementcolorarray[m][i]=="Red" %}
                                         <img src="/images/box_red.png" alt="Loader Image"/>
-                                    {% elseif elementcolorarray[bc][m]=="Yellow" %}
+                                    {% elseif elementcolorarray[m][i]=="Yellow" %}
                                         <img src="/images/box_yellow.png" alt="Loader Image"/>
                                     {% else %}
                                         <img src="/images/arrow-buttom.png" alt="Loader Image"/>
@@ -115,7 +115,7 @@
                                 </td>
                             {% endif %}
 
-                            {% endfor %}
+                          {#  {% endfor %}#}
                         {% endfor %}
                     </tr>
                     {% set i=i+1 %}
