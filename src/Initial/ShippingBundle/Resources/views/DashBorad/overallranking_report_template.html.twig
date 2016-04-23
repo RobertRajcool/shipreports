@@ -7,22 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shipping</title>
     <!-- Bootstrap -->
-    <link href="http://shipreports/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://shipreports/css/app.css" rel="stylesheet">
-    <link href="http://shipreports/css/pdf.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/pdf.css" rel="stylesheet">
 
-    <link href="http://shipreports/css/ss-standard.css" rel="stylesheet">
-    <link href="http://shipreports/css/font-awesome.css" rel="stylesheet">
-    <link href="http://shipreports/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="http://shipreports/js/jquery.min.js"></script>
-    <script src="http://shipreports/js/angular.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="http://shipreports/js/bootstrap.min.js"></script>
-    <script src="http://shipreports/js/highchart/highcharts.js"></script>
-    <script type="text/javascript">
-        {{ chart(chart) }}
-    </script>
+    <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -31,24 +27,75 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">Ranking Report_{{ shipid }} </div>
+                <div class="title">Vessel Ranking {{ shipname }}</div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
 
-
         <section class="data-row-section top-margin-space">
-            <table class="table table-striped-4 kpi_ranking_rules_show_row" >
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_main_title_row">
                 <thead>
                 <tr>
-                    <th colspan="3">Rules</th>
+                    <th colspan="4">{{ 'kpiranking.header'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td id="rulePlaceId" class="rulePlace">
+                    <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
+                    <td>{{ shipname }}</td>
+                    <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
+                    <td>V-ships</td>
+                </tr>
+                <tr>
+                    <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
+                    <td>{{ currentyear }}</td>
+                    <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
+                    <td>{{ ageofvessel }}</td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_row">
+                <thead>
+                <tr>
+                    <th class="branding-colours kpi_name">{{ 'kpiranking.kpi'|trans }}</th>
+                    <th class="branding-colours weightage">{{ 'kpiranking.weightage'|trans }}</th>
 
-                    </td>
+                    {% for monthname in montharray %}
+                        <th class="branding-colours">{{ monthname }}</th>
+                        {#<th></th>#}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set i=0 %}
+                {% for kpi in listofkpi %}
+
+                    <tr><td>
+                            {{ kpi.kpiName }}
+                        </td>
+                        <td>{{ kpiweightage[i] }}</td>
+                        {% for j in 0..countmonth1 %}
+
+                            <td>
+                                {{ kpimonthdata[kpi.id][j] }}
+                            </td>
+
+
+                        {% endfor %}
+
+
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                {#  <tr><td>Total</td></tr>#}
+                <tr>
+                    <td colspan="" class="kpi_name_thtd"><strong>{{ 'kpiranking.avgscore'|trans }}</strong></td>
+                    <td>100</td>
+
+                    {% for avg in avgscore %}
+                        <td><strong>{{ avg }}</strong></td>
+                    {% endfor %}
                 </tr>
                 </tbody>
             </table>
@@ -58,17 +105,16 @@
             <table class="responsive-table certificates-table">
                 <thead>
                 <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ shipid }}</th>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ shipname }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td id="linechart"></td>
+                    <td><img src="/phantomjs/listofgraph/{{ link }}" alt="Loader Image"/></td>
                 </tr>
                 </tbody>
             </table>
         </section>
-
 
     </div>
 </div>

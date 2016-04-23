@@ -90,6 +90,7 @@
                             $('#sendreportshipid').val(data.shipid);
                            $('#shipnameid').text(data.shipname);
                             $('#currentyearid').text(data.currentyear);
+                            $('#yearid').val(data.currentyear);
                             $('#ageofvesselid').text(data.ageofvessel);
                             $('<table class="table table-striped-2 kpi_ranking_row secondtable"><thead ><tr id="headertable"><th>KPI</th><th class="tableheader">Weightage</th></tr></thead><tbody id="tablebodyid"></tbody></table>').appendTo('#tableofcontent');
                             $.each(data.montharray, function(i)
@@ -234,31 +235,6 @@
 
                 });
 
-           /*     $('#sendreportid').click(function(e)
-                {
-                    var shipid=$('#sendreportshipid').val();
-                    alert(shipid);
-                    var data = {shipid :shipid};
-                    alert('afterdata');
-                    $.ajax({
-                        type: "POST",
-                        data: data,
-                        url: "/dashboard/send_rankingreports",
-                        success: function(data)
-                        {
-
-                           alert('Sucess');
-
-                        }
-                        ,
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            alert('Error : ' + errorThrown);
-                        }
-                    });
-
-                });*/
-
             });
         </script>
 
@@ -333,6 +309,7 @@
             <div class="actions_edit_button">
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
+                    <input type="hidden" id="yearid" name="year">
                     <button type="submit" class="submit_btn" id="sendreportid" >Send Report</button>
                 </form>
 

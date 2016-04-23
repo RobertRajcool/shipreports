@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <link href="css/pdf.css" rel="stylesheet">
+
+    <link href="css/ss-standard.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function()
+        {
+
+        });
+    </script>
+
+</head>
+<body>
+
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">Ranking Report_{{ kpiname }} </div>
+            </div>
+            <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
+        </div>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_main_title_row">
+                <thead>
+                <tr>
+                    <th>{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                </tbody>
+            </table>
+            <table class="responsive-table certificates-table element_ranking_12_month_pdf_row">
+                <thead>
+                <tr>
+                    <th class="kpi_name">{{ 'elementranking.month'|trans }}</th>
+                    {% for monthname in montharray %}
+                        <th  class="month">{{ monthname }}</th>
+                    {% endfor %}
+
+                </tr>
+                </thead>
+                <tbody>
+                {% set countmonth1= countmonth-1 %}
+                {% set elementcountvalue= countofelement-1 %}
+                {% set i=0 %}
+                {% for element in listofelement %}
+                    <tr>
+                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}{#<a  style="color: #2b542c"
+                                                       href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true"
+                                                       class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a>#}</td>
+                        {#<td>{{ elementweightage[i] }}%</td>#}
+
+                        {% for j in 0..countmonth1 %}
+                            {% for k in 0..elementcountvalue %}
+                            {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
+
+                                {% if monthlydata[j][0] == NULL %}
+                                    <td></td>
+                                {% endif %}
+
+                                {% if monthlydata[j][0] != NULL %}
+                                    <td>
+
+                                        {{ monthlydata[k][j]  }}
+                                    </td>
+                                {% endif %}
+
+                            {# {% set akj=akj+1 %}#}
+                            {% endfor %}
+
+                        {% endfor %}
+
+                    </tr>
+
+                    <tr>
+                        {% for m in 0..countmonth1 %}
+                        {% for bc in 0..elementcountvalue %}
+                            {% if elementcolorarray[m][0] == "" %}
+                                <td></td>
+                            {% endif %}
+                            {% if elementcolorarray[m][0] != "" %}
+                                <td>
+                                    {% if elementcolorarray[bc][m]=="Green" %}
+                                        <img src="/images/box_green.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[bc][m]=="Red" %}
+                                        <img src="/images/box_red.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[bc][m]=="Yellow" %}
+                                        <img src="/images/box_yellow.png" alt="Loader Image"/>
+                                    {% else %}
+                                        <img src="/images/arrow-buttom.png" alt="Loader Image"/>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+
+                            {% endfor %}
+                        {% endfor %}
+                    </tr>
+                    {% set i=i+1 %}
+                {% endfor %}
+                <tr>
+                    <td colspan="" class="kpi_name_thtd"><strong>{{ 'elementranking.score'|trans }}</strong></td>
+
+
+                    {% for avg in kpigraph %}
+                        <td><strong>{{ avg }}</strong></td>
+                    {% endfor %}
+                </tr>
+
+                </tbody>
+            </table>
+        </section>
+
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><img src="/phantomjs/listofgraph/{{ link }}" alt="Loader Image"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+    </div>
+</div>
+</body>
+</html>

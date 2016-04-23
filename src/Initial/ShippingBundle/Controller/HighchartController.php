@@ -415,7 +415,6 @@ class HighchartController extends Controller
     }
 
 
-
     public function showcommentAction($page)
     {
         $em = $this->getDoctrine()->getManager();
