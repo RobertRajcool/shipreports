@@ -311,7 +311,6 @@
                                 $.each(data.yearMonthName, function(i){
                                     $('<th colspan="2">'+data.yearMonthName[i]+'</th>').appendTo('#previousRowPlace');
                                 });
-                                //console.log(data.yearKpiColorArray);
                                 var inn =0;
                                 {% for kpi in kpi_list %}
                                 $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
@@ -327,22 +326,18 @@
                                         if(color == 'Green')
                                         {
                                             $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color == 'Red')
                                         {
                                             $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color == 'Yellow')
                                         {
                                             $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>');
                                         }
                                     }else
                                     {
                                         $('<td class="month"></td>').appendTo('#praviousRowId'+inn);
-                                        //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="" alt="Loader Image"/></td>');
                                     }
 
                                     if(j<11)
@@ -352,52 +347,42 @@
                                         if(color=='Green' && status=='Green' )
                                         {
                                             $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Green' && status=='Yellow' )
                                         {
                                             $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Green' && status=='Red' )
                                         {
                                             $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Yellow' && status=='Green' )
                                         {
                                             $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Yellow' && status=='Yellow' )
                                         {
                                             $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Yellow' && status=='Red' )
                                         {
                                             $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Red' && status=='Green' )
                                         {
                                             $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Red' && status=='Yellow' )
                                         {
                                             $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>');
                                         }
                                         else if(color=='Red' && status=='Red' )
                                         {
                                             $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/>'+j+'</td>');
                                         }
                                         else
                                         {
                                             $('<td class="month_difference"></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#statusData'+inn).after('<td class="month_difference"><img src="" alt="Loader Image"/></td>');
                                         }
                                     }
                                 });
@@ -411,7 +396,7 @@
                                 alert('Error : ' + errorThrown);
                             }
                         })
-                    })
+                    });
 
                     $('.nextYear').click(function($e)
                     {

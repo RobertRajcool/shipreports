@@ -459,7 +459,6 @@ class DashboradController extends Controller
     {
         $year = $request->request->get('Year');
         $yearValue = $this->indexAction( $request, '', '', $year+1);
-        $yy = $yearValue['currentYear'];
 
         $response = new JsonResponse();
         $response->setData(array(

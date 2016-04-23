@@ -168,10 +168,10 @@
   text-align:center;
 }
 .kpi_name_weightage_row .kpi_name {
-  width: 160px;
+  width: 35%;
 }
 .kpi_name_weightage_row .weightage {
-  width: 60px;
+  width: 10%;
 }
 .kpi_name_weightage_row .month {
   width: auto;
