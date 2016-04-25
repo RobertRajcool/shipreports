@@ -27,7 +27,7 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">Vessel Ranking {{ shipname }}</div>
+                <div class="title">Vessel  {{ shipname }}</div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
@@ -44,7 +44,7 @@
                     <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
                     <td>{{ shipname }}</td>
                     <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
-                    <td>V-ships</td>
+                    <td>Pioneer</td>
                 </tr>
                 <tr>
                     <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
@@ -59,15 +59,17 @@
                 <tr>
                     <th class="branding-colours kpi_name">{{ 'kpiranking.kpi'|trans }}</th>
                     <th class="branding-colours weightage">{{ 'kpiranking.weightage'|trans }}</th>
+                    {% set countmonth1= countmonth-1 %}
 
-                    {% for monthname in montharray %}
-                        <th class="branding-colours">{{ monthname }}</th>
+                    {% for z in 0..countmonth1 %}
+                        <th class="branding-colours">{{ montharray[z] }}</th>
+
                         {#<th></th>#}
                     {% endfor %}
                 </tr>
                 </thead>
                 <tbody>
-                {% set countmonth1= countmonth-1 %}
+
                 {% set i=0 %}
                 {% for kpi in listofkpi %}
 
@@ -77,9 +79,16 @@
                         <td>{{ kpiweightage[i] }}</td>
                         {% for j in 0..countmonth1 %}
 
-                            <td>
-                                {{ kpimonthdata[kpi.id][j] }}
-                            </td>
+
+                            {% if kpimonthdata[j][i] != NULL %}
+                                <td>
+                                    {{ kpimonthdata[j][i] }}
+                                </td>
+                            {% endif %}
+
+                            {% if kpimonthdata[j][i] == NULL  %}
+                                <td>{{ kpimonthdata[j][i] }}</td>
+                            {% endif %}
 
 
                         {% endfor %}
@@ -92,9 +101,13 @@
                 <tr>
                     <td colspan="" class="kpi_name_thtd"><strong>{{ 'kpiranking.avgscore'|trans }}</strong></td>
                     <td>100</td>
-
-                    {% for avg in avgscore %}
-                        <td><strong>{{ avg }}</strong></td>
+                    {% for y in 0..countmonth1 %}
+                        {% if avgscore[y] != NULL %}
+                            <td><strong>{{ avgscore[y] }}</strong></td>
+                        {% endif %}
+                        {% if  avgscore[y] == NULL  %}
+                            <td><strong></strong></td>
+                        {% endif %}
                     {% endfor %}
                 </tr>
                 </tbody>

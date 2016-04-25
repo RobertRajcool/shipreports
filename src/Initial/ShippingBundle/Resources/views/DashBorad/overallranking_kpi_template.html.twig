@@ -7,18 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Shipping</title>
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/app.css" rel="stylesheet">
-    <link href="css/pdf.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/pdf.css" rel="stylesheet">
 
-    <link href="css/ss-standard.css" rel="stylesheet">
-    <link href="css/font-awesome.css" rel="stylesheet">
-    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/angular.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function()
         {
@@ -34,7 +34,7 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">Ranking Report_{{ kpiname }} </div>
+                <div class="title"> {{ kpiname }} </div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
@@ -55,15 +55,16 @@
             <table class="responsive-table certificates-table element_ranking_12_month_pdf_row">
                 <thead>
                 <tr>
-                    <th class="kpi_name">{{ 'elementranking.month'|trans }}</th>
-                    {% for monthname in montharray %}
-                        <th  class="month">{{ monthname }}</th>
+                    <th class="kpi_name">Element Name</th>
+                    {% set countmonth1= countmonth-1 %}
+                    {% for x in 0..countmonth1 %}
+                        <th  class="month">{{ montharray[x] }}</th>
                     {% endfor %}
 
                 </tr>
                 </thead>
                 <tbody>
-                {% set countmonth1= countmonth-1 %}
+
                 {% set elementcountvalue= countofelement-1 %}
                 {% set i=0 %}
                 {% for element in listofelement %}
@@ -77,15 +78,16 @@
                             {#{% for k in 0..elementcountvalue %}#}
                             {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
 
-                                {% if monthlydata[j][0] == NULL %}
-                                    <td></td>
-                                {% endif %}
+                                {% if monthlydata[j][0]!= NULL %}
 
-                                {% if monthlydata[j][0] != NULL %}
                                     <td>
 
                                         {{ monthlydata[j][i]  }}
                                     </td>
+
+
+                                {% else %}
+                                    <td></td>
                                 {% endif %}
 
                             {# {% set akj=akj+1 %}#}
@@ -109,8 +111,6 @@
                                         <img src="/images/box_red.png" alt="Loader Image"/>
                                     {% elseif elementcolorarray[m][i]=="Yellow" %}
                                         <img src="/images/box_yellow.png" alt="Loader Image"/>
-                                    {% else %}
-                                        <img src="/images/arrow-buttom.png" alt="Loader Image"/>
                                     {% endif %}
                                 </td>
                             {% endif %}
@@ -122,10 +122,16 @@
                 {% endfor %}
                 <tr>
                     <td colspan="" class="kpi_name_thtd"><strong>{{ 'elementranking.score'|trans }}</strong></td>
-
-
                     {% for avg in kpigraph %}
+
+                    {% if avg != NULL %}
                         <td><strong>{{ avg }}</strong></td>
+
+                    {% else  %}
+                        <td><strong></strong></td>
+                    {% endif %}
+
+
                     {% endfor %}
                 </tr>
 

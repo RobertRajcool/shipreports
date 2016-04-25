@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\PHPNodeJs;
 use Initial\ShippingBundle\Entity\Ranking_LookupStatus;
+use Initial\ShippingBundle\Entity\Scorecard_LookupStatus;
 use Initial\ShippingBundle\Entity\Ranking_LookupData;
 use Initial\ShippingBundle\Form\AddExcelFileType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -451,151 +452,182 @@ class DataVerficationController extends Controller
      */
     public function addkpivaluesAction(Request $request, $buttonid)
     {
-        $shipid = $request->request->get('shipid');
-        $returnfromcontroller = $this->findelementkpiid($shipid);
-        $kpiandelementids=$returnfromcontroller['elementids'];
-        $elementvalues = $request->request->get('newelemetvalues');
-        $dataofmonth = $request->request->get('dataofmonth');
-        $mydate = '01-' . $dataofmonth;
-        $time = strtotime($mydate);
-        $newformat = date('Y-m-d', $time);
         $em = $this->getDoctrine()->getManager();
-        $new_date = new \DateTime($newformat);
-        $new_date->modify('last day of this month');
-        $k = 0;
-        $returnmsg = '';
-        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-        if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid')
-        {
+        //Finding Company for Login user Starts Here//
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        else {
+            $userid=$user->getId();
+            $shipid = $request->request->get('shipid');
+            $returnfromcontroller = $this->findelementkpiid($shipid);
+            $kpiandelementids = $returnfromcontroller['elementids'];
+            $elementvalues = $request->request->get('newelemetvalues');
+            $dataofmonth = $request->request->get('dataofmonth');
+            $mydate = '01-' . $dataofmonth;
+            $time = strtotime($mydate);
+            $newformat = date('Y-m-d', $time);
+            $em = $this->getDoctrine()->getManager();
+            $new_date = new \DateTime($newformat);
+            $new_date->modify('last day of this month');
+            $k = 0;
+            $returnmsg = '';
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
-            $returnarrayids = $em->createQueryBuilder()
-                ->select('b.id')
-                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.monthdetail =:dataofmonth')
-                ->setParameter('shipdetailsid', $shipid)
-                ->setParameter('dataofmonth', $new_date)
-                ->getQuery()
-                ->getResult();
-            for ($kkk = 0; $kkk < count($returnarrayids); $kkk++)
-            {
-                $entityobject = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->find($returnarrayids[$kkk]['id']);
+                $returnarrayids = $em->createQueryBuilder()
+                    ->select('b.id')
+                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                    ->where('b.shipDetailsId = :shipdetailsid')
+                    ->andWhere('b.monthdetail =:dataofmonth')
+                    ->setParameter('shipdetailsid', $shipid)
+                    ->setParameter('dataofmonth', $new_date)
+                    ->getQuery()
+                    ->getResult();
+                for ($kkk = 0; $kkk < count($returnarrayids); $kkk++) {
+                    $entityobject = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->find($returnarrayids[$kkk]['id']);
+                    if ($buttonid == 'adminbuttonid') {
+                        $entityobject->setValue($elementvalues[$kkk]);
+                        $entityobject->setStatus(3);
+                    }
+                    if ($buttonid == 'verfiybuttonid') {
+                        $entityobject->setValue($elementvalues[$kkk]);
+                        $entityobject->setStatus(2);
+                    }
+                    if ($buttonid == 'updatebuttonid') {
+                        $entityobject->setValue($elementvalues[$kkk]);
+                        $entityobject->setStatus(1);
+                    }
+                    //$entityobject->setFilename($pdffilenamearray[0].'.pdf');
+                    $em->flush();
+
+                }
+                $returnmsg = ' Data Updated...';
+                $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                $newlookupstatus=$lookstatus[0];
                 if($buttonid == 'adminbuttonid')
                 {
-                    $entityobject->setValue($elementvalues[$kkk]);
-                    $entityobject->setStatus(3);
+
+                    $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
+                    // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(3);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
+                    $gearman = $this->get('gearman');
+                    $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addscorecardlookupdataupdate', json_encode($rankinglookuptable));
                 }
                 if($buttonid == 'verfiybuttonid')
                 {
-                    $entityobject->setValue($elementvalues[$kkk]);
-                    $entityobject->setStatus(2);
+                    //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(2);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
                 }
                 if($buttonid == 'updatebuttonid')
                 {
-                    $entityobject->setValue($elementvalues[$kkk]);
-                    $entityobject->setStatus(1);
-                }
-                //$entityobject->setFilename($pdffilenamearray[0].'.pdf');
-                $em->flush();
-
-            }
-            $returnmsg = ' Data Updated...';
-
-        }
-        if ($buttonid == 'savebuttonid')
-        {
-            foreach ($kpiandelementids as $kpikey => $kpipvalue)
-            {
-
-
-                $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpikey));
-                foreach ($kpipvalue as $elementkey => $elementvalue) {
-                    $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementvalue));
-
-                    $readingkpivalue = new ReadingKpiValues();
-                    $readingkpivalue->setKpiDetailsId($newkpiid);
-                    $readingkpivalue->setElementDetailsId($newelementid);
-                    $readingkpivalue->setShipDetailsId($newshipid);
-                    $readingkpivalue->setMonthdetail($new_date);
-                    $readingkpivalue->setValue($elementvalues[$k]);
-                    $readingkpivalue->setStatus(1);
-                    $em->persist($readingkpivalue);
+                    //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $newlookupstatus->setStatus(1);
+                    $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
-                    $k++;
-
                 }
+
             }
-            $returnmsg = ' Data Saved...';
-            $fullurl="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-            $mailer = $this->container->get('mailer');
-            $message = \Swift_Message::newInstance()
-                ->setFrom('lawrance@commusoft.co.uk')
-                ->setTo("doss.cclawranc226@gmail.com")
-                ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
-                ->setBody("This Web Url:".$fullurl);
-
-            $mailer->send($message);
-        }
-
-        $shipname = $newshipid->getShipName();
-        $nextshipid = 0;
-        $nextshipname = '';
-        $user = $this->getUser();
-        $role = $user->getRoles();
-        $kpielementarray = $this->findnumofshipsAction($request,'nextshipajaxcall');
-        $statusforship = $this->findshipstatusmonth($dataofmonth, $kpielementarray, $role[0]);
-        $finddatawithstatus=array();
+            if ($buttonid == 'savebuttonid') {
+                foreach ($kpiandelementids as $kpikey => $kpipvalue) {
 
 
-        if ($role[0] == 'ROLE_ADMIN')
-        {
-            $status=2;
-            $index = array_search(0, $statusforship);
-            $nextshipid=$kpielementarray[$index]['id'];
-            $nextshipname=$kpielementarray[$index]['shipName'];
-            $finddatawithstatus=$this->finddatawithstatus($status,$nextshipid,$dataofmonth);
-        }
-        if ($role[0] == 'ROLE_MANAGER')
-        {
-            $status=1;
-            $index = array_search(0, $statusforship);
-            $nextshipid=$kpielementarray[$index]['id'];
-            $nextshipname=$kpielementarray[$index]['shipName'];
-            $finddatawithstatus=$this->finddatawithstatus($status,$nextshipid,$dataofmonth);
-        }
-        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
-        {
-            $status=0;
-            $index = array_search(0, $statusforship);
-            $nextshipid=$kpielementarray[$index]['id'];
-            $nextshipname=$kpielementarray[$index]['shipName'];
-            $finddatawithstatus=$this->finddatawithstatus($status,$nextshipid,$dataofmonth);
+                    $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpikey));
+                    foreach ($kpipvalue as $elementkey => $elementvalue) {
+                        $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementvalue));
 
-        }
-        $response = new JsonResponse();
-        if(count($finddatawithstatus)==4)
-        {
+                        $readingkpivalue = new ReadingKpiValues();
+                        $readingkpivalue->setKpiDetailsId($newkpiid);
+                        $readingkpivalue->setElementDetailsId($newelementid);
+                        $readingkpivalue->setShipDetailsId($newshipid);
+                        $readingkpivalue->setMonthdetail($new_date);
+                        $readingkpivalue->setValue($elementvalues[$k]);
+                        $readingkpivalue->setStatus(1);
+                        $em->persist($readingkpivalue);
+                        $em->flush();
+                        $k++;
+
+                    }
+                }
+                $returnmsg = ' Data Saved...';
+                $fullurl = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom('lawrance@commusoft.co.uk')
+                    ->setTo("doss.cclawranc226@gmail.com")
+                    ->setSubject($newshipid->getShipName() . ' Data Added By V-Ship Team')
+                    ->setBody("This Web Url:" . $fullurl);
+
+                $mailer->send($message);
+                $lookupstatusobject = new Scorecard_LookupStatus();
+                $lookupstatusobject->setShipid($newshipid);
+                $lookupstatusobject->setStatus(1);
+                $lookupstatusobject->setDataofmonth($new_date);
+                $lookupstatusobject->setDatetime(new \DateTime());
+                $lookupstatusobject->setUserid($userid);
+                $em->persist($lookupstatusobject);
+                $em->flush();
+            }
+
+            $shipname = $newshipid->getShipName();
+            $nextshipid = 0;
+            $nextshipname = '';
+            $user = $this->getUser();
+            $role = $user->getRoles();
+            $kpielementarray = $this->findnumofshipsAction($request, 'nextshipajaxcall');
+            $statusforship = $this->findshipstatusmonth($dataofmonth, $kpielementarray, $role[0]);
+            $finddatawithstatus = array();
 
 
-            $response->setData(array('returnmsg' => $shipname . $returnmsg,
-                'shipname' =>$nextshipname,
-                'shipid' => $nextshipid,
-                'kpiNameArray' =>$finddatawithstatus['elementnamekpiname'],
-                'elementcount' => $finddatawithstatus['maxelementcount'],
-                'elementweightage'=>$finddatawithstatus['elementweightage'],
-                'elementvalues' => $finddatawithstatus['elementvalues']));
-            return $response;
-        }
-        else
-        {
+            if ($role[0] == 'ROLE_ADMIN') {
+                $status = 2;
+                $index = array_search(0, $statusforship);
+                $nextshipid = $kpielementarray[$index]['id'];
+                $nextshipname = $kpielementarray[$index]['shipName'];
+                $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
+            }
+            if ($role[0] == 'ROLE_MANAGER') {
+                $status = 1;
+                $index = array_search(0, $statusforship);
+                $nextshipid = $kpielementarray[$index]['id'];
+                $nextshipname = $kpielementarray[$index]['shipName'];
+                $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
+            }
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                $status = 0;
+                $index = array_search(0, $statusforship);
+                $nextshipid = $kpielementarray[$index]['id'];
+                $nextshipname = $kpielementarray[$index]['shipName'];
+                $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
 
-            $response->setData(array('returnmsg' => $shipname . $returnmsg,
-                'shipname' =>$nextshipname,
-                'shipid' => $nextshipid,
-                'kpiNameArray' =>array(),
-                'elementcount' => 0,
-                'elementvalues' => array()));
-            return $response;
+            }
+            $response = new JsonResponse();
+            if (count($finddatawithstatus) == 4) {
+
+
+                $response->setData(array('returnmsg' => $shipname . $returnmsg,
+                    'shipname' => $nextshipname,
+                    'shipid' => $nextshipid,
+                    'kpiNameArray' => $finddatawithstatus['elementnamekpiname'],
+                    'elementcount' => $finddatawithstatus['maxelementcount'],
+                    'elementweightage' => $finddatawithstatus['elementweightage'],
+                    'elementvalues' => $finddatawithstatus['elementvalues']));
+                return $response;
+            } else {
+
+                $response->setData(array('returnmsg' => $shipname . $returnmsg,
+                    'shipname' => $nextshipname,
+                    'shipid' => $nextshipid,
+                    'kpiNameArray' => array(),
+                    'elementcount' => 0,
+                    'elementvalues' => array()));
+                return $response;
+            }
         }
 
     }
