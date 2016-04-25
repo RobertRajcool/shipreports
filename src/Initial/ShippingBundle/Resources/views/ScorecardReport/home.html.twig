@@ -27,8 +27,8 @@
         <script type="text/javascript">
             $(document).ready(function(){
                 $('.reportShow').hide();
-                $('.reportElementShow').hide();
-                $('.submit_btn').live("click",function(){
+                $('.reportElementShowSection').hide();
+                $('.report_btn').live("click",function(){
                     var aM = $('.activeMonth').val();
                     var aY = $('.activeYear').val();
                     var eM = $('.endMonth').val();
@@ -44,6 +44,10 @@
                         endMonth : eM,
                         endYear : eY
                     };
+                    $('.activeMonthText').val(aM);
+                    $('.activeYearText').val(aY);
+                    $('.endMonthText').val(eM);
+                    $('.endYearText').val(eY);
 
                     $.ajax({
                         type: "POST",
@@ -52,15 +56,21 @@
                         success: function(data)
                         {
                             alert('success');
-                            console.log(data);
                             $('.reportGenerate').hide();
                             $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
                             $.each(data.monthName, function(i){
-                                $('<th colspan="2">'+data.monthName[i]+'</th>').appendTo('#previousRowPlace');
+                                if(data.monthName!=data.monthName.length)
+                                {
+                                    $('<th colspan="2">'+data.monthName[i]+'</th>').appendTo('#previousRowPlace');
+                                }
+                                else if(data.monthName==data.monthName.length)
+                                {
+                                    $('<th>'+data.monthName[i]+'</th>').appendTo('#previousRowPlace');
+                                }
                             });
                             var inn =0;
                             $.each(data.kpiNameList, function(i){
-                                $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> '+data.kpiNameList[inn]['kpiName']+' </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
+                                $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> <a href="#'+i+i+'">'+data.kpiNameList[inn]['kpiName']+'</a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
                                 $.each(data.yearKpiColorArray, function(j)
                                 {
                                     var color = '';
@@ -144,11 +154,43 @@
                                 $('<section id="section'+i+'"> </section>').appendTo('.reportElementShow');
                                 $('<div class="col-sm-12" id="divOne'+i+'"> </div>').appendTo('#section'+i);
                                 $('<div class="dashboard" id="dashboard'+i+'"> </div>').appendTo('#divOne'+i);
+                                $('<div class="dashboard" id="graphDashboard'+i+'"> </div>').appendTo('.reportElementShow');
                                 $('<div id="elementScorecardTable'+i+'"> </div>').appendTo('#dashboard'+i);
-                                $('<table class="table table-striped graph_and_colour_coding_dashboard_main_title_row"><thead><tr><th> '+data.kpiNameList[i]['kpiName']+' </th></tr></thead></table>').appendTo('#elementScorecardTable'+i);
-                                $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="elementRowPlace'+i+'"><th class="kpi_name_thtd"> Element </th> <th>Weightage</th></tr> </thead> <tbody id="elementTableBody'+i+'"> </tbody></table>').appendTo('#elementScorecardTable'+i);
+                                $('<table class="table table-striped graph_and_colour_coding_dashboard_main_title_row" id="'+i+i+'"><thead><tr><th> '+data.kpiNameList[i]['kpiName']+' </th></tr></thead> <tr> <td> <a class="linkclass" href="#top" style="float: right">Back to top </a> </td> </tr> </table>').appendTo('#elementScorecardTable'+i);
+                                $('<table class="table table-striped-2 kpi_year_view_score_card_row"><thead><tr id="elementRowPlace'+i+'"><th class="kpi_name_thtd"> Element </th> <th>Weightage</th></tr> </thead> <tbody id="elementTableBody'+i+'"> </tbody></table>').appendTo('#elementScorecardTable'+i);
+                                $('<table class="table table-striped normal_table"><thead><tr><th>'+data.kpiNameList[i]['kpiName']+'-Graph </th></tr> </thead> <tbody> <tr> <td id="graphArea'+i+'"> </td> </tr> </tbody></table>').appendTo('#elementScorecardTable'+i);
+                                var graphData = new Array();
                                 $.each(data.monthName, function(month){
-                                    $('<th colspan="2">'+data.monthName[month]+'</th>').appendTo('#elementRowPlace'+i);
+                                    if(data.monthName!=data.monthName.length)
+                                    {
+                                        $('<th colspan="2">'+data.monthName[month]+'</th>').appendTo('#elementRowPlace'+i);
+                                    }
+                                    else if(data.monthName==data.monthName.length)
+                                    {
+                                        $('<th>'+data.monthName[month]+'</th>').appendTo('#elementRowPlace'+i);
+                                    }
+                                    graphData.push(data.elementLevelChartData[month][i]);
+                                });
+                                $('#graphArea'+i).highcharts({
+                                    chart: {
+                                        type: 'line',
+                                        width: 1065
+                                    },
+                                    title: {
+                                        text: ''
+                                    },
+                                    xAxis: {
+                                        categories: data.monthName
+                                    },
+                                    exporting: {"enabled":false},
+                                    plotOptions: {"series":{"allowPointSelect":true,"dataLabels":{"enabled":true}}},
+                                    series: [{
+                                        name: data.kpiNameList[i]['kpiName'],
+                                        showInLegend:false,
+                                        data: graphData,
+                                        color: '#103a71'
+                                    }],
+                                    yAxis: {"max":3, "min":0}
                                 });
                                 $.each(data.elementNameList[i], function(j){
                                     $('<tr id="elementRowId'+i+j+'"> <td class="kpi_name kpi_name_thtd"> '+data.elementNameList[i][j]['elementName']+' </td> <td class="weightage">'+data.elementNameList[i][j]['weightage']+' </td> </tr> ').appendTo('#elementTableBody'+i);
@@ -176,58 +218,129 @@
                                         {
                                             $('<td class="month"></td>').appendTo('#elementRowId'+i+j);
                                         }
-                                        /*$('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);*/
                                         if(k<data.monthName.length-1)
                                         {
                                             var status = data.elementColorArray[k+1][i][j];
 
                                             if(color=='Green' && status=='Green' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Green' && status=='Yellow' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Green' && status=='Red' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Yellow' && status=='Green' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Yellow' && status=='Yellow' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Yellow' && status=='Red' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Red' && status=='Green' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Red' && status=='Yellow' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else if(color=='Red' && status=='Red' )
                                             {
-                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId'+i+j);
                                             }
                                             else
                                             {
-                                                $('<td class="month_difference"></td>').appendTo('#elementRowId'+i+j);
+                                                $('<td class="month"></td>').appendTo('#elementRowId'+i+j);
                                             }
                                         }
                                     });
                                 });
+                                var spanCount =2 + (2 * data.monthName.length)-1;
+                                $(' <tr id="emptyRow'+i+'"> <td colspan="'+spanCount+'">&nbsp;</td> </tr> ').appendTo('#elementTableBody'+i);
+                                $(' <tr id="kpiRowPlace'+i+'"><td class="kpi_name kpi_name_thtd"> '+data.kpiNameList[i]['kpiName']+' </td> <td class="weightage">100</td></tr> ').appendTo('#elementTableBody'+i);
+                                $.each(data.monthName, function(monthCount){
+                                    //$('<td>&nbsp;</td>').appendTo('#emptyRow'+i);
+                                    var kpiColor = '';
+                                    kpiColor = data.yearKpiColorArray[monthCount][i];
+                                    if(kpiColor != 'false' && kpiColor != '')
+                                    {
+                                        if(kpiColor == 'Green')
+                                        {
+                                            $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor == 'Red')
+                                        {
+                                            $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor == 'Yellow')
+                                        {
+                                            $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                    }else
+                                    {
+                                        $('<td class="month"></td>').appendTo('#kpiRowPlace'+i);
+                                    }
+                                    if(monthCount<data.monthName.length-1)
+                                    {
+                                        //$('<td>&nbsp;</td>').appendTo('#emptyRow'+i);
+                                        var status = data.yearKpiColorArray[monthCount+1][i];
+
+                                        if(kpiColor=='Green' && status=='Green' )
+                                        {
+                                            $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Green' && status=='Yellow' )
+                                        {
+                                            $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Green' && status=='Red' )
+                                        {
+                                            $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Yellow' && status=='Green' )
+                                        {
+                                            $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Yellow' && status=='Yellow' )
+                                        {
+                                            $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Yellow' && status=='Red' )
+                                        {
+                                            $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Red' && status=='Green' )
+                                        {
+                                            $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Red' && status=='Yellow' )
+                                        {
+                                            $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else if(kpiColor=='Red' && status=='Red' )
+                                        {
+                                            $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                        else
+                                        {
+                                            $('<td class="month"></td>').appendTo('#kpiRowPlace'+i);
+                                        }
+                                    }
+                                });
                             });
 
                             $('.reportShow').show();
-                            $('.reportElementShow').show();
+                            $('.reportElementShowSection').show();
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
@@ -306,7 +419,7 @@
                         </fieldset>
                     </div>
                     <div class="actions_submit">
-                        <input type="submit" class="submit_btn" value="View Data" />
+                        <input type="submit" class="submit_btn report_btn" value="View Data" />
                     </div>
                 </form>
             </div>
@@ -317,7 +430,7 @@
         <div class="col-sm-12">
             <div class="dashboard">
                 <div>
-                    <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                    <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row" id="top">
                         <thead>
                             <tr>
                                 <th>Management Performance</th>
@@ -347,5 +460,16 @@
         </div>
     </section>
 
-    <div class="reportElementShow"></div>
+    <section class="reportElementShowSection">
+        <form action="{{ path('scorecard_report_pdfReport') }}" method="post">
+            <input type="hidden" class="activeMonthText" name="activeMonth" value="">
+            <input type="hidden" class="activeYearText" name="activeYear" value="">
+            <input type="hidden" class="endMonthText" name="endMonth" value="">
+            <input type="hidden" class="endYearText" name="endYear" value="">
+            <div class="reportElementShow"></div>
+            <div class="actions_submit">
+                <input type="submit" class="submit_btn" value="Send Report" />
+            </div>
+        </form>
+    </section>
 {% endblock %}
