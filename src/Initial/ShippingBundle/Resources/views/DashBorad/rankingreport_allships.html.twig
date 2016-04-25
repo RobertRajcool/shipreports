@@ -7,6 +7,9 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
         <script>
             $(document).ready(function()
             {
@@ -91,6 +94,12 @@
                                 title: {
                                     text: ''
 
+                                },
+                                legend: {
+                                    layout: 'vertical',
+                                    align: 'right',
+                                    verticalAlign: 'middle',
+                                    borderWidth: 0
                                 },
                                 xAxis: {
                                     categories: data.montharray

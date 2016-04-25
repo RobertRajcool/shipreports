@@ -3338,8 +3338,6 @@ class DashboradController extends Controller
             }
             $newcategories=array();
             $DataRankingReports=0;
-
-
             $overallShipDetailArray = array();
             for ($shipCount = 0; $shipCount < count($listAllShipForCompany); $shipCount++)
             {
@@ -3364,6 +3362,7 @@ class DashboradController extends Controller
                     ->setParameter('shipid', $listAllShipForCompany[0]['id'])
                     ->getQuery()
                     ->getResult();
+
 
                 for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++)
                 {
@@ -3462,8 +3461,19 @@ class DashboradController extends Controller
                // array($oneChart_Data,$overallShipDetailArray);
                 $monthInLetter = $new_monthdetail_date->format('M-Y');
                // $oneChart_Data=array(array("name" => $monthInLetter,'showInLegend'=> false, 'color' => 'blue', "data" => $overallShipDetailArray));
-                array_push($oneChart_Data,array("name" => $rankingShipName,'showInLegend'=> true, 'color' => 'blue', "data" => $ShipDetailDataarray));
-        }
+               /* if($shipCount<count($highcahrtdashstyle))
+                {
+                    array_push($oneChart_Data,array("name" => $rankingShipName,'showInLegend'=> true,'dashStyle'=>$highcahrtdashstyle[$shipCount],  "data" => $ShipDetailDataarray));
+                }
+                else
+                {
+                    array_push($oneChart_Data,array("name" => $rankingShipName,'showInLegend'=> true,'dashStyle'=>'Solid',  "data" => $ShipDetailDataarray));
+
+                }*/
+                array_push($oneChart_Data,array("name" => $rankingShipName,'showInLegend'=> true,  "data" => $ShipDetailDataarray));
+
+
+            }
             $response = new JsonResponse();
             $response->setData
             (
