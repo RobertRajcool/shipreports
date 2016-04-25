@@ -33,7 +33,7 @@
                 <thead>
                 {% set i1=0 %}
                 <tr>
-                    <th class="branding-colours">KPI Name</th>
+                    <th class="branding-colours">KPI</th>
                     <th class="branding-colours">Weightage</th>
                     {% for monthname in monthName %}
                         {% if i1 < monthName|length-1 %}
@@ -113,7 +113,7 @@
             <table class="responsive-table certificates-table">
                 <thead>
                 <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">Management Performance - Graph</th>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ headerTitle }} - Graph</th>
                 </tr>
                 </thead>
                 <tbody>

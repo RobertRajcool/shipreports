@@ -309,6 +309,9 @@ class ScorecardReportController extends Controller
         $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
         $pdfObject->defaultheaderline = 0;
         $pdfObject->defaultheaderfontstyle = 'B';
+        $waterMarkImage= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo.png';
+        $pdfObject ->SetWatermarkImage($waterMarkImage);
+        $pdfObject ->showWatermarkImage = true;
 
         $graphObject = array(
             'chart'=>array('renderTo'=>'areaId','type'=>"line"),
@@ -344,11 +347,11 @@ class ScorecardReportController extends Controller
                 'monthName' => $returnObject['monthName'],
                 'kpiNameList' => $returnObject['kpiNameList'],
                 'imageSource' => 'graphImage'.$todayDate.$todayTime.'.png',
-                'headerTitle' => 'Management Performance'
+                'headerTitle' => 'Pioneer Scorecard Report'
             ));
 
         $pdfObject->AddPage('', 4, '', 'on');
-        $pdfObject->SetHeader('Type: ' . 'Ranking Report' . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
         $pdfObject->WriteHTML($customerListDesign);
 
 
@@ -405,7 +408,7 @@ class ScorecardReportController extends Controller
                 ));
 
             $pdfObject->AddPage('', 4, '', 'on');
-            $pdfObject->SetHeader('Type: ' . 'Scorecard Report' . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $pdfObject->WriteHTML($customerListDesign);
         }
 
