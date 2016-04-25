@@ -15,10 +15,10 @@
   width: 1230px;
   padding: 15px 0%;
   margin: 0 auto;
-  color: #333333;
+  color: #000000;
   background: #FFFFFF;
-  font-size: 11px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-family: arial;
 }
 .certificate-wrapper .row-fluid {
   padding: 10px 0px;
@@ -30,7 +30,7 @@
   margin-bottom: 10px;
 }
 .certificates_header .brand-title {
-  width: 64%;
+  width: 85%;
   float: left;
   font-family: arial;
   color: #000000;
@@ -45,9 +45,10 @@
   text-align: right;
 }
 .certificates_header .title {
-  font-size: 28px;
+  font-size: 18px;
   line-height: 29px;
   margin-bottom: 8px;
+  font-family: arial;
 }
 .certificates_header p {
   margin: 0px;
@@ -61,7 +62,7 @@
 .data-row-section p {
   font-family: arial;
   font-size: 11px;
-  color: #333333;
+  color: #000000;
 }
 .certificates-table {
   border-right: 1px solid #afafaf;
@@ -71,6 +72,7 @@
   width: 100%;
   margin-top: -1px;
   border-collapse: 0px;
+  font-family: arial;
 }
 .certificates-table thead {
   background: none;
@@ -129,8 +131,8 @@
   padding: 2px 4px;
   border-bottom: 1px solid #afafaf;
   border-right: 1px solid #afafaf;
-  font-size: 11px;
-  color: #333333;
+  font-size: 12px;
+  color: #000000;
   font-family: arial;
   vertical-align: top;
   text-align: left;
@@ -140,10 +142,10 @@
   border-right: none;
 }
 .certificates-table tbody td p strong {
-  color: #333333;
+  color: #000000;
 }
 .certificates-table tbody td strong {
-  color: #333333;
+  color: #000000;
 }
 .certificates-table tbody td p {
   margin: 0 0 10px 0;
@@ -180,12 +182,13 @@
 
 
 .kpi_ranking_12_month_pdf_main_title_row thead th {
-  text-align:center;
+  text-align:left;
   font-weight:bold;
+  font-family: arial;
   font-size:14px;
 }
 .kpi_ranking_12_month_pdf_main_title_row tbody td {
-  padding:4px 10px !important;
+  padding:3px 4px !important;
 }
 .kpi_ranking_12_month_pdf_main_title_row .vessel_name_1 {
   width:25%;
