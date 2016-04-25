@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/pdf.css" rel="stylesheet">
+
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">{{ headerTitle }}</div>
+            </div>
+            <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
+        </div>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table kpi_name_weightage_row">
+                <thead>
+                {% set i1=0 %}
+                <tr>
+                    <th class="branding-colours">Element</th>
+                    <th class="branding-colours">Weightage</th>
+                    {% for monthname in monthName %}
+                        {% if i1 < monthName|length-1 %}
+                            <th colspan="2" class="branding-colours">{{ monthname }}</th>
+                        {% else %}
+                            <th class="branding-colours no-td-right-border">{{ monthname }}</th>
+                        {% endif %}
+                        {% set i1 = i1+1 %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set elementCountList=0 %}
+                {% for element in elementNameList[0] %}
+                    <tr>
+                        <td class="kpi_name">{{ element.elementName }}</td>
+                        <td class="weightage">{{ element.weightage }}</td>
+                        {% set monthCountList=0 %}
+                        {% for monthname in monthName %}
+                            <td class="month">
+                                {% if elementColorArray[monthCountList]|length != 0 %}
+                                    {% if elementColorArray[monthCountList][elementCountList]=="Green" %}
+                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                    {% elseif elementColorArray[monthCountList][elementCountList]=="Red" %}
+                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                    {% elseif elementColorArray[monthCountList][elementCountList]=="Yellow" %}
+                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            {% if monthCountList < monthName|length-1 %}
+                                {% set nextMonthCountList=monthCountList+1 %}
+                                <td class="month">
+                                    {% if elementColorArray[monthCountList]|length != 0 and elementColorArray[nextMonthCountList]|length != 0 %}
+                                        {% if elementColorArray[monthCountList][elementCountList]=="Green" and elementColorArray[nextMonthCountList][elementCountList]=="Green" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Green" and elementColorArray[nextMonthCountList][elementCountList]=="Red" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Green" and elementColorArray[nextMonthCountList][elementCountList]=="Yellow" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Red" and elementColorArray[nextMonthCountList][elementCountList]=="Green" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Red" and elementColorArray[nextMonthCountList][elementCountList]=="Red" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Red" and elementColorArray[nextMonthCountList][elementCountList]=="Yellow" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][elementCountList]=="Green" %}
+                                            <img src="/images/up_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][elementCountList]=="Red" %}
+                                            <img src="/images/down_arrow.png">
+                                        {% elseif elementColorArray[monthCountList][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][elementCountList]=="Yellow" %}
+                                            <img src="/images/straight_arrow.png">
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            {% set monthCountList=monthCountList+1 %}
+                        {% endfor %}
+                    </tr>
+                    {% set elementCountList=elementCountList+1 %}
+                {% endfor %}
+                <tr>
+                    <td style="border-left:none; border-right:none;" class="month">&nbsp;</td>
+                    <td style="border-left:none; border-right:none;" class="month">&nbsp;</td>
+                    {% set secondMonthCountList=0 %}
+                    {% for monthname in monthName %}
+                        <td style="border-left:none; border-right:none;" class="month">&nbsp;</td>
+                        {% if secondMonthCountList < monthName|length-1 %}
+                            <td style="border-left:none; border-right:none;" class="month">&nbsp;</td>
+                        {% endif %}
+                        {% set secondMonthCountList=secondMonthCountList+1 %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="kpi_name"><strong>{{ headerTitle }}</strong></td>
+                    <td class="weightage"><strong>100</strong></td>
+                    {% set nextSecondMonthCountList=0 %}
+                    {% for monthname in monthName %}
+                        <td class="month">
+                            {% if yearKpiColorArray[nextSecondMonthCountList]=="Green" %}
+                                <img src="/images/01_score_card.png" alt="Loader Image"/>
+                            {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Red" %}
+                                <img src="/images/03_score_card.png" alt="Loader Image"/>
+                            {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Yellow" %}
+                                <img src="/images/02_score_card.png" alt="Loader Image"/>
+                            {% endif %}
+                        </td>
+                        {% if nextSecondMonthCountList < monthName|length-1 %}
+                            {% set nextMonthCountList=nextSecondMonthCountList+1 %}
+                            <td class="month">
+                                {% if yearKpiColorArray[nextSecondMonthCountList]|length != 0 and  yearKpiColorArray[nextMonthCountList]|length != 0 %}
+                                    {% if yearKpiColorArray[nextSecondMonthCountList]=="Green" and yearKpiColorArray[nextMonthCountList]=="Green" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Green" and yearKpiColorArray[nextMonthCountList]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Green" and yearKpiColorArray[nextMonthCountList]=="Yellow" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Red" and yearKpiColorArray[nextMonthCountList]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Red" and yearKpiColorArray[nextMonthCountList]=="Red" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Red" and yearKpiColorArray[nextMonthCountList]=="Yellow" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Yellow" and yearKpiColorArray[nextMonthCountList]=="Green" %}
+                                        <img src="/images/up_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Yellow" and yearKpiColorArray[nextMonthCountList]=="Red" %}
+                                        <img src="/images/down_arrow.png">
+                                    {% elseif yearKpiColorArray[nextSecondMonthCountList]=="Yellow" and yearKpiColorArray[nextMonthCountList]=="Yellow" %}
+                                        <img src="/images/straight_arrow.png">
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                        {% set nextSecondMonthCountList=nextSecondMonthCountList+1 %}
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ headerTitle }} - Graph</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><img src="/phantomjs/scorecard/graphImageFile/{{ imageSource }}" alt="Loader Image"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+</body>
+</html>

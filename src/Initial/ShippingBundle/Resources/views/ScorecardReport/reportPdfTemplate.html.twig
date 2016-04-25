@@ -84,7 +84,7 @@
         <div class="row-fluid">
             <div class="certificates_header clearfix">
                 <div class="brand-title">
-                    <div class="title">Management Performance</div>
+                    <div class="title">Pioneer Scorecard Report</div>
                 </div>
                 <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
             </div>
@@ -93,13 +93,13 @@
                     <thead>
                         {% set i1=0 %}
                         <tr>
-                            <th class="branding-colours kpi_name">KPI Name</th>
+                            <th class="branding-colours kpi_name">KPI</th>
                             <th class="branding-colours weightage">Weightage</th>
                             {% for monthname in monthName %}
                                 {% if i1 < monthName|length %}
-                                    <th colspan="2" class="branding-colours">{{ monthname }}</th>
+                                    <th colspan="2" class="branding-colours month">{{ monthname }}</th>
                                 {% else %}
-                                    <th class="branding-colours no-td-right-border">{{ monthname }}</th>
+                                    <th class="branding-colours month no-td-right-border">{{ monthname }}</th>
                                 {% endif %}
                                 {% set i1 = i1+1 %}
                             {% endfor %}
@@ -160,7 +160,7 @@
                 <table class="responsive-table certificates-table">
                     <thead>
                         <tr>
-                            <th class="branding-colours thead-title-two-row no-td-right-border">Management Performance - Graph</th>
+                            <th class="branding-colours thead-title-two-row no-td-right-border">Pioneer Scorecard Report - Graph</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -179,7 +179,7 @@
                         <thead>
                             {% set i1=0 %}
                             <tr>
-                                <th class="branding-colours kpi_name">Element Name</th>
+                                <th class="branding-colours kpi_name">Element</th>
                                 <th class="branding-colours weightage">Weightage</th>
                                 {% for monthname in monthName %}
                                     {% if i1 < monthName|length %}
@@ -212,7 +212,7 @@
                                         </td>
                                         {% if monthCountList < monthName|length-1 %}
                                             {% set nextMonthCountList=monthCountList+1 %}
-                                            <td class="month_difference">
+                                            <td class="month_differen">
                                                 {% if elementColorArray[monthCountList][one]|length != 0 and elementColorArray[nextMonthCountList][one]|length != 0 %}
                                                     {% if elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
                                                         <img src="/images/straight_arrow.png">
