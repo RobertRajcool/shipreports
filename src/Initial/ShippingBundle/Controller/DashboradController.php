@@ -2784,8 +2784,10 @@ class DashboradController extends Controller
                     if($FindKpivalueCount==0)
                     {
                         array_push($Month_Avg_Total,$monthlyKpiAverageValueTotal[$SplitKpiCount]);
+                        array_push($Month_Element_Color,$monthlykpicolorarray[$SplitKpiCount]);
+                        array_push($Month_Element_Value,$monthlyElementValueArray[$SplitKpiCount]);
 
-                        if($monthlyElementValueArray[$SplitKpiCount]!=null)
+                       /* if($monthlyElementValueArray[$SplitKpiCount]!=null)
                         {
                             array_push($Month_Element_Value,$monthlyElementValueArray[$SplitKpiCount]);
                         }
@@ -2793,12 +2795,14 @@ class DashboradController extends Controller
                         if($monthlykpicolorarray[$SplitKpiCount]!="")
                         {
                             array_push($Month_Element_Color,$monthlykpicolorarray[$SplitKpiCount]);
-                        }
+                        }*/
                     }
                     if($FindKpivalueCount!=0)
                     {
                         array_push($Month_Avg_Total,$monthlyKpiAverageValueTotal[$FindKpivalueCount]);
-                        if($monthlyElementValueArray[$FindKpivalueCount]!=null)
+                        array_push($Month_Element_Value,$monthlyElementValueArray[$FindKpivalueCount]);
+                        array_push($Month_Element_Color,$monthlykpicolorarray[$FindKpivalueCount]);
+                      /*  if($monthlyElementValueArray[$FindKpivalueCount]!=null)
                         {
                             array_push($Month_Element_Value,$monthlyElementValueArray[$FindKpivalueCount]);
                         }
@@ -2806,7 +2810,7 @@ class DashboradController extends Controller
                         if($monthlykpicolorarray[$FindKpivalueCount]!="")
                         {
                             array_push($Month_Element_Color,$monthlykpicolorarray[$FindKpivalueCount]);
-                        }
+                        }*/
 
                     }
 
@@ -2837,7 +2841,7 @@ class DashboradController extends Controller
                 $yearcount=$diff->y+1;
             }
 
-            $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+          $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
             $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo.png';
@@ -2919,7 +2923,7 @@ class DashboradController extends Controller
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
 
-               /* return $this->render('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
+             /*  return $this->render('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
                     'kpiid' => $kpiid,
                     'screenName' => 'Ranking Report',
                     'userName' => '',
@@ -2935,11 +2939,12 @@ class DashboradController extends Controller
                     'listofelement' => $ElementName_Weightage[$kpiid],
                     'countofelement'=>count($ElementName_Weightage[$kpiid]),
                     'currentyear'=>date('Y')
-                ));*/
+                ));
+               */
 
 
 
-                $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
+               $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
                     'kpiid' => $kpiid,
                     'screenName' => 'Ranking Report',
                     'userName' => '',
@@ -2974,87 +2979,7 @@ class DashboradController extends Controller
             $response = new Response();
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
-
             return $response;
-            /*
-//return $response;
-
-            $graphObject = array(
-                'chart'=>array('renderTo'=>'areaId','type'=>"line"),
-                'exporting'=>array('enabled'=>false),
-                'plotOptions'=>array('series'=>array(
-                    "allowPointSelect"=>true,
-                    "dataLabels"=>array(
-                        "enabled"=>true
-                    )
-                )),
-                'series'=>array(
-                    array('name'=>'Series','showInLegend'=>false,'color'=>'blue','data'=>$monthlyKpiAverageScore)
-                ),
-                'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
-                'title'=>array('text'=>$shipname),
-                'xAxis'=>array('categories'=>$newcategories,'labels'=>array('style'=>array('color'=>'#0000F0'))),
-            );
-            $jsondata=json_encode($graphObject);
-            $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/ship_'.$shipid.'.json';
-            file_put_contents($pdffilenamefullpath, $jsondata);
-            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-            $outfile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_'.$shipid.'.png';
-            $JsonFileDirectroy=$this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/ship_'.$shipid.'.json -outfile '.$outfile.' -scale 2.5 -width 1065';
-            $ImageGeneration = 'phantomjs ' . $Highchartconvertjs.$JsonFileDirectroy;
-            $handle = popen($ImageGeneration, 'r');
-            $charamee = fread($handle, 2096);
-
-           return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
-                'shipid' => $shipid,
-                'screenName' => 'Ranking Report',
-                'userName' => '',
-                'date' => date('Y-m-d'),
-                'link' => 'shipimage_'.$shipid.'.png',
-                'listofkpi' => $rankingKpiList,
-                'kpiweightage' => $rankingKpiWeightarray,
-                'montharray' => $newcategories,
-                'shipname' => $shipname,
-                'countmonth' => count($newcategories),
-                'avgscore' => $monthlyKpiAverageScore,
-                'ageofvessel'=>$yearcount,
-                'kpimonthdata'=>$overallfindingelementgraph,
-                'currentyear'=>date('Y')
-            ));
-
-            $htmlContent = $this->container->get('templating')->renderResponse($filePath, $values, null);
-            $this->mpdf->AddPage('', 1, '', 'on');
-            $this->mpdf->WriteHTML($htmlContent->getContent(), 2);
-            return $this->mpdf;
-
-
-
-                        $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
-                            'shipid' => $shipid,
-                            'screenName' => 'Ranking Report',
-                            'userName' => '',
-                            'date' => date('Y-m-d'),
-                            'link' => 'shipimage_'.$shipid.'.png',
-                            'listofkpi' => $rankingKpiList,
-                            'kpiweightage' => $rankingKpiWeightarray,
-                            'montharray' => $newcategories,
-                            'shipname' => $shipname,
-                            'countmonth' => count($newcategories),
-                            'avgscore' => $monthlyKpiAverageScore,
-                            'ageofvessel'=>$yearcount,
-                            'kpimonthdata'=>$overallfindingelementgraph,
-                            'currentyear'=>date('Y')
-                        ));
-                        $client = new HighchartController();
-                        $client->setContainer($this->container);
-                        $printPdf = $client->createPdf($customerListDesign, 'Ranking Report');
-
-                        $response = new Response();
-                        $response->setContent($printPdf);
-                        $response->headers->set('Content-Type', 'application/pdf');
-
-                        return $response;*/
-
         }
         else
         {
