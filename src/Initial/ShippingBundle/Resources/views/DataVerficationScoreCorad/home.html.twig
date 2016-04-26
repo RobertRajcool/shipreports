@@ -288,18 +288,93 @@
                         data:data,
                         success: function(data)
                         {
-                            $('#area').highcharts().series[0].setData(data.changechartdata);
-                            $('#area').highcharts().series[0].update({ name: month+'-'+year});
+                            $('#overallshids').html('');
+                            $('#overallshids').text('');
+                            $('<div class="views_kpi_name_total"><span>Vessels ('+data.shipcount+')</span></div>').appendTo('#overallshids');
+                            $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
+                            $.each(data.listofships, function(i)
+                            {
+                                var status=data.status_ship[i];
+                                var img='';
+                                if(status==3)
+                                {
+                                    var img=$('<img src="/images/tick_icon.png">');
+                                }
+                                $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a>'+img+'</li>').appendTo('#addshipids');
+                            });
+                            $('#elementformid').html('');
+                            $('#elementformid').text('');
+                            $('#shipname').text(data.currentshipname);
+                            $('#currentid').text(month+'-'+year);
+                            $('#datofmonthid').text(month+'-'+year);
+                            $('#shipid').val(data.currentshipid);
 
-                            /*var chart = $('#area').highcharts();
-                             chart.series[0].update({
-                             name: month+'-'+year,
-                             data: data.changechartdata
-                             });
+                            $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
+                            $('.linkclass').removeClass("active");
+                            $('#'+data.currentshipid).addClass('active');
+                            var j=1;
+                            var newtemp=0;
+                            $.each(data.elementkpiarray, function(i, listkpi)
+                            {
+
+                                var k=$.isNumeric(i);
+                                if(!k)
+                                {
+                                    var temp=1
+
+                                    $('<table class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                    $.each(listkpi,function(mykey,myvalue)
+                                    {
+                                        if(data.elementvalues.length>0)
+                                        {
+
+                                            $('#updatebuttonid').show();
+                                            $('#savebuttonid').show();
+                                            $('#adminbuttonid').show();
+
+                                            if(temp==1)
+                                            {
+                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                            }
+                                            if(temp>1)
+                                            {
+                                                $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                            }
 
 
-                             */
-                            $('#currentid').text(month+'-'+year)
+                                        }
+                                        else
+                                        {
+                                            $('#updatebuttonid').show();
+                                            $('#savebuttonid').show();
+                                            $('#adminbuttonid').show();
+                                            if(temp==1)
+                                            {
+                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                            }
+                                            if(temp>1)
+                                            {
+                                                $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                            }
+
+
+                                        }
+                                        temp++;
+                                        newtemp++;
+
+
+                                    });
+                                    $(' </tr></tbody></table>').appendTo('#addkpiformid');
+
+
+                                }
+                                j++;
+
+
+                            });
+
+
+
 
 
                         },
