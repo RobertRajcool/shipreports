@@ -119,12 +119,12 @@
                             $.each(data.listofships, function(i)
                             {
                                 var status=data.status_ship[i];
-                                var img='';
+
+                                $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a></li>').appendTo('#addshipids');
                                 if(status==3)
                                 {
-                                    var img=$('<img src="/images/tick_icon.png">');
+                                    $('#'+data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                 }
-                                $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a>'+img+'</li>').appendTo('#addshipids');
                             });
                             $('#elementformid').html('');
                             $('#elementformid').text('');
@@ -295,12 +295,12 @@
                             $.each(data.listofships, function(i)
                             {
                                 var status=data.status_ship[i];
-                                var img='';
+
+                                $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a></li>').appendTo('#addshipids');
                                 if(status==3)
                                 {
-                                    var img=$('<img src="/images/tick_icon.png">');
+                                    $('#'+data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                 }
-                                $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a>'+img+'</li>').appendTo('#addshipids');
                             });
                             $('#elementformid').html('');
                             $('#elementformid').text('');
