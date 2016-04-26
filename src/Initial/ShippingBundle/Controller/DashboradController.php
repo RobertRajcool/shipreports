@@ -1330,8 +1330,8 @@ class DashboradController extends Controller
                     ->getResult();
                 if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
                 {
-                    $ff = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
-                    $statusVerified  = $ff->format('n');
+                    $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
+                    $statusVerified  = $dateFromDb->format('n');
                 }
             }
 
@@ -1606,6 +1606,47 @@ class DashboradController extends Controller
                 $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
                 array_push($monthDetails, $month);
             }
+            $shipidarray = $em->createQueryBuilder()
+                ->select('identity(b.shipDetailsId)')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.id = :kpiid')
+                ->setParameter('kpiid', $kpiid)
+                ->getQuery()
+                ->getResult();
+            $shipId = $shipidarray[0][1];
+            $currentMonth = date('n');
+            $new_monthdetail_date = new \DateTime($monthDetails[$currentMonth-1]);
+            $new_monthdetail_date->modify('last day of this month');
+            $statusVerified = $currentMonth-1;
+            $monthlyShipDataStatus = $em->createQueryBuilder()
+                ->select('b.status')
+                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                ->setParameter('shipId', $shipId)
+                ->setParameter('monthDetail', $new_monthdetail_date)
+                ->getQuery()
+                ->getResult();
+
+            if(count($monthlyShipDataStatus)!=0 && $monthlyShipDataStatus[0]['status']==4)
+            {
+                $statusVerified = $currentMonth;
+            }
+            else
+            {
+                $statusFieldQuery = $em->createQueryBuilder()
+                    ->select('b.status, b.dataofmonth')
+                    ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                    ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                    ->setParameter('shipId', $shipId)
+                    ->setParameter('monthDetail', $new_monthdetail_date)
+                    ->getQuery()
+                    ->getResult();
+                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                {
+                    $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
+                    $statusVerified  = $dateFromDb->format('n');
+                }
+            }
             $elementForKpiList = $em->createQueryBuilder()
                 ->select('a.elementName', 'a.id', 'a.weightage')
                 ->from('InitialShippingBundle:RankingElementDetails', 'a')
@@ -1628,7 +1669,7 @@ class DashboradController extends Controller
             $monthlyKpiAverageValueTotal = array();
             $monthlyElementColorArray = array();
             $monthlyElementValueArray = array();
-            for($monthCount=0;$monthCount<count($monthDetails);$monthCount++)
+            for($monthCount=0;$monthCount<$statusVerified;$monthCount++)
             {
                 $scorecardElementValueArray = array();
                 $kpiElementColorArray = array();
@@ -1645,18 +1686,6 @@ class DashboradController extends Controller
                     $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                     $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
 
-                    $elementDbValue = $em->createQueryBuilder()
-                        ->select('a.value')
-                        ->from('InitialShippingBundle:RankingMonthlyData', 'a')
-                        ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
-                        ->setParameter('elementId', $scorecardElementId)
-                        ->setParameter('monthName',$new_monthdetail_date)
-                        ->setParameter('shipId',$shipId)
-                        ->setParameter('statusvalue',3)
-                        ->setParameter('kpiId',$kpiid)
-                        ->getQuery()
-                        ->getResult();
-
                     $rankingElementRulesArray = $em->createQueryBuilder()
                         ->select('a.rules')
                         ->from('InitialShippingBundle:RankingRules', 'a')
@@ -1664,43 +1693,48 @@ class DashboradController extends Controller
                         ->setParameter('elementId', $scorecardElementId)
                         ->getQuery()
                         ->getResult();
-                    $elementResultColor = "";
+                    $rankingElementResultColor = "";
                     $elementColorValue=0;
-                    if(count($elementDbValue)!=0)
+                    $rankingElementResult = $em->createQueryBuilder()
+                        ->select('b.elementdata, b.elementcolor')
+                        ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                        ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                        ->setParameter('kpiId', $kpiid)
+                        ->setParameter('shipId', $shipId)
+                        ->setParameter('elementId', $scorecardElementId)
+                        ->setParameter('monthDetail', $new_monthdetail_date )
+                        ->getQuery()
+                        ->getResult();
+                    if(count($rankingElementResult)!=0)
                     {
-                        for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
-                        {
-                            $elementRule = $rankingElementRulesArray[$elementRulesCount];
-                            $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . $elementDbValue[0]['value'];
-                            $elementJsFileName = 'node ' . $elementJsFileDirectory;
-                            $handle = popen($elementJsFileName, 'r');
-                            $elementColor = fread($handle, 2096);
-                            $elementResultColor = str_replace("\n", '', $elementColor);
-
-                            if ($elementResultColor == "false") {
-                                continue;
-                            }
-
-                            if ($elementResultColor == "Green") {
-                                $elementColorValue = $scorecardElementWeight;
-                                break;
-                            } else if ($elementResultColor == "Yellow") {
-                                $elementColorValue = $scorecardElementWeight/2;
-                                break;
-                            } else if ($elementResultColor == "Red") {
-                                $elementColorValue = 0;
-                                break;
-                            }
-                        }
+                        $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
                     }
                     else
                     {
-                        $elementDbValue[0]['value']=null;
+                        $rankingElementResult[0]['elementdata'] =null;
+                    }
+
+                    if($rankingElementResultColor == "false")
+                    {
+                        $rankingElementResultColor = "";
+                    }
+
+                    if($rankingElementResultColor=='Green')
+                    {
+                        $elementColorValue = $scorecardElementWeight;
+                    }
+                    else if($rankingElementResultColor == 'Yellow')
+                    {
+                        $elementColorValue = $scorecardElementWeight/2;
+                    }
+                    else if($rankingElementResultColor == 'Red')
+                    {
+                        $elementColorValue = 0;
                     }
 
                     array_push($scorecardElementRules,$rankingElementRulesArray);
-                    array_push($scorecardElementValueArray,$elementDbValue[0]['value']);
-                    array_push($kpiElementColorArray,$elementResultColor);
+                    array_push($scorecardElementValueArray,$rankingElementResult[0]['elementdata']);
+                    array_push($kpiElementColorArray,$rankingElementResultColor);
                     $elementValueWithWeight = $elementColorValue ;
                     $kpiSumValue+=$elementValueWithWeight;
                 }
@@ -1727,8 +1761,7 @@ class DashboradController extends Controller
                 $ob->series($series);
                 $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
                 $ob->exporting->enabled(false);
-                //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
-                //find the comments for particular user//
+
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
@@ -1750,7 +1783,6 @@ class DashboradController extends Controller
                         'commentarray'=>$listofcomment,
                         'monthlydata'=>$monthlyElementValueArray,
                         'elementRule' => $scorecardElementRules
-
                     );
                 }
 
@@ -1777,14 +1809,6 @@ class DashboradController extends Controller
 
             else
             {
-                $shipidarray = $em->createQueryBuilder()
-                    ->select('identity(b.shipDetailsId)')
-                    ->from('InitialShippingBundle:RankingKpiDetails', 'b')
-                    ->where('b.id = :kpiid')
-                    ->setParameter('kpiid', $kpiid)
-                    ->getQuery()
-                    ->getResult();
-                $shipId = $shipidarray[0][1];
                 $newkpiid = $em->createQueryBuilder()
                     ->select('b.id')
                     ->from('InitialShippingBundle:RankingKpiDetails', 'b')
@@ -1805,7 +1829,7 @@ class DashboradController extends Controller
                 $monthlyKpiAverageValueTotal = array();
                 $monthlyElementColorArray = array();
                 $monthlyElementValueArray = array();
-                for($monthCount=0;$monthCount<count($monthDetails);$monthCount++)
+                for($monthCount=0;$monthCount<$statusVerified;$monthCount++)
                 {
                     $scorecardElementValueArray = array();
                     $kpiElementColorArray = array();
@@ -1822,7 +1846,7 @@ class DashboradController extends Controller
                         $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                         $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
 
-                        $elementDbValue = $em->createQueryBuilder()
+                        /*$elementDbValue = $em->createQueryBuilder()
                             ->select('a.value')
                             ->from('InitialShippingBundle:RankingMonthlyData', 'a')
                             ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
@@ -1832,7 +1856,7 @@ class DashboradController extends Controller
                             ->setParameter('statusvalue',3)
                             ->setParameter('kpiId',$newkpiid[0]['id'])
                             ->getQuery()
-                            ->getResult();
+                            ->getResult();*/
 
                         $rankingElementRulesArray = $em->createQueryBuilder()
                             ->select('a.rules')
@@ -1841,9 +1865,45 @@ class DashboradController extends Controller
                             ->setParameter('elementId', $scorecardElementId)
                             ->getQuery()
                             ->getResult();
-                        $elementResultColor = "";
+                        $rankingElementResultColor = "";
                         $elementColorValue=0;
-                        if(count($elementDbValue)!=0)
+                        $rankingElementResult = $em->createQueryBuilder()
+                            ->select('b.elementdata, b.elementcolor')
+                            ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                            ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                            ->setParameter('kpiId', $newkpiid[0]['id'])
+                            ->setParameter('shipId', $shipId)
+                            ->setParameter('elementId', $scorecardElementId)
+                            ->setParameter('monthDetail', $new_monthdetail_date )
+                            ->getQuery()
+                            ->getResult();
+                        if(count($rankingElementResult)!=0)
+                        {
+                            $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
+                        }
+                        else
+                        {
+                            $rankingElementResult[0]['elementdata'] =null;
+                        }
+
+                        if($rankingElementResultColor == "false")
+                        {
+                            $rankingElementResultColor = "";
+                        }
+
+                        if($rankingElementResultColor=='Green')
+                        {
+                            $elementColorValue = $scorecardElementWeight;
+                        }
+                        else if($rankingElementResultColor == 'Yellow')
+                        {
+                            $elementColorValue = $scorecardElementWeight/2;
+                        }
+                        else if($rankingElementResultColor == 'Red')
+                        {
+                            $elementColorValue = 0;
+                        }
+                       /* if(count($elementDbValue)!=0)
                         {
                             for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
                             {
@@ -1873,11 +1933,11 @@ class DashboradController extends Controller
                         else
                         {
                             $elementDbValue[0]['value']=null;
-                        }
+                        }*/
 
                         array_push($scorecardElementRules,$rankingElementRulesArray);
-                        array_push($scorecardElementValueArray,$elementDbValue[0]['value']);
-                        array_push($kpiElementColorArray,$elementResultColor);
+                        array_push($scorecardElementValueArray,$rankingElementResult[0]['elementdata']);
+                        array_push($kpiElementColorArray,$rankingElementResultColor);
                         $elementValueWithWeight = $elementColorValue ;
                         $kpiSumValue+=$elementValueWithWeight;
                     }
@@ -1904,8 +1964,7 @@ class DashboradController extends Controller
                 $ob->series($series);
                 $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
                 $ob->exporting->enabled(false);
-                //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
-                //find the comments for particular user//
+
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
