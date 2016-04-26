@@ -50,10 +50,8 @@ class Scorecard_LookupData
 
     /**
      * @var string
-     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\ShipDetails")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="ShipDetailsId", referencedColumnName="id")
-     * })
+     *
+     * @ORM\Column(name="shipDetailsId", type="string", length=255)
      */
     private $shipDetailsId;
 
@@ -186,6 +184,8 @@ class Scorecard_LookupData
     {
         $this->shipDetailsId = $shipDetailsId;
     }
+
+
 
     /**
      * @return string

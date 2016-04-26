@@ -204,7 +204,7 @@
                             },
                             error: function(XMLHttpRequest, textStatus, errorThrown)
                             {
-                                alert('Error : ' + errorThrown);
+                                window.location.href = 'http://shipreports/login';
                             }
                         });
 
@@ -395,7 +395,7 @@
                                     },
                                     error: function(XMLHttpRequest, textStatus, errorThrown)
                                     {
-                                        alert('Error : ' + errorThrown);
+                                        window.location.href = 'http://shipreports/login';
                                     }
                                 });
 
@@ -532,7 +532,7 @@
 
                                                 <input class="resetclass" onkeypress="return isNumberKey(event)" name="newelemetvalues[]" type="text"  required placeholder="123">
                                             {% endif %}
-                                            {% if elementvalues|length > 0 %}
+                                            {% if elementvalues|length > 0 and  elementvalues|length > i%}
                                                 <input class="resetclass" onkeypress="return isNumberKey(event)" name="newelemetvalues[]" type="text" value="{{ elementvalues[i] }}" required placeholder="123">
                                             {% endif %}
                                             </td>

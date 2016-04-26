@@ -23,10 +23,8 @@ class Scorecard_LookupStatus
 
     /**
      * @var string
-     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\ShipDetails")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="shipid", referencedColumnName="id")
-     * })
+     *
+     * @ORM\Column(name="shipid", type="string", length=255)
      */
     private $shipid;
 
@@ -82,6 +80,7 @@ class Scorecard_LookupStatus
     {
         $this->shipid = $shipid;
     }
+
 
     /**
      * @return int

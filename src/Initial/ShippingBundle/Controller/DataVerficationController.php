@@ -504,11 +504,14 @@ class DataVerficationController extends Controller
 
                 }
                 $returnmsg = ' Data Updated...';
-                $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
-                $newlookupstatus=$lookstatus[0];
+                $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
+                if(count($lookstatus)!=0)
+                {
+                    $newlookupstatus=$lookstatus[0];
+                }
+
                 if($buttonid == 'adminbuttonid')
                 {
-
                     $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
                     // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $newlookupstatus->setStatus(3);
@@ -517,7 +520,7 @@ class DataVerficationController extends Controller
                     $gearman = $this->get('gearman');
                     $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addscorecardlookupdataupdate', json_encode($rankinglookuptable));
                 }
-                if($buttonid == 'verfiybuttonid')
+                if($buttonid =='verfiybuttonid')
                 {
                     //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $newlookupstatus->setStatus(2);
@@ -555,7 +558,7 @@ class DataVerficationController extends Controller
                     }
                 }
                 $returnmsg = ' Data Saved...';
-                $fullurl = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                $fullurl = "http://shipreports/login";
                 $mailer = $this->container->get('mailer');
                 $message = \Swift_Message::newInstance()
                     ->setFrom('lawrance@commusoft.co.uk')
@@ -565,7 +568,7 @@ class DataVerficationController extends Controller
 
                 $mailer->send($message);
                 $lookupstatusobject = new Scorecard_LookupStatus();
-                $lookupstatusobject->setShipid($newshipid);
+                $lookupstatusobject->setShipid($shipid);
                 $lookupstatusobject->setStatus(1);
                 $lookupstatusobject->setDataofmonth($new_date);
                 $lookupstatusobject->setDatetime(new \DateTime());
@@ -606,6 +609,7 @@ class DataVerficationController extends Controller
                 $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
 
             }
+
             $response = new JsonResponse();
             if (count($finddatawithstatus) == 4) {
 
@@ -1529,7 +1533,8 @@ class DataVerficationController extends Controller
                     if ($maxelementcount < count($elementids)) {
                         $maxelementcount = count($elementids);
                     }
-                    for ($j = 0; $j < count($elementids); $j++) {
+                    for ($j = 0; $j < count($elementids); $j++)
+                    {
                         $sessionkpielementid_ranking[$newkpiid][$j] = $elementids[$j]['id'];
                         $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                         array_push($elementweightage,$elementids[$j]['weightage']);
@@ -1558,7 +1563,8 @@ class DataVerficationController extends Controller
             for ($kkk = 0; $kkk < count($resularray); $kkk++) {
                 array_push($elementvalues, $resularray[$kkk]['value']);
             }
-            if ($mode == 'listkpielement') {
+            if ($mode == 'listkpielement')
+            {
                 return array('returnarray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
             }
             $response = new JsonResponse();
