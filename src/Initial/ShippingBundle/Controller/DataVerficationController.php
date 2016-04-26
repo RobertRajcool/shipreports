@@ -2745,7 +2745,7 @@ class DataVerficationController extends Controller
 
 
             $listallshipforcompany = $query->getResult();
-            $statusforship = $this->findshipstatus_ranking($dataofmonth = '', $listallshipforcompany, $role[0]);
+            $statusforship = $this->findshipstatus_ranking($dataofmonth, $listallshipforcompany, $role[0]);
             $finddatawithstatus=array();
             $shipid=0;
             $shipname='';
