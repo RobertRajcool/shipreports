@@ -1300,6 +1300,40 @@ class DashboradController extends Controller
                 }
                 $currentyear = date($year);
             }
+            $currentMonth = date('n');
+            $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth-1]);
+            $new_monthdetail_date->modify('last day of this month');
+            $statusVerified = $currentMonth-1;
+            $monthlyShipDataStatus = $em->createQueryBuilder()
+                ->select('b.status')
+                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                ->setParameter('shipId', $shipid)
+                ->setParameter('monthDetail', $new_monthdetail_date)
+                ->getQuery()
+                ->getResult();
+
+            if(count($monthlyShipDataStatus)!=0 && $monthlyShipDataStatus[0]['status']==4)
+            {
+                $statusVerified = $currentMonth;
+            }
+            else
+            {
+                $statusFieldQuery = $em->createQueryBuilder()
+                    ->select('b.status, b.dataofmonth')
+                    ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                    ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                    ->setParameter('shipId', $shipid)
+                    ->setParameter('monthDetail', $new_monthdetail_date)
+                    ->getQuery()
+                    ->getResult();
+                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                {
+                    $ff = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
+                    $statusVerified  = $ff->format('n');
+                }
+            }
+
             $rankingKpiList = $em->createQueryBuilder()
                 ->select('b.kpiName', 'b.id', 'b.weightage')
                 ->from('InitialShippingBundle:RankingKpiDetails', 'b')
@@ -1310,7 +1344,7 @@ class DashboradController extends Controller
             $monthlyKpiValue = array();
             $newcategories = array();
             $monthlyKpiAverageScore = array();
-            for ($d = 0; $d < count($oneyear_montharray); $d++)
+            for ($d = 0; $d < $statusVerified; $d++)
             {
                 $time2 = strtotime($oneyear_montharray[$d]);
                 $monthinletter = date('M', $time2);
@@ -1319,6 +1353,7 @@ class DashboradController extends Controller
                 $new_monthdetail_date->modify('last day of this month');
                 $rankingKpiValueCountArray = array();
                 $rankingKpiWeightarray = array();
+
                 for($rankingKpiCount=0;$rankingKpiCount<count($rankingKpiList);$rankingKpiCount++)
                 {
                     $rankingElementValueTotal = 0;
@@ -1381,45 +1416,6 @@ class DashboradController extends Controller
                             {
                                 $rankingElementColorValue = 0;
                             }
-
-                            /*$rankingElementRulesList = $em->createQueryBuilder()
-                                ->select('a.rules')
-                                ->from('InitialShippingBundle:RankingRules', 'a')
-                                ->where('a.elementDetailsId = :element_id')
-                                ->setParameter('element_id', $rankingElementId)
-                                ->getQuery()
-                                ->getResult();
-
-                            for($elementRuleCount=0;$elementRuleCount<count($rankingElementRulesList);$elementRuleCount++)
-                            {
-                                $rankingElementRule = $rankingElementRulesList[$elementRuleCount];
-                                $rankingJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rankingElementRule['rules'] . ' \' ' . $rankingElementValue;
-                                $rankingJsFileName = 'node ' . $rankingJsFileDirectory;
-                                $handle = popen($rankingJsFileName, 'r');
-                                $resultColor = fread($handle, 2096);
-                                $rankingElementResultColor = str_replace("\n", '', $resultColor);
-
-                                if ($rankingElementResultColor == "false")
-                                {
-                                    continue;
-                                }
-
-                                if($rankingElementResultColor=='Green')
-                                {
-                                    $rankingElementColorValue = $rankingElementWeight;
-                                    break;
-                                }
-                                else if($rankingElementResultColor == 'Yellow')
-                                {
-                                    $rankingElementColorValue = $rankingElementWeight/2;
-                                    break;
-                                }
-                                else if($rankingElementResultColor == 'Red')
-                                {
-                                    $rankingElementColorValue = 0;
-                                    break;
-                                }
-                            }*/
                             $rankingElementValueTotal+=$rankingElementColorValue;
                         }
                     }
@@ -1485,48 +1481,6 @@ class DashboradController extends Controller
                             {
                                 $rankingElementColorValue = 0;
                             }
-
-                            /*$rankingElementRulesList = $em->createQueryBuilder()
-                                ->select('a.rules')
-                                ->from('InitialShippingBundle:RankingRules', 'a')
-                                ->where('a.elementDetailsId = :element_id')
-                                ->setParameter('element_id', $rankingElementId)
-                                ->getQuery()
-                                ->getResult();
-
-                            $rankingElementResultColor = "";
-                            $rankingElementColorValue = 0;
-
-                            for($elementRuleCount=0;$elementRuleCount<count($rankingElementRulesList);$elementRuleCount++)
-                            {
-                                $rankingElementRule = $rankingElementRulesList[$elementRuleCount];
-                                $rankingJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rankingElementRule['rules'] . ' \' ' . $rankingElementValue;
-                                $rankingJsFileName = 'node ' . $rankingJsFileDirectory;
-                                $handle = popen($rankingJsFileName, 'r');
-                                $resultColor = fread($handle, 2096);
-                                $rankingElementResultColor = str_replace("\n", '', $resultColor);
-
-                                if ($rankingElementResultColor == "false")
-                                {
-                                    continue;
-                                }
-
-                                if($rankingElementResultColor=='Green')
-                                {
-                                    $rankingElementColorValue = $rankingElementWeight;
-                                    break;
-                                }
-                                else if($rankingElementResultColor == 'Yellow')
-                                {
-                                    $rankingElementColorValue = $rankingElementWeight/2;
-                                    break;
-                                }
-                                else if($rankingElementResultColor == 'Red')
-                                {
-                                    $rankingElementColorValue = 0;
-                                    break;
-                                }
-                            }*/
                             $rankingElementValueTotal+=$rankingElementColorValue;
                         }
                     }
