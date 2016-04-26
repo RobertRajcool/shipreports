@@ -716,9 +716,9 @@ class ReadExcelWorker
             $shipids=$shipid;
         }
 
-        print_r($new_date) ;
+        //print_r($new_date) ;
         $newlookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupData')->findBy(array('monthdetail'=>$new_date));
-        echo count($newlookstatus);
+        //echo count($newlookstatus);
         for($count=0;$count<count($newlookstatus);$count++)
         {
             $mylookstatus=$newlookstatus[$count];
