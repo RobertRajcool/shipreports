@@ -623,7 +623,8 @@ class DataVerficationController extends Controller
                     'elementweightage' => $finddatawithstatus['elementweightage'],
                     'elementvalues' => $finddatawithstatus['elementvalues']));
                 return $response;
-            } else {
+            }
+            else {
 
                 $response->setData(array('returnmsg' => $shipname . $returnmsg,
                     'shipname' => $nextshipname,
@@ -2387,6 +2388,110 @@ class DataVerficationController extends Controller
          $form->add('add', 'submit', array('label' => 'Reading.....'));*/
 
         return $form;
+    }
+
+    /**
+     * Ajax Call For change of monthdata of Rankinng Chart
+     *
+     * @Route("/monthchangescorecard", name="monthchangescorecard")
+     */
+    public function monthchangedataverfication_scorecardAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null)
+        {
+           $dataofmonth=$request->request->get('dataofmonth');
+           $mydate = '01-' . $dataofmonth;
+          // $time = strtotime($mydate);
+          // $newformat = date('Y-m-d', $time);
+          // $new_date = new \DateTime($newformat);
+          // $new_date->modify('last day of this month');
+            $userId = $user->getId();
+            $username = $user->getUsername();
+            $role = $user->getRoles();
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a.shipName', 'a.id')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->where('b.adminName = :username')
+                    ->setParameter('username', $username)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a.shipName', 'a.id')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+
+
+            $listallshipforcompany = $query->getResult();
+            $statusforship = $this->findshipstatusmonth($mydate, $listallshipforcompany, $role[0]);
+            $finddatawithstatus=array();
+            $shipid=0;
+            $shipname='';
+
+            if ($role[0] == 'ROLE_ADMIN')
+            {
+                $status=2;
+                $index = array_search(0, $statusforship);
+                $shipid=$listallshipforcompany[$index]['id'];
+                $shipname=$listallshipforcompany[$index]['shipName'];
+                $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
+            }
+            if ($role[0] == 'ROLE_MANAGER')
+            {
+                $status=1;
+                $index = array_search(0, $statusforship);
+                $shipid=$listallshipforcompany[$index]['id'];
+                $shipname=$listallshipforcompany[$index]['shipName'];
+                $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
+            }
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
+            {
+                $status=0;
+                $index = array_search(0, $statusforship);
+                $shipid=$listallshipforcompany[$index]['id'];
+                $shipname=$listallshipforcompany[$index]['shipName'];
+                $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
+
+            }
+
+            $response = new JsonResponse();
+            if(count($finddatawithstatus)==4)
+            {
+                $response->setData(
+                    array('listofships' => $listallshipforcompany,
+                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                        'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
+                        'elementvalues'=>$finddatawithstatus['elementvalues'],
+                        'elementweightage'=>$finddatawithstatus['elementweightage'],
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname
+                    ));
+                return $response;
+            }
+            else
+            {
+                $response->setData(
+                    array('listofships' => $listallshipforcompany,
+                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                        'elementkpiarray'=>array(),'elementcount'=>0,
+                        'elementvalues'=>array(),
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname
+                    ));
+                return $response;
+            }
+
+       }
+       else
+       {
+           return $this->redirectToRoute('fos_user_security_login');
+       }
+
     }
 
 
