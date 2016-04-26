@@ -1347,17 +1347,48 @@ class DashboradController extends Controller
                             $rankingElementId=$rankingElementList[$rankingElementCount]['id'];
                             $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
                             $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
+                            $rankingElementResultColor = "";
+                            $rankingElementColorValue = 0;
+                            $rankingElementResult = $em->createQueryBuilder()
+                                ->select('b.elementdata, b.elementcolor')
+                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                ->setParameter('kpiId', $rankingKpiId)
+                                ->setParameter('shipId', $shipid)
+                                ->setParameter('elementId', $rankingElementId)
+                                ->setParameter('monthDetail', $new_monthdetail_date )
+                                ->getQuery()
+                                ->getResult();
+                            if(count($rankingElementResult)!=0)
+                            {
+                                $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
+                            }
 
-                            $rankingElementRulesList = $em->createQueryBuilder()
+                            if ($rankingElementResultColor == "false")
+                            {
+                                $rankingElementResultColor = "";
+                            }
+
+                            if($rankingElementResultColor=='Green')
+                            {
+                                $rankingElementColorValue = $rankingElementWeight;
+                            }
+                            else if($rankingElementResultColor == 'Yellow')
+                            {
+                                $rankingElementColorValue = $rankingElementWeight/2;
+                            }
+                            else if($rankingElementResultColor == 'Red')
+                            {
+                                $rankingElementColorValue = 0;
+                            }
+
+                            /*$rankingElementRulesList = $em->createQueryBuilder()
                                 ->select('a.rules')
                                 ->from('InitialShippingBundle:RankingRules', 'a')
                                 ->where('a.elementDetailsId = :element_id')
                                 ->setParameter('element_id', $rankingElementId)
                                 ->getQuery()
                                 ->getResult();
-
-                            $rankingElementResultColor = "";
-                            $rankingElementColorValue = 0;
 
                             for($elementRuleCount=0;$elementRuleCount<count($rankingElementRulesList);$elementRuleCount++)
                             {
@@ -1388,7 +1419,7 @@ class DashboradController extends Controller
                                     $rankingElementColorValue = 0;
                                     break;
                                 }
-                            }
+                            }*/
                             $rankingElementValueTotal+=$rankingElementColorValue;
                         }
                     }
@@ -1420,8 +1451,42 @@ class DashboradController extends Controller
                             $rankingElementId=$rankingElementList[$rankingElementCount]['id'];
                             $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
                             $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
+                            $rankingElementResultColor = "";
+                            $rankingElementColorValue = 0;
+                            $rankingElementResult = $em->createQueryBuilder()
+                                ->select('b.elementdata, b.elementcolor')
+                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                ->setParameter('kpiId', $newkpiid[0]['id'])
+                                ->setParameter('shipId', $shipid)
+                                ->setParameter('elementId', $rankingElementId)
+                                ->setParameter('monthDetail', $new_monthdetail_date )
+                                ->getQuery()
+                                ->getResult();
+                            if(count($rankingElementResult)!=0)
+                            {
+                                $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
+                            }
 
-                            $rankingElementRulesList = $em->createQueryBuilder()
+                            if ($rankingElementResultColor == "false")
+                            {
+                                $rankingElementResultColor = "";
+                            }
+
+                            if($rankingElementResultColor=='Green')
+                            {
+                                $rankingElementColorValue = $rankingElementWeight;
+                            }
+                            else if($rankingElementResultColor == 'Yellow')
+                            {
+                                $rankingElementColorValue = $rankingElementWeight/2;
+                            }
+                            else if($rankingElementResultColor == 'Red')
+                            {
+                                $rankingElementColorValue = 0;
+                            }
+
+                            /*$rankingElementRulesList = $em->createQueryBuilder()
                                 ->select('a.rules')
                                 ->from('InitialShippingBundle:RankingRules', 'a')
                                 ->where('a.elementDetailsId = :element_id')
@@ -1461,7 +1526,7 @@ class DashboradController extends Controller
                                     $rankingElementColorValue = 0;
                                     break;
                                 }
-                            }
+                            }*/
                             $rankingElementValueTotal+=$rankingElementColorValue;
                         }
                     }
