@@ -576,6 +576,7 @@ class DataVerficationController extends Controller
                 $em->persist($lookupstatusobject);
                 $em->flush();
             }
+            $newlookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupData')->findBy(array('monthdetail'=>$new_date));
 
             $shipname = $newshipid->getShipName();
             $nextshipid = 0;

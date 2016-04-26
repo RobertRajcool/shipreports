@@ -699,6 +699,7 @@ class ReadExcelWorker
             ->setParameter('statusValue', 3)
             ->getQuery()
             ->getResult();
+        print_r($TotalShipsInserted);
 
 
         if(count($TotalShipsInserted)!=0)
@@ -706,16 +707,18 @@ class ReadExcelWorker
             $shipids=array();
            for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
            {
-               array_push($shipids,$TotalShipsInserted[$findshipidcount]['shipDetailsId']);
+               array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
            }
+            $shipids=implode(',',$shipids);
         }
         else
         {
             $shipids=$shipid;
         }
 
-
+        print_r($new_date) ;
         $newlookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupData')->findBy(array('monthdetail'=>$new_date));
+        echo count($newlookstatus);
         for($count=0;$count<count($newlookstatus);$count++)
         {
             $mylookstatus=$newlookstatus[$count];
@@ -878,7 +881,7 @@ class ReadExcelWorker
         $newlookupstatus->setStatus(4);
         $newlookupstatus->setDatetime(new \DateTime());
         $em->flush();
-       // echo "Data inserted";
+       echo "Data inserted";
         return true;
 
 
