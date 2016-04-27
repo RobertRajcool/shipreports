@@ -116,6 +116,7 @@
                             $('#overallshids').text('');
                             $('<div class="views_kpi_name_total"><span>Vessels ('+data.shipcount+')</span></div>').appendTo('#overallshids');
                             $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
+                            var shipstatus=0
                             $.each(data.listofships, function(i)
                             {
                                 var status=data.status_ship[i];
@@ -124,6 +125,7 @@
                                 if(status==3)
                                 {
                                     $('#'+data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                    shipstatus++;
                                 }
                             });
                             $('#elementformid').html('');
@@ -134,6 +136,8 @@
                             $('#shipid').val(data.currentshipid);
 
                                $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
+                            if(data.shipcount !=shipstatus)
+                            {
                                 $('.linkclass').removeClass("active");
                                 $('#'+data.currentshipid).addClass('active');
                                 var j=1;
@@ -196,6 +200,12 @@
 
 
                                 });
+                        }
+                                else
+                                    {
+                                        $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
+                                        $('#allbuttondiv').hide();
+                                     }
 
 
 
@@ -292,14 +302,17 @@
                             $('#overallshids').text('');
                             $('<div class="views_kpi_name_total"><span>Vessels ('+data.shipcount+')</span></div>').appendTo('#overallshids');
                             $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
+                            var shipstatus=0
                             $.each(data.listofships, function(i)
                             {
                                 var status=data.status_ship[i];
+
 
                                 $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a></li>').appendTo('#addshipids');
                                 if(status==3)
                                 {
                                     $('#'+data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                    shipstatus++;
                                 }
                             });
                             $('#elementformid').html('');
@@ -308,8 +321,9 @@
                             $('#currentid').text(month+'-'+year);
                             $('#datofmonthid').text(month+'-'+year);
                             $('#shipid').val(data.currentshipid);
-
                             $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
+                            if(data.shipcount !=shipstatus)
+                            {
                             $('.linkclass').removeClass("active");
                             $('#'+data.currentshipid).addClass('active');
                             var j=1;
@@ -372,6 +386,12 @@
 
 
                             });
+                            }
+                            else
+                            {
+                                $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
+                                $('#allbuttondiv').hide();
+                            }
 
 
 

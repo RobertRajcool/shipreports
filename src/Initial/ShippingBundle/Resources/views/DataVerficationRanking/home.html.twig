@@ -306,10 +306,11 @@
                             $('#overallshids').text('');
                             $('<div class="views_kpi_name_total"><span>Vessels ('+data.shipcount+')</span></div>').appendTo('#overallshids');
                             $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
+                            var shipstatus=0
                             $.each(data.listofships, function(i)
                             {
                                 var status=data.status_ship[i];
-                                var shipstatus=0
+
 
                                 $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a></li>').appendTo('#addshipids');
                                 if(status==3)
