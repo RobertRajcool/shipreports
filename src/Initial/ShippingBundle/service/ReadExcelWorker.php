@@ -699,7 +699,7 @@ class ReadExcelWorker
             ->setParameter('statusValue', 3)
             ->getQuery()
             ->getResult();
-        print_r($TotalShipsInserted);
+       // print_r($TotalShipsInserted);
 
 
         if(count($TotalShipsInserted)!=0)
@@ -863,7 +863,7 @@ class ReadExcelWorker
                     $lookupdataobject->setKpiColor($kpiResultColor);
                     $lookupdataobject->setMonthdetail($new_date);
                     $lookupdataobject->setIndividualKpiAverageScore($kpiSumValue);
-                    $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' =>$scorecardKpiId));
+                    $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' =>$scorecardAllKpiId));
                     $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $ElementIds[$Elementcolorcount]));
                     $lookupdataobject->setElementDetailsId($newelementid);
                     $lookupdataobject->setKpiDetailsId($newkpiid);
