@@ -2251,10 +2251,10 @@ class DashboradController extends Controller
                     ->select('a.comment')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
-                    ->where('a.shipid = :shipid')
+                    ->where('a.kpiid = :kpiid')
                     ->andwhere('b.emailId = :username')
                     ->setParameter('username', $useremailaddres)
-                    ->setParameter('shipid', $kpiid)
+                    ->setParameter('kpiid', $kpiid)
                     ->getQuery()
                     ->getResult();
                 $listofcommentarray = $listofcomment;
