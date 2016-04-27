@@ -699,7 +699,7 @@ class ReadExcelWorker
             ->setParameter('statusValue', 3)
             ->getQuery()
             ->getResult();
-        print_r($TotalShipsInserted);
+       // print_r($TotalShipsInserted);
 
 
         if(count($TotalShipsInserted)!=0)
