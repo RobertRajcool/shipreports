@@ -607,11 +607,9 @@
 
                                     {% if i2 != 2 %}
                                         <th class="month_th_1">{{ month }}</th>
-                                        {#<th class="month_difference">status</th>#}
                                     {% endif %}
                                     {% if i2 == 2 %}
                                         <th class="month_th_3 last">{{ month }}</th>
-                                        {#<th class="month_difference">status</th>#}
                                     {% endif %}
                                     {% set i2=i2+1 %}
                                 {% endfor %}
@@ -624,25 +622,20 @@
                                 <tr>
                                     <td class="kpi_name_td kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
                                     <td class="weightage_td">{{ kpi.weightage }}</td>
-                                    {% for j in 0..2 %}
+                                    {% set j=0 %}
+                                    {% for kpiColor in kpicolorarray %}
                                         <td class="month_td">
-                                        {% if j <1 %}
                                             {% if kpicolorarray[j][i]=="Green" %}
                                                 <img src="/images/01_score_card.png" alt="Loader Image"/>
                                             {% elseif kpicolorarray[j][i]=="Red" %}
                                                 <img src="/images/03_score_card.png" alt="Loader Image"/>
                                             {% elseif kpicolorarray[j][i]=="Yellow" %}
                                                 <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                            {% else %}
-                                                <div class="nocolor"></div>
                                             {% endif %}
-                                        {% endif %}
                                         </td>
-
                                         {% if j != 2 %}
                                             {% set j1=j+1 %}
                                             <td class="month_difference_td">
-                                            {% if j <0 %}
                                                 {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
                                                     <img src="/images/straight_arrow.png">
                                                 {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
@@ -662,23 +655,19 @@
                                                 {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
                                                     <img src="/images/straight_arrow.png">
                                                 {% endif %}
-                                            {% endif %}
                                             </td>
                                         {% endif %}
-
+                                        {% set j=j+1 %}
                                     {% endfor %}
                                     {% set i=i+1 %}
                                 </tr>
-
                             {% endfor %}
                             {% set i1=0 %}
                             <tr>
                                 <td colspan="2" class="average_score_2_td kpi_name_thtd"><strong>Average score</strong></td>
                                 {% for avg in kpiAverageScore %}
                                     <td>
-                                    {% if i1<1 %}
                                         <strong>{{ avg }}</strong>
-                                    {% endif %}
                                     </td>
                                     {% if i1 != 2 %}
                                         <td>&nbsp;</td>
@@ -765,7 +754,6 @@
                                             <input type="hidden" value="{{ currentYear }}" id="scoreCurrentYear">
                                         </div>
                                     </th>
-                                    {#<th class="quaterView">Quater view </th>#}
                                 </tr>
                                 </thead>
                             </table>
@@ -786,11 +774,10 @@
                                     <tr>
                                         <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
                                         <td class="weightage">{{ kpi.weightage }}</td>
-
-                                        {% for j in 0..11 %}
-
+                                        {% set j=0 %}
+                                        {% for monthName in yearMonthName %}
                                             <td class="month">
-                                                {% if j<4 %}
+                                                {% if j<5 %}
                                                     {% if yearKpiColorArray[j][i]=="Green" %}
                                                         <img src="/images/01_score_card.png" alt="Loader Image"/>
                                                     {% elseif yearKpiColorArray[j][i]=="Red" %}
@@ -802,12 +789,9 @@
                                                     {% endif %}
                                             {% endif %}
                                             </td>
-
-                                            {% if j != 11 %}
+                                            {% if j != yearMonthName|length-1 %}
                                                 {% set j1=j+1 %}
-
                                                 <td class="month_difference">
-                                                {% if j<3 %}
                                                     {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
@@ -827,12 +811,9 @@
                                                     {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% endif %}
-                                                    {#<img src="/images/down_arrow.png">#}
-                                                {% endif %}
                                                 </td>
-
                                             {% endif %}
-
+                                            {% set j=j+1 %}
                                         {% endfor %}
                                         {% set i=i+1 %}
                                     </tr>

@@ -543,7 +543,6 @@
                         <td>{{ element.weightage }}</td>
                         {% for j in 0..countmonth1 %}
                             <td>
-                            {% if j <1 %}
                                 {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                                 {% if elementcolorarray[j][i]=="Green" %}
                                     <img src="/images/01.png" alt="Loader Image"/>
@@ -552,12 +551,10 @@
                                 {% elseif elementcolorarray[j][i]=="Yellow" %}
                                     <img src="/images/02.png" alt="Loader Image"/>
                                 {% endif %}
-                            {% endif %}
                             </td>
                             {% if j != 2 %}
                                 {% set j1=j+1 %}
                                 <td>
-                                {% if j <0 %}
                                     {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
                                         <img src="/images/straight_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
@@ -577,7 +574,6 @@
                                     {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
                                         <img src="/images/straight_arrow.png">
                                     {% endif %}
-                                {% endif %}
                                 </td>
                             {% endif %}
                             {% set akj=akj+1 %}
@@ -605,7 +601,6 @@
                             </td>
                             {% if k != 2 %}
                                 {% set k1=0 %}
-                                {#<td>{{ kpi_color[2][0] }}</td>#}
                                 <td class="month_difference">
                                     {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/straight_arrow.png">
