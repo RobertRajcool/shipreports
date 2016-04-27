@@ -955,23 +955,25 @@ class DataVerficationController extends Controller
             }
             if(count($finddatawithstatus)==4)
             {
+
                 return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
                         'elementvalues'=>$finddatawithstatus['elementvalues'],
                         'elementweightage'=>$finddatawithstatus['elementweightage'],
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,
                     ));
             }
             else
             {
+
                 return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray'=>array(),'elementcount'=>0,
                         'elementvalues'=>array(),
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,
                     ));
             }
 
@@ -2754,26 +2756,38 @@ class DataVerficationController extends Controller
             {
                 $status=2;
                 $index = array_search(0, $statusforship);
-                $shipid=$listallshipforcompany[$index]['id'];
-                $shipname=$listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid);
+                /*if($index!=false)
+                {
+                 */   $shipid=$listallshipforcompany[$index]['id'];
+                    $shipname=$listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid,$dataofmonth);
+                /*}*/
+
             }
             if ($role[0] == 'ROLE_MANAGER')
             {
                 $status=1;
                 $index = array_search(0, $statusforship);
+                if($index!=false)
+                {
+
+                }
                 $shipid=$listallshipforcompany[$index]['id'];
                 $shipname=$listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid);
+                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid,$dataofmonth);
 
             }
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
             {
                 $status=0;
                 $index = array_search(0, $statusforship);
+                if($index!=false)
+                {
+
+                }
                 $shipid=$listallshipforcompany[$index]['id'];
                 $shipname=$listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid);
+                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$shipid,$dataofmonth);
 
 
             }
