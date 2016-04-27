@@ -577,6 +577,7 @@ class DataVerficationController extends Controller
             $k = 0;
             $returnmsg = '';
             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+
             if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
@@ -607,17 +608,44 @@ class DataVerficationController extends Controller
 
                 }
                 $returnmsg = ' Data Updated...';
-                $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
-                if(count($lookstatus)!=0)
-                {
-                    $newlookupstatus=$lookstatus[0];
-                }
+
 
                 if($buttonid == 'adminbuttonid')
                 {
                     $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
                     // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
+                    if(count($lookstatus)!=0)
+                    {
+                        $newlookupstatus=$lookstatus[0];
+                    }
+                    $TotalShipsInserted=$em->createQueryBuilder()
+                        ->select('identity(a.shipDetailsId)')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->groupby('a.shipDetailsId')
+                        ->setParameter('statusValue', 3)
+                        ->getQuery()
+                        ->getResult();
+                    //print_r($TotalShipsInserted);
+
+
+                    if(count($TotalShipsInserted)!=0)
+                    {
+                        $shipids=array();
+                        for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                        {
+                            array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        }
+                        $shipids=implode(',',$shipids);
+                    }
+                    else
+                    {
+                        $shipids=$shipid;
+                    }
                     $newlookupstatus->setStatus(3);
+                    $newlookupstatus->setShipid($shipids);
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
                     $gearman = $this->get('gearman');
@@ -626,14 +654,76 @@ class DataVerficationController extends Controller
                 if($buttonid =='verfiybuttonid')
                 {
                     //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
+                    if(count($lookstatus)!=0)
+                    {
+                        $newlookupstatus=$lookstatus[0];
+                    }
+                    $TotalShipsInserted=$em->createQueryBuilder()
+                        ->select('identity(a.shipDetailsId)')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->groupby('a.shipDetailsId')
+                        ->setParameter('statusValue', 2)
+                        ->getQuery()
+                        ->getResult();
+                    //print_r($TotalShipsInserted);
+
+
+                    if(count($TotalShipsInserted)!=0)
+                    {
+                        $shipids=array();
+                        for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                        {
+                            array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        }
+                        $shipids=implode(',',$shipids);
+                    }
+                    else
+                    {
+                        $shipids=$shipid;
+                    }
                     $newlookupstatus->setStatus(2);
+                    $newlookupstatus->setShipid($shipids);
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
                 }
                 if($buttonid == 'updatebuttonid')
                 {
                     //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
+                    $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
+                    if(count($lookstatus)!=0)
+                    {
+                        $newlookupstatus=$lookstatus[0];
+                    }
+                    $TotalShipsInserted=$em->createQueryBuilder()
+                        ->select('identity(a.shipDetailsId)')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->groupby('a.shipDetailsId')
+                        ->setParameter('statusValue', 1)
+                        ->getQuery()
+                        ->getResult();
+                    //print_r($TotalShipsInserted);
+
+
+                    if(count($TotalShipsInserted)!=0)
+                    {
+                        $shipids=array();
+                        for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                        {
+                            array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        }
+                        $shipids=implode(',',$shipids);
+                    }
+                    else
+                    {
+                        $shipids=$shipid;
+                    }
                     $newlookupstatus->setStatus(1);
+                    $newlookupstatus->setShipid($shipids);
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
                 }
@@ -694,6 +784,7 @@ class DataVerficationController extends Controller
                 {
                     $shipids=$shipid;
                 }
+
                 $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
                 if(count($lookstatus)!=0)
                 {
@@ -715,7 +806,7 @@ class DataVerficationController extends Controller
                 }
 
             }
-            $newlookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupData')->findBy(array('monthdetail'=>$new_date));
+            //$newlookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupData')->findBy(array('monthdetail'=>$new_date));
 
             $shipname = $newshipid->getShipName();
             $nextshipid = 0;

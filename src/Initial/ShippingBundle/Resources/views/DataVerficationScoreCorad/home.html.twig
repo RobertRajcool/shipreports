@@ -132,7 +132,7 @@
                             $('#elementformid').text('');
                             $('#shipname').text(data.currentshipname);
                             $('#currentid').text(month+'-'+year);
-                            $('#datofmonthid').text(month+'-'+year);
+                            $('#datofmonthid').val(month+'-'+year);
                             $('#shipid').val(data.currentshipid);
 
                                $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
@@ -319,7 +319,7 @@
                             $('#elementformid').text('');
                             $('#shipname').text(data.currentshipname);
                             $('#currentid').text(month+'-'+year);
-                            $('#datofmonthid').text(month+'-'+year);
+                            $('#datofmonthid').val(month+'-'+year);
                             $('#shipid').val(data.currentshipid);
                             $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
                             if(data.shipcount !=shipstatus)
