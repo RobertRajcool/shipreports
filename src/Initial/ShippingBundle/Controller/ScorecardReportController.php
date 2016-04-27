@@ -132,22 +132,14 @@ class ScorecardReportController extends Controller
             for($kpiCount=0;$kpiCount<count($scorecardKpiList);$kpiCount++)
             {
                 $scorecardElementColorArray = array();
-                $scorecardKpiId = $scorecardKpiList[0]['id'];
                 $scorecardAllKpiId = $scorecardKpiList[$kpiCount]['id'];
                 $scorecardKpiWeight = $scorecardKpiList[$kpiCount]['weightage'];
-                $scorecardKpiName = $scorecardKpiList[$kpiCount]['kpiName'];
-                $kpiSumValue=0;
 
                 $scorecardElementArray = $em->createQueryBuilder()
-                    ->select('c.id, c.elementName,  c.weightage, sum(a.value) as value')
+                    ->select('c.id, c.elementName,  c.weightage')
                     ->from('InitialShippingBundle:ElementDetails', 'c')
-                    ->leftjoin('InitialShippingBundle:ReadingKpiValues', 'a', 'WITH', 'c.id = a.elementDetailsId and a.monthdetail = :dateOfMonth')
-                    ->where('c.kpiDetailsId = :kpiId and a.status=:statusValue' )
+                    ->where('c.kpiDetailsId = :kpiId' )
                     ->setParameter('kpiId', $scorecardAllKpiId)
-                    ->setParameter('dateOfMonth', $monthDetail)
-                    ->setParameter('statusValue', 1)
-                    ->groupBy('c.id, c.weightage')
-                    ->orderBy('c.id')
                     ->getQuery()
                     ->getResult();
                 if($dateCount==0)
@@ -168,80 +160,45 @@ class ScorecardReportController extends Controller
                     for($elementCount=0;$elementCount<count($scorecardElementArray);$elementCount++)
                     {
                         $scorecardElementId = $scorecardElementArray[$elementCount]['id'];
-                        $scorecardElementName = $scorecardElementArray[$elementCount]['elementName'];
-                        $scorecardElementWeight = $scorecardElementArray[$elementCount]['weightage'];
-                        $scorecardElementSumValue = $scorecardElementArray[$elementCount]['value'];
-
-                        $averageElementValue = $scorecardElementSumValue / count($listAllShipForCompany);
-
-                        $scorecardElementRulesArray = $em->createQueryBuilder()
-                            ->select('a.rules')
-                            ->from('InitialShippingBundle:Rules', 'a')
-                            ->where('a.elementDetailsId = :elementId')
-                            ->setParameter('elementId', $scorecardElementId)
-                            ->getQuery()
-                            ->getResult();
                         $elementResultColor = "";
                         $elementColorValue=0;
-
-                        for($elementRulesCount=0;$elementRulesCount<count($scorecardElementRulesArray);$elementRulesCount++)
+                        $scorecardElementResult = $em->createQueryBuilder()
+                            ->select('b.elementcolor')
+                            ->from('InitialShippingBundle:Scorecard_LookupData', 'b')
+                            ->where('b.kpiDetailsId = :kpiId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                            ->setParameter('kpiId', $scorecardAllKpiId)
+                            ->setParameter('elementId', $scorecardElementId)
+                            ->setParameter('monthDetail', $monthDetail )
+                            ->getQuery()
+                            ->getResult();
+                        if(count($scorecardElementResult)!=0)
                         {
-                            $elementRule = $scorecardElementRulesArray[$elementRulesCount];
-                            $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . ((float)$averageElementValue);
-                            $elementJsFileName = 'node ' . $elementJsFileDirectory;
-                            $handle = popen($elementJsFileName, 'r');
-                            $elementColor = fread($handle, 2096);
-                            $elementResultColor = str_replace("\n", '', $elementColor);
-
-                            if ($elementResultColor == "false") {
-                                continue;
-                            }
-
-                            if ($elementResultColor == "Green") {
-                                $elementColorValue = 3;
-                                break;
-                            } else if ($elementResultColor == "Yellow") {
-                                $elementColorValue = 2;
-                                break;
-                            } else if ($elementResultColor == "Red") {
-                                $elementColorValue = 1;
-                                break;
-                            }
+                            $elementResultColor = $scorecardElementResult[0]['elementcolor'];
                         }
                         array_push($scorecardElementColorArray,$elementResultColor);
-                        $elementValueWithWeight = $elementColorValue * (((int)$scorecardElementWeight) / 100);
-                        $kpiSumValue+=$elementValueWithWeight;
                     }
+                }
+                $kpiResult = $em->createQueryBuilder()
+                    ->select('b.kpiColor, b.individualKpiAverageScore')
+                    ->from('InitialShippingBundle:Scorecard_LookupData', 'b')
+                    ->where('b.kpiDetailsId = :kpiId and b.monthdetail = :monthDetail')
+                    ->setParameter('kpiId', $scorecardAllKpiId)
+                    ->setParameter('monthDetail', $monthDetail )
+                    ->getQuery()
+                    ->getResult();
+                if(count($kpiResult)!=0)
+                {
+                    array_push($scorecardKpiColorArray,$kpiResult[0]['kpiColor']);
+                    $monthlyScorecardKpiWeightAverageValueTotal+=($kpiResult[0]['individualKpiAverageScore']*$scorecardKpiWeight)/100;
+                    array_push($monthlyKpiSumValue,$kpiResult[0]['individualKpiAverageScore']);
                 }
                 else
                 {
-                    $kpiSumValue="";
+                    array_push($scorecardKpiColorArray,"");
+                    $monthlyScorecardKpiWeightAverageValueTotal+=0;
+                    array_push($monthlyKpiSumValue,0);
                 }
-                $scorecardKpiRulesArray = $em->createQueryBuilder()
-                    ->select('a.rules')
-                    ->from('InitialShippingBundle:KpiRules', 'a')
-                    ->where('a.kpiDetailsId = :kpiId')
-                    ->setParameter('kpiId', $scorecardKpiId)
-                    ->getQuery()
-                    ->getResult();
-
-                for ($kpiRulesCount = 0; $kpiRulesCount < count($scorecardKpiRulesArray); $kpiRulesCount++)
-                {
-                    $kpiRule = $scorecardKpiRulesArray[$kpiRulesCount];
-                    $kpiJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $kpiRule['rules'] . ' \' ' . $kpiSumValue;
-                    $kpiJsFileName = 'node ' . $kpiJsFileDirectory;
-                    $handle = popen($kpiJsFileName, 'r');
-                    $kpiColor = fread($handle, 2096);
-                    $kpiResultColor = str_replace("\n", '', $kpiColor);
-
-                    if ($kpiResultColor != "false") {
-                        break;
-                    }
-                }
-                array_push($scorecardKpiColorArray,$kpiResultColor);
-                $monthlyScorecardKpiWeightAverageValueTotal+=$kpiSumValue*($scorecardKpiWeight/100);
                 array_push($monthlyScorecardElementColorArray,$scorecardElementColorArray);
-                array_push($monthlyKpiSumValue,$kpiSumValue);
             }
             array_push($monthlyScorecardKpiColorArray,$scorecardKpiColorArray);
             array_push($monthlyKpiAverageValueTotal,$monthlyScorecardKpiWeightAverageValueTotal);
@@ -264,7 +221,6 @@ class ScorecardReportController extends Controller
         $ob->series($series);
         $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
         $ob->exporting->enabled(false);
-
         if($pdfMode==1)
         {
             return array(
@@ -278,7 +234,6 @@ class ScorecardReportController extends Controller
                 'elementLevelChartData' => $overallMonthlyKpiSumValue
             );
         }
-
         $response = new JsonResponse();
         $response->setData(array(
             'yearKpiColorArray' => $monthlyScorecardKpiColorArray,

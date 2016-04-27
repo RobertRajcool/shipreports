@@ -205,7 +205,6 @@ class DashboradController extends Controller
             {
                 return array("data" =>$overallShipDetailArray,'currentmonth'=>$monthInLetter, 'name' => $monthInLetter,);
             }
-            // Adding data to javascript chart function starts Here.. //
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('column');
@@ -218,11 +217,9 @@ class DashboradController extends Controller
             $ob->legend->enabled(false);
             $ob->plotOptions->series(array('borderWidth'=>0,'dataLabels'=>array('enabled'=>false),
                 'point'=>array('events'=>array('click'=>new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
-
             $ob->series(array( array( 'showInLegend'=> false,'colorByPoint'=> true,  'name' => $monthInLetter, 'color' => 'rgb(124, 181, 236)',   "data" =>$overallShipDetailArray)));
-
-            /* $ob->drilldown->series($drilldownarray);*/
             $ob->exporting->enabled(false);
+
             if($mode=='overallreports_ranking')
             {
                 return array(
@@ -234,9 +231,6 @@ class DashboradController extends Controller
                     'currentyear'=>$yearChange,
                 );
             }
-
-            // Adding data to javascript chart function  Ends Here.. //
-
 
             $datesArray=array();
 
@@ -478,7 +472,6 @@ class DashboradController extends Controller
                     'kpiAverageScore' => $monthlyKpiAverageValueTotal
                 );
             }
-
             return $this->render(
                 'InitialShippingBundle:DashBorad:home.html.twig',
                 array(
@@ -807,8 +800,6 @@ class DashboradController extends Controller
                         for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
                         {
                             $rule = $kpi_rules[$kpi_rules_count];
-                            /*
-                                                $rule_obj = json_encode($rule);*/
                             $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
                             $jsfilename = 'node ' . $jsfiledirectry;
                             $handle = popen($jsfilename, 'r');
@@ -840,7 +831,6 @@ class DashboradController extends Controller
 
             );
 
-
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
@@ -852,7 +842,6 @@ class DashboradController extends Controller
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
             $ob->exporting->enabled(false);
-
 
             $listofcomment = $em->createQueryBuilder()
                 ->select('a.comment')
@@ -880,7 +869,6 @@ class DashboradController extends Controller
                     'commentarray'=>$listofcomment,
                 );
             }
-
 
             return $this->render(
                 'InitialShippingBundle:DashBorad:listallkpiforship.html.twig',
@@ -1021,7 +1009,6 @@ class DashboradController extends Controller
                 array_push($monthLetterArray, $monthLetterFormat);
                 $monthDetail = new \DateTime($quarterDatesArray[$monthCount]);
                 $monthlyScorecardKpiWeightAverageValueTotal = 0;
-
                 for($kpiCount=0;$kpiCount<count($scorecardKpiList);$kpiCount++)
                 {
                     $scorecardAllKpiId = $scorecardKpiList[$kpiCount]['id'];
@@ -1033,20 +1020,7 @@ class DashboradController extends Controller
                         $scorecardKpiId = $scorecardKpiList[$kpiCount]['id'];
                         $scorecardKpiWeight = $scorecardKpiList[$kpiCount]['weightage'];
                         $scorecardKpiName = $scorecardKpiList[$kpiCount]['kpiName'];
-                        $kpiSumValue=0;
 
-                       /* $scorecardElementArray = $em->createQueryBuilder()
-                            ->select('c.id, c.weightage, c.elementName, sum(a.value) as value')
-                            ->from('InitialShippingBundle:ElementDetails', 'c')
-                            ->leftjoin('InitialShippingBundle:ReadingKpiValues', 'a', 'WITH', 'c.id = a.elementDetailsId and a.monthdetail = :dateOfMonth')
-                            ->where('c.kpiDetailsId = :kpiId and a.status=:statusValue' )
-                            ->setParameter('kpiId', $scorecardKpiId)
-                            ->setParameter('dateOfMonth', $monthDetail)
-                            ->setParameter('statusValue',1)
-                            ->groupBy('c.id, c.weightage')
-                            ->orderBy('c.id')
-                            ->getQuery()
-                            ->getResult();*/
                         $scorecardElementArray = $em->createQueryBuilder()
                             ->select('c.id, c.weightage, c.elementName')
                             ->from('InitialShippingBundle:ElementDetails', 'c')
@@ -1054,13 +1028,11 @@ class DashboradController extends Controller
                             ->setParameter('kpiId', $scorecardKpiId)
                             ->getQuery()
                             ->getResult();
-
                         if(count($scorecardElementArray)>0)
                         {
                             for($elementCount=0;$elementCount<count($scorecardElementArray);$elementCount++)
                             {
                                 $scorecardElementId = $scorecardElementArray[$elementCount]['id'];
-                                $scorecardElementWeight = $scorecardElementArray[$elementCount]['weightage'];
                                 $scorecardElementRulesArray = $em->createQueryBuilder()
                                     ->select('a.rules')
                                     ->from('InitialShippingBundle:Rules', 'a')
@@ -1069,37 +1041,6 @@ class DashboradController extends Controller
                                     ->getQuery()
                                     ->getResult();
                                 array_push($scorecardElementRules,$scorecardElementRulesArray);
-                                /*$averageElementValue = $scorecardElementSumValue / count($allShipsArray);
-
-
-                                $elementResultColor = "";
-                                $elementColorValue=0;
-
-
-                                for($elementRulesCount=0;$elementRulesCount<count($scorecardElementRulesArray);$elementRulesCount++)
-                                {
-                                    $elementRule = $scorecardElementRulesArray[$elementRulesCount];
-                                    $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . ((float)$averageElementValue);
-                                    $elementJsFileName = 'node ' . $elementJsFileDirectory;
-                                    $handle = popen($elementJsFileName, 'r');
-                                    $elementColor = fread($handle, 2096);
-                                    $elementResultColor = str_replace("\n", '', $elementColor);
-
-                                    if ($elementResultColor == "false") {
-                                        continue;
-                                    }
-
-                                    if ($elementResultColor == "Green") {
-                                        $elementColorValue = 3;
-                                        break;
-                                    } else if ($elementResultColor == "Yellow") {
-                                        $elementColorValue = 2;
-                                        break;
-                                    } else if ($elementResultColor == "Red") {
-                                        $elementColorValue = 1;
-                                        break;
-                                    }
-                                }*/
                                 $elementResultColor = "";
                                 $elementColorValue=0;
                                 $scorecardElementResult = $em->createQueryBuilder()
@@ -1117,8 +1058,6 @@ class DashboradController extends Controller
                                 }
 
                                 array_push($kpiElementColorArray,$elementResultColor);
-                                /*$elementValueWithWeight = $elementColorValue * (((int)$scorecardElementWeight) / 100);
-                                $kpiSumValue+=$elementValueWithWeight;*/
                             }
                         }
                         else
@@ -1146,29 +1085,6 @@ class DashboradController extends Controller
                             $monthlyScorecardKpiWeightAverageValueTotal+=0;
                             array_push($scorecardElementValueArray,0);
                         }
-                        /*$scorecardKpiRulesArray = $em->createQueryBuilder()
-                            ->select('a.rules')
-                            ->from('InitialShippingBundle:KpiRules', 'a')
-                            ->where('a.kpiDetailsId = :kpiId')
-                            ->setParameter('kpiId', $scorecardKpiId)
-                            ->getQuery()
-                            ->getResult();
-
-                        for ($kpiRulesCount = 0; $kpiRulesCount < count($scorecardKpiRulesArray); $kpiRulesCount++)
-                        {
-                            $kpiRule = $scorecardKpiRulesArray[$kpiRulesCount];
-                            $kpiJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $kpiRule['rules'] . ' \' ' . $kpiSumValue;
-                            $kpiJsFileName = 'node ' . $kpiJsFileDirectory;
-                            $handle = popen($kpiJsFileName, 'r');
-                            $kpiColor = fread($handle, 2096);
-                            $kpiResultColor = str_replace("\n", '', $kpiColor);
-
-                            if ($kpiResultColor != "false") {
-                                break;
-                            }
-                        }*/
-                        /*array_push($scorecardKpiColorArray,$kpiResultColor);
-                        $monthlyScorecardKpiWeightAverageValueTotal+=$kpiSumValue*($scorecardKpiWeight/100);*/
                     }
                 }
                 array_push($monthlyScorecardKpiColorArray,$scorecardKpiColorArray);
@@ -1187,14 +1103,11 @@ class DashboradController extends Controller
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
             $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
-            /*$ob->subtitle->text($shipname);
-            $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));*/
             $ob->xAxis->categories($monthLetterArray);
             $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
             $ob->series($series);
             $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
             $ob->exporting->enabled(false);
-            //$ob->plotOptions->area(array('pointStart'=>0,'marker'=>array('enabled'=>false,'symbol'=>'circle','radius'=>2,'states'=>array('hover'=>array('enabled'=>false)))));
 
             $commentForElementKpi = $em->createQueryBuilder()
                 ->select('a.comment')
@@ -1221,8 +1134,6 @@ class DashboradController extends Controller
 
                 );
             }
-
-
             return $this->render(
                 'InitialShippingBundle:DashBorad:elementforkpi.html.twig',
                 array(
@@ -1238,7 +1149,6 @@ class DashboradController extends Controller
                     'elementRule' => $scorecardElementRules
                 )
             );
-
         }
         else
         {
