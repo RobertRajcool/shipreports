@@ -402,8 +402,11 @@ class HighchartController extends Controller
         $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
         $mpdf->defaultheaderline = 0;
         $mpdf->defaultheaderfontstyle = 'B';
+        $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo_02.png';
+        $mpdf ->SetWatermarkImage($WateMarkImagePath);
+        $mpdf ->showWatermarkImage = true;
         $mpdf->AddPage('', 4, '', 'on');
-        $mpdf->SetHeader('Type: ' . $title . '|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
         //$mpdf->SetTitle($title);
         $mpdf->WriteHTML($html);
       /*  // $output= $mpdf->Output('filename.pdf','F');
