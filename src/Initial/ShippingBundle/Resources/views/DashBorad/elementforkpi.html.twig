@@ -103,7 +103,7 @@
                         ,
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
+                            window.location.href = 'http://shipreports/login';
                         }
                     });
 
@@ -217,14 +217,13 @@
                             }
 
                             $('#buttonid').show();
-                            $("<div title='Basic dialog'>Test message</div>").dialog();
+                            jAlert('', 'Comment Added');
                         }
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
 
-                            alert('Error : ' + errorThrown);
-
+                            window.location.href = 'http://shipreports/login';
                         }
                     });
 
@@ -243,61 +242,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: Routing.generate('addchart'),
-                        beforeSend: function () {
-                            var text='';
-
-                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                            }
-
-                            $('#resultLoading').css({
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'fixed',
-                                'z-index':'10000000',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto'
-                            });
-
-                            $('#resultLoading .bg').css({
-                                'background':'#000000',
-                                'opacity':'0.7',
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'absolute',
-                                'top':'0'
-                            });
-
-                            $('#resultLoading>div:first').css({
-                                'width': '250px',
-                                'height':'75px',
-                                'text-align': 'center',
-                                'position': 'fixed',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto',
-                                'font-size':'16px',
-                                'z-index':'10',
-                                'color':'#ffffff'
-
-                            });
-
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeIn(300);
-                            $('body').css('cursor', 'wait');
-                        },
-                        complete: function () {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                            $('#commentandreportdiv').hide();
-                        }
+                        url: Routing.generate('addchart')
                     });
                     $.ajax({
                         data: data,
@@ -311,8 +256,7 @@
                         ,
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
-                        }
+                            window.location.href = 'http://shipreports/login';                        }
                     });
 
                 });
@@ -386,13 +330,12 @@
                             $('#mailform').hide();
                             $('#addcomment').hide();
 
-                            alert(data.updatemsg);
+                            jAlert('', data.updatemsg);
 
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
-                        }
+                            window.location.href = 'http://shipreports/login';                        }
                     });
                 };
 
@@ -670,7 +613,7 @@
             <table class="table table-striped normal_table">
                 <thead>
                 <tr>
-                    <th>Graph Title</th>
+                    <th>{{ kpiname }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -764,7 +707,7 @@
                         <div class="form-group">
                             <label class="control-label col-xs-3">&nbsp;</label>
                             <div class="col-xs-9">
-                                {#<button value="Send reports" type="submit" class="submit_btn_2">Send reports</button>#}
+
                                 <input id="" class="submit_btn_2" type="submit" value="{{ 'elementranking.sendreport'|trans }}">
                             </div>
 

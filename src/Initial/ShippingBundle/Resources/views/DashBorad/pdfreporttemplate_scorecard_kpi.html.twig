@@ -105,7 +105,7 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">Score Card {{ kpiname }}</div>
+                <div class="title">{{ kpiname }}</div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
@@ -119,9 +119,8 @@
                 </thead>
                 <tbody>
                 <tr>
-                    {#<td>Scorecard: Minimum ~ maximum: 0 ~ 3.0</td>#}
-                    <td>
-                        <a class="linkclass" href="{{ path('dashboardhome') }}" style="float: right"  >Back</a></td>
+
+                    <td></td>
                 </tr>
                 </tbody>
             </table>
@@ -245,7 +244,7 @@
                     {% endfor %}
                 </tr>
             </table>
-        </section>
+        </section>{#
 
 
         <section class="data-row-section top-margin-space">
@@ -263,7 +262,7 @@
                 </tr>
                 </tbody>
             </table>
-        </section>
+        </section>#}
         <div>
             {% set newcommandarray = {} %}
             {% set jk=0 %}
