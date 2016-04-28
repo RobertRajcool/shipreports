@@ -154,9 +154,6 @@
                         global: false,
                         type: "post",
                         url:Routing.generate('autocompleteformailing'),
-                        beforeSend: function () {
-                            /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
-                        }
                     });
                     $.ajax({
                         data: data,
@@ -167,8 +164,8 @@
                             {
                                 $.each(data.returnresult, function(i, listelemnt)
                                 {
-
                                     $('#hiddenresult').val(data.returnresult);
+                                    $('#commentandreportdiv').show();
                                     $('#livesearchdiv').show();
                                     $("#livesearch").show();
                                     $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
@@ -183,7 +180,7 @@
                         ,
                         error: function()
                         {
-                            alert('Error While Generating Image as pdf');
+                            window.location.href = 'http://shipreports/login';
 
                         }
                     });
@@ -290,12 +287,12 @@
                             }
 
                             $('#buttonid').show();
-                            alert('Comment Added');
+                            jAlert('','Comment Added');
                         }
                         ,
                         error: function()
                         {
-                            alert('Error While Generating Image as pdf');
+                            window.location.href = 'http://shipreports/login';
 
                         }
                     });
@@ -316,8 +313,36 @@
                         global: false,
                         type: "post",
                         url: Routing.generate('addchart'),
+
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            $('#imagefilename').val(data);
+                            submitchatform();
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            window.location.href = 'http://shipreports/login';
+
+                        }
+                    });
+
+                });
+                function submitchatform()
+                {
+
+                    var form=$('#chatform');
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: Routing.generate('addcommentkpi'),
                         beforeSend: function () {
-                            var text='Please Wait';
+                            var text='';
 
                             if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
                                 $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
@@ -368,47 +393,28 @@
                             $('#resultLoading .bg').height('100%');
                             $('#resultLoading').fadeOut(300);
                             $('body').css('cursor', 'default');
-                            $('#commentandreportdiv').hide();
                         }
                     });
                     $.ajax({
-                        data: data,
-                        success: function (data)
-                        {
-
-                            $('#imagefilename').val(data);
-                            submitchatform();
-
-                        }
-                        ,
-                        error: function()
-                        {
-                            alert('Error While Generating Image as pdf');
-
-                        }
-                    });
-
-                });
-                function submitchatform()
-                {
-
-                    var form=$('#chatform');
-                    $.ajax({
-                        type: "post",
                         data: form.serialize(),
-                        url: Routing.generate('addcommentkpi'),
                         success: function (data)
                         {
+
                             $('#commentform').hide();
                             $('#mailform').hide();
                             $('#addcomment').hide();
+                            $('#mycommentid').val(' ');
+                            $('#toemail').val(' ');
 
-                            alert(data.updatemsg);
+                            $('#commentandreportdiv').hide();
+                            $('#buttonid').show();
+
+                            jAlert('', data.updatemsg);
 
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
+                            window.location.href = 'http://shipreports/login';
                         }
                     });
                 };

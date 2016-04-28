@@ -1102,7 +1102,7 @@ class DashboradController extends Controller
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
-            $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
+            $ob->title->text($scorecardKpiName, array('style' => array('color' => 'red')));
             $ob->xAxis->categories($monthLetterArray);
             $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
             $ob->series($series);
@@ -2037,137 +2037,141 @@ class DashboradController extends Controller
      */
     public function addcomment_scorecardAction(Request $request)
     {
-        $em=$this->getDoctrine()->getManager();
-        //get client Email Id
+        $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $username = $user->getUsername();
-        $useremailaddres=$user->getEmail();
+        if ($user != null) {
+            $username = $user->getUsername();
+            $useremailaddres = $user->getEmail();
 
-        $userquery = $em->createQueryBuilder()
-            ->select('a.emailId')
-            ->from('InitialShippingBundle:CompanyDetails','a')
-            ->where('a.adminName = :userId')
-            ->setParameter('userId',$username)
-            ->getQuery();
-        $clientemailid=$userquery->getSingleScalarResult();
+            $userquery = $em->createQueryBuilder()
+                ->select('a.emailId')
+                ->from('InitialShippingBundle:CompanyDetails', 'a')
+                ->where('a.adminName = :userId')
+                ->setParameter('userId', $username)
+                ->getQuery();
+            $clientemailid = $userquery->getSingleScalarResult();
 
-        //get Informaton From User
+            //get Informaton From User
 
-        $params = $request->request->get('send_command');
-        $kpiid=$params['kpiid'];
-        $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
-        $kpiname=$newkpiid->getKpiName();
-        $returnvaluefrommonth = $this->listallelementforkpiAction($kpiid,$request,'pdftemplate_kpilevel');
-
-
-        $filename = $params['filename'];
-        $pdffilenamearray=explode(".",$filename);
-
-        $kpiid=$params['kpiid'];
-
-        $comment = $params['comment'];
-        $checkboxvalue='';
-        if(count($params)<6)
-        {
-            $checkboxvalue='No';
-            $listofcommentarray=array();
-
-        }
-        else
-        {
-            $checkboxvalue = $params['addcomment'];
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
-        }
-        $idforrecord = $params['lastid'];
-
-        $today = date("Y-m-d H:i:s");
-        $pageName = $request->query->get('page');
-        $screenName = $this->get('translator')->trans($pageName);
-        $date = date('l jS F Y h:i', time());
-        $route = $request->attributes->get('_route');
+            $params = $request->request->get('send_command');
+            $kpiid = $params['kpiid'];
+            $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiid));
+            $kpiname = $newkpiid->getKpiName();
+            $returnvaluefrommonth = $this->listallelementforkpiAction($kpiid, $request, 'pdftemplate_kpilevel');
 
 
-        $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate_scorecard_kpi.html.twig', array(
-            'link' => $filename,
-            'screenName' => $screenName,
-            'userName' => '',
-            'date' => $date,
-            'listofelement'=>$returnvaluefrommonth['listofelement'],
-            'kpiname'=>$kpiname,
-            'montharray'=>$returnvaluefrommonth['montharray'],
-            'elementcolorarray'=>$returnvaluefrommonth['elementcolorarray'],
-            'countmonth'=>count($returnvaluefrommonth['elementcolorarray']),
-            'commentarray'=>$listofcommentarray,
-            'datetime'=>$today,
-            'kpi_color'=>$returnvaluefrommonth['kpi_color'],
-            'elementRule'=>$returnvaluefrommonth['elementRule']
-        ));
-        $client = new HighchartController();
-        $client->setContainer($this->container);
-        $printPdf = $client->createPdf($customerListDesign, $screenName);
+            $filename = $params['filename'];
+            $pdffilenamearray = explode(".", $filename);
 
-        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'.pdf';
-        file_put_contents($pdffilenamefullpath, $printPdf);
+            $kpiid = $params['kpiid'];
 
+            $comment = $params['comment'];
+            $checkboxvalue = '';
+            if (count($params) < 6) {
+                $checkboxvalue = 'No';
+                $listofcommentarray = array();
 
-
-        //$sendcommand=new SendCommand();
-        //assign file attachement for mail and Mailing Starts Here...u
-        $useremaildid=$params['clientemail'];
-
-        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
-        {
-            $mailer = $this->container->get('mailer');
-            $message = \Swift_Message::newInstance()
-                ->setFrom($clientemailid)
-                ->setTo($useremaildid)
-                ->setSubject($kpiname)
-                ->setBody($comment);
-            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-            $mailer->send($message);
-        }
-        else
-        {
-            $findsemail=$em->createQueryBuilder()
-                ->select('a.useremailid')
-                ->from('InitialShippingBundle:EmailUsers','a')
-                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-                ->where('b.groupname = :sq')
-                ->ORwhere('a.useremailid = :sb')
-                ->setParameter('sq',$useremaildid)
-                ->setParameter('sb',$useremaildid)
-                ->getQuery()
-                ->getResult();
-
-
-            //assign file attachement for mail and Mailing Starts Here...u
-            for($ma=0;$ma<count($findsemail);$ma++)
-            {
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom($clientemailid)
-                    ->setTo($findsemail[$ma]['emailid'])
-                    ->setSubject($kpiname)
-                    ->setBody($comment);
-                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                $mailer->send($message);
+            } else {
+                $checkboxvalue = $params['addcomment'];
+                $commentForElementKpi = $em->createQueryBuilder()
+                    ->select('a.comment')
+                    ->from('InitialShippingBundle:SendCommand', 'a')
+                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                    ->where('a.kpiid = :kpiid')
+                    ->andwhere('b.emailId = :username')
+                    ->setParameter('username', $useremailaddres)
+                    ->setParameter('kpiid', $kpiid)
+                    ->getQuery()
+                    ->getResult();
+                $listofcommentarray = $commentForElementKpi;
             }
-        }
-        //Mailing Ends....
-        //Update Process Starts Here...
-        $session=new Session();
-        $kpiandelementids= $session->get('commandid');
-        if($kpiandelementids!=null)
-        {
-            $entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->find($kpiandelementids);
-            $entityobject->setClientemail($clientemailid);
-            $entityobject->setFilename($pdffilenamearray[0].'.pdf');
-            $em->flush();
-        }
+            $idforrecord = $params['lastid'];
 
-        $response = new JsonResponse();
-        $response->setData(array('updatemsg'=>"Report Has Been Send"));
-        return $response;
+            $today = date("Y-m-d H:i:s");
+            $pageName = $request->query->get('page');
+            $screenName = $this->get('translator')->trans($pageName);
+            $date = date('l jS F Y h:i', time());
+            $route = $request->attributes->get('_route');
+
+
+            $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate_scorecard_kpi.html.twig', array(
+                'link' => $filename,
+                'screenName' => $screenName,
+                'userName' => '',
+                'date' => $date,
+                'listofelement' => $returnvaluefrommonth['listofelement'],
+                'kpiname' => $kpiname,
+                'montharray' => $returnvaluefrommonth['montharray'],
+                'elementcolorarray' => $returnvaluefrommonth['elementcolorarray'],
+                'countmonth' => count($returnvaluefrommonth['elementcolorarray']),
+                'commentarray' => $listofcommentarray,
+                'datetime' => $today,
+                'kpi_color' => $returnvaluefrommonth['kpi_color'],
+                'elementRule' => $returnvaluefrommonth['elementRule']
+            ));
+            $client = new HighchartController();
+            $client->setContainer($this->container);
+            $printPdf = $client->createPdf($customerListDesign, $screenName);
+
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $pdffilenamearray[0] . '.pdf';
+            file_put_contents($pdffilenamefullpath, $printPdf);
+            //assign file attachement for mail and Mailing Starts Here...u
+            $useremaildid = $params['clientemail'];
+            $mailidarray = array();
+            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
+            {
+                array_push($mailidarray, $useremaildid);
+            }
+            else
+            {
+                $findsemail = $em->createQueryBuilder()
+                    ->select('a.useremailid')
+                    ->from('InitialShippingBundle:EmailUsers', 'a')
+                    ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                    ->where('b.groupname = :sq')
+                    ->ORwhere('a.useremailid = :sb')
+                    ->setParameter('sq', $useremaildid)
+                    ->setParameter('sb', $useremaildid)
+                    ->getQuery()
+                    ->getResult();
+
+
+                //assign file attachement for mail and Mailing Starts Here...u
+                for ($ma = 0; $ma < count($findsemail); $ma++) {
+                    /* $mailer = $this->container->get('mailer');
+                     $message = \Swift_Message::newInstance()
+                         ->setFrom($clientemailid)
+                         ->setTo($findsemail[$ma]['emailid'])
+                         ->setSubject($kpiname)
+                         ->setBody($comment);
+                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                     $mailer->send($message);*/
+                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                }
+            }
+            //Mailing Ends....
+            $rankinglookuptable = array('from_emailid' => $clientemailid, 'to_emailids' => $mailidarray, 'filename' => $pdffilenamearray[0] . '.pdf', 'comment' => $comment, 'subject' => $kpiname);
+            $gearman = $this->get('gearman');
+            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+            //Mailing Ends....
+            //Update Process Starts Here...
+            $session = new Session();
+            $kpiandelementids = $session->get('commandid');
+            if ($kpiandelementids != null) {
+                $entityobject = $em->getRepository('InitialShippingBundle:SendCommand')->find($kpiandelementids);
+                $entityobject->setClientemail($clientemailid);
+                $entityobject->setFilename($pdffilenamearray[0] . '.pdf');
+                $em->flush();
+            }
+
+            $response = new JsonResponse();
+            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            return $response;
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
 
     /**
@@ -2180,134 +2184,137 @@ class DashboradController extends Controller
         $em=$this->getDoctrine()->getManager();
         //get client Email Id
         $user = $this->getUser();
-        $username = $user->getUsername();
-        $useremailaddres=$user->getEmail();
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $username = $user->getUsername();
+            $useremailaddres = $user->getEmail();
 
-        $userquery = $em->createQueryBuilder()
-            ->select('a.emailId')
-            ->from('InitialShippingBundle:CompanyDetails','a')
-            ->where('a.adminName = :userId')
-            ->setParameter('userId',$username)
-            ->getQuery();
-        $clientemailid=$userquery->getSingleScalarResult();
+            $userquery = $em->createQueryBuilder()
+                ->select('a.emailId')
+                ->from('InitialShippingBundle:CompanyDetails', 'a')
+                ->where('a.adminName = :userId')
+                ->setParameter('userId', $username)
+                ->getQuery();
+            $clientemailid = $userquery->getSingleScalarResult();
 
-        //get Informaton From User
+            //get Informaton From User
 
-        $params = $request->request->get('send_command');
-        $kpiid=$params['kpiid'];
-        $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiid));
-        $kpiname=$newkpiid->getKpiName();
-        $returnvaluefrommonth = $this->listallelementforkpi_rankingAction($kpiid,$request,'pdftemplate_kpilevel');
-
-
-        $filename = $params['filename'];
-        $pdffilenamearray=explode(".",$filename);
-
-        $kpiid=$params['kpiid'];
-
-        $comment = $params['comment'];
-        $checkboxvalue='';
-        if(count($params)<6)
-        {
-            $checkboxvalue='No';
-            $listofcommentarray=array();
-
-        }
-        else
-        {
-            $checkboxvalue = $params['addcomment'];
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
-        }
-        $idforrecord = $params['lastid'];
-
-        $today = date("Y-m-d H:i:s");
-        $pageName = $request->query->get('page');
-        $screenName = $this->get('translator')->trans($pageName);
-        $date = date('l jS F Y h:i', time());
-        $route = $request->attributes->get('_route');
-
-        $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate.html.twig', array(
-            'link' => $filename,
-            'screenName' => $screenName,
-            'userName' => '',
-            'date' => $date,
-            'listofelement'=>$returnvaluefrommonth['listofelement'],
-            'kpiname'=>$kpiname,
-            'montharray'=>$returnvaluefrommonth['montharray'],
-            'elementcolorarray'=>$returnvaluefrommonth['elementcolorarray'],
-            'countmonth'=>count($returnvaluefrommonth['elementcolorarray']),
-            'avgscore'=> $returnvaluefrommonth['avgscore'],
-            'monthlydata'=>$returnvaluefrommonth['monthlydata'],
-            'commentarray'=>$listofcommentarray,
-            'datetime'=>$today,
-            'elementRule'=>$returnvaluefrommonth['elementRule']
-        ));
-        $client = new HighchartController();
-        $client->setContainer($this->container);
-        $printPdf = $client->createPdf($customerListDesign, $screenName);
-
-        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'.pdf';
-        file_put_contents($pdffilenamefullpath, $printPdf);
+            $params = $request->request->get('send_command');
+            $kpiid = $params['kpiid'];
+            $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiid));
+            $kpiname = $newkpiid->getKpiName();
+            $returnvaluefrommonth = $this->listallelementforkpi_rankingAction($kpiid, $request, 'pdftemplate_kpilevel');
 
 
+            $filename = $params['filename'];
+            $pdffilenamearray = explode(".", $filename);
 
-        //$sendcommand=new SendCommand();
-        //assign file attachement for mail and Mailing Starts Here...u
-        $useremaildid=$params['clientemail'];
+            $kpiid = $params['kpiid'];
 
-        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
-        {
-            $mailer = $this->container->get('mailer');
-            $message = \Swift_Message::newInstance()
-                ->setFrom($clientemailid)
-                ->setTo($useremaildid)
-                ->setSubject($kpiname)
-                ->setBody($comment);
-            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-            $mailer->send($message);
-        }
-        else
-        {
-            $findsemail=$em->createQueryBuilder()
-                ->select('a.useremailid')
-                ->from('InitialShippingBundle:EmailUsers','a')
-                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-                ->where('b.groupname = :sq')
-                ->ORwhere('a.useremailid = :sb')
-                ->setParameter('sq',$useremaildid)
-                ->setParameter('sb',$useremaildid)
-                ->getQuery()
-                ->getResult();
+            $comment = $params['comment'];
+            $checkboxvalue = '';
+            if (count($params) < 6) {
+                $checkboxvalue = 'No';
+                $listofcommentarray = array();
 
-
-            //assign file attachement for mail and Mailing Starts Here...u
-            for($ma=0;$ma<count($findsemail);$ma++)
-            {
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom($clientemailid)
-                    ->setTo($findsemail[$ma]['emailid'])
-                    ->setSubject($kpiname)
-                    ->setBody($comment);
-                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                $mailer->send($message);
+            } else {
+                $checkboxvalue = $params['addcomment'];
+                $listofcomment = $em->createQueryBuilder()
+                    ->select('a.comment')
+                    ->from('InitialShippingBundle:SendCommandRanking', 'a')
+                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                    ->where('a.kpiid = :kpiid')
+                    ->andwhere('b.emailId = :username')
+                    ->setParameter('username', $useremailaddres)
+                    ->setParameter('kpiid', $kpiid)
+                    ->getQuery()
+                    ->getResult();
+                $listofcommentarray = $listofcomment;
             }
-        }
-        //Mailing Ends....
-        //Update Process Starts Here...
-        $session=new Session();
-        $kpiandelementids= $session->get('commandid');
-        if($kpiandelementids!=null)
-        {
-            $entityobject = $em->getRepository('InitialShippingBundle:SendCommandRanking')->find($kpiandelementids);
-            $entityobject->setClientemail($clientemailid);
-            $entityobject->setFilename($pdffilenamearray[0].'.pdf');
-            $em->flush();
-        }
+            $idforrecord = $params['lastid'];
 
-        $response = new JsonResponse();
-        $response->setData(array('updatemsg'=>"Report Has Been Send"));
-        return $response;
+            $today = date("Y-m-d H:i:s");
+            $pageName = $request->query->get('page');
+            $screenName = $this->get('translator')->trans($pageName);
+            $date = date('l jS F Y h:i', time());
+            $route = $request->attributes->get('_route');
+
+            $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate.html.twig', array(
+                'link' => $filename,
+                'screenName' => $screenName,
+                'userName' => '',
+                'date' => $date,
+                'listofelement' => $returnvaluefrommonth['listofelement'],
+                'kpiname' => $kpiname,
+                'montharray' => $returnvaluefrommonth['montharray'],
+                'elementcolorarray' => $returnvaluefrommonth['elementcolorarray'],
+                'countmonth' => count($returnvaluefrommonth['elementcolorarray']),
+                'avgscore' => $returnvaluefrommonth['avgscore'],
+                'monthlydata' => $returnvaluefrommonth['monthlydata'],
+                'commentarray' => $listofcommentarray,
+                'datetime' => $today,
+                'elementRule' => $returnvaluefrommonth['elementRule']
+            ));
+            $client = new HighchartController();
+            $client->setContainer($this->container);
+            $printPdf = $client->createPdf($customerListDesign, $screenName);
+
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $pdffilenamearray[0] . '.pdf';
+            file_put_contents($pdffilenamefullpath, $printPdf);
+
+
+            //$sendcommand=new SendCommand();
+            //assign file attachement for mail and Mailing Starts Here...u
+            $useremaildid = $params['clientemail'];
+            $mailidarray = array();
+
+            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL)) {
+                array_push($mailidarray, $useremaildid);
+
+            } else {
+                $findsemail = $em->createQueryBuilder()
+                    ->select('a.useremailid')
+                    ->from('InitialShippingBundle:EmailUsers', 'a')
+                    ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                    ->where('b.groupname = :sq')
+                    ->ORwhere('a.useremailid = :sb')
+                    ->setParameter('sq', $useremaildid)
+                    ->setParameter('sb', $useremaildid)
+                    ->getQuery()
+                    ->getResult();
+
+
+                //assign file attachement for mail and Mailing Starts Here...u
+                for ($ma = 0; $ma < count($findsemail); $ma++) {
+                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                }
+            }
+
+
+            //Mailing Ends....
+            $rankinglookuptable = array('from_emailid' => $clientemailid, 'to_emailids' => $mailidarray, 'filename' => $pdffilenamearray[0] . '.pdf', 'comment' => $comment, 'subject' => $kpiname);
+            $gearman = $this->get('gearman');
+            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+            //Mailing Ends....
+            //Update Process Starts Here...
+            $session = new Session();
+            $kpiandelementids = $session->get('commandid');
+            if ($kpiandelementids != null) {
+                $entityobject = $em->getRepository('InitialShippingBundle:SendCommandRanking')->find($kpiandelementids);
+                $entityobject->setClientemail($clientemailid);
+                $entityobject->setFilename($pdffilenamearray[0] . '.pdf');
+                $em->flush();
+            }
+
+            $response = new JsonResponse();
+            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            return $response;
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
     /**
      * Add comment for shipreports
@@ -2319,135 +2326,151 @@ class DashboradController extends Controller
         $em=$this->getDoctrine()->getManager();
         //get client Email Id
         $user = $this->getUser();
-        $username = $user->getUsername();
-        $useremailaddres=$user->getEmail();
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $username = $user->getUsername();
+            $useremailaddres = $user->getEmail();
 
-        $userquery = $em->createQueryBuilder()
-            ->select('a.emailId')
-            ->from('InitialShippingBundle:CompanyDetails','a')
-            ->where('a.adminName = :userId')
-            ->setParameter('userId',$username)
-            ->getQuery();
-        $clientemailid=$userquery->getSingleScalarResult();
-        $params = $request->request->get('send_command');
-        $kpiid=$params['kpiid'];
-        $returnvaluefrommonth = $this->listallkpiforship_rankingAction($kpiid,$year=' ',$request,'pdftemplate_shiplevel');
-        $filename = $params['filename'];
-        $pdffilenamearray=explode(".",$filename);
-        $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
-        $kpiname=$newkpiid->getShipName();
-        $comment = $params['comment'];
-        $checkboxvalue='';
-        if(count($params)<6)
-        {
-            $checkboxvalue='No';
-            $listofcommentarray=array();
+            $userquery = $em->createQueryBuilder()
+                ->select('a.emailId')
+                ->from('InitialShippingBundle:CompanyDetails', 'a')
+                ->where('a.adminName = :userId')
+                ->setParameter('userId', $username)
+                ->getQuery();
+            $clientemailid = $userquery->getSingleScalarResult();
+            $params = $request->request->get('send_command');
+            $kpiid = $params['kpiid'];
+            $returnvaluefrommonth = $this->listallkpiforship_rankingAction($kpiid, $year = ' ', $request, 'pdftemplate_shiplevel');
+            $filename = $params['filename'];
+            $pdffilenamearray = explode(".", $filename);
+            $newkpiid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $kpiid));
+            $kpiname = $newkpiid->getShipName();
+            $comment = $params['comment'];
+            $checkboxvalue = '';
+            if (count($params) < 6) {
+                $checkboxvalue = 'No';
+                $listofcommentarray = array();
 
-        }
-        else
-        {
-            $checkboxvalue = $params['addcomment'];
-            $listofcommentarray=$returnvaluefrommonth['commentarray'];
-        }
-
-
-        /* if($checkboxvalue=="Yes")
-         {
-
-         }
-         else
-         {
-
-         }*/
-        $idforrecord = $params['lastid'];
-
-        $today = date("Y-m-d H:i:s");
-        $pageName = $request->query->get('page');
-        $screenName = $this->get('translator')->trans($pageName);
-        $date = date('l jS F Y h:i', time());
-        $route = $request->attributes->get('_route');
-
-        $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
-            'link' => $filename,
-            'screenName' => $screenName,
-            'userName' => '',
-            'date' => $date,
-            'listofkpi' => $returnvaluefrommonth['listofkpi'],
-            'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
-            'montharray' => $returnvaluefrommonth['montharray'],
-            'shipname' => $kpiname,
-            'countmonth' => count($returnvaluefrommonth['montharray']),
-            'avgscore' => $returnvaluefrommonth['avgscore'],
-            'ageofvessel'=>$returnvaluefrommonth['ageofvessel'],
-            'commentarray'=>$listofcommentarray,
-            'kpimonthdata'=>$returnvaluefrommonth['kpimonthdata'],
-            'currentyear'=>date('Y')
-        ));
-
-        $client = new HighchartController();
-        $client->setContainer($this->container);
-        $printPdf = $client->createPdf($customerListDesign, $screenName);
-
-        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$pdffilenamearray[0].'.pdf';
-        file_put_contents($pdffilenamefullpath, $printPdf);
-
-        $useremaildid=$params['clientemail'];
-        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
-        {
-            $mailer = $this->container->get('mailer');
-            $message = \Swift_Message::newInstance()
-                ->setFrom($clientemailid)
-                ->setTo($useremaildid)
-                ->setSubject($kpiname)
-                ->setBody($comment);
-            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-            $mailer->send($message);
-        }
-        else
-        {
-            $findsemail=$em->createQueryBuilder()
-                ->select('a.useremailid')
-                ->from('InitialShippingBundle:EmailUsers','a')
-                ->join('InitialShippingBundle:EmailGroup','b', 'WITH', 'b.id = a.groupid')
-                ->where('b.groupname = :sq')
-                ->ORwhere('a.useremailid = :sb')
-                ->setParameter('sq',$useremaildid)
-                ->setParameter('sb',$useremaildid)
-                ->getQuery()
-                ->getResult();
-
-
-            //assign file attachement for mail and Mailing Starts Here...u
-            for($ma=0;$ma<count($findsemail);$ma++)
-            {
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom($clientemailid)
-                    ->setTo($findsemail[$ma]['emailid'])
-                    ->setSubject($kpiname)
-                    ->setBody($comment);
-                $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                $mailer->send($message);
+            } else {
+                $checkboxvalue = $params['addcomment'];
+                $listofcomment = $em->createQueryBuilder()
+                    ->select('a.comment')
+                    ->from('InitialShippingBundle:SendCommandRanking', 'a')
+                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                    ->where('a.shipid = :shipid')
+                    ->andwhere('b.emailId = :username')
+                    ->setParameter('username', $useremailaddres)
+                    ->setParameter('shipid', $kpiid)
+                    ->getQuery()
+                    ->getResult();
+                $listofcommentarray = $listofcomment;
             }
+
+
+            /* if($checkboxvalue=="Yes")
+             {
+
+             }
+             else
+             {
+
+             }*/
+            $idforrecord = $params['lastid'];
+
+            $today = date("Y-m-d H:i:s");
+            $pageName = $request->query->get('page');
+            $screenName = $this->get('translator')->trans($pageName);
+            $date = date('l jS F Y h:i', time());
+            $route = $request->attributes->get('_route');
+
+            $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplateforship.html.twig', array(
+                'link' => $filename,
+                'screenName' => $screenName,
+                'userName' => '',
+                'date' => $date,
+                'listofkpi' => $returnvaluefrommonth['listofkpi'],
+                'kpiweightage' => $returnvaluefrommonth['kpiweightage'],
+                'montharray' => $returnvaluefrommonth['montharray'],
+                'shipname' => $kpiname,
+                'countmonth' => count($returnvaluefrommonth['montharray']),
+                'avgscore' => $returnvaluefrommonth['avgscore'],
+                'ageofvessel' => $returnvaluefrommonth['ageofvessel'],
+                'commentarray' => $listofcommentarray,
+                'kpimonthdata' => $returnvaluefrommonth['kpimonthdata'],
+                'currentyear' => date('Y')
+            ));
+
+            $client = new HighchartController();
+            $client->setContainer($this->container);
+            $printPdf = $client->createPdf($customerListDesign, $screenName);
+
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $pdffilenamearray[0] . '.pdf';
+            file_put_contents($pdffilenamefullpath, $printPdf);
+
+            $useremaildid = $params['clientemail'];
+            $mailidarray = array();
+            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL)) {
+                array_push($mailidarray, $useremaildid);
+                /* $mailer = $this->container->get('mailer');
+                 $message = \Swift_Message::newInstance()
+                     ->setFrom($clientemailid)
+                     ->setTo($useremaildid)
+                     ->setSubject($kpiname)
+                     ->setBody($comment);
+                 $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                 $mailer->send($message);*/
+            } else {
+                $findsemail = $em->createQueryBuilder()
+                    ->select('a.useremailid')
+                    ->from('InitialShippingBundle:EmailUsers', 'a')
+                    ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                    ->where('b.groupname = :sq')
+                    ->ORwhere('a.useremailid = :sb')
+                    ->setParameter('sq', $useremaildid)
+                    ->setParameter('sb', $useremaildid)
+                    ->getQuery()
+                    ->getResult();
+
+
+                //assign file attachement for mail and Mailing Starts Here...u
+                for ($ma = 0; $ma < count($findsemail); $ma++) {
+                    /* $mailer = $this->container->get('mailer');
+                     $message = \Swift_Message::newInstance()
+                         ->setFrom($clientemailid)
+                         ->setTo($findsemail[$ma]['emailid'])
+                         ->setSubject($kpiname)
+                         ->setBody($comment);
+                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                     $mailer->send($message);*/
+                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                }
+            }
+
+
+            //Mailing Ends....
+            $rankinglookuptable = array('from_emailid' => $clientemailid, 'to_emailids' => $mailidarray, 'filename' => $pdffilenamearray[0] . '.pdf', 'comment' => $comment, 'subject' => $kpiname);
+            $gearman = $this->get('gearman');
+            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+            //Update Process Starts Here...
+
+            $session = new Session();
+            $kpiandelementids = $session->get('commandid');
+            if ($kpiandelementids != null) {
+                $entityobject = $em->getRepository('InitialShippingBundle:SendCommandRanking')->findOneBy(array('id' => $kpiandelementids));
+                $entityobject->setClientemail($clientemailid);
+                $entityobject->setFilename($pdffilenamearray[0] . '.pdf');
+                $em->flush();
+            }
+
+            $response = new JsonResponse();
+            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            return $response;
         }
-
-
-        //Mailing Ends....
-        //Update Process Starts Here...
-
-        $session=new Session();
-        $kpiandelementids= $session->get('commandid');
-        if($kpiandelementids!=null)
+        else
         {
-            $entityobject = $em->getRepository('InitialShippingBundle:SendCommandRanking')->findOneBy(array('id' => $kpiandelementids));
-            $entityobject->setClientemail($clientemailid);
-            $entityobject->setFilename($pdffilenamearray[0].'.pdf');
-            $em->flush();
+            return $this->redirectToRoute('fos_user_security_login');
         }
-
-        $response = new JsonResponse();
-        $response->setData(array('updatemsg'=>"Report Has Been Send"));
-        return $response;
     }
     /**
      * Reports For Ranking

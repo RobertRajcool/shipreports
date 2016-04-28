@@ -1137,6 +1137,49 @@ class ReadExcelWorker
 
 
     }
+    /**
+     * Mailing Reports
+     *
+     * @param \GearmanJob $job Alll Mailing  Sending
+     *
+     * @return boolean
+     *
+     * @Gearman\Job(
+     *     iterations = 1,
+     *     name = "common_mail_function"
+     * )
+     */
+    public function common_mail_function(\GearmanJob $job)
+    {
+
+
+        $emClient = $this->doctrine->getManager();
+        $mailer = $this->container->get('mailer');
+        $parametervalues = json_decode($job->workload());
+        $from_emailid = $parametervalues->{'from_emailid'};
+        $to_emailids = $parametervalues->{'to_emailids'};
+        $filename = $parametervalues->{'filename'};
+        $comment = $parametervalues->{'comment'};
+        $subject= $parametervalues->{'subject'};
+        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/uploads/brochures/'.$filename;
+
+        for($ma=0;$ma<count($to_emailids);$ma++)
+        {
+
+             $message = \Swift_Message::newInstance()
+                 ->setFrom($from_emailid)
+                 ->setTo($to_emailids[$ma])
+                 ->setSubject($subject)
+                 ->setBody($comment);
+             $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($filename));
+             $mailer->send($message);
+
+        }
+        echo "Mail Has Been Send...";
+        return true;
+
+
+    }
 
 
 }

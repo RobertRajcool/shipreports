@@ -98,7 +98,7 @@
 
         <div class="certificates_header clearfix">
             <div class="brand-title">
-                <div class="title">Ranking Report_{{ kpiname }} </div>
+                <div class="title">{{ kpiname }} </div>
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
@@ -158,8 +158,6 @@
                                     <img src="/images/box_red.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[m][i]=="Yellow" %}
                                     <img src="/images/box_yellow.png" alt="Loader Image"/>
-                                {% else %}
-                                    <img src="/images/arrow-buttom.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                         {% endfor %}
@@ -178,7 +176,7 @@
                 </tbody>
             </table>
         </section>
-
+{#
         <section class="data-row-section top-margin-space">
             <table class="table table-striped-4 kpi_ranking_rules_show_row" >
                 <thead>
@@ -194,7 +192,7 @@
                 </tr>
                 </tbody>
             </table>
-        </section>
+        </section>#}
         <div id="">
             {% set newcommandarray = {} %}
             {% set jk=0 %}
