@@ -1946,37 +1946,6 @@ class DashboradController extends Controller
                         {
                             $elementColorValue = 0;
                         }
-                       /* if(count($elementDbValue)!=0)
-                        {
-                            for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
-                            {
-                                $elementRule = $rankingElementRulesArray[$elementRulesCount];
-                                $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . $elementDbValue[0]['value'];
-                                $elementJsFileName = 'node ' . $elementJsFileDirectory;
-                                $handle = popen($elementJsFileName, 'r');
-                                $elementColor = fread($handle, 2096);
-                                $elementResultColor = str_replace("\n", '', $elementColor);
-
-                                if ($elementResultColor == "false") {
-                                    continue;
-                                }
-
-                                if ($elementResultColor == "Green") {
-                                    $elementColorValue = $scorecardElementWeight;
-                                    break;
-                                } else if ($elementResultColor == "Yellow") {
-                                    $elementColorValue = $scorecardElementWeight/2;
-                                    break;
-                                } else if ($elementResultColor == "Red") {
-                                    $elementColorValue = 0;
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            $elementDbValue[0]['value']=null;
-                        }*/
 
                         array_push($scorecardElementRules,$rankingElementRulesArray);
                         array_push($scorecardElementValueArray,$rankingElementResult[0]['elementdata']);
@@ -3426,6 +3395,7 @@ class DashboradController extends Controller
                         'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
                         'title'=>array('text'=>$kpiName),
                         'xAxis'=>array('categories'=>$newcategories,'labels'=>array('style'=>array('color'=>'#0000F0'))),
+                     'yAxis'=>array('max'=>$weightage,'title'=>array('text'=>'Values','style'=>array('color'=>'#0000F0'))),
                     );
                     $jsondata=json_encode($graphObject);
                     $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/kpi_'.$kpiid.'.json';

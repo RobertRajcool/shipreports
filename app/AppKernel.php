@@ -22,7 +22,6 @@ class AppKernel extends Kernel
             new Ob\HighchartsBundle\ObHighchartsBundle(),
             new TFox\MpdfPortBundle\TFoxMpdfPortBundle(),
             new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
-            new Mmoreram\GearmanBundle\GearmanBundle(),
             new m4t1t0\FopPdfBundle\FopPdfBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
 

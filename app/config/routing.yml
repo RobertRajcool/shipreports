@@ -1,3 +1,7 @@
+initial_shipping_ship_scorecard_report:
+    resource: "@InitialShippingBundle/Controller/ScorecardReportController.php"
+    type:     annotation
+
 initial_shipping_ship_status_details:
     resource: "@InitialShippingBundle/Controller/ShipStatusDetailsController.php"
     type:     annotation
