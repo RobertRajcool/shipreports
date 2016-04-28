@@ -350,11 +350,11 @@
 
     <section>
         <div id="formcontentid" class="col-sm-12">
-            <div class="add_kpi_views_screen">
-                <tr>
-                    <td>
-                        <a class="submit_btn" href="{{ path('allships_ranking_reports') }}" style="float: right"  >Vessel Reports</a></td>
-                </tr>
+            <div class="actions_report_vessel_top">
+                <a class="actions_report_btn" href="{{ path('allships_ranking_reports') }}"  >Vessel Reports</a>
+            </div>
+            <div class="add_kpi_views_screen report_top">
+
                 <form id="reportform" class="form-horizontal no-style"  method="post">
 
                 <div class="kpi_basic_details">
@@ -413,20 +413,19 @@
         </div>
     </section>
     <section >
-
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
-            <div class="actions_edit_button">
+            <div class="actions_report_top">
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
-                    <button type="submit" class="submit_btn" id="sendreportid" >Send Report</button>
+                    <button type="submit" class="actions_report_btn" id="sendreportid" >Send Report</button>
                 </form>
 
 
 
 
-                <button  class="submit_btn" id="printreportid" >Print</button>
-                <a href="{{ path('ranking_reports') }}" class="submit_btn">Back</a>
+                <button  class="actions_report_btn" id="printreportid" >Print</button>
+                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
             </div>
             <div id="listalltable" class="table-responsive rankingreport">
 

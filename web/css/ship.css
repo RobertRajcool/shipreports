@@ -1963,6 +1963,62 @@ input[type="color"],
     margin-top: 56px;
 
 }
+.actions_report_top {
+    padding: 15px 0px 0px 24px;
+    font-size: 14px;
+    font-weight:bold;
+    border-top: 1px solid #dad7cf !important;
+    box-shadow: 0 0 5px 0 rgba(50, 50, 50, 0.3);
+    background:#ffffff;
+    position:fixed;
+    top:0px;
+    margin:0 0 0 -24px;
+    width:100%;
+    z-index: 111;
+}
+.actions_report_top form {
+    float: left;
+}
+.actions_report_top .actions_report_btn {
+    background: #103a71;
+    border-radius: 3px;
+    border: 1px solid #062d60;
+    padding: 5px 10px;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 12px;
+    float: left;
+    line-height: normal;
+    margin-right: 10px;
+}
+.actions_report_vessel_top {
+    padding: 15px 0px 17px 34px;
+    font-size: 14px;
+    font-weight:bold;
+    border-top: 1px solid #dad7cf !important;
+    box-shadow: 0 0 5px 0 rgba(50, 50, 50, 0.3);
+    background:#ffffff;
+    position:fixed;
+    top:0px;
+    margin:0 0 0 -24px;
+    width:100%;
+    z-index: 111;
+}
+.actions_report_vessel_top .actions_report_btn {
+    background: #103a71;
+    border-radius: 3px;
+    border: 1px solid #062d60;
+    padding: 5px 10px;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 12px;
+    float: left;
+    line-height: normal;
+    margin-right: 10px;
+}
+.add_kpi_views_screen.report_top {
+    top: 36px;
+}
 
 /*
 .conditional {
