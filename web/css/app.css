@@ -4485,11 +4485,11 @@ ul.dropdown-menu li span.message {
   top: 50%;
 }
 .modal-header {
-  background: #6393b5;
+  background: #103a71;
   -webkit-border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   border-radius: 4px 4px 0 0;
-  padding: 9px 15px;
+  padding: 7px 15px;
   border-bottom: 1px solid #eee;
 }
 .modal-header .close {
@@ -29193,8 +29193,8 @@ strong.inline {
   margin: 0;
 }
 .modal-body {
-  overflow: hidden;
-  max-height: 100%;
+  max-height: 300px;
+  overflow: auto;
 }
 .modal-body.without-padding {
   padding: 15px 0 0 0;

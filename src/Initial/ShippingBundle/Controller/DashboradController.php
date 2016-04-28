@@ -2538,7 +2538,7 @@ class DashboradController extends Controller
      *
      * @Route("/view_ranking_reports", name="view_ranking_reports")
      */
-    public function view_ranking_reportsAction(Request $request,$mode='',$sendReport='')
+    public function view_ranking_reportsAction(Request $request,$sendReport='')
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -3003,7 +3003,7 @@ class DashboradController extends Controller
         $user = $this->getUser();
         if ($user != null)
         {
-            $reportObject = $this->view_ranking_reportsAction($request,'','sendReport');
+            $reportObject = $this->view_ranking_reportsAction($request,'sendReport');
             $rankingKpiList = $em->createQueryBuilder()
                 ->select('b.kpiName', 'b.id', 'b.weightage')
                 ->from('InitialShippingBundle:RankingKpiDetails', 'b')
@@ -3120,6 +3120,182 @@ class DashboradController extends Controller
             $response = new Response();
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
+            return $response;
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+    /**
+     * Send Reports to Mailing For Ranking
+     *
+     * @Route("/send_rankingreports_mail", name="send_rankingreports_mail")
+     */
+    public function sendreports_mail_rankingAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null)
+        {
+            $email = $user->getEmail();
+            $reportObject = $this->view_ranking_reportsAction($request,'sendReport');
+            $rankingKpiList = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id', 'b.weightage')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.shipDetailsId = :shipid')
+                ->setParameter('shipid', $reportObject['shipid'])
+                ->getQuery()
+                ->getResult();
+            $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+            $mpdf->defaultheaderline = 0;
+            $mpdf->defaultheaderfontstyle = 'B';
+            $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo_02.png';
+            $mpdf ->SetWatermarkImage($WateMarkImagePath);
+            $mpdf ->showWatermarkImage = true;
+            $graphObject = array(
+                'chart'=>array('renderTo'=>'areaId','type'=>"line"),
+                'exporting'=>array('enabled'=>false),
+                'plotOptions'=>array('series'=>array(
+                    "allowPointSelect"=>true,
+                    "dataLabels"=>array(
+                        "enabled"=>true
+                    )
+                )),
+                'series'=>array(
+                    array('name'=>'Series','showInLegend'=>false,'color'=>'blue','data'=>$reportObject['chartdata'])
+                ),
+                'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
+                'title'=>array('text'=>$reportObject['shipname']),
+                'xAxis'=>array('categories'=>$reportObject['montharray'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
+                'yAxis'=>array('max'=>100,'title'=>array('text'=>'Values','style'=>array('color'=>'#0000F0'))),
+            );
+            $jsondata=json_encode($graphObject);
+            $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/ship_'.$reportObject['shipid'].'.json';
+            file_put_contents($pdffilenamefullpath, $jsondata);
+            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+            $outfile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_'.$reportObject['shipid'].'.png';
+            $JsonFileDirectroy=$this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/ship_'.$reportObject['shipid'].'.json -outfile '.$outfile.' -scale 2.5 -width 1065';
+            $ImageGeneration = 'phantomjs ' . $Highchartconvertjs.$JsonFileDirectroy;
+            $handle = popen($ImageGeneration, 'r');
+            $charamee = fread($handle, 2096);
+            $customerListDesign= $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                'shipid' => $reportObject['shipid'],
+                'screenName' => 'Ranking Report',
+                'userName' => '',
+                'date' => date('Y-m-d'),
+                'link' => 'shipimage_'.$reportObject['shipid'].'.png',
+                'listofkpi' => $reportObject['listofkpi'],
+                'kpiweightage' => $reportObject['kpiweightage'],
+                'montharray' => $reportObject['montharray'],
+                'shipname' => $reportObject['shipname'],
+                'countmonth' => count($reportObject['montharray']),
+                'avgscore' => $reportObject['avgscore'],
+                'ageofvessel'=>$reportObject['ageofvessel'],
+                'kpimonthdata'=>$reportObject['kpimonthdata'],
+                'currentyear'=>date('Y')
+            ));
+            $mpdf->AddPage('', 4, '', 'on');
+            $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $mpdf->WriteHTML($customerListDesign);
+            for($KpiPdfcount=0;$KpiPdfcount<count($rankingKpiList);$KpiPdfcount++)
+            {
+                $kpiName=$rankingKpiList[$KpiPdfcount]['kpiName'];
+                $kpiid=$rankingKpiList[$KpiPdfcount]['id'];
+                $weightage=$rankingKpiList[$KpiPdfcount]['weightage'];
+                $graphObject = array(
+                    'chart'=>array('renderTo'=>'areaId','type'=>"line"),
+                    'exporting'=>array('enabled'=>false),
+                    'plotOptions'=>array('series'=>array(
+                        "allowPointSelect"=>true,
+                        "dataLabels"=>array(
+                            "enabled"=>true
+                        )
+                    )),
+                    'series'=>array(
+                        array('name'=>'Series','showInLegend'=>false,'color'=>'blue','data'=>$reportObject['kpigraph'][$kpiid])
+                    ),
+                    'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
+                    'title'=>array('text'=>$kpiName),
+                    'xAxis'=>array('categories'=>$reportObject['montharray'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
+                    'yAxis'=>array('max'=>$weightage,'title'=>array('text'=>'Values','style'=>array('color'=>'#0000F0'))),
+                );
+                $jsondata=json_encode($graphObject);
+                $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/kpi_'.$kpiid.'.json';
+                file_put_contents($pdffilenamefullpath, $jsondata);
+                $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+                $outfile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_'.$kpiid.'.png';
+                $JsonFileDirectroy=$this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/kpi_'.$kpiid.'.json -outfile '.$outfile.' -scale 2.5 -width 1065';
+                $ImageGeneration = 'phantomjs ' . $Highchartconvertjs.$JsonFileDirectroy;
+                $handle = popen($ImageGeneration, 'r');
+                $charamee = fread($handle, 2096);
+
+                $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
+                    'kpiid' => $kpiid,
+                    'screenName' => 'Ranking Report',
+                    'userName' => '',
+                    'date' => date('Y-m-d'),
+                    'link' => 'kpiimage_'.$kpiid.'.png',
+                    'montharray' => $reportObject['montharray'],
+                    'kpiname' => $kpiName,
+                    'countmonth' => count($reportObject['montharray']),
+                    'kpigraph'=>$reportObject['kpigraph'][$kpiid],
+                    'elementcolorarray' => $reportObject['elementcolorarray'][$kpiid],
+                    'monthlydata'=>$reportObject['monthlydata'][$kpiid],
+                    'elementRule' => $reportObject['elementRule'],
+                    'listofelement' => $reportObject['listofelement'][$kpiid],
+                    'countofelement'=>count($reportObject['listofelement'][$kpiid]),
+                    'currentyear'=>date('Y')
+                ));
+
+                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+                $mpdf->WriteHTML($customerListDesign);
+            }
+            $content = $mpdf->Output('', 'S');
+            $fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' .$fileName;
+            file_put_contents($pdffilenamefullpath, $content);
+            $useremaildid = $request->request->get('clientemail');
+            $mailbox = $request->request->get('comment');
+            $mailidarray = array();
+            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
+            {
+                array_push($mailidarray, $useremaildid);
+            }
+            else
+            {
+                $findsemail = $em->createQueryBuilder()
+                    ->select('a.useremailid')
+                    ->from('InitialShippingBundle:EmailUsers', 'a')
+                    ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                    ->where('b.groupname = :sq')
+                    ->ORwhere('a.useremailid = :sb')
+                    ->setParameter('sq', $useremaildid)
+                    ->setParameter('sb', $useremaildid)
+                    ->getQuery()
+                    ->getResult();
+
+
+                //assign file attachement for mail and Mailing Starts Here...u
+                for ($ma = 0; $ma < count($findsemail); $ma++) {
+                    /* $mailer = $this->container->get('mailer');
+                     $message = \Swift_Message::newInstance()
+                         ->setFrom($clientemailid)
+                         ->setTo($findsemail[$ma]['emailid'])
+                         ->setSubject($kpiname)
+                         ->setBody($comment);
+                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                     $mailer->send($message);*/
+                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                }
+            }
+            //Mailing Ends....
+            $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
+            $gearman = $this->get('gearman');
+            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+            $response = new JsonResponse();
+            $response->setData(array('updatemsg' => "Report Has Been Send"));
             return $response;
         }
         else
