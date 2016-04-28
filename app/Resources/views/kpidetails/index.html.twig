@@ -888,15 +888,12 @@
 
 
                 $('.edit_submit_button').live("click",function(){
-
-                    //alert('hi');
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
                     for(var i_i=1;i_i<count_row;i_i++)
                     {
                         rule_array.push($('#rule_obj_text-'+i_i).val());
                     }
-                    //console.log(rule_array);
                     var condition_text = "";
                     var i=0;
                     var data = {
@@ -908,8 +905,6 @@
                         Id : $('.kpi_edit_id').val(),
                         rules : rule_array
                     };
-
-
                     $('.kpi_name').empty();
                     $('.kpi_description').empty();
                     $('.kpi_weightage').empty();
@@ -929,10 +924,7 @@
                         data: data,
                         url: "ajax_edit",
                         success: function(data) {
-                            //alert('success')
-                            //console.log(data);
                             $('.grid_edit_kpi').hide();
-
                             var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];

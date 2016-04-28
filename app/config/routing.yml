@@ -1,6 +1,6 @@
 initial_shipping_ship_scorecard_report:
-     resource: "@InitialShippingBundle/Controller/ScorecardReportController.php"
-     type: annotation
+    resource: "@InitialShippingBundle/Controller/ScorecardReportController.php"
+    type:     annotation
 
 initial_shipping_ship_status_details:
     resource: "@InitialShippingBundle/Controller/ShipStatusDetailsController.php"
@@ -102,6 +102,7 @@ app:
 
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
 
