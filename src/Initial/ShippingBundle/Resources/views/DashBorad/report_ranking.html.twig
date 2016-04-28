@@ -235,6 +235,10 @@
                                     xAxis: {
                                         categories: data.montharray
                                     },
+                                    yAxis: {
+                                        max: data.listofkpi[tempcount]['weightage'],
+                                        min: 0
+                                    },
                                     plotOptions: {"series":{"allowPointSelect":true,"dataLabels":{"enabled":true}}},
                                     series: [{
                                         name: data.listofkpi[tempcount]['kpiName'],

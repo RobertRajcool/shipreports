@@ -2670,7 +2670,17 @@ class DashboradController extends Controller
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
 
-                            $elementDbValue = $em->createQueryBuilder()
+                            $elementResultColor = "";
+                            $elementColorValue=0;
+                            $rankingElementRulesArray = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:RankingRules', 'a')
+                                ->where('a.elementDetailsId = :elementId')
+                                ->setParameter('elementId', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+
+                            /*$elementDbValue = $em->createQueryBuilder()
                                 ->select('a.value')
                                 ->from('InitialShippingBundle:RankingMonthlyData', 'a')
                                 ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
@@ -2741,7 +2751,52 @@ class DashboradController extends Controller
                                 array_push($Elment_Value,$elementDbValue[0]['value']);
                                 array_push($NewElementColor,$elementResultColor);
 
+                            }*/
+
+                            $rankingElementResult = $em->createQueryBuilder()
+                                ->select('b.elementdata, b.elementcolor')
+                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                ->setParameter('kpiId', $rankingKpiId)
+                                ->setParameter('shipId', $shipid)
+                                ->setParameter('elementId', $scorecardElementId)
+                                ->setParameter('monthDetail', $new_monthdetail_date )
+                                ->getQuery()
+                                ->getResult();
+                            if(count($rankingElementResult)!=0)
+                            {
+                                $elementResultColor = $rankingElementResult[0]['elementcolor'];
                             }
+                            else
+                            {
+                                $rankingElementResult[0]['elementdata']=0;
+                            }
+
+                            if ($elementResultColor == "false")
+                            {
+                                $elementColorValue = 0;
+                            }
+
+                            if($elementResultColor=='Green')
+                            {
+                                $elementColorValue = $scorecardElementWeight;
+                            }
+                            else if($elementResultColor == 'Yellow')
+                            {
+                                $elementColorValue = $scorecardElementWeight/2;
+                            }
+                            else if($elementResultColor == 'Red')
+                            {
+                                $elementColorValue = 0;
+                            }
+
+                            array_push($scorecardElementRules,$rankingElementRulesArray);
+                            array_push($scorecardElementValueArray,$rankingElementResult[0]['elementdata']);
+                            $elementValueWithWeight = $elementColorValue ;
+                            $kpiSumValue+=$elementValueWithWeight;
+                            $rankingElementValueTotal+=$elementColorValue;
+                            array_push($Elment_Value,$rankingElementResult[0]['elementdata']);
+                            array_push($NewElementColor,$elementResultColor);
 
 
                         }
@@ -2790,7 +2845,16 @@ class DashboradController extends Controller
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
 
-                            $elementDbValue = $em->createQueryBuilder()
+                            $rankingElementRulesArray = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:RankingRules', 'a')
+                                ->where('a.elementDetailsId = :elementId')
+                                ->setParameter('elementId', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+                            $elementResultColor = "";
+                            $elementColorValue=0;
+                            /*$elementDbValue = $em->createQueryBuilder()
                                 ->select('a.value')
                                 ->from('InitialShippingBundle:RankingMonthlyData', 'a')
                                 ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
@@ -2862,8 +2926,52 @@ class DashboradController extends Controller
                                 array_push($Elment_Value,$elementDbValue[0]['value']);
                                 array_push($NewElementColor,$elementResultColor);
 
+                            }*/
+
+                            $rankingElementResult = $em->createQueryBuilder()
+                                ->select('b.elementdata, b.elementcolor')
+                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                ->setParameter('kpiId', $newkpiid)
+                                ->setParameter('shipId', $shipid)
+                                ->setParameter('elementId', $scorecardElementId)
+                                ->setParameter('monthDetail', $new_monthdetail_date )
+                                ->getQuery()
+                                ->getResult();
+                            if(count($rankingElementResult)!=0)
+                            {
+                                $elementResultColor = $rankingElementResult[0]['elementcolor'];
+                            }
+                            else
+                            {
+                                $rankingElementResult[0]['elementdata']=0;
                             }
 
+                            if ($elementResultColor == "false")
+                            {
+                                $elementColorValue = 0;
+                            }
+
+                            if($elementResultColor=='Green')
+                            {
+                                $elementColorValue = $scorecardElementWeight;
+                            }
+                            else if($elementResultColor == 'Yellow')
+                            {
+                                $elementColorValue = $scorecardElementWeight/2;
+                            }
+                            else if($elementResultColor == 'Red')
+                            {
+                                $elementColorValue = 0;
+                            }
+
+                            array_push($scorecardElementRules,$rankingElementRulesArray);
+                            array_push($scorecardElementValueArray,$rankingElementResult[0]['elementdata']);
+                            $elementValueWithWeight = $elementColorValue ;
+                            $kpiSumValue+=$elementValueWithWeight;
+                            $rankingElementValueTotal+=$elementColorValue;
+                            array_push($Elment_Value,$rankingElementResult[0]['elementdata']);
+                            array_push($NewElementColor,$elementResultColor);
 
                         }
                         array_push($monthlyKpiAverageValueTotal,($kpiSumValue*$rankingKpiWeight)/100);
@@ -2895,8 +3003,8 @@ class DashboradController extends Controller
                 }
                 else if(array_sum($rankingKpiValueCountArray)==0)
                 {
-                    array_push($monthlyKpiAverageScore, null);
-                    //array_push($dataforgraphforship,0);
+                    array_push($monthlyKpiAverageScore, 0);
+                    array_push($dataforgraphforship,0);
                 }
                 //array_push($monthlykpicolorarray,$KpiColorArray);
                 array_push($NewMonthlyKPIValue,$Newkpivalue);
@@ -2915,7 +3023,7 @@ class DashboradController extends Controller
                 $New_Month_Avg_Total=array();
                 $New_Month_Element_Value=array();
                 $New_Month_Element_Color=array();
-                for($New_FindKpivalueCount=0;$New_FindKpivalueCount<count($dataforgraphforship);$New_FindKpivalueCount++)
+                for($New_FindKpivalueCount=0;$New_FindKpivalueCount<$statusVerified;$New_FindKpivalueCount++)
                 {
                     $New_Month_Avg_Total[$New_FindKpivalueCount]=$NewMonthlyAvgTotal[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Value[$New_FindKpivalueCount]=$NewMonthlyKPIValue[$New_FindKpivalueCount][$rankingKpiId];
@@ -2953,7 +3061,7 @@ class DashboradController extends Controller
                     'kpiweightage' => $rankingKpiWeightarray,
                     'montharray' => $newcategories,
                     'shipname' => $shipname,
-                    'countmonth' => count($dataforgraphforship),
+                    'countmonth' => count($newcategories),
                     'avgscore' => $monthlyKpiAverageScore,
                     'shipid'=>$shipid->getId(),
                     'chartdata'=>$dataforgraphforship,
