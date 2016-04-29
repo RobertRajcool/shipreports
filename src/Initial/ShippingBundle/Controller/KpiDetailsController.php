@@ -402,7 +402,8 @@ class KpiDetailsController extends Controller
      */
     public function ajax_editAction(Request $request)
     {
-        $id = $request->request->get('Id');
+        echo "Hi";
+        /*$id = $request->request->get('Id');
         $kpiName = $request->request->get('kpiName');
         $weightage = $request->request->get('weightage');
         $description = $request->request->get('description');
@@ -456,8 +457,20 @@ class KpiDetailsController extends Controller
 
         $show_response = $this->kpi_ajax_showAction($request,'hi');
 
-        return $show_response;
+        return $show_response;*/
 
+    }
+
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/ajaxKpiEdit", name="kpidetails_ajaxKpiEdit")
+     */
+    public function ajaxKpiEditAction()
+    {
+        echo "Hi";
     }
 
 
