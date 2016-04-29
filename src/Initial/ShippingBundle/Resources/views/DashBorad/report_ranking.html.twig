@@ -258,7 +258,7 @@
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
+                            window.location.href = 'http://shipreports/login';
 
                         }
                     });
@@ -337,11 +337,155 @@
                         ,
                         error: function()
                         {
-                            alert('Error While Generating Image as pdf');
+                            window.location.href = 'http://shipreports/login';
 
                         }
                     });
 
+                });
+                $('#toemail').keyup(function()
+                {
+
+                    var searchstring=$(this).val();
+                    var data = {searchstring :searchstring} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('autocompleteformailing'),
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            if($.isArray(data.returnresult))
+                            {
+                                $.each(data.returnresult, function(i, listelemnt)
+                                {
+                                    $('#hiddenresult').val(data.returnresult);
+                                    $('#commentandreportdiv').show();
+                                    $('#livesearchdiv').show();
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
+
+                                });
+
+                            }
+
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            window.location.href = 'http://shipreports/login';
+
+                        }
+                    });
+
+                });
+                $('#sendmailid').click(function($e)
+                {
+                    $e.preventDefault();
+                    var shipid=$('#sendreportshipid').val();
+                    var year=$('#yearid').val();
+                    var clientemail=$('#toemail').val();
+                    var comment=$('#mycommentid').val();
+                    var data = {shipid :shipid,year:year,clientemail:clientemail,comment:comment} ;
+                    $('#close_button').click();
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('send_rankingreports_mail'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');/*
+                            $('#formcontentid').hide();
+                            $('#resultofreport').show();
+                            $('#listalltable').show();*/
+                            $('#myModal').modal('hide')
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+                            jAlert('', data.updatemsg);
+                        }
+                        ,
+                        error: function()
+                        {
+                            window.location.href = 'http://shipreports/login';
+
+                        }
+                    });
+
+                });
+
+
+                $(".dynamiclabel").live("click",function(e)
+                {
+                    var b=$(this).text();
+                    $('#toemail').val(b);
+                    $('#livesearchdiv').hide();
+                });
+                $('#livesearchdiv').hide()
+                $('#mycommentid').click(function()
+                {
+                    $('#livesearchdiv').hide();
+                });
+                $('#mycommentid').focus(function()
+                {
+                    $('#livesearchdiv').hide();
                 });
 
             });
@@ -422,14 +566,11 @@
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
-                    <button type="submit" class="actions_report_btn" id="sendreportid" >Send Report</button>
+                    <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
                 </form>
-
-
-
-
-                <button  class="actions_report_btn" id="printreportid" >Print</button>
+                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
                 <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
+
             </div>
             <div id="listalltable" class="table-responsive rankingreport">
 
@@ -477,6 +618,47 @@
                 </div>
                 </div>
 
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog model_content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">{{ 'elementranking.sendreport'|trans }}</h4>
+                    </div>
+                    <div class="modal-body">
+
+                                    <form id="chatform" class="form-horizontal no-style" method="post">
+
+                                        <div class="form-group">
+                                            <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
+                                            <div class="col-xs-9">
+
+                                                <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
+                                                <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                                    <ul id="livesearch">
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
+                                            <div class="col-xs-9">
+                                                {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
+                                                <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
+                    </div>
+
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
         </div>
     </section>
 

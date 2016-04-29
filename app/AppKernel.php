@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Ob\HighchartsBundle\ObHighchartsBundle(),
+            new Mmoreram\GearmanBundle\GearmanBundle(),
             new TFox\MpdfPortBundle\TFoxMpdfPortBundle(),
             new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
             new m4t1t0\FopPdfBundle\FopPdfBundle(),
@@ -34,6 +35,7 @@ class AppKernel extends Kernel
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+
         }
 
         return $bundles;

@@ -2019,6 +2019,22 @@ input[type="color"],
 .add_kpi_views_screen.report_top {
     top: 36px;
 }
+.modal-dialog.model_content
+{
+    width: auto !important;
+}
+.modal-footer .actions_report_btn {
+    background: #103a71;
+    border-radius: 3px;
+    border: 1px solid #062d60;
+    padding: 5px 10px;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 12px;
+    float: right;
+    line-height: normal;
+    margin-right: 10px;
+}
 
 /*
 .conditional {
