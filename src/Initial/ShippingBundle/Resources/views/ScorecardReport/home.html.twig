@@ -55,7 +55,7 @@
                         url: "reportGenerate",
                         success: function(data)
                         {
-                            alert('success');
+                            //alert('success');
                             $('.reportGenerate').hide();
                             $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
                             $.each(data.monthName, function(i){
@@ -269,7 +269,6 @@
                                 $(' <tr id="emptyRow'+i+'"> <td colspan="'+spanCount+'">&nbsp;</td> </tr> ').appendTo('#elementTableBody'+i);
                                 $(' <tr id="kpiRowPlace'+i+'"><td class="kpi_name kpi_name_thtd"> '+data.kpiNameList[i]['kpiName']+' </td> <td class="weightage">100</td></tr> ').appendTo('#elementTableBody'+i);
                                 $.each(data.monthName, function(monthCount){
-                                    //$('<td>&nbsp;</td>').appendTo('#emptyRow'+i);
                                     var kpiColor = '';
                                     kpiColor = data.yearKpiColorArray[monthCount][i];
                                     if(kpiColor != 'false' && kpiColor != '')
@@ -292,7 +291,6 @@
                                     }
                                     if(monthCount<data.monthName.length-1)
                                     {
-                                        //$('<td>&nbsp;</td>').appendTo('#emptyRow'+i);
                                         var status = data.yearKpiColorArray[monthCount+1][i];
 
                                         if(kpiColor=='Green' && status=='Green' )
@@ -347,7 +345,34 @@
                             alert('Error : ' + errorThrown);
                         }
                     })
+                });
+
+                $('.send_report').live("click",function(){
+                    var aM = $('.activeMonth').val();
+                    var aY = $('.activeYear').val();
+                    var eM = $('.endMonth').val();
+                    var eY = $('.endYear').val();
+                    var data = {
+                        activeMonth : aM,
+                        activeYear : aY,
+                        endMonth : eM,
+                        endYear : eY
+                    };
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "ajaxPdfReport",
+                        success: function(data)
+                        {
+                            alert(data.reportMessage);
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    })
                 })
+
             });
         </script>
 
@@ -461,14 +486,14 @@
     </section>
 
     <section class="reportElementShowSection">
-        <form action="{{ path('scorecard_report_pdfReport') }}" method="post">
+        <form {#action="{{ path('scorecard_report_pdfReport') }}" method="post"#}>
             <input type="hidden" class="activeMonthText" name="activeMonth" value="">
             <input type="hidden" class="activeYearText" name="activeYear" value="">
             <input type="hidden" class="endMonthText" name="endMonth" value="">
             <input type="hidden" class="endYearText" name="endYear" value="">
             <div class="reportElementShow"></div>
             <div class="actions_submit">
-                <input type="submit" class="submit_btn" value="Send Report" />
+                <input type="submit" class="submit_btn send_report" value="Send Report" />
             </div>
         </form>
     </section>

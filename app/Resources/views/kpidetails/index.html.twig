@@ -92,8 +92,6 @@
                     $('.show_kpi').show();
                 });
 
-                // Kpi view coding
-
                 $('.rule_div').hide();
                 var condition_text = "";
                 var count = 0;
@@ -150,15 +148,11 @@
                             $('.kpi_endDate_month').append(monthNames[end_date.getMonth()]);
                             $('.kpi_endDate_year').append(end_date.getFullYear());
 
-                            //Setting Edit kpi values
-
                             $('.edit_kpi_name').val(data.kpi_detail[0].kpiName);
                             $('.edit_kpi_description').val(data.kpi_detail[0].description);
                             $('.edit_kpi_weightage').val(data.kpi_detail[0].weightage);
                             $('.edit_kpi_cellName').val(data.kpi_detail[0].cellName);
                             $('.edit_kpi_cellDetails').val(data.kpi_detail[0].cellDetails);
-                            /*$('.monthPicker_activeDate').val(data.kpi_detail[0].activeDate.date);
-                            $('.monthPicker_endDate').val(data.kpi_detail[0].endDate.date);*/
                             $('.kpi_edit_id').val(data.kpi_detail[0].id);
                             $('.active_month').val(active_date.getMonth());
                             $('.active_year').val(active_date.getFullYear());
@@ -167,19 +161,16 @@
 
                             var shipIdArray = [];
                             $.each(data.ship_name, function(ii){
-                                shipIdArray.push(data.ship_name[ii][0]['id']);//add ship id here
+                                shipIdArray.push(data.ship_name[ii][0]['id']);
                             });
 
                             $.each(data.ship_array,function(index)
                             {
                                 if(shipIdArray.indexOf(data.ship_array[index]['id']) != -1){
-                                    //selected
                                     var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', 'selected').appendTo('.ship_name_edit');
                                 }else{
-                                    //not selected
                                     var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
                                 }
-                                /*var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', 'selected').appendTo('.ship_name_edit');*/
                             });
 
                             $.each(data.ship_name, function(ii)
@@ -323,7 +314,6 @@
             <div class="col-sm-3 users_views">
                 <div class="add_user_btn_main">
                     <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add KPI</a></span>
-                    {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
@@ -337,7 +327,6 @@
                         <div class="users_list_grid">
                                 <span class="users_name_row">
                                     <span class="name"><a href="" class="kpi_class" id={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</a> </span>
-                                    {#<span class="text">{{ kpiDetail.description }}</span>#}
                                     <span class="text">
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
                                             Jan-{{ kpiDetail.activeDate|date('Y') }}
@@ -399,29 +388,18 @@
         </section>
     </div>
 
-    {#<section id="nogroupselected">
-        <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
-            <div class="text_image">
-                <img src="/images/no-user.png">
-                <label>No KPI Selected</label>
-            </div>
-        </div>
-    </section>#}
-
     <div id="list_view">
         <section>
             <div class="users_advanced_list_views_screen">
                 <div class="">
                     <div class="add_user_btn_main">
                         <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add KPI</a></span>
-                        {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
                          </span>
                     </div>
                     <div class="spacing"></div>
-
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
@@ -929,7 +907,6 @@
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
                             var active_date = new Date(data.kpi_detail[0].activeDate.date);
-
                             var end_date = new Date(data.kpi_detail[0].endDate.date);
 
                             $('.kpi_name').append(data.kpi_detail[0].kpiName);
@@ -942,8 +919,6 @@
                             $('.kpi_endDate_month').append(monthNames[end_date.getMonth()]);
                             $('.kpi_endDate_year').append(end_date.getFullYear());
 
-                            //Setting Edit kpi values
-
                             $('.edit_kpi_name').val(data.kpi_detail[0].kpiName);
                             $('.edit_kpi_description').val(data.kpi_detail[0].description);
                             $('.edit_kpi_weightage').val(data.kpi_detail[0].weightage);
@@ -953,13 +928,11 @@
                             $('.monthPicker_endDate').val(data.kpi_detail[0].endDate.date);
                             $('.kpi_edit_id').val(data.kpi_detail[0].id);
 
-
                             $.each(data.ship_name, function(ii)
                             {
                                 $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
                                 $('.kpi_name_edit').append('<input>').attr({'type':'checkbox','name':'ships[]'}).val(data.ship_name[i][0]['shipName']).text(data.ship_name[i][0]['shipName']);
                             });
-
 
                             $('.show_kpi').show();
 

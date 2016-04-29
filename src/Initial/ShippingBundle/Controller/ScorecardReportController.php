@@ -442,6 +442,136 @@ class ScorecardReportController extends Controller
         return $response;*/
     }
 
+    /**
+     * ScorecardReport pdfReport.
+     *
+     * @Route("/ajaxPdfReport", name="scorecard_report_pdfReport")
+     */
+    public function ajaxPdfReportAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $todayTime = date("H:i:s");
+        $todayDate = date("Y-m-d");
+
+        $returnObject = $this->reportGenerateAction( $request,1);
+
+        $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
+        $pdfObject->defaultheaderline = 0;
+        $pdfObject->defaultheaderfontstyle = 'B';
+        $waterMarkImage= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo.png';
+        $pdfObject ->SetWatermarkImage($waterMarkImage);
+        $pdfObject ->showWatermarkImage = true;
+
+        $graphObject = array(
+            'chart'=>array('renderTo'=>'areaId','type'=>"line"),
+            'exporting'=>array('enabled'=>false),
+            'plotOptions'=>array('series'=>array(
+                "allowPointSelect"=>true,
+                "dataLabels"=>array(
+                    "enabled"=>true
+                )
+            )),
+            'series'=>array(
+                array('name'=>'Series','showInLegend'=>false,'color'=>'#103a71','data'=>$returnObject['changeChartData'])
+            ),
+            'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
+            'title'=>array('text'=>'Graph Title'),
+            'xAxis'=>array('categories'=>$returnObject['monthName'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
+            'yAxis'=>array('max'=>3,'min'=>0)
+        );
+        $jsonFileData=json_encode($graphObject);
+        $jsonFilePath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/scorecard/graphJsonFile/graphData'.$todayDate.$todayTime.'.json';
+        file_put_contents($jsonFilePath, $jsonFileData);
+        $HighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
+        $inFile = $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/scorecard/graphJsonFile/graphData'.$todayDate.$todayTime.'.json ';
+        $outFile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/graphImage'.$todayDate.$todayTime.'.png ';
+        $imageGeneration = 'phantomjs '.$HighChartLocation.'-infile '.$inFile.'-outfile '.$outFile.' -scale 2.5 -width 1024';
+        $fileHandle = popen($imageGeneration, 'r');
+        $result = fread($fileHandle, 2096);
+
+        $customerListDesign= $this->renderView('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
+            array(
+                'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
+                'kpiAvgScore' => $returnObject['kpiAvgScore'],
+                'monthName' => $returnObject['monthName'],
+                'kpiNameList' => $returnObject['kpiNameList'],
+                'imageSource' => 'graphImage'.$todayDate.$todayTime.'.png',
+                'headerTitle' => 'Pioneer Scorecard Report'
+            ));
+
+        $pdfObject->AddPage('', 4, '', 'on');
+        $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        $pdfObject->WriteHTML($customerListDesign);
+
+
+        for($kpiCount=0;$kpiCount<count($returnObject['kpiNameList']);$kpiCount++)
+        {
+            $kpiDataArray = array();
+            $elementColorArray = array();
+            $elementNameList = array();
+            $kpiColorArray = array();
+            array_push($elementNameList,$returnObject['elementNameList'][$kpiCount]);
+            for($monthCount=0;$monthCount<count($returnObject['monthName']);$monthCount++)
+            {
+                array_push($kpiDataArray,$returnObject['elementLevelChartData'][$monthCount][$kpiCount]);
+                array_push($elementColorArray,$returnObject['elementColorArray'][$monthCount][$kpiCount]);
+                array_push($kpiColorArray,$returnObject['yearKpiColorArray'][$monthCount][$kpiCount]);
+            }
+            $kpiGraphObject = array(
+                'chart'=>array('renderTo'=>'areaId','type'=>"line"),
+                'exporting'=>array('enabled'=>false),
+                'plotOptions'=>array('series'=>array(
+                    "allowPointSelect"=>true,
+                    "dataLabels"=>array(
+                        "enabled"=>true
+                    )
+                )),
+                'series'=>array(
+                    array('name'=>'Series','showInLegend'=>false,'color'=>'#103a71','data'=>$kpiDataArray)
+                ),
+                'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
+                'title'=>array('text'=>$returnObject['kpiNameList'][$kpiCount]['kpiName']),
+                'xAxis'=>array('categories'=>$returnObject['monthName'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
+                'yAxis'=>array('max'=>3,'min'=>0)
+            );
+
+            $kpiJsonFileData=json_encode($kpiGraphObject);
+            $kpiJsonFilePath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/scorecard/graphJsonFile/KPI-'.$returnObject['kpiNameList'][$kpiCount]['id'].$todayDate.$todayTime.'.json';
+            file_put_contents($kpiJsonFilePath, $kpiJsonFileData);
+            $kpiHighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
+            $kpiInFile = $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/scorecard/graphJsonFile/KPI-'.$returnObject['kpiNameList'][$kpiCount]['id'].$todayDate.$todayTime.'.json ';
+            $kpiOutFile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/KPI-'.$returnObject['kpiNameList'][$kpiCount]['id'].$todayDate.$todayTime.'.png ';
+            $kpiImageGeneration = 'phantomjs '.$kpiHighChartLocation.'-infile '.$kpiInFile.'-outfile '.$kpiOutFile.' -scale 2.5 -width 1024';
+            $kpiFileHandle = popen($kpiImageGeneration, 'r');
+            $kpiResult = fread($kpiFileHandle, 2096);
+
+            $customerListDesign= $this->renderView('InitialShippingBundle:ScorecardReport:kpiLevelPdfTemplate.html.twig',
+                array(
+                    'yearKpiColorArray' => $kpiColorArray,
+                    'monthName' => $returnObject['monthName'],
+                    'kpiNameList' => $returnObject['kpiNameList'][$kpiCount]['kpiName'],
+                    'imageSource' => 'KPI-'.$returnObject['kpiNameList'][$kpiCount]['id'].$todayDate.$todayTime.'.png',
+                    'headerTitle' => $returnObject['kpiNameList'][$kpiCount]['kpiName'],
+                    'elementNameList' => $elementNameList,
+                    'elementColorArray' =>$elementColorArray
+                ));
+
+            $pdfObject->AddPage('', 4, '', 'on');
+            $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $pdfObject->WriteHTML($customerListDesign);
+        }
+
+        $content = $pdfObject->Output('', 'S');
+        $fileName = 'pdfReport' . date('Y-m-d H-i-s') . '.pdf';
+        $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/scorecard/' .$fileName;
+        file_put_contents($pdfFilePath, $content);
+        /*$userMailId = $request->request->get('clientemail');
+        $commentBox = $request->request->get('comment');*/
+        $response = new JsonResponse();
+        $response->setData(array('reportMessage' => "Report Has Been Send"));
+        return $response;
+    }
+
 }
 
 
