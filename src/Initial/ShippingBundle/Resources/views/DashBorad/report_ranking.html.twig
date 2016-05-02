@@ -462,7 +462,7 @@
                     });
 
                 });
-                $('#sendreportid').click(function($e)
+       /*         $('#sendreportid').click(function($e)
                 {
                     $e.preventDefault();
                     var shipid=$('#sendreportshipid').val();
@@ -534,7 +534,8 @@
                         data: data,
                         success: function (data)
                         {
-                            var myResponse = eval(data.pdffile);
+                            var myResponse = eval(data.returnvalue);
+                            alert(myResponse);
                             $("<iframe />") // create an iframe
                             // add the source
                                     .attr('src', 'data:application/pdf;base64,' + myResponse.base64EncodedResponse)
@@ -549,7 +550,7 @@
                         }
                     });
 
-                });
+                });*/
 
 
                 $(".dynamiclabel").live("click",function(e)
@@ -653,11 +654,12 @@
     <section >
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
-                <form id="" class="form-horizontal no-style" action="{#{{ path('send_rankingreports') }}#}"  method="post">
+                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
                     <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
                 </form>
+               {# <a href="{{ path('dashboardhome', { 'year':currentyear,'shipid':}) }}" class="actions_report_btn">Print</a>#}
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
                 <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
 

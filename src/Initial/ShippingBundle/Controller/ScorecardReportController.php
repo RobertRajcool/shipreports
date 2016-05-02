@@ -445,11 +445,13 @@ class ScorecardReportController extends Controller
     /**
      * ScorecardReport pdfReport.
      *
-     * @Route("/ajaxPdfReport", name="scorecard_report_pdfReport")
+     * @Route("/ajaxPdfReport", name="scorecard_report_pdfReport_mail")
      */
     public function ajaxPdfReportAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $email = $user->getEmail();
         $todayTime = date("H:i:s");
         $todayDate = date("Y-m-d");
 
@@ -475,7 +477,7 @@ class ScorecardReportController extends Controller
                 array('name'=>'Series','showInLegend'=>false,'color'=>'#103a71','data'=>$returnObject['changeChartData'])
             ),
             'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
-            'title'=>array('text'=>'Graph Title'),
+            'title'=>array('text'=>''),
             'xAxis'=>array('categories'=>$returnObject['monthName'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
             'yAxis'=>array('max'=>3,'min'=>0)
         );
@@ -563,12 +565,51 @@ class ScorecardReportController extends Controller
 
         $content = $pdfObject->Output('', 'S');
         $fileName = 'pdfReport' . date('Y-m-d H-i-s') . '.pdf';
-        $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/scorecard/' .$fileName;
+        if (!is_dir($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/'))
+        {
+            mkdir($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/');
+        }
+        $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' .$fileName;
         file_put_contents($pdfFilePath, $content);
-        /*$userMailId = $request->request->get('clientemail');
-        $commentBox = $request->request->get('comment');*/
+        $userMailId = $request->request->get('clientemail');
+        $commentBox = $request->request->get('comment');     $mailidarray = array();
+        if (filter_var($userMailId, FILTER_VALIDATE_EMAIL))
+        {
+            array_push($mailidarray, $userMailId);
+        }
+        else
+        {
+            $findsemail = $em->createQueryBuilder()
+                ->select('a.useremailid')
+                ->from('InitialShippingBundle:EmailUsers', 'a')
+                ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                ->where('b.groupname = :sq')
+                ->ORwhere('a.useremailid = :sb')
+                ->setParameter('sq', $userMailId)
+                ->setParameter('sb', $userMailId)
+                ->getQuery()
+                ->getResult();
+
+
+            //assign file attachement for mail and Mailing Starts Here...u
+            for ($ma = 0; $ma < count($findsemail); $ma++) {
+                /* $mailer = $this->container->get('mailer');
+                 $message = \Swift_Message::newInstance()
+                     ->setFrom($clientemailid)
+                     ->setTo($findsemail[$ma]['emailid'])
+                     ->setSubject($kpiname)
+                     ->setBody($comment);
+                 $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                 $mailer->send($message);*/
+                array_push($mailidarray, $findsemail[$ma]['emailid']);
+            }
+        }
+        //Mailing Ends....
+        $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $commentBox, 'subject' => 'Score Card Report');
+        $gearman = $this->get('gearman');
+        $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
         $response = new JsonResponse();
-        $response->setData(array('reportMessage' => "Report Has Been Send"));
+        $response->setData(array('updatemsg' => "Report Has Been Send"));
         return $response;
     }
 

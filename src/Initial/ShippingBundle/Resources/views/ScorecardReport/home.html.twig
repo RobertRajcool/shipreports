@@ -48,11 +48,67 @@
                     $('.activeYearText').val(aY);
                     $('.endMonthText').val(eM);
                     $('.endYearText').val(eY);
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('scorecard_report_report'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                        }
+                    });
 
                     $.ajax({
-                        type: "POST",
                         data: data,
-                        url: "reportGenerate",
                         success: function(data)
                         {
                             //alert('success');
@@ -346,8 +402,7 @@
                         }
                     })
                 });
-
-                $('.send_report').live("click",function(){
+  /*              $('.send_report').live("click",function(){
                     var aM = $('.activeMonth').val();
                     var aY = $('.activeYear').val();
                     var eM = $('.endMonth').val();
@@ -361,7 +416,7 @@
                     $.ajax({
                         type: "POST",
                         data: data,
-                        url: "ajaxPdfReport",
+                        url: "scorecard_report_pdfReport_mail",
                         success: function(data)
                         {
                             alert(data.reportMessage);
@@ -371,7 +426,155 @@
                             alert('Error : ' + errorThrown);
                         }
                     })
-                })
+                });*/
+                $('#sendmailid').click(function($e){
+                    $e.preventDefault();
+                    var aM = $('.activeMonth').val();
+                    var aY = $('.activeYear').val();
+                    var eM = $('.endMonth').val();
+                    var eY = $('.endYear').val();
+                    var clientemail=$('#toemail').val();
+                    var comment=$('#mycommentid').val();
+                    var data = {
+                        activeMonth : aM,
+                        activeYear : aY,
+                        endMonth : eM,
+                        endYear : eY,
+                        clientemail:clientemail,
+                        comment:comment
+                    };
+                    $('#close_button').click();
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('scorecard_report_pdfReport_mail'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                            $('#toemail').val('');
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+                            jAlert('', data.updatemsg);
+                        }
+                        ,
+                        error: function()
+                        {
+                            window.location.href = 'http://shipreports/login';
+
+                        }
+                    });
+
+                });
+                $(".dynamiclabel").live("click",function(e)
+                {
+                    var b=$(this).text();
+                    $('#toemail').val(b);
+                    $('#livesearchdiv').hide();
+                });
+                $('#livesearchdiv').hide()
+                $('#mycommentid').click(function()
+                {
+                    $('#livesearchdiv').hide();
+                });
+                $('#mycommentid').focus(function()
+                {
+                    $('#livesearchdiv').hide();
+                });
+                $('#toemail').keyup(function()
+                {
+
+                    var searchstring=$(this).val();
+                    var data = {searchstring :searchstring} ;
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('autocompleteformailing'),
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+
+                            if($.isArray(data.returnresult))
+                            {
+                                $.each(data.returnresult, function(i, listelemnt)
+                                {
+                                    $('#hiddenresult').val(data.returnresult);
+                                    $('#commentandreportdiv').show();
+                                    $('#livesearchdiv').show();
+                                    $("#livesearch").show();
+                                    $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
+
+                                });
+
+                            }
+
+
+
+                        }
+                        ,
+                        error: function()
+                        {
+                            window.location.href = 'http://shipreports/login';
+
+                        }
+                    });
+
+                });
+
 
             });
         </script>
@@ -454,6 +657,7 @@
     <section class="reportShow">
         <div class="col-sm-12">
             <div class="dashboard">
+                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
                 <div>
                     <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row" id="top">
                         <thead>
@@ -486,7 +690,7 @@
     </section>
 
     <section class="reportElementShowSection">
-        <form {#action="{{ path('scorecard_report_pdfReport') }}" method="post"#}>
+        <form action="{{ path('scorecard_report_pdfReport') }}" target="_blank" method="post">
             <input type="hidden" class="activeMonthText" name="activeMonth" value="">
             <input type="hidden" class="activeYearText" name="activeYear" value="">
             <input type="hidden" class="endMonthText" name="endMonth" value="">
@@ -495,6 +699,51 @@
             <div class="actions_submit">
                 <input type="submit" class="submit_btn send_report" value="Send Report" />
             </div>
+
         </form>
+
+
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog model_content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">{{ 'elementranking.sendreport'|trans }}</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form id="chatform" class="form-horizontal no-style" method="post">
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
+                                <div class="col-xs-9">
+
+                                    <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
+                                    <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                        <ul id="livesearch">
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
+                                <div class="col-xs-9">
+                                    {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
+                                    <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
+                    </div>
+
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div>
     </section>
 {% endblock %}
