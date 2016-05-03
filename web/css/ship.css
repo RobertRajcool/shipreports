@@ -16,7 +16,6 @@ video {
     height: auto;
     z-index: -100;
     transform: translateX(-50%) translateY(-50%);
-    background: url('//demosthenes.info/assets/images/polina.jpg') no-repeat;
     background-size: cover;
     transition: 1s opacity;
 }
@@ -477,8 +476,13 @@ select {
     border-radius: 0;
     padding: 0 0 10px 0;
     bottom:0px;
-    position:fixed;
-    width:12.6%;
+    width:100%;
+}
+.x-btn-my-account-small_inner_2 {
+    bottom: 0;
+    padding: 0 18px 8px 0;
+    position: absolute;
+    width: 100%;
 }
 .user_setting_main {
     float:left;
@@ -544,37 +548,37 @@ select {
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
     border: 1px solid #dad7cf;
     position:fixed;
-    bottom:60px;
-    padding: 15px;
+    bottom:45px;
+    padding: 8px;
 }
 .my-account-box .my-account-box-inner {
     display:block;
 }
 .my-account-box .my-account-box-inner .settings {
-    font-size:24px;
+    font-size:18px;
     float:left;
     display:block;
     clear:both;
     padding:0px;
 }
 .my-account-box .my-account-box-inner .logout {
-    font-size:24px;
+    font-size:18px;
     float:left;
     display:block;
     clear:both;
     padding:0px;
-    margin:20px 0 0 0;
+    margin:15px 0 0 0;
 }
 .my-account-box .my-account-box-inner .settings a {
     color:#333333;
-    font-size:13px;
-    margin:-25px 0 0 30px;
+    font-size:12px;
+    margin:-22px 0 0 24px;
     display:block;
 }
 .my-account-box .my-account-box-inner .logout a {
     color:#333333;
-    font-size:13px;
-    margin:-25px 0 0 30px;
+    font-size:12px;
+    margin:-22px 0 0 24px;
     display:block;
 }
 .my-account-box .my-account-box-inner .settings a:hover {
@@ -589,8 +593,8 @@ select {
     color:#FFFFFF;
     width:20px;
     height:40px;
-    position:absolute;
-    margin:63px 0 0 -7px;
+    position:inherit;
+    margin:56px 0 0 -2px;
 }
 
 /* Users screen */
