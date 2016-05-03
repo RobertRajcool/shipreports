@@ -259,7 +259,7 @@ class DashboradController extends Controller
             $statusVerified = $currentMonth-1;
             $monthlyShipDataStatus = $em->createQueryBuilder()
                 ->select('b.status')
-                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
                 ->where('b.dataofmonth = :monthDetail')
                 ->setParameter('monthDetail', $currentMonthObject)
                 ->getQuery()
@@ -272,14 +272,14 @@ class DashboradController extends Controller
             else
             {
                 $statusFieldQuery = $em->createQueryBuilder()
-                    ->select('b.dataofmonth')
-                    ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                    ->select('b.dataofmonth,b.status')
+                    ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
                     ->where('b.status = :monthStatus')
                     ->setParameter('monthStatus', 4)
                     ->groupby('b.dataofmonth')
                     ->getQuery()
                     ->getResult();
-                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery)-1]['status']==4)
                 {
                     $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
                     $statusVerified  = $dateFromDb->format('n');
@@ -2651,6 +2651,8 @@ class DashboradController extends Controller
             $dataforgraphforship=array();
             $NewMonthlyKPIValue=array();
             $NewMonthlyAvgTotal=array();
+            $scorecardElementRules = array();
+            $rankingKpiWeightarray = array();
             $NewMonthColor=array();
             for ($d = $initial; $d < $statusVerified; $d++)
             {
@@ -2659,10 +2661,8 @@ class DashboradController extends Controller
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
                 $new_monthdetail_date->modify('last day of this month');
-                $scorecardElementRules = array();
                 $scorecardElementValueArray = array();
                 $rankingKpiValueCountArray = array();
-                $rankingKpiWeightarray = array();
                 $Newkpivalue=array();
                 $NewKpiAvg=array();
                 $NewKpiColor=array();
