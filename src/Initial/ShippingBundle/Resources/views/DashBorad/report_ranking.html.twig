@@ -14,6 +14,7 @@
             $(document).ready(function()
             {
                 $('#resultofreport').hide();
+                $('#emptyresultofreport').hide();
                 $('#reportform').submit(function()
                 {
                     var form=$('#reportform');
@@ -73,9 +74,7 @@
                             $('#resultLoading .bg').height('100%');
                             $('#resultLoading').fadeOut(300);
                             $('body').css('cursor', 'default');
-                            $('#formcontentid').hide();
-                            $('#resultofreport').show();
-                            $('#listalltable').show();
+
                         }
                     });
 
@@ -86,169 +85,165 @@
                             $('#kpigraphlist').html(' ');
                             $('#kpigraphlist').text(' ');
                             $('#kpigraphlist').val(' ');
-
-                            $('#area').highcharts().series[0].setData(data.chartdata);
-                            console.log(data.chartdata);
-                            $('#area').highcharts().xAxis[0].setCategories(data.montharray);
-                           // console.log(data.chartmonth);
-                            $('#graphtitle').text(data.shipname);
-                            $('#sendreportshipid').val(data.shipid);
-                           $('#shipnameid').text(data.shipname);
-                            $('#currentyearid').text(data.currentyear);
-                            $('#yearid').val(data.currentyear);
-                            $('#ageofvesselid').text(data.ageofvessel);
-                            $('<table class="table table-striped-2 kpi_ranking_row secondtable"><thead ><tr id="headertable"><th>KPI</th><th class="tableheader">Weightage</th></tr></thead><tbody id="tablebodyid"></tbody></table>').appendTo('#tableofcontent');
-                            var shipdatamonthcount
-                            for(shipdatamonthcount = 0; shipdatamonthcount < data.countmonth ; shipdatamonthcount++)
+                            if(data.chartdata.length!=0)
                             {
-                                $('<th class="month">'+data.montharray[shipdatamonthcount]+'</th>').appendTo('#headertable');
+                                $('#area').highcharts().series[0].setData(data.chartdata);
+                                console.log(data.chartdata);
+                                $('#area').highcharts().xAxis[0].setCategories(data.montharray);
+                                // console.log(data.chartmonth);
+                                $('#graphtitle').text(data.shipname);
+                                $('#sendreportshipid').val(data.shipid);
+                                $('#shipnameid').text(data.shipname);
+                                $('#currentyearid').text(data.currentyear);
+                                $('#yearid').val(data.currentyear);
+                                $('#ageofvesselid').text(data.ageofvessel);
+                                $('<table class="table table-striped-2 kpi_ranking_row secondtable"><thead ><tr id="headertable"><th>KPI</th><th class="tableheader">Weightage</th></tr></thead><tbody id="tablebodyid"></tbody></table>').appendTo('#tableofcontent');
+                                var shipdatamonthcount
+                                for (shipdatamonthcount = 0; shipdatamonthcount < data.countmonth; shipdatamonthcount++) {
+                                    $('<th class="month">' + data.montharray[shipdatamonthcount] + '</th>').appendTo('#headertable');
 
 
-                            }
-
-
-
-                            $.each(data.listofkpi,function(i)
-                                    {
-                                        $('<div id="score_color_'+data.listofkpi[i]['id']+'"></div> <table id="table_'+data.listofkpi[i]['id']+'" class="table table-striped normal_table"><thead><tr ><th>'+data.listofkpi[i]['kpiName']+'</th></tr></thead><tbody><tr><td id="'+data.listofkpi[i]['id']+'"></td></tr></tbody></table>').appendTo('#kpigraphlist')
-                                        $('<tr id="secondtabletr'+i+'"></tr>').appendTo('#tablebodyid');
-                                     $('<td id="'+i+'" class="kpi_name_thtd"><a href="#score_color_'+data.listofkpi[i]['id']+'"> '+data.listofkpi[i]['kpiName']+'</a></td><td>'+data.kpiweightage[i]+'</td>').appendTo('#secondtabletr'+i);
-                                        var k=0;
-                                        for(k = 0; k <data.countmonth ; k++)
-                                        {
-
-                                            if(data.kpimonthdata[k][i]!=null)
-                                            {
-                                                $('<td>'+data.kpimonthdata[k][i]+'</td>').appendTo('#secondtabletr'+i);
-                                            }
-                                            else
-                                            {
-                                                $('<td></td>').appendTo('#secondtabletr'+i);
-                                            }
-
-                                        }
-
-                                    });
-
-                            $('<tr class="newtempclass"><td class="kpi_name_thtd">Score</td><td>100</td></tr>').appendTo('#tablebodyid');
-                            var kk=0;
-                            for(kk = 0; kk <data.countmonth ; kk++)
-                            {  // console.log(data.avgscore[j]);
-                                if(data.avgscore[kk]!=null)
-                                {
-                                    $('<td>'+data.avgscore[kk]+'</td>').appendTo('.newtempclass');
-                                }
-                                else
-                                {
-                                    $('<td></td>').appendTo('.newtempclass');
                                 }
 
 
+                                $.each(data.listofkpi, function (i) {
+                                    $('<div id="score_color_' + data.listofkpi[i]['id'] + '"></div> <table id="table_' + data.listofkpi[i]['id'] + '" class="table table-striped normal_table"><thead><tr ><th>' + data.listofkpi[i]['kpiName'] + '</th></tr></thead><tbody><tr><td id="' + data.listofkpi[i]['id'] + '"></td></tr></tbody></table>').appendTo('#kpigraphlist')
+                                    $('<tr id="secondtabletr' + i + '"></tr>').appendTo('#tablebodyid');
+                                    $('<td id="' + i + '" class="kpi_name_thtd"><a href="#score_color_' + data.listofkpi[i]['id'] + '"> ' + data.listofkpi[i]['kpiName'] + '</a></td><td>' + data.kpiweightage[i] + '</td>').appendTo('#secondtabletr' + i);
+                                    var k = 0;
+                                    for (k = 0; k < data.countmonth; k++) {
 
-                            }
-                            var tempcount=0;
-                           /* <tr id="elementcolor'+key+'"></tr><tr id="elementavgscor'+key+'"></tr>*/
-                            var elementtrdynamic=0;
-
-                            $.each(data.kpigraph, function(key, listofelementvalues)
-                            {
-                                $('<table class="table table-striped graph_and_colour_coding_main_title_row"><thead><tr><th>'+data.listofkpi[tempcount]['kpiName']+'</th></tr></thead><tbody><tr><td></td></tr></tbody></table>').appendTo('#score_color_'+key);
-                                $('<table class="table table-striped-3 element_ranking_row"><thead><tr id="tableheader_'+key+'"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_'+key+'"></tbody></table>').appendTo('#score_color_'+key)
-                                var datamonthcount
-                                for(datamonthcount = 0; datamonthcount < data.countmonth ; datamonthcount++)
-                                {
-                                    $('<th class="month">'+data.montharray[datamonthcount]+'</th>').appendTo('#tableheader_'+key);
-
-                                }
-                                //console.log(data.monthlydata);
-
-                                $.each(data.listofelement[key],function(b)
-                                {
-                                    $('<tr id="elementid_'+elementtrdynamic+'"></tr>').appendTo('#scoretablebodyid_'+key);
-                                    $('<td  rowspan="2" class="element_name_title">'+data.listofelement[key][b]['elementName']+'</td>').appendTo('#elementid_'+elementtrdynamic);
-                                    $('<tr id="elementcolor_'+elementtrdynamic+'"></tr>').appendTo('#scoretablebodyid_'+key);
-
-                                    var monthcount=0
-                                    for(monthcount = 0; monthcount < data.countmonth ; monthcount++)
-                                    {
-                                        var ranking_value='';
-
-                                        if(data.monthlydata[key][monthcount].length!=0)
-                                        {
-
-                                            ranking_value = data.monthlydata[key][monthcount][b];
+                                        if (data.kpimonthdata[k][i] != null) {
+                                            $('<td>' + data.kpimonthdata[k][i] + '</td>').appendTo('#secondtabletr' + i);
                                         }
-                                        if (ranking_value != 'false' && ranking_value != '' && ranking_value != null && ranking_value != 'undefined')
-                                        {
-                                            $('<td>'+ranking_value+'</td>').appendTo('#elementid_'+elementtrdynamic);
-                                        }
-                                        else
-                                        {
-                                            $('<td></td>').appendTo('#elementid_'+elementtrdynamic);
+                                        else {
+                                            $('<td></td>').appendTo('#secondtabletr' + i);
                                         }
 
-                                       /* $('<td>green</td>').appendTo('#elementcolor_'+elementtrdynamic);*/
-                                        var ranking_color = '';
-                                        if(data.elementcolorarray[key][monthcount].length!=0)
-                                        {
-                                            ranking_color = data.elementcolorarray[key][monthcount][b];
-
-                                        }
-
-                                        if (ranking_color != 'false' && ranking_color != '')
-                                        {
-                                            if (ranking_color == 'Green') {
-                                                $('<td><img src="/images/box_green.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
-                                            }
-                                            else if (ranking_color == 'Red') {
-                                                $('<td><img src="/images/box_red.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
-                                            }
-                                            else if (ranking_color == 'Yellow') {
-                                                $('<td><img src="/images/box_yellow.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            $('<td></td>').appendTo('#elementcolor_' + elementtrdynamic);
-                                        }
                                     }
-                                    elementtrdynamic++;
+
                                 });
-                                $('<tr id="elementavgscore_'+elementtrdynamic+'"></tr>').appendTo('#scoretablebodyid_'+key);
-                                $('<td class="kpi_name_thtd"><strong>Score</strong></td>').appendTo('#elementavgscore_'+elementtrdynamic);
-                                var avgscore=0
-                                for(avgscore = 0; avgscore < data.countmonth ; avgscore++)
-                                {
-                                    $('<td>'+data.kpigraph[key][avgscore]+'</td>').appendTo('#elementavgscore_'+elementtrdynamic);
+
+                                $('<tr class="newtempclass"><td class="kpi_name_thtd">Score</td><td>100</td></tr>').appendTo('#tablebodyid');
+                                var kk = 0;
+                                for (kk = 0; kk < data.countmonth; kk++) {  // console.log(data.avgscore[j]);
+                                    if (data.avgscore[kk] != null) {
+                                        $('<td>' + data.avgscore[kk] + '</td>').appendTo('.newtempclass');
+                                    }
+                                    else {
+                                        $('<td></td>').appendTo('.newtempclass');
+                                    }
+
+
                                 }
+                                var tempcount = 0;
+                                /* <tr id="elementcolor'+key+'"></tr><tr id="elementavgscor'+key+'"></tr>*/
+                                var elementtrdynamic = 0;
+
+                                $.each(data.kpigraph, function (key, listofelementvalues) {
+                                    $('<table class="table table-striped graph_and_colour_coding_main_title_row"><thead><tr><th>' + data.listofkpi[tempcount]['kpiName'] + '</th></tr></thead><tbody><tr><td></td></tr></tbody></table>').appendTo('#score_color_' + key);
+                                    $('<table class="table table-striped-3 element_ranking_row"><thead><tr id="tableheader_' + key + '"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_' + key + '"></tbody></table>').appendTo('#score_color_' + key)
+                                    var datamonthcount
+                                    for (datamonthcount = 0; datamonthcount < data.countmonth; datamonthcount++) {
+                                        $('<th class="month">' + data.montharray[datamonthcount] + '</th>').appendTo('#tableheader_' + key);
+
+                                    }
+                                    //console.log(data.monthlydata);
+
+                                    $.each(data.listofelement[key], function (b) {
+                                        $('<tr id="elementid_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
+                                        $('<td  rowspan="2" class="element_name_title">' + data.listofelement[key][b]['elementName'] + '</td>').appendTo('#elementid_' + elementtrdynamic);
+                                        $('<tr id="elementcolor_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
+
+                                        var monthcount = 0
+                                        for (monthcount = 0; monthcount < data.countmonth; monthcount++) {
+                                            var ranking_value = '';
+
+                                            if (data.monthlydata[key][monthcount].length != 0) {
+
+                                                ranking_value = data.monthlydata[key][monthcount][b];
+                                            }
+                                            if (ranking_value != 'false' && ranking_value != '' && ranking_value != null && ranking_value != 'undefined') {
+                                                $('<td>' + ranking_value + '</td>').appendTo('#elementid_' + elementtrdynamic);
+                                            }
+                                            else {
+                                                $('<td></td>').appendTo('#elementid_' + elementtrdynamic);
+                                            }
+
+                                            /* $('<td>green</td>').appendTo('#elementcolor_'+elementtrdynamic);*/
+                                            var ranking_color = '';
+                                            if (data.elementcolorarray[key][monthcount].length != 0) {
+                                                ranking_color = data.elementcolorarray[key][monthcount][b];
+
+                                            }
+
+                                            if (ranking_color != 'false' && ranking_color != '') {
+                                                if (ranking_color == 'Green') {
+                                                    $('<td><img src="/images/box_green.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                }
+                                                else if (ranking_color == 'Red') {
+                                                    $('<td><img src="/images/box_red.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                }
+                                                else if (ranking_color == 'Yellow') {
+                                                    $('<td><img src="/images/box_yellow.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                }
+                                            }
+                                            else {
+                                                $('<td></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                            }
+                                        }
+                                        elementtrdynamic++;
+                                    });
+                                    $('<tr id="elementavgscore_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
+                                    $('<td class="kpi_name_thtd"><strong>Score</strong></td>').appendTo('#elementavgscore_' + elementtrdynamic);
+                                    var avgscore = 0
+                                    for (avgscore = 0; avgscore < data.countmonth; avgscore++) {
+                                        $('<td>' + data.kpigraph[key][avgscore] + '</td>').appendTo('#elementavgscore_' + elementtrdynamic);
+                                    }
 
 
-                                $('#'+key).highcharts({
-                                    chart: {
-                                        type: 'line',
-                                        width: 1065
-                                    },
-                                    title: {
-                                        text: ''
+                                    $('#' + key).highcharts({
+                                        chart: {
+                                            type: 'line',
+                                            width: 1065
+                                        },
+                                        title: {
+                                            text: ''
 
-                                    },
-                                    xAxis: {
-                                        categories: data.montharray
-                                    },
-                                    yAxis: {
-                                        max: data.listofkpi[tempcount]['weightage'],
-                                        min: 0
-                                    },
-                                    plotOptions: {"series":{"allowPointSelect":true,"dataLabels":{"enabled":true}}},
-                                    series: [{
-                                        name: data.listofkpi[tempcount]['kpiName'],
-                                        showInLegend:false,
-                                        data: listofelementvalues
-                                    }]
+                                        },
+                                        xAxis: {
+                                            categories: data.montharray
+                                        },
+                                        yAxis: {
+                                            max: data.listofkpi[tempcount]['weightage'],
+                                            min: 0
+                                        },
+                                        plotOptions: {
+                                            "series": {
+                                                "allowPointSelect": true,
+                                                "dataLabels": {"enabled": true}
+                                            }
+                                        },
+                                        series: [{
+                                            name: data.listofkpi[tempcount]['kpiName'],
+                                            showInLegend: false,
+                                            data: listofelementvalues
+                                        }]
+                                    });
+                                    tempcount++;
+
                                 });
-                                tempcount++;
+                                $('#formcontentid').hide();
+                                $('#resultofreport').show();
+                                $('#listalltable').show();
+                            }
+                            else
+                            {
+                                $('#formcontentid').hide();
+                                $('#emptyresultofreport').show();
+                                $('<span>No Record Found For '+data.currentyear+' </span>').appendTo('#emptyrecord');
+                            }
 
-                            });
 
 
 
@@ -448,11 +443,8 @@
                         complete: function () {
                             $('#resultLoading .bg').height('100%');
                             $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');/*
-                            $('#formcontentid').hide();
-                            $('#resultofreport').show();
-                            $('#listalltable').show();*/
-                            $('#myModal').modal('hide')
+                            $('body').css('cursor', 'default');
+                            $('#toemail').val('');
                         }
                     });
                     $.ajax({
@@ -470,6 +462,95 @@
                     });
 
                 });
+       /*         $('#sendreportid').click(function($e)
+                {
+                    $e.preventDefault();
+                    var shipid=$('#sendreportshipid').val();
+                    var year=$('#yearid').val();
+                    //var clientemail=$('#toemail').val();
+                    //var comment=$('#mycommentid').val();
+                    var data = {shipid :shipid,year:year} ;
+                   // $('#close_button').click();
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('send_rankingreports'),
+                        beforeSend: function () {
+                            var text='';
+
+                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                            }
+
+                            $('#resultLoading').css({
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'fixed',
+                                'z-index':'10000000',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto'
+                            });
+
+                            $('#resultLoading .bg').css({
+                                'background':'#000000',
+                                'opacity':'0.7',
+                                'width':'100%',
+                                'height':'100%',
+                                'position':'absolute',
+                                'top':'0'
+                            });
+
+                            $('#resultLoading>div:first').css({
+                                'width': '250px',
+                                'height':'75px',
+                                'text-align': 'center',
+                                'position': 'fixed',
+                                'top':'0',
+                                'left':'0',
+                                'right':'0',
+                                'bottom':'0',
+                                'margin':'auto',
+                                'font-size':'16px',
+                                'z-index':'10',
+                                'color':'#ffffff'
+
+                            });
+
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeIn(300);
+                            $('body').css('cursor', 'wait');
+                        },
+                        complete: function () {
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+                            $('#toemail').val('');
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data)
+                        {
+                            var myResponse = eval(data.returnvalue);
+                            alert(myResponse);
+                            $("<iframe />") // create an iframe
+                            // add the source
+                                    .attr('src', 'data:application/pdf;base64,' + myResponse.base64EncodedResponse)
+                                    .appendTo('.modal-body');
+                        }
+                        ,
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            var response = $.parseJSON(XMLHttpRequest.responseText);
+                            alert(response.error);
+                            window.location.href = 'http://shipreports/login';
+                        }
+                    });
+
+                });*/
 
 
                 $(".dynamiclabel").live("click",function(e)
@@ -560,14 +641,25 @@
 
         </div>
     </section>
+<section>
+    <div id="emptyresultofreport" class="col-md-12 users_advanced_list_views_screen ">
+        <div class="actions_report_top">
+            <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
+        </div>
+        <div id="emptyrecord" style="margin-top: 40px;">
+
+        </div>
+        </div>
+    </section>
     <section >
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
-                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}"  method="post">
+                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
                     <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
                 </form>
+               {# <a href="{{ path('dashboardhome', { 'year':currentyear,'shipid':}) }}" class="actions_report_btn">Print</a>#}
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
                 <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
 

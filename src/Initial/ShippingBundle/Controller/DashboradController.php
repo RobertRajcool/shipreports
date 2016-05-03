@@ -3150,7 +3150,7 @@ class DashboradController extends Controller
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
             }
-          $content = $mpdf->Output('', 'S');
+            $content = $mpdf->Output('', 'S');
             $response = new Response();
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
