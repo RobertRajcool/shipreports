@@ -28,7 +28,8 @@
             $(document).ready(function(){
                 $('.reportShow').hide();
                 $('.reportElementShowSection').hide();
-                $('.report_btn').live("click",function(){
+                $('.report_btn').live("click",function($e){
+                    $e.preventDefault();
                     var aM = $('.activeMonth').val();
                     var aY = $('.activeYear').val();
                     var eM = $('.endMonth').val();
@@ -508,9 +509,9 @@
                 {
                     $('#livesearchdiv').hide();
                 });
-                $('#toemail').keyup(function()
+                $('#toemail').keyup(function($e)
                 {
-
+                    $e.preventDefault();
                     var searchstring=$(this).val();
                     var data = {searchstring :searchstring} ;
                     $.ajaxSetup({

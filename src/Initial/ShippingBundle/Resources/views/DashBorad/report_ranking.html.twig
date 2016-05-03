@@ -15,8 +15,9 @@
             {
                 $('#resultofreport').hide();
                 $('#emptyresultofreport').hide();
-                $('#reportform').submit(function()
+                $('#reportform').submit(function($e)
                 {
+                    $e.preventDefault(); //Without Page will refersh
                     var form=$('#reportform');
                     $.ajaxSetup({
                         global: false,
@@ -243,12 +244,6 @@
                                 $('#emptyresultofreport').show();
                                 $('<span>No Record Found For '+data.currentyear+' </span>').appendTo('#emptyrecord');
                             }
-
-
-
-
-
-
                         }
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -338,9 +333,9 @@
                     });
 
                 });
-                $('#toemail').keyup(function()
+                $('#toemail').keyup(function($e)
                 {
-
+                    $e.preventDefault();
                     var searchstring=$(this).val();
                     var data = {searchstring :searchstring} ;
                     $.ajaxSetup({
@@ -462,95 +457,95 @@
                     });
 
                 });
-       /*         $('#sendreportid').click(function($e)
-                {
-                    $e.preventDefault();
-                    var shipid=$('#sendreportshipid').val();
-                    var year=$('#yearid').val();
-                    //var clientemail=$('#toemail').val();
-                    //var comment=$('#mycommentid').val();
-                    var data = {shipid :shipid,year:year} ;
-                   // $('#close_button').click();
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        url:Routing.generate('send_rankingreports'),
-                        beforeSend: function () {
-                            var text='';
+                /*         $('#sendreportid').click(function($e)
+                 {
+                 $e.preventDefault();
+                 var shipid=$('#sendreportshipid').val();
+                 var year=$('#yearid').val();
+                 //var clientemail=$('#toemail').val();
+                 //var comment=$('#mycommentid').val();
+                 var data = {shipid :shipid,year:year} ;
+                 // $('#close_button').click();
+                 $.ajaxSetup({
+                 global: false,
+                 type: "post",
+                 url:Routing.generate('send_rankingreports'),
+                 beforeSend: function () {
+                 var text='';
 
-                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                            }
+                 if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                 $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                 }
 
-                            $('#resultLoading').css({
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'fixed',
-                                'z-index':'10000000',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto'
-                            });
+                 $('#resultLoading').css({
+                 'width':'100%',
+                 'height':'100%',
+                 'position':'fixed',
+                 'z-index':'10000000',
+                 'top':'0',
+                 'left':'0',
+                 'right':'0',
+                 'bottom':'0',
+                 'margin':'auto'
+                 });
 
-                            $('#resultLoading .bg').css({
-                                'background':'#000000',
-                                'opacity':'0.7',
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'absolute',
-                                'top':'0'
-                            });
+                 $('#resultLoading .bg').css({
+                 'background':'#000000',
+                 'opacity':'0.7',
+                 'width':'100%',
+                 'height':'100%',
+                 'position':'absolute',
+                 'top':'0'
+                 });
 
-                            $('#resultLoading>div:first').css({
-                                'width': '250px',
-                                'height':'75px',
-                                'text-align': 'center',
-                                'position': 'fixed',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto',
-                                'font-size':'16px',
-                                'z-index':'10',
-                                'color':'#ffffff'
+                 $('#resultLoading>div:first').css({
+                 'width': '250px',
+                 'height':'75px',
+                 'text-align': 'center',
+                 'position': 'fixed',
+                 'top':'0',
+                 'left':'0',
+                 'right':'0',
+                 'bottom':'0',
+                 'margin':'auto',
+                 'font-size':'16px',
+                 'z-index':'10',
+                 'color':'#ffffff'
 
-                            });
+                 });
 
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeIn(300);
-                            $('body').css('cursor', 'wait');
-                        },
-                        complete: function () {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                            $('#toemail').val('');
-                        }
-                    });
-                    $.ajax({
-                        data: data,
-                        success: function (data)
-                        {
-                            var myResponse = eval(data.returnvalue);
-                            alert(myResponse);
-                            $("<iframe />") // create an iframe
-                            // add the source
-                                    .attr('src', 'data:application/pdf;base64,' + myResponse.base64EncodedResponse)
-                                    .appendTo('.modal-body');
-                        }
-                        ,
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            var response = $.parseJSON(XMLHttpRequest.responseText);
-                            alert(response.error);
-                            window.location.href = 'http://shipreports/login';
-                        }
-                    });
+                 $('#resultLoading .bg').height('100%');
+                 $('#resultLoading').fadeIn(300);
+                 $('body').css('cursor', 'wait');
+                 },
+                 complete: function () {
+                 $('#resultLoading .bg').height('100%');
+                 $('#resultLoading').fadeOut(300);
+                 $('body').css('cursor', 'default');
+                 $('#toemail').val('');
+                 }
+                 });
+                 $.ajax({
+                 data: data,
+                 success: function (data)
+                 {
+                 var myResponse = eval(data.returnvalue);
+                 alert(myResponse);
+                 $("<iframe />") // create an iframe
+                 // add the source
+                 .attr('src', 'data:application/pdf;base64,' + myResponse.base64EncodedResponse)
+                 .appendTo('.modal-body');
+                 }
+                 ,
+                 error: function (XMLHttpRequest, textStatus, errorThrown)
+                 {
+                 var response = $.parseJSON(XMLHttpRequest.responseText);
+                 alert(response.error);
+                 window.location.href = 'http://shipreports/login';
+                 }
+                 });
 
-                });*/
+                 });*/
 
 
                 $(".dynamiclabel").live("click",function(e)
@@ -586,69 +581,69 @@
 
                 <form id="reportform" class="form-horizontal no-style"  method="post">
 
-                <div class="kpi_basic_details">
-                    <fieldset class="fieldset_box add_rule_form">
-                        <legend class="legend_name">Reports</legend>
-                        <div class="form-group">
-                            <label class="control-label col-xs-4">Choose Vessels</label>
-                            <div class="col-xs-8">
-                            <select required name="shipid" >
-                                <option value="">Select</option>
-                                {% for shipobject in listofships %}
-                                    <option value="{{ shipobject.id }} ">{{ shipobject.shipName }}</option>
-                                {% endfor %}
-                            </select>
+                    <div class="kpi_basic_details">
+                        <fieldset class="fieldset_box add_rule_form">
+                            <legend class="legend_name">Reports</legend>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">Choose Vessels</label>
+                                <div class="col-xs-8">
+                                    <select required name="shipid" >
+                                        <option value="">Select</option>
+                                        {% for shipobject in listofships %}
+                                            <option value="{{ shipobject.id }} ">{{ shipobject.shipName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-xs-4">Choose Year</label>
-                            <div class="col-xs-8">
-                                <select required class="add_rule_basic_drop"  name="year">
-                                    <option value="">Select</option>
-                                    <option value=2000>2000</option>
-                                    <option value=2001>2001</option>
-                                    <option value=2002>2002</option>
-                                    <option value=2003>2003</option>
-                                    <option value=2004>2004</option>
-                                    <option value=2005>2005</option>
-                                    <option value=2006>2006</option>
-                                    <option value=2007>2007</option>
-                                    <option value=2008>2008</option>
-                                    <option value=2009>2009</option>
-                                    <option value=2010>2010</option>
-                                    <option value=2011>2011</option>
-                                    <option value=2012>2012</option>
-                                    <option value=2013>2013</option>
-                                    <option value=2014>2014</option>
-                                    <option value=2015>2015</option>
-                                    <option value=2016>2016</option>
-                                    <option value=2017>2017</option>
-                                    <option value=2018>2018</option>
-                                    <option value=2019>2019</option>
-                                    <option value=2020>2020</option>
-                                </select>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">Choose Year</label>
+                                <div class="col-xs-8">
+                                    <select required class="add_rule_basic_drop"  name="year">
+                                        <option value="">Select</option>
+                                        <option value=2000>2000</option>
+                                        <option value=2001>2001</option>
+                                        <option value=2002>2002</option>
+                                        <option value=2003>2003</option>
+                                        <option value=2004>2004</option>
+                                        <option value=2005>2005</option>
+                                        <option value=2006>2006</option>
+                                        <option value=2007>2007</option>
+                                        <option value=2008>2008</option>
+                                        <option value=2009>2009</option>
+                                        <option value=2010>2010</option>
+                                        <option value=2011>2011</option>
+                                        <option value=2012>2012</option>
+                                        <option value=2013>2013</option>
+                                        <option value=2014>2014</option>
+                                        <option value=2015>2015</option>
+                                        <option value=2016>2016</option>
+                                        <option value=2017>2017</option>
+                                        <option value=2018>2018</option>
+                                        <option value=2019>2019</option>
+                                        <option value=2020>2020</option>
+                                    </select>
+                                </div>
+
                             </div>
+                        </fieldset>
+                    </div>
 
-                        </div>
-                    </fieldset>
-                </div>
-
-                <div class="actions_submit">
-                    <input type="submit" class="submit_btn" id="viewreportid" value="View Report" />
-                </div>
-            </form>
+                    <div class="actions_submit">
+                        <input type="submit" class="submit_btn" id="viewreportid" value="View Report" />
+                    </div>
+                </form>
             </div>
 
         </div>
     </section>
-<section>
-    <div id="emptyresultofreport" class="col-md-12 users_advanced_list_views_screen ">
-        <div class="actions_report_top">
-            <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
-        </div>
-        <div id="emptyrecord" style="margin-top: 40px;">
+    <section>
+        <div id="emptyresultofreport" class="col-md-12 users_advanced_list_views_screen ">
+            <div class="actions_report_top">
+                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
+            </div>
+            <div id="emptyrecord" style="margin-top: 40px;">
 
-        </div>
+            </div>
         </div>
     </section>
     <section >
@@ -659,7 +654,7 @@
                     <input type="hidden" id="yearid" name="year">
                     <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
                 </form>
-               {# <a href="{{ path('dashboardhome', { 'year':currentyear,'shipid':}) }}" class="actions_report_btn">Print</a>#}
+                {# <a href="{{ path('dashboardhome', { 'year':currentyear,'shipid':}) }}" class="actions_report_btn">Print</a>#}
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
                 <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
 
@@ -693,22 +688,22 @@
                     </tbody>
                 </table>
                 <div id="tableofcontent"></div>
-            <table id="shipchart" class="table table-striped normal_table">
-                <thead>
-                <tr>
-                    <th id="graphtitle">Title</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td id="area"></td>
-                </tr>
-                </tbody>
-            </table>
+                <table id="shipchart" class="table table-striped normal_table">
+                    <thead>
+                    <tr>
+                        <th id="graphtitle">Title</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td id="area"></td>
+                    </tr>
+                    </tbody>
+                </table>
                 <div id="kpigraphlist">
 
                 </div>
-                </div>
+            </div>
 
         </div>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -720,28 +715,28 @@
                     </div>
                     <div class="modal-body">
 
-                                    <form id="chatform" class="form-horizontal no-style" method="post">
+                        <form id="chatform" class="form-horizontal no-style" method="post">
 
-                                        <div class="form-group">
-                                            <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
-                                            <div class="col-xs-9">
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
+                                <div class="col-xs-9">
 
-                                                <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
-                                                <div id="livesearchdiv"  class="send_reports_to_input_list">
-                                                    <ul id="livesearch">
+                                    <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
+                                    <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                        <ul id="livesearch">
 
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
-                                            <div class="col-xs-9">
-                                                {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
-                                                <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
-                                            </div>
-                                        </div>
-                                    </form>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
+                                <div class="col-xs-9">
+                                    {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
+                                    <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                                </div>
+                            </div>
+                        </form>
 
                     </div>
                     <div class="modal-footer">

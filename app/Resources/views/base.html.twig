@@ -67,9 +67,17 @@
 
         });
     </script>#}
-    <script>
-        $(document).ready(function()
+    <script type="text/javascript">
+        $(window).ready(function()
         {
+            //$('#dashboradhome1').addClass("active");
+            $('.layout_name').click(function()
+            {
+                $('#dashboradhome1').removeClass("active");
+                $('.layout_name').removeClass("active");
+                var currentId = $(this).attr('id');
+                $('#'+currentId+1).addClass("active");
+            });
             $('.scorecard').hide();
             $('.ranking_submenu').hide();
             $('.my-account-box').hide();
@@ -93,31 +101,12 @@
                 $('.my-account-box').slideToggle('slow');
 
             });
-            $('#whole_content').click(function()
-            {
-                $('.my-account-box').fadeOut(300);
-            });
-
-
-        });
-    </script>
-    <script type="text/javascript">
-        $(window).ready(function()
-        {
-            //$('#dashboradhome1').addClass("active");
-            $('.layout_name').click(function()
-            {
-                $('#dashboradhome1').removeClass("active");
-                $('.layout_name').removeClass("active");
-                var currentId = $(this).attr('id');
-                $('#'+currentId+1).addClass("active");
-            });
         });
     </script>
 </head>
 <body>
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    <div class="container">
+    <div class="container" >
         <div class="row">
             <div  class="col-md-2 left_menus-2">
                 <div class="logo"><img src="/images/pioneer_logo.png"></div>
@@ -138,12 +127,12 @@
                         </li>
                         {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                             <li class="topmenu_score" id="Scorecard1">
-                                <a class="layout_name" id="Scorecard">
+                                <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
                                     <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
                                     <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
                                     <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                                 </a>
-                                <ul class="submenu scorecard" >
+                                <ul class="submenu scorecard" ng-show="ScoreCard">
                                     <li id="kpidetails_select1">
                                         <a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}">
                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
@@ -185,13 +174,13 @@
                                 </ul>
                             </li>
 
-                            <li id="Vessel_Ranking1" class="topmenu_ranking">
-                                <a class="layout_name" id="Vessel_Ranking" >
+                            <li class="topmenu_ranking" id="Vessel_Ranking1">
+                                <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
                                     <span class="menu-item-icon ss-warehouse">&nbsp;</span>
                                     <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
                                     <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                                 </a>
-                                <ul class="submenu ranking_submenu" >
+                                <ul class="submenu ranking_submenu" ng-show="VesselRanking">
                                     <li id="rankingkpidetails_select1">
                                         <a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}">
                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
@@ -304,7 +293,7 @@
                 <div class="x-btn-my-account-small">
                     <div class="x-btn-my-account-small_inner_2">
                     <div class="menu_logout_button"><a href="{{ path('fos_user_security_logout') }}"><samp class="menu-item-icon ss-logout"></samp><span class="menu-item-text">{{ 'layout.menu.logout'|trans }}</span></a></div>
-                    <div class="user_setting_main" >
+                    <div class="user_setting_main" ng-click="myFunc()">
                         <span class="x-btn-icon-el">
                             <img src="/images/nouser.png">
                         </span>
@@ -314,19 +303,19 @@
                         </span>
                         <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
                     </div>
-                        </div>
                 </div>
+                    </div>
 
-                <div class="my-account-box" >
+                <div class="my-account-box" ng-show="showMe">
                     <div class="my-account-box-inner">
                         <div class="settings"><samp class="ss-settings"><a href={{ path('fos_user_change_password') }}>{{ 'layout.menu.settingsfor'|trans }} {{app.user.username }}</a></samp></div>
                         <div class="logout"><samp class="ss-logout"><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.menu.logout'|trans }}</a></samp></div>
                     </div>
-                   {# <div class="arrow ss-dropdown">&nbsp;</div>#}
+                    <div class="arrow ss-dropdown">&nbsp;</div>
                 </div>
             </div>
             <div class="dashboard_screen_views dashboard_right_ship">
-                <section id="whole_content">
+                <section>
                     {% block body %}
 
                     {% endblock %}
