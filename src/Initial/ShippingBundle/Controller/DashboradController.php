@@ -2540,8 +2540,10 @@ class DashboradController extends Controller
      */
     public function view_ranking_reportsAction(Request $request,$sendReport='')
     {
-            $em = $this->getDoctrine()->getManager();
-            $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null)
+        {
             $userId = $user->getId();
             $userName = $user->getUsername();
             $shipid = $request->request->get('shipid');
@@ -2649,9 +2651,7 @@ class DashboradController extends Controller
             $dataforgraphforship=array();
             $NewMonthlyKPIValue=array();
             $NewMonthlyAvgTotal=array();
-            $rankingKpiWeightarray = array();
             $NewMonthColor=array();
-            $scorecardElementRules = array();
             for ($d = $initial; $d < $statusVerified; $d++)
             {
                 $time2 = strtotime($oneyear_montharray[$d]);
@@ -2659,9 +2659,10 @@ class DashboradController extends Controller
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
                 $new_monthdetail_date->modify('last day of this month');
-
+                $scorecardElementRules = array();
                 $scorecardElementValueArray = array();
                 $rankingKpiValueCountArray = array();
+                $rankingKpiWeightarray = array();
                 $Newkpivalue=array();
                 $NewKpiAvg=array();
                 $NewKpiColor=array();
@@ -3019,7 +3020,11 @@ class DashboradController extends Controller
             );
             return $response;
 
-
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
     /**
      * Send Reports For Ranking
@@ -3030,7 +3035,9 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $reportObject = $this->view_ranking_reportsAction($request,'sendReport');
+        if ($user != null)
+        {
+            $reportObject = $this->view_ranking_reportsAction($request,'sendReport');
             $rankingKpiList = $em->createQueryBuilder()
                 ->select('b.kpiName', 'b.id', 'b.weightage')
                 ->from('InitialShippingBundle:RankingKpiDetails', 'b')
@@ -3148,7 +3155,11 @@ class DashboradController extends Controller
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
             return $response;
-
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
     /**
      * Send Reports to Mailing For Ranking
@@ -3157,8 +3168,10 @@ class DashboradController extends Controller
      */
     public function sendreports_mail_rankingAction(Request $request)
     {
-            $em = $this->getDoctrine()->getManager();
-            $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null)
+        {
             $email = $user->getEmail();
             $reportObject = $this->view_ranking_reportsAction($request,'sendReport');
             $rankingKpiList = $em->createQueryBuilder()
@@ -3299,10 +3312,16 @@ class DashboradController extends Controller
 
 
                 //assign file attachement for mail and Mailing Starts Here...u
-                for ($ma = 0; $ma < count($findsemail); $ma++)
-                {
-
-                    array_push($mailidarray, $findsemail[$ma]['useremailid']);
+                for ($ma = 0; $ma < count($findsemail); $ma++) {
+                    /* $mailer = $this->container->get('mailer');
+                     $message = \Swift_Message::newInstance()
+                         ->setFrom($clientemailid)
+                         ->setTo($findsemail[$ma]['emailid'])
+                         ->setSubject($kpiname)
+                         ->setBody($comment);
+                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                     $mailer->send($message);*/
+                    array_push($mailidarray, $findsemail[$ma]['emailid']);
                 }
             }
             //Mailing Ends....
@@ -3312,6 +3331,11 @@ class DashboradController extends Controller
             $response = new JsonResponse();
             $response->setData(array('updatemsg' => "Report Has Been Send"));
             return $response;
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
     /**
      * Reports For Ranking
@@ -3344,8 +3368,9 @@ class DashboradController extends Controller
      */
     public function overall_ships_rankingreportsAction(Request $request,$mode='',$dataofmonth='', $year=' ')
     {
-            $em = $this->getDoctrine()->getManager();
-            $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
             $userId = $user->getId();
             $userName = $user->getUsername();
 
@@ -3487,6 +3512,20 @@ class DashboradController extends Controller
                     }
                     array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
                 }
+                if ($manufacturingYear == "")
+                {
+                    $yearcount = 0;
+                }
+                else
+                {
+                    $currentdatestring = date('Y-01-01');
+                    $d1 = new \DateTime($currentdatestring);
+                    $man_datestring = $manufacturingYear . '-01-' . '01';
+                    $d2 = new \DateTime($man_datestring);
+                    $diff = $d2->diff($d1);
+                    $yearcount = $diff->y + 1;
+                    $vesselage = 20 / $yearcount;
+                }
                     if(array_sum($rankingKpiValueCountArray)!=0)
                     {
                         array_push($ShipDetailDataarray,(array_sum($rankingKpiValueCountArray)));
@@ -3510,5 +3549,9 @@ class DashboradController extends Controller
             );
             return $response;
         }
+
+    }
+
+
 
 }
