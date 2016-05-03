@@ -259,7 +259,7 @@ class DashboradController extends Controller
             $statusVerified = $currentMonth-1;
             $monthlyShipDataStatus = $em->createQueryBuilder()
                 ->select('b.status')
-                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
                 ->where('b.dataofmonth = :monthDetail')
                 ->setParameter('monthDetail', $currentMonthObject)
                 ->getQuery()
@@ -272,14 +272,14 @@ class DashboradController extends Controller
             else
             {
                 $statusFieldQuery = $em->createQueryBuilder()
-                    ->select('b.dataofmonth')
-                    ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                    ->select('b.dataofmonth,b.status')
+                    ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
                     ->where('b.status = :monthStatus')
                     ->setParameter('monthStatus', 4)
                     ->groupby('b.dataofmonth')
                     ->getQuery()
                     ->getResult();
-                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery)-1]['status']==4)
                 {
                     $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
                     $statusVerified  = $dateFromDb->format('n');
