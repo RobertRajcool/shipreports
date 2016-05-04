@@ -488,11 +488,11 @@
                             <td>
                                 {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                                 {% if elementcolorarray[j][i]=="Green" %}
-                                    <img src="/images/01.png" alt="Loader Image"/>
+                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[j][i]=="Red" %}
-                                    <img src="/images/03.png" alt="Loader Image"/>
+                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                    <img src="/images/02.png" alt="Loader Image"/>
+                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if j != 2 %}
@@ -529,7 +529,7 @@
             <table class="table table-striped-2 graph_and_colour_coding_row">
                 {% set k=0 %}
                 <tr>
-                    <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
+                    <td class="kpi_name kpi_name_thtd"><strong>{{ kpiname }}</strong></td>
                     <td class="weightage">100</td>
                     {% for kpi_colors_first in kpi_color %}
                         {% for kpi_colors in kpi_colors_first %}
@@ -613,7 +613,7 @@
             <table class="table table-striped normal_table">
                 <thead>
                 <tr>
-                    <th>{{ kpiname }}</th>
+                    <th>{{ kpiname }} - Graph</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -688,7 +688,6 @@
                         <div class="form-group">
                             <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
                             <div class="col-xs-9">
-                                {#<input type="text" class="send_reports_to_input" placeholder="">#}
                                 <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
                                 <div id="livesearchdiv"  class="send_reports_to_input_list">
                                     <ul id="livesearch">
@@ -700,7 +699,6 @@
                         <div class="form-group">
                             <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
                             <div class="col-xs-9">
-                                {# <textarea class="add_comment_textarea" placeholder="Enter comment here"> </textarea>#}
                                 <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
                             </div>
                         </div>

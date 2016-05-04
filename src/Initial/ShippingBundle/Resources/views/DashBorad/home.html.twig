@@ -4,10 +4,6 @@
 {% block body %}
     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
         {% block javascripts %}
-
-            {# {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
-             <script src="{{ asset_url }}"></script>
-             {% endjavascripts %}#}
             {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
             <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
@@ -108,16 +104,7 @@
                             {
                                 $('#area').highcharts().series[0].setData(data.changechartdata);
                                 $('#area').highcharts().series[0].update({ name: month+'-'+year});
-                                $('#currentid').text(month+'-'+year)
-
-                                /*var chart = $('#area').highcharts();
-                                 chart.series[0].update({
-                                 name: month+'-'+year,
-                                 data: data.changechartdata
-                                 });
-
-
-                                 */
+                                $('#currentid').text(month+'-'+year);
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
@@ -129,12 +116,10 @@
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
                                 alert('Error : ' + errorThrown);
-
                             }
                         });
-
-
                     });
+
                     $('#nextmonth').click(function($e)
                     {
                         $e.preventDefault();
@@ -207,26 +192,13 @@
                             {
                                 $('#area').highcharts().series[0].setData(data.changechartdata);
                                 $('#area').highcharts().series[0].update({ name: month+'-'+year});
-
-                                /*var chart = $('#area').highcharts();
-                                 chart.series[0].update({
-                                 name: month+'-'+year,
-                                 data: data.changechartdata
-                                 });
-
-
-                                 */
                                 $('#currentid').text(month+'-'+year)
-
-
                             },
                             error: function(XMLHttpRequest, textStatus, errorThrown)
                             {
                                 alert('Error : ' + errorThrown);
-
                             }
                         });
-
                     });
 
                     $('.yearViewContent').hide();
@@ -251,8 +223,6 @@
                     $('.previousYear').click(function($e)
                     {
                         $e.preventDefault();
-                        //alert('Wait for a moment');
-
                         var data = {
                             Year : $('#scoreCurrentYear').val()
                         };
@@ -263,50 +233,11 @@
                             url: " previousYearChange",
                             success: function(data)
                             {
-                                //alert('success');
                                 $('#previousYearShow').empty();
                                 $('#previousScorecardTable').empty();
                                 $('#previousYearShow').append(data.currentYear);
                                 $('#scorePreviousCurrentYear').val(data.currentYear);
                                 $('#scoreCurrentYear').val(data.currentYear);
-
-                                if(data.currentYear==2016)
-                                {
-                                    var monthCount1 = 0;
-                                    var currentMonth = (new Date).getMonth() + 1;
-                                    $.each(data.yearKpiColorArray,function(i){
-                                        if(monthCount1>currentMonth)
-                                        {
-                                            $.each(data.kpiNameList, function(j){
-                                                data.yearKpiColorArray[i][j]="";
-                                            })
-                                        }
-                                        monthCount1++;
-                                    })
-                                }
-
-                                if(data.currentYear==2015)
-                                {
-                                    var monthCount = 0;
-                                    $.each(data.yearKpiColorArray,function(i){
-                                        if(monthCount<8)
-                                        {
-                                            $.each(data.kpiNameList, function(j){
-                                                data.yearKpiColorArray[i][j]="";
-                                            })
-                                        }
-                                        monthCount++;
-                                    })
-                                }
-                                if(data.currentYear<2015)
-                                {
-                                    $.each(data.yearKpiColorArray,function(i){
-                                        $.each(data.kpiNameList, function(j){
-                                            data.yearKpiColorArray[i][j]="";
-                                        })
-                                    })
-                                }
-
                                 $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
                                 $.each(data.yearMonthName, function(i){
                                     $('<th colspan="2">'+data.yearMonthName[i]+'</th>').appendTo('#previousRowPlace');
@@ -316,11 +247,7 @@
                                 $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
                                 $.each(data.yearKpiColorArray, function(j)
                                 {
-                                    var color = '';
-                                    if(inn < data.yearKpiColorArray.length){
-                                        color = data.yearKpiColorArray[j][inn];
-                                    }
-
+                                    var color = data.yearKpiColorArray[j][inn];
                                     if(color != 'false' && color != '')
                                     {
                                         if(color == 'Green')
@@ -340,7 +267,7 @@
                                         $('<td class="month"></td>').appendTo('#praviousRowId'+inn);
                                     }
 
-                                    if(j<11)
+                                    if(j < data.yearMonthName.length-1)
                                     {
                                         var status = data.yearKpiColorArray[j+1][inn];
 
@@ -388,6 +315,11 @@
                                 });
                                 inn++;
                                 {% endfor %}
+                                $('<tr id="avgRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> <strong>Average Score </strong> </td> <td class="weightage"></td> ').appendTo('#previousTableBody');
+                                $.each(data.yearAvgScore, function(avgCount)
+                                {
+                                    $('<td colspan="2">'+data.yearAvgScore[avgCount]+'</td>').appendTo('#avgRowId'+inn);
+                                });
                                 $('.yearViewContent').hide();
                                 $('.previousYearViewContent').show();
                             },
@@ -401,8 +333,6 @@
                     $('.nextYear').click(function($e)
                     {
                         $e.preventDefault();
-                        //alert('Wait for a moment');
-
                         var data = {
                             Year : $('#scoreCurrentYear').val()
                         };
@@ -418,49 +348,11 @@
                                 url: " nextYearChange",
                                 success: function(data)
                                 {
-                                    //alert('success');
                                     $('#previousYearShow').empty();
                                     $('#previousScorecardTable').empty();
                                     $('#previousYearShow').append(data.currentYear);
                                     $('#scorePreviousCurrentYear').val(data.currentYear);
                                     $('#scoreCurrentYear').val(data.currentYear);
-
-                                    if(data.currentYear==2016)
-                                    {
-                                        var monthCount1 = 0;
-                                        var currentMonth = (new Date).getMonth() + 1;
-                                        $.each(data.yearKpiColorArray,function(i){
-                                            if(monthCount1>currentMonth)
-                                            {
-                                                $.each(data.kpiNameList, function(j){
-                                                    data.yearKpiColorArray[i][j]="";
-                                                })
-                                            }
-                                            monthCount1++;
-                                        })
-                                    }
-
-                                    if(data.currentYear==2015)
-                                    {
-                                        var monthCount = 0;
-                                        $.each(data.yearKpiColorArray,function(i){
-                                            if(monthCount<8)
-                                            {
-                                                $.each(data.kpiNameList, function(j){
-                                                    data.yearKpiColorArray[i][j]="";
-                                                })
-                                            }
-                                            monthCount++;
-                                        })
-                                    }
-                                    if(data.currentYear<2015 )
-                                    {
-                                        $.each(data.yearKpiColorArray,function(i){
-                                            $.each(data.kpiNameList, function(j){
-                                                data.yearKpiColorArray[i][j]="";
-                                            })
-                                        })
-                                    }
 
                                     $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
                                     $.each(data.yearMonthName, function(i){
@@ -471,92 +363,83 @@
                                     $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
                                     $.each(data.yearKpiColorArray, function(j)
                                     {
-                                        var color = '';
-                                        if(inn < data.yearKpiColorArray.length){
-                                            color = data.yearKpiColorArray[j][inn];
-                                        }
+                                        var color = data.yearKpiColorArray[j][inn];
+                                        /*if(inn < data.yearKpiColorArray.length){
+                                         color = data.yearKpiColorArray[j][inn];
+                                         }*/
 
                                         if(color != 'false' && color != '')
                                         {
                                             if(color == 'Green')
                                             {
                                                 $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color == 'Red')
                                             {
                                                 $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color == 'Yellow')
                                             {
                                                 $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>');
                                             }
                                         }else
                                         {
                                             $('<td class="month"></td>').appendTo('#praviousRowId'+inn);
-                                            //$('#previousColorRowId'+inn).after('<td id="statusData'+inn+'" class="month"><img src="" alt="Loader Image"/></td>');
                                         }
 
-                                        if(j<11)
+                                        if(j < data.yearMonthName.length-1)
                                         {
                                             var status = data.yearKpiColorArray[j+1][inn];
 
                                             if(color=='Green' && status=='Green' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Green' && status=='Yellow' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Green' && status=='Red' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Yellow' && status=='Green' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Yellow' && status=='Yellow' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Yellow' && status=='Red' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Red' && status=='Green' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Red' && status=='Yellow' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>');
                                             }
                                             else if(color=='Red' && status=='Red' )
                                             {
                                                 $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/>'+j+'</td>');
                                             }
                                             else
                                             {
                                                 $('<td class="month_difference"></td>').appendTo('#praviousRowId'+inn);
-                                                //$('#statusData'+inn).after('<td class="month_difference"><img src="" alt="Loader Image"/></td>');
                                             }
                                         }
                                     });
                                     inn++;
                                     {% endfor %}
+                                    $('<tr id="avgRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> <strong>Average Score </strong> </td> <td class="weightage"></td> ').appendTo('#previousTableBody');
+                                    $.each(data.yearAvgScore, function(avgCount)
+                                    {
+                                        $('<td colspan="2">'+data.yearAvgScore[avgCount]+'</td>').appendTo('#avgRowId'+inn);
+                                    });
                                     $('.yearViewContent').hide();
                                     $('.previousYearViewContent').show();
                                 },
@@ -566,249 +449,92 @@
                                 }
                             })
                         }
-
                     })
                 });
             </script>
         {% endblock %}
 
         <div class="wholeContent">
-        <div class="col-sm-10">
-            <div class="dashboard">
-                <div class="table-responsive">
-                    <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
-                        <thead>
-                        <tr>
-                            <th>
-                                Management Performance
-                                <div class="year_view_btn">
-                                    <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
-                                    <a href=""><span class="item yearView">2016</span></a>
-                                    <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
-                                </div>
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            {#<td>Year-2016</td>#}
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="table_container_dashboard">
-                        <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
+            <div class="col-sm-10">
+                <div class="dashboard">
+                    <div class="table-responsive">
+                        <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
                             <thead>
                             <tr>
-                                <th class="kpi_name_th kpi_name_thtd">KPI</th>
-                                <th class="weightage_th">Weightage</th>
-                                {% set i2=0 %}
-                                {% for month in month_name %}
-
-                                    {% if i2 != 2 %}
-                                        <th class="month_th_1">{{ month }}</th>
-                                    {% endif %}
-                                    {% if i2 == 2 %}
-                                        <th class="month_th_3 last">{{ month }}</th>
-                                    {% endif %}
-                                    {% set i2=i2+1 %}
-                                {% endfor %}
+                                <th>
+                                    Management Performance
+                                    <div class="year_view_btn">
+                                        <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                        <a href=""><span class="item yearView">2016</span></a>
+                                        <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
+                                    </div>
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
-                            {% set i=0 %}
-                            {% for kpi in kpi_list %}
-
-                                <tr>
-                                    <td class="kpi_name_td kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
-                                    <td class="weightage_td">{{ kpi.weightage }}</td>
-                                    {% set j=0 %}
-                                    {% for kpiColor in kpicolorarray %}
-                                        <td class="month_td">
-                                            {% if kpicolorarray[j][i]=="Green" %}
-                                                <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                            {% elseif kpicolorarray[j][i]=="Red" %}
-                                                <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                            {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                            {% endif %}
-                                        </td>
-                                        {% if j != 2 %}
-                                            {% set j1=j+1 %}
-                                            <td class="month_difference_td">
-                                                {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
-                                                    <img src="/images/straight_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
-                                                    <img src="/images/down_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Yellow" %}
-                                                    <img src="/images/down_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Green" %}
-                                                    <img src="/images/up_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Red" %}
-                                                    <img src="/images/straight_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Yellow" %}
-                                                    <img src="/images/up_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Green" %}
-                                                    <img src="/images/up_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Red" %}
-                                                    <img src="/images/down_arrow.png">
-                                                {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
-                                                    <img src="/images/straight_arrow.png">
-                                                {% endif %}
-                                            </td>
-                                        {% endif %}
-                                        {% set j=j+1 %}
-                                    {% endfor %}
-                                    {% set i=i+1 %}
-                                </tr>
-                            {% endfor %}
-                            {% set i1=0 %}
                             <tr>
-                                <td colspan="2" class="average_score_2_td kpi_name_thtd"><strong>Average score</strong></td>
-                                {% for avg in kpiAverageScore %}
-                                    <td>
-                                        <strong>{{ avg }}</strong>
-                                    </td>
-                                    {% if i1 != 2 %}
-                                        <td>&nbsp;</td>
-                                    {% endif %}
-                                    {% set i1=i1+1 %}
-                                {% endfor %}
+                                {#<td>Year-2016</td>#}
                             </tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
 
-            <div class="dashboard">
-                <div class="widget time">
-                    <div class="x-header">
-                        <div class="x-panel-header-text">{{ 'dashboard.main.content'|trans }}</div>
-                        <div class="toolbar-title">
-                            <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
-                            <span id="currentid" class="item">March-2016</span>
-                            <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
-                        </div>
-
-
-                    </div>
-                    <div id="area" class="chart large_chart">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-2 dashboard">
-            <div class="widget time">
-                <div class="x-header">
-                    <div class="x-panel-header-text">{{ 'dashboard.shipname'|trans }}  {{ ship_count }}</div>
-                </div>
-                <div class="ship_name">
-                    <div class="dashboard_ship_list">
-                        <ul>   {% for shipobject in allships %}
-                                <li><a href="{{ path('listallkpiforship_ranking', { 'shipid': shipobject.id,'year': currentyear }) }}">{{ shipobject.shipName }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-2 dashboard">
-            <div class="widget time">
-                <div class="x-header">
-                    <div class="x-panel-header-text">{{ 'dashboard.ranking'|trans }} {{ 'dashboard.kpi'|trans }}</div>
-                </div>
-                <div class="chart-2">
-                    {{ rankinKpiCount }}
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2 dashboard">
-            <div class="widget time">
-                <div class="x-header">
-                    <div class="x-panel-header-text">{{ 'dashboard.score'|trans }} {{ 'dashboard.kpi'|trans }}</div>
-                </div>
-                <div class="chart-2">
-                    {{ kpiCount }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="yearViewContent">
-        <section>
-            <div class="">
-                <div class="col-sm-12">
-                    <div class="dashboard">
-                        <div>
-                            <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                        <div class="table_container_dashboard">
+                            <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
                                 <thead>
                                 <tr>
-                                    <th>Management Performance
-                                        <div class="year_view_btn">
-                                            <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
-                                            <a href=""><span class="item yearView fullYearView">{{ currentYear }}</span></a>
-                                            <a href="#"  class="right-arrow ss-navigateright nextYear">&nbsp;</a>
-                                            <input type="hidden" value="{{ currentYear }}" id="scoreCurrentYear">
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-                            </table>
+                                    <th class="kpi_name_th kpi_name_thtd">KPI</th>
+                                    <th class="weightage_th">Weightage</th>
+                                    {% set i2=0 %}
+                                    {% for month in month_name %}
 
-                            <table class="table table-striped-2 year_view_score_card_row">
-                                <thead>
-                                <tr>
-                                    <th class="kpi_name_thtd">KPI</th>
-                                    <th>Weightage</th>
-                                    {% for monthName in yearMonthName %}
-                                        <th colspan="2">{{ monthName }}</th>
+                                        {% if i2 != 2 %}
+                                            <th class="month_th_1">{{ month }}</th>
+                                        {% endif %}
+                                        {% if i2 == 2 %}
+                                            <th class="month_th_3 last">{{ month }}</th>
+                                        {% endif %}
+                                        {% set i2=i2+1 %}
                                     {% endfor %}
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% set i=0 %}
                                 {% for kpi in kpi_list %}
+
                                     <tr>
-                                        <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
-                                        <td class="weightage">{{ kpi.weightage }}</td>
+                                        <td class="kpi_name_td kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                                        <td class="weightage_td">{{ kpi.weightage }}</td>
                                         {% set j=0 %}
-                                        {% for monthName in yearMonthName %}
-                                            <td class="month">
-                                                {% if j<5 %}
-                                                    {% if yearKpiColorArray[j][i]=="Green" %}
-                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                                    {% elseif yearKpiColorArray[j][i]=="Red" %}
-                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" %}
-                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                                    {% else %}
-                                                        <div class="nocolor"></div>
-                                                    {% endif %}
-                                            {% endif %}
+                                        {% for kpiColor in kpicolorarray %}
+                                            <td class="month_td">
+                                                {% if kpicolorarray[j][i]=="Green" %}
+                                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                {% elseif kpicolorarray[j][i]=="Red" %}
+                                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                {% endif %}
                                             </td>
-                                            {% if j != yearMonthName|length-1 %}
+                                            {% if j != 2 %}
                                                 {% set j1=j+1 %}
-                                                <td class="month_difference">
-                                                    {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
+                                                <td class="month_difference_td">
+                                                    {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
                                                         <img src="/images/straight_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
+                                                    {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
                                                         <img src="/images/down_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                    {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Yellow" %}
                                                         <img src="/images/down_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
+                                                    {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Green" %}
                                                         <img src="/images/up_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
+                                                    {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Red" %}
                                                         <img src="/images/straight_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                    {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Yellow" %}
                                                         <img src="/images/up_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
+                                                    {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Green" %}
                                                         <img src="/images/up_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
+                                                    {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Red" %}
                                                         <img src="/images/down_arrow.png">
-                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                    {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% endif %}
                                                 </td>
@@ -818,46 +544,214 @@
                                         {% set i=i+1 %}
                                     </tr>
                                 {% endfor %}
+                                {% set i1=0 %}
+                                <tr>
+                                    <td colspan="2" class="average_score_2_td kpi_name_thtd"><strong>Average score</strong></td>
+                                    {% for avg in kpiAverageScore %}
+                                        <td>
+                                            <strong>{{ avg }}</strong>
+                                        </td>
+                                        {% if i1 != 2 %}
+                                            <td>&nbsp;</td>
+                                        {% endif %}
+                                        {% set i1=i1+1 %}
+                                    {% endfor %}
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-            </div>
-        </section>
-    </div>
-
-    <div class="previousYearViewContent">
-        <section>
-            <div class="">
-                <div class="col-sm-12">
-                    <div class="dashboard">
-                        <div>
-                            <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
-                                <thead>
-                                <tr>
-                                    <th>Management Performance
-                                        <div class="year_view_btn">
-                                            <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
-                                            <a href=""><span id="previousYearShow" class="item fullYearView"> </span></a>
-                                            <a href="#" class="right-arrow ss-navigateright nextYear ">&nbsp;</a>
-                                            <input type="hidden" value="" id="scorePreviousCurrentYear">
-                                        </div>
-                                    </th>
-                                </tr>
-                                </thead>
-                            </table>
-
-                            <div id="previousScorecardTable">
-
+                <div class="dashboard">
+                    <div class="widget time">
+                        <div class="x-header">
+                            <div class="x-panel-header-text">{{ 'dashboard.main.content'|trans }}</div>
+                            <div class="toolbar-title">
+                                <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                <span id="currentid" class="item">March-2016</span>
+                                <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                             </div>
+
+
+                        </div>
+                        <div id="area" class="chart large_chart">
                         </div>
                     </div>
                 </div>
-
             </div>
-        </section>
-    </div>
+
+            <div class="col-sm-2 dashboard">
+                <div class="widget time">
+                    <div class="x-header">
+                        <div class="x-panel-header-text">{{ 'dashboard.shipname'|trans }}  {{ ship_count }}</div>
+                    </div>
+                    <div class="ship_name">
+                        <div class="dashboard_ship_list">
+                            <ul>   {% for shipobject in allships %}
+                                    <li><a href="{{ path('listallkpiforship_ranking', { 'shipid': shipobject.id,'year': currentyear }) }}">{{ shipobject.shipName }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-2 dashboard">
+                <div class="widget time">
+                    <div class="x-header">
+                        <div class="x-panel-header-text">{{ 'dashboard.ranking'|trans }} {{ 'dashboard.kpi'|trans }}</div>
+                    </div>
+                    <div class="chart-2">
+                        {{ rankinKpiCount }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 dashboard">
+                <div class="widget time">
+                    <div class="x-header">
+                        <div class="x-panel-header-text">{{ 'dashboard.score'|trans }} {{ 'dashboard.kpi'|trans }}</div>
+                    </div>
+                    <div class="chart-2">
+                        {{ kpiCount }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="yearViewContent">
+            <section>
+                <div class="">
+                    <div class="col-sm-12">
+                        <div class="dashboard">
+                            <div>
+                                <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                                    <thead>
+                                    <tr>
+                                        <th>Management Performance
+                                            <div class="year_view_btn">
+                                                <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
+                                                <a href=""><span class="item yearView fullYearView">{{ currentYear }}</span></a>
+                                                <a href="#"  class="right-arrow ss-navigateright nextYear">&nbsp;</a>
+                                                <input type="hidden" value="{{ currentYear }}" id="scoreCurrentYear">
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                </table>
+
+                                <table class="table table-striped-2 year_view_score_card_row">
+                                    <thead>
+                                    <tr>
+                                        <th class="kpi_name_thtd">KPI</th>
+                                        <th>Weightage</th>
+                                        {% for monthName in yearMonthName %}
+                                            <th colspan="2">{{ monthName }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set i=0 %}
+                                    {% for kpi in kpi_list %}
+                                        <tr>
+                                            <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                                            <td class="weightage">{{ kpi.weightage }}</td>
+                                            {% set j=0 %}
+                                            {% for monthName in yearMonthName %}
+                                                <td class="month">
+                                                    {% if yearKpiColorArray[j][i]=="Green" %}
+                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                    {% elseif yearKpiColorArray[j][i]=="Red" %}
+                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                    {% elseif yearKpiColorArray[j][i]=="Yellow" %}
+                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                    {% else %}
+                                                        <div class="nocolor"></div>
+                                                    {% endif %}
+                                                </td>
+                                                {% if j != yearMonthName|length-1 %}
+                                                    {% set j1=j+1 %}
+                                                    <td class="month_difference">
+                                                        {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
+                                                            <img src="/images/straight_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
+                                                            <img src="/images/down_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                            <img src="/images/down_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
+                                                            <img src="/images/up_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
+                                                            <img src="/images/straight_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                            <img src="/images/up_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
+                                                            <img src="/images/up_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
+                                                            <img src="/images/down_arrow.png">
+                                                        {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
+                                                            <img src="/images/straight_arrow.png">
+                                                        {% endif %}
+                                                    </td>
+                                                {% endif %}
+                                                {% set j=j+1 %}
+                                            {% endfor %}
+                                            {% set i=i+1 %}
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td class="kpi_name_thtd"><strong>Average Score</strong></td>
+                                        <td></td>
+                                        {% set colCount=0 %}
+                                        {% for avgScore in yearAvgScore %}
+                                            {% if colCount != yearMonthName|length-1 %}
+                                                <td colspan="2">{{ avgScore }}</td>
+                                            {% endif %}
+                                            {% if colCount == yearMonthName|length-1 %}
+                                                <td>{{ avgScore }}</td>
+                                            {% endif %}
+                                            {% set colCount=colCount+1 %}
+                                        {% endfor %}
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <div class="previousYearViewContent">
+            <section>
+                <div class="">
+                    <div class="col-sm-12">
+                        <div class="dashboard">
+                            <div>
+                                <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                                    <thead>
+                                    <tr>
+                                        <th>Management Performance
+                                            <div class="year_view_btn">
+                                                <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
+                                                <a href=""><span id="previousYearShow" class="item fullYearView"> </span></a>
+                                                <a href="#" class="right-arrow ss-navigateright nextYear ">&nbsp;</a>
+                                                <input type="hidden" value="" id="scorePreviousCurrentYear">
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                </table>
+
+                                <div id="previousScorecardTable">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
     {% endif %}
 {% endblock %}
