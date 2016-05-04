@@ -203,14 +203,16 @@
 
                     $('.yearViewContent').hide();
 
-                    $('.yearView').click(function()
+                    $('.yearView').click(function($e)
                     {
+                        $e.preventDefault();
                         $('.wholeContent').hide();
                         $('.yearViewContent').show();
                     })
 
-                    $('.fullYearView').click(function(){
-
+                    $('.fullYearView').click(function($e)
+                    {
+                        $e.preventDefault();
                         $('.yearViewContent').hide();
                         $('.previousYearViewContent').hide();
                         $('#scorePreviousCurrentYear').val(2016);
@@ -364,10 +366,6 @@
                                     $.each(data.yearKpiColorArray, function(j)
                                     {
                                         var color = data.yearKpiColorArray[j][inn];
-                                        /*if(inn < data.yearKpiColorArray.length){
-                                         color = data.yearKpiColorArray[j][inn];
-                                         }*/
-
                                         if(color != 'false' && color != '')
                                         {
                                             if(color == 'Green')
