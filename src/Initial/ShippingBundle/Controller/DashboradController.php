@@ -2545,8 +2545,6 @@ class DashboradController extends Controller
             $dataforgraphforship=array();
             $NewMonthlyKPIValue=array();
             $NewMonthlyAvgTotal=array();
-            $scorecardElementRules = array();
-            $rankingKpiWeightarray = array();
             $NewMonthColor=array();
             for ($d = $initial; $d < $statusVerified; $d++)
             {
@@ -2555,8 +2553,10 @@ class DashboradController extends Controller
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
                 $new_monthdetail_date->modify('last day of this month');
+                $scorecardElementRules = array();
                 $scorecardElementValueArray = array();
                 $rankingKpiValueCountArray = array();
+                $rankingKpiWeightarray = array();
                 $Newkpivalue=array();
                 $NewKpiAvg=array();
                 $NewKpiColor=array();

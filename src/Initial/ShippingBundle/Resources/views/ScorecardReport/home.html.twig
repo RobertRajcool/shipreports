@@ -28,7 +28,8 @@
             $(document).ready(function(){
                 $('.reportShow').hide();
                 $('.reportElementShowSection').hide();
-                $('.report_btn').live("click",function(){
+                $('.report_btn').live("click",function($e){
+                    $e.preventDefault();
                     var aM = $('.activeMonth').val();
                     var aY = $('.activeYear').val();
                     var eM = $('.endMonth').val();
@@ -402,31 +403,6 @@
                         }
                     })
                 });
-  /*              $('.send_report').live("click",function(){
-                    var aM = $('.activeMonth').val();
-                    var aY = $('.activeYear').val();
-                    var eM = $('.endMonth').val();
-                    var eY = $('.endYear').val();
-                    var data = {
-                        activeMonth : aM,
-                        activeYear : aY,
-                        endMonth : eM,
-                        endYear : eY
-                    };
-                    $.ajax({
-                        type: "POST",
-                        data: data,
-                        url: "scorecard_report_pdfReport_mail",
-                        success: function(data)
-                        {
-                            alert(data.reportMessage);
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            alert('Error : ' + errorThrown);
-                        }
-                    })
-                });*/
                 $('#sendmailid').click(function($e){
                     $e.preventDefault();
                     var aM = $('.activeMonth').val();
@@ -533,9 +509,9 @@
                 {
                     $('#livesearchdiv').hide();
                 });
-                $('#toemail').keyup(function()
+                $('#toemail').keyup(function($e)
                 {
-
+                    $e.preventDefault();
                     var searchstring=$(this).val();
                     var data = {searchstring :searchstring} ;
                     $.ajaxSetup({
@@ -697,7 +673,7 @@
             <input type="hidden" class="endYearText" name="endYear" value="">
             <div class="reportElementShow"></div>
             <div class="actions_submit">
-                <input type="submit" class="submit_btn send_report" value="Send Report" />
+                <input type="submit" class="submit_btn send_report" value="Print" />
             </div>
 
         </form>

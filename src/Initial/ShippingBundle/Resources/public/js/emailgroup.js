@@ -331,8 +331,8 @@ $(document).ready(function()
     //Find the group active or inactive checkbox value Ends Here
     function checboxcheckeddisplay(id)
     {
-        /*$('#'+id).prop('checked', true);
-        $('#activecheckbox').css('display','block')*/
+        $('#'+id).prop('checked', true);
+        $('#activecheckbox').css('display','block')
 
     }
     $('.inline-checkbox').live('click change',function ()

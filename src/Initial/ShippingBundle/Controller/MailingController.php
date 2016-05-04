@@ -30,6 +30,8 @@ class MailingController extends Controller
         $em = $this->getDoctrine()->getManager();
         //Finding Company for Login user Starts Here//
         $user = $this->getUser();
+        if($user!=null)
+        {
         $userId = $user->getId();
         $username = $user->getUsername();
 
@@ -70,6 +72,12 @@ class MailingController extends Controller
         //Finding Company for Login user Ends Here//
         return $this->render('InitialShippingBundle:Mailing:creategroup.html.twig',
             array('listofuser'=>$listofuser,'usercount'=>count($listofuser)));
+
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
     /**
      * ajaxviewemailgroup.
