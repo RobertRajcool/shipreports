@@ -589,22 +589,11 @@ class ScorecardReportController extends Controller
                 ->setParameter('sb', $userMailId)
                 ->getQuery()
                 ->getResult();
-
-
-            //assign file attachement for mail and Mailing Starts Here...u
-            for ($ma = 0; $ma < count($findsemail); $ma++) {
-                /* $mailer = $this->container->get('mailer');
-                 $message = \Swift_Message::newInstance()
-                     ->setFrom($clientemailid)
-                     ->setTo($findsemail[$ma]['emailid'])
-                     ->setSubject($kpiname)
-                     ->setBody($comment);
-                 $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                 $mailer->send($message);*/
+            for ($ma = 0; $ma < count($findsemail); $ma++)
+            {
                 array_push($mailidarray, $findsemail[$ma]['emailid']);
             }
         }
-        //Mailing Ends....
         $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $commentBox, 'subject' => 'Score Card Report');
         $gearman = $this->get('gearman');
         $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));

@@ -14,8 +14,9 @@
             $(document).ready(function()
             {
                 $('#resultofreport').hide();
-                $('#reportform').submit(function()
+                $('#reportform').submit(function($e)
                 {
+                    $e.preventDefault();
                     var form=$('#reportform');
                     $.ajaxSetup({
                         global: false,

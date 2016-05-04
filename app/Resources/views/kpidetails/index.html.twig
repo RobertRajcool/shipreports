@@ -30,22 +30,26 @@
                 $('#list_view').hide();
                 $('.grid_edit_kpi').hide();
 
-                $('.add-rule').live("click",function(){
+                $('.add-rule').live("click",function($e){
+                    $e.preventDefault();
                     $('.field').hide();
                 });
 
-                $('.add-condition').live("click",function(){
+                $('.add-condition').live("click",function($e){
+                    $e.preventDefault();
                     $('.field').hide();
                 });
 
-                $('.edit_kpi_button').live("click",function(){
+                $('.edit_kpi_button').live("click",function($e){
+                    $e.preventDefault();
                     $('.show_kpi').hide();
                     $('.create_kpi').hide();
                     $('.rule_create_div').hide();
                     $('.grid_edit_kpi').show();
                 });
 
-                $('.box_icon').click(function(){
+                $('.box_icon').click(function($e){
+                    $e.preventDefault();
                     $('#list_view').hide();
                     $('.box_icon').hide();
                     $('#nogroupselected').show();
@@ -54,7 +58,8 @@
                     $('.list_icon').show();
                     $('.create_kpi').show();
                 });
-                $('.list_icon').click(function(){
+                $('.list_icon').click(function($e){
+                    $e.preventDefault();
                     $('.box_icon').show();
                     $('#grid_view').hide();
                     $('#nogroupselected').hide();
@@ -64,28 +69,28 @@
                     $('.list_icon').hide();
                     $('#list_view').show();
                 });
-                $('.add_btn').live("click",function(){
-                    //$('#grid_view').hide();
+                $('.add_btn').live("click",function($e){
+                    $e.preventDefault();
                     $('#nogroupselected').hide();
                     $('#list_view').hide();
                     $('.grid_edit_kpi').hide();
                     $('.show_kpi').hide();
-
                     $('#kpi_details_activeDate_month').addClass('add_rule_basic_date_drop ');
                     $('#kpi_details_endDate_month').addClass('add_rule_basic_date_drop ');
                     $('#kpi_details_activeDate_year').addClass('add_rule_basic_year_drop ');
                     $('#kpi_details_endDate_year').addClass('add_rule_basic_year_drop ');
-
                     $('.create_kpi').show();
                 });
 
-                $('.cancel_btn').live("click",function(){
+                $('.cancel_btn').live("click",function($e){
+                    $e.preventDefault();
                     $('.create_kpi').hide();
                     $('#nogroupselected').show();
                     $('#grid_view').show();
                 });
 
-                $('.edit_cancel_button').live("click",function(){
+                $('.edit_cancel_button').live("click",function($e){
+                    $e.preventDefault();
                     $('.grid_edit_kpi').hide();
                     $('#nogroupselected').hide();
                     $('#grid_view').show();
@@ -96,8 +101,9 @@
                 var condition_text = "";
                 var count = 0;
                 var i = 0;
-                $('.kpi_class').live("click",function()
+                $('.kpi_class').live("click",function($e)
                 {
+                    $e.preventDefault();
                     $('.create_kpi').hide();
                     $('.grid_edit_kpi').hide();
                     $('#nogroupselected').hide();
@@ -244,8 +250,9 @@
                     }
                 });
 
-                $('#weightageId').change(function()
+                $('#weightageId').change(function($e)
                 {
+                    $e.preventDefault();
                     var currentId = $(this).val();
                     var data = {weightage : currentId};
 
@@ -651,14 +658,12 @@
         </section>
     </div>
 
-
     <div class = "show_kpi">
         <section>
             <div class="col-sm-11">
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
                         <a href="" class="edit_btn edit_kpi_button"> Edit</a>
-                        {#<a href="" class="edit_btn">Archive</a>#}
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic details</legend>
@@ -717,14 +722,12 @@
 
         <script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/action-builder.js"></script>
-
         <script type="text/javascript">
-
             $(document).ready(function(){
                 $('.kpi_rules').hide();
-
-                $('.edit_class').live("click",function()
+                $('.edit_class').live("click",function($e)
                 {
+                    $e.preventDefault();
                     $('.rule_create_div').show();
                     var conditions, actions;
                     var currentId = $(this).attr('id');
@@ -853,7 +856,8 @@
                     $('.all-any-none').hide();
                 });
 
-                $('.delete_class').live("click",function(){
+                $('.delete_class').live("click",function($e){
+                    $e.preventDefault();
                     var currentId = $(this).attr('id');
                     var id_value = splitfun(currentId);
                     $('#row_edit_id-'+id_value).remove();
@@ -864,8 +868,8 @@
                     }
                 });
 
-
-                $('.edit_submit_button').live("click",function(){
+                $('.edit_submit_button').live("click",function($e){
+                    $e.preventDefault();
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
                     for(var i_i=1;i_i<count_row;i_i++)
@@ -987,45 +991,33 @@
 
                 });
 
-                function rule_operator(operator)
-                {
-                    if(operator=='equalTo')
-                    {
+                function rule_operator(operator) {
+                    if(operator=='equalTo'){
                         operator = '=';
                     }
-                    else if(operator=='notEqualTo')
-                    {
+                    else if(operator=='notEqualTo'){
                         operator = '!=';
                     }
-                    else if(operator=='greaterThan')
-                    {
+                    else if(operator=='greaterThan'){
                         operator = '>';
                     }
-                    else if(operator=='greaterThanEqual')
-                    {
+                    else if(operator=='greaterThanEqual'){
                         operator = '>=';
                     }
-                    else if(operator =='lessThan')
-                    {
+                    else if(operator =='lessThan'){
                         operator = '<';
                     }
-                    else if(operator=='lessThanEqual')
-                    {
+                    else if(operator=='lessThanEqual'){
                         operator = '<=';
                     }
-
                     return operator;
                 }
-
-
                 function splitfun(data){
                     var num = data.split('-');
                     return num[1];
                 }
             });
-
         </script>
-
 
         <section>
             <div class="col-sm-11">
@@ -1065,7 +1057,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
-                                        <span>
+                                <span>
                                     <select class="month_text add_rule_basic_date_drop active_month ">
                                         <option value="0">JAN</option>
                                         <option value="1">FEB</option>
@@ -1080,14 +1072,13 @@
                                         <option value="10">NOV</option>
                                         <option value="11">DEC</option>
                                     </select>
-                                        </span>
-                                         <span>
-                                            <select class="year_text add_rule_basic_year_drop active_year">
-                                                {% for i in 2000..2020 %}
-                                                    <option value={{ i }}>{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
-                                             {#<input type="date" name="startDate" id="startDate" class="monthPicker_activeDate" />#}
+                                </span>
+                                <span>
+                                    <select class="year_text add_rule_basic_year_drop active_year">
+                                        {% for i in 2000..2020 %}
+                                            <option value={{ i }}>{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
                                 </span>
                                         To
                                 <span>
@@ -1112,7 +1103,6 @@
                                             <option value={{ i }}>{{ i }}</option>
                                         {% endfor %}
                                     </select>
-                                     {#<input type="date" name="startDate" id="endDate" class="monthPicker_endDate" />#}
                                 </span>
                                     </div>
                                 </div>
@@ -1132,7 +1122,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-
                             <fieldset class="fieldset_box add_rule_right_edit_form rule_div">
                                 <legend class="legend_name">Rules</legend>
                                 <div class="table-responsive">
@@ -1148,7 +1137,6 @@
                                 </div>
                                 <div id="rule_obj_text"></div>
                             </fieldset>
-
                         </div>
                         <div class="kpi_rules">
                             <fieldset class="fieldset_box_right add_rule_right_edit_form rule_create_div">
@@ -1157,15 +1145,8 @@
                                     <div class="col-xs-9">
                                         <div id="conditions_edit"></div>
                                         <div id="actions_edit"></div>
-
                                         <p id="text_box"></p>
                                         <input type="hidden" id="result" name="value">
-
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                            {# &#123;&#35;<div id="act&#35;&#125;>#}
                                     </div>
                                 </div>
                                 <div class="form-group button">
@@ -1179,7 +1160,6 @@
                             <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save</button>
                             <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
                         </div>
-
                     </form>
                 </div>
             </div>
