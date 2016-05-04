@@ -407,28 +407,27 @@
                 k++;
                 {% endfor %}
 
+                $('.KpiRulesShow').hide();
+                $('.myFuncKpiRulesShow').live("click",function($e){
+                    $e.preventDefault();
+                    $('.KpiRulesShow').toggle();
+                })
                 $('#rule_row_id').hide();
-                /*Displaying the rules above the graph*/
-
                 function splitfun(data){
                     var result = data.split('*');
                     return result;
                 }
-
                 var Example = (function() {
                     "use strict";
-
                     var elem,
                             hideHandler,
                             that = {};
-
                     that.init = function(options) {
                         elem = $(options.selector);
                     };
 
                     that.show = function(text) {
                         clearTimeout(hideHandler);
-
                         elem.find("span").html(text);
                         elem.delay(200).fadeIn().delay(4000).fadeOut();
                     };
@@ -594,8 +593,8 @@
                 {% endfor %}
             </div>
 
-            <div class="rules_ranking"><a ng-click="myFuncKpiRulesShow()" class="rules_show_btn" href="">Rules show</a></div>
-            <table class="table table-striped-4 kpi_ranking_rules_show_row" ng-show="KpiRulesShow">
+            <div class="rules_ranking"><a class="rules_show_btn myFuncKpiRulesShow" href="">Rules show</a></div>
+            <table class="table table-striped-4 kpi_ranking_rules_show_row KpiRulesShow">
                 <thead>
                 <tr>
                     <th colspan="3">Rules</th>
@@ -642,8 +641,6 @@
             </table>
         </div>
         <div class="graph_send_comment">
-
-
             <div id="buttonid">
                 <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
                 <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
@@ -652,7 +649,6 @@
             </div>
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->
-
                 <fieldset id="commentform" class="fieldset_box_2">
                     <legend class="legend_name">{{ 'elementranking.addcomment'|trans }}</legend>
                     <form  class="form-horizontal no-style"  method="post">
@@ -661,11 +657,9 @@
 
                         <div class="form-group">
                             <div class="col-xs-12">
-                                {#<textarea class="add_comment_textarea" placeholder="Enter comment here..."> </textarea>#}
                                 <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
                             </div>
                         </div>
-                        {#  <button value="Save" type="submit" class="submit_btn_save">Save</button>#}
                         <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">
                     </form>
                 </fieldset>
@@ -682,7 +676,6 @@
                             <label class="control-label  col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
                             <div class="col-xs-9">
                                 <div class="add_comment_checkbox"><label><input type="checkbox"  name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}</label></div>
-
                             </div>
                         </div>
                         <div class="form-group">
@@ -690,9 +683,7 @@
                             <div class="col-xs-9">
                                 <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
                                 <div id="livesearchdiv"  class="send_reports_to_input_list">
-                                    <ul id="livesearch">
-
-                                    </ul>
+                                    <ul id="livesearch"></ul>
                                 </div>
                             </div>
                         </div>
@@ -713,10 +704,7 @@
                     </form>
                 </fieldset>
                 <!--Form for Send Reports Ends Here  -->
-
             </div>
-
-
         </div>
     </div>
 {% endblock %}
