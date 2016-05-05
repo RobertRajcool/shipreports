@@ -3264,240 +3264,414 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        if ($user != null) {
-            $userId = $user->getId();
-            $userName = $user->getUsername();
 
-            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
-                $query = $em->createQueryBuilder()
-                    ->select('a.shipName', 'a.id', 'a.manufacturingYear')
-                    ->from('InitialShippingBundle:ShipDetails', 'a')
-                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
-                    ->where('b.adminName = :username')
-                    ->setParameter('username', $userName)
-                    ->getQuery();
-            } else {
-                $query = $em->createQueryBuilder()
-                    ->select('a.shipName', 'a.id', 'a.manufacturingYear')
-                    ->from('InitialShippingBundle:ShipDetails', 'a')
-                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                    ->where('b.id = :userId')
-                    ->setParameter('userId', $userId)
-                    ->getQuery();
-            }
+        $userId = $user->getId();
+        $userName = $user->getUsername();
 
-            $listAllShipForCompany = $query->getResult();
-            $year=$request->request->get('year');
-            $oneyear_montharray = array();
-            $oneChart_Data=array();
-            if ($year == ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
-                    array_push($oneyear_montharray, $month);
-                }
+        if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id', 'a.manufacturingYear')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                ->where('b.adminName = :username')
+                ->setParameter('username', $userName)
+                ->getQuery();
+        } else {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id', 'a.manufacturingYear')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery();
+        }
+
+        $listAllShipForCompany = $query->getResult();
+        $year=$request->request->get('year');
+        $oneyear_montharray = array();
+        $oneChart_Data=array();
+        if ($year == ' ') {
+            for ($m = 1; $m <= 12; $m++) {
+                $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
+                array_push($oneyear_montharray, $month);
             }
-            if ($year != ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
-                    array_push($oneyear_montharray, $month);
-                }
+        }
+        if ($year != ' ') {
+            for ($m = 1; $m <= 12; $m++) {
+                $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
+                array_push($oneyear_montharray, $month);
             }
-            $newcategories=array();
-            $DataRankingReports=0;
-            for ($shipCount = 0; $shipCount < count($listAllShipForCompany); $shipCount++)
+        }
+        $newcategories=array();
+        $DataRankingReports=0;
+        for ($shipCount = 0; $shipCount < count($listAllShipForCompany); $shipCount++)
+        {
+            $rankingShipName = $listAllShipForCompany[$shipCount]['shipName'];
+            $manufacturingYear = $listAllShipForCompany[$shipCount]['manufacturingYear'];
+            $rankingShipId = $listAllShipForCompany[$shipCount]['id'];
+            $initial=0;
+            $statusVerified=0;
+            $currentRequestYear = date('Y');
+            if($currentRequestYear==$year)
             {
-                $rankingShipName = $listAllShipForCompany[$shipCount]['shipName'];
-                $manufacturingYear = $listAllShipForCompany[$shipCount]['manufacturingYear'];
-                $rankingShipId = $listAllShipForCompany[$shipCount]['id'];
-                $initial=0;
-                $statusVerified=0;
-                $currentRequestYear = date('Y');
-                if($currentRequestYear==$year)
+                $currentMonth = date('n');
+                $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth-1]);
+                $new_monthdetail_date->modify('last day of this month');
+                $statusVerified = $currentMonth-1;
+                $monthlyShipDataStatus = $em->createQueryBuilder()
+                    ->select('b.status')
+                    ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                    ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                    ->setParameter('shipId', $rankingShipId)
+                    ->setParameter('monthDetail', $new_monthdetail_date)
+                    ->getQuery()
+                    ->getResult();
+
+                if(count($monthlyShipDataStatus)!=0 && $monthlyShipDataStatus[0]['status']==4)
                 {
-                    $currentMonth = date('n');
-                    $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth-1]);
-                    $new_monthdetail_date->modify('last day of this month');
-                    $statusVerified = $currentMonth-1;
-                    $monthlyShipDataStatus = $em->createQueryBuilder()
-                        ->select('b.status')
+                    $statusVerified = $currentMonth;
+                }
+                else
+                {
+                    $statusFieldQuery = $em->createQueryBuilder()
+                        ->select('b.status, b.dataofmonth')
                         ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
                         ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
                         ->setParameter('shipId', $rankingShipId)
                         ->setParameter('monthDetail', $new_monthdetail_date)
                         ->getQuery()
                         ->getResult();
-
-                    if(count($monthlyShipDataStatus)!=0 && $monthlyShipDataStatus[0]['status']==4)
+                    if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
                     {
-                        $statusVerified = $currentMonth;
-                    }
-                    else
-                    {
-                        $statusFieldQuery = $em->createQueryBuilder()
-                            ->select('b.status, b.dataofmonth')
-                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                            ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
-                            ->setParameter('shipId', $rankingShipId)
-                            ->setParameter('monthDetail', $new_monthdetail_date)
-                            ->getQuery()
-                            ->getResult();
-                        if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
-                        {
-                            $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
-                            $statusVerified  = $dateFromDb->format('n');
-                        }
+                        $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
+                        $statusVerified  = $dateFromDb->format('n');
                     }
                 }
-                else
+            }
+            else
+            {
+                for($yearCount=0;$yearCount<count($oneyear_montharray);$yearCount++)
                 {
-                    for($yearCount=0;$yearCount<count($oneyear_montharray);$yearCount++)
+                    $monthObject = new \DateTime($oneyear_montharray[$yearCount]);
+                    $monthObject->modify('last day of this month');
+                    $statusFieldQuery = $em->createQueryBuilder()
+                        ->select('b.status, b.dataofmonth')
+                        ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                        ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                        ->setParameter('shipId', $rankingShipId)
+                        ->setParameter('monthDetail', $monthObject)
+                        ->getQuery()
+                        ->getResult();
+                    if(count($statusFieldQuery)!=0 )
                     {
-                        $monthObject = new \DateTime($oneyear_montharray[$yearCount]);
-                        $monthObject->modify('last day of this month');
-                        $statusFieldQuery = $em->createQueryBuilder()
-                            ->select('b.status, b.dataofmonth')
-                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                            ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
-                            ->setParameter('shipId', $rankingShipId)
-                            ->setParameter('monthDetail', $monthObject)
-                            ->getQuery()
-                            ->getResult();
-                        if(count($statusFieldQuery)!=0 )
+                        for($statusFieldCount=0;$statusFieldCount<count($statusFieldQuery);$statusFieldCount++)
                         {
-                            for($statusFieldCount=0;$statusFieldCount<count($statusFieldQuery);$statusFieldCount++)
+                            if($statusFieldQuery[$statusFieldCount]['status']==4)
                             {
-                                if($statusFieldQuery[$statusFieldCount]['status']==4)
-                                {
-                                    $dateFromDb = $statusFieldQuery[$statusFieldCount]['dataofmonth'];
-                                    $initial  = $dateFromDb->format('n');
-                                    $statusVerified = 12-$initial;
-                                }
+                                $dateFromDb = $statusFieldQuery[$statusFieldCount]['dataofmonth'];
+                                $initial  = $dateFromDb->format('n');
+                                $statusVerified = 12-$initial;
                             }
                         }
                     }
                 }
-                $ShipDetailDataarray=array();
-                for ($d = $initial; $d < $statusVerified; $d++)
+            }
+            $ShipDetailDataarray=array();
+            for ($d = $initial; $d < $statusVerified; $d++)
+            {
+                $monthcount=0;
+                $time2 = strtotime($oneyear_montharray[$d]);
+                $monthinletter = date('M', $time2);
+                if($shipCount==0)
                 {
-                    $monthcount=0;
-                    $time2 = strtotime($oneyear_montharray[$d]);
-                    $monthinletter = date('M', $time2);
-                    if($shipCount==0)
-                    {
-                        array_push($newcategories, $monthinletter);
-                    }
-                    $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
-                    $new_monthdetail_date->modify('last day of this month');
-                    $rankingKpiValueCountArray = array();
-                    $rankingKpiList = $em->createQueryBuilder()
-                        ->select('b.kpiName', 'b.id', 'b.weightage')
-                        ->from('InitialShippingBundle:RankingKpiDetails', 'b')
-                        ->where('b.shipDetailsId = :shipid')
-                        ->setParameter('shipid', $listAllShipForCompany[0]['id'])
+                    array_push($newcategories, $monthinletter);
+                }
+                $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
+                $new_monthdetail_date->modify('last day of this month');
+                $rankingKpiValueCountArray = array();
+                $rankingKpiList = $em->createQueryBuilder()
+                    ->select('b.kpiName', 'b.id', 'b.weightage')
+                    ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                    ->where('b.shipDetailsId = :shipid')
+                    ->setParameter('shipid', $listAllShipForCompany[0]['id'])
+                    ->getQuery()
+                    ->getResult();
+
+                for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++)
+                {
+                    $rankingElementValueTotal = 0;
+                    $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
+                    $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
+                    $rankingElementList = $em->createQueryBuilder()
+                        ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
+                        ->from('InitialShippingBundle:RankingElementDetails', 'c')
+                        ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
+                        ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
+                        ->setParameter('kpiid', $rankingKpiId)
+                        ->setParameter('datamonth', $new_monthdetail_date)
+                        ->setParameter('rankingStatusValue', 3)
+                        ->setParameter('shipId', $rankingShipId)
                         ->getQuery()
                         ->getResult();
 
-                    for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++)
+                    if ($rankingElementList > 0)
                     {
-                        $rankingElementValueTotal = 0;
-                        $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
-                        $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
-                        $rankingElementList = $em->createQueryBuilder()
-                            ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
-                            ->from('InitialShippingBundle:RankingElementDetails', 'c')
-                            ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
-                            ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
-                            ->setParameter('kpiid', $rankingKpiId)
-                            ->setParameter('datamonth', $new_monthdetail_date)
-                            ->setParameter('rankingStatusValue', 3)
-                            ->setParameter('shipId', $rankingShipId)
-                            ->getQuery()
-                            ->getResult();
-
-                        if ($rankingElementList > 0)
+                        if($monthcount==0)
                         {
-                            if($monthcount==0)
-                            {
-                                $DataRankingReports++;
+                            $DataRankingReports++;
 
-                            }
-                            for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++)
-                            {
-                                $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
-                                $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
-                                $elementResultColor = "";
-                                $rankingElementColorValue=0;
-                                $rankingElementResult = $em->createQueryBuilder()
-                                    ->select('b.elementdata, b.elementcolor')
-                                    ->from('InitialShippingBundle:Ranking_LookupData', 'b')
-                                    ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
-                                    ->setParameter('kpiId', $rankingKpiId)
-                                    ->setParameter('shipId', $rankingShipId)
-                                    ->setParameter('elementId', $rankingElementId)
-                                    ->setParameter('monthDetail', $new_monthdetail_date )
-                                    ->getQuery()
-                                    ->getResult();
-                                if(count($rankingElementResult)!=0)
-                                {
-                                    $elementResultColor = $rankingElementResult[0]['elementcolor'];
-                                }
-                                else
-                                {
-                                    $rankingElementResult[0]['elementdata']=0;
-                                }
-
-                                if ($elementResultColor == "false")
-                                {
-                                    $rankingElementColorValue = 0;
-                                }
-
-                                if($elementResultColor=='Green')
-                                {
-                                    $rankingElementColorValue = $rankingElementWeight;
-                                }
-                                else if($elementResultColor == 'Yellow')
-                                {
-                                    $rankingElementColorValue = $rankingElementWeight/2;
-                                }
-                                else if($elementResultColor == 'Red')
-                                {
-                                    $rankingElementColorValue = 0;
-                                }
-                                $rankingElementValueTotal += $rankingElementColorValue;
-                            }
-                            $monthcount++;
                         }
-                        array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
-                    }
-                    if ($manufacturingYear == "")
-                    {
-                        $yearcount = 0;
-                    }
-                    else
-                    {
-                        $currentdatestring = date('Y-01-01');
-                        $d1 = new \DateTime($currentdatestring);
-                        $man_datestring = $manufacturingYear . '-01-' . '01';
-                        $d2 = new \DateTime($man_datestring);
-                        $diff = $d2->diff($d1);
-                        $yearcount = $diff->y + 1;
-                        $vesselage = 20 / $yearcount;
-                    }
-                    array_push($ShipDetailDataarray,(array_sum($rankingKpiValueCountArray)));
+                        for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++)
+                        {
+                            $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
+                            $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
+                            $elementResultColor = "";
+                            $rankingElementColorValue=0;
+                            $rankingElementResult = $em->createQueryBuilder()
+                                ->select('b.elementdata, b.elementcolor')
+                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                ->setParameter('kpiId', $rankingKpiId)
+                                ->setParameter('shipId', $rankingShipId)
+                                ->setParameter('elementId', $rankingElementId)
+                                ->setParameter('monthDetail', $new_monthdetail_date )
+                                ->getQuery()
+                                ->getResult();
+                            if(count($rankingElementResult)!=0)
+                            {
+                                $elementResultColor = $rankingElementResult[0]['elementcolor'];
+                            }
+                            else
+                            {
+                                $rankingElementResult[0]['elementdata']=0;
+                            }
 
+                            if ($elementResultColor == "false")
+                            {
+                                $rankingElementColorValue = 0;
+                            }
 
+                            if($elementResultColor=='Green')
+                            {
+                                $rankingElementColorValue = $rankingElementWeight;
+                            }
+                            else if($elementResultColor == 'Yellow')
+                            {
+                                $rankingElementColorValue = $rankingElementWeight/2;
+                            }
+                            else if($elementResultColor == 'Red')
+                            {
+                                $rankingElementColorValue = 0;
+                            }
+                            $rankingElementValueTotal += $rankingElementColorValue;
+                        }
+                        $monthcount++;
+                    }
+                    array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
                 }
-                array_push($oneChart_Data,array("name" => $rankingShipName,'showInLegend'=> true, "data" => $ShipDetailDataarray));
+                if ($manufacturingYear == "")
+                {
+                    $yearcount = 0;
+                }
+                else
+                {
+                    $currentdatestring = date('Y-01-01');
+                    $d1 = new \DateTime($currentdatestring);
+                    $man_datestring = $manufacturingYear . '-01-' . '01';
+                    $d2 = new \DateTime($man_datestring);
+                    $diff = $d2->diff($d1);
+                    $yearcount = $diff->y + 1;
+                    $vesselage = 20 / $yearcount;
+                }
+                array_push($ShipDetailDataarray,(array_sum($rankingKpiValueCountArray)));
+
+
             }
-            $response = new JsonResponse();
-            $response->setData
-            (
-                array(
-                    'montharray' => $newcategories,
-                    'chartdata'=>$oneChart_Data,
-                )
+            array_push($oneChart_Data,array("name" => $rankingShipName,'showInLegend'=> true, "data" => $ShipDetailDataarray));
+        }
+        if($mode=='overallreports')
+        {
+          return array(
+              'montharray' => $newcategories,
+              'chartdata'=>$oneChart_Data,
+              'year'=>$year
+                );
+        }
+        $response = new JsonResponse();
+        $response->setData
+        (
+            array(
+                'montharray' => $newcategories,
+                'chartdata'=>$oneChart_Data,
+                'year'=>$year
+            )
+        );
+        return $response;
+
+    }
+    /**
+     * Allships Reports For Ranking
+     *
+     * @Route("/allships_send_rankingreports", name="allships_send_rankingreports")
+     */
+    public function allshipss_endreports_rankingAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null)
+        {
+            $reportObject = $this->overall_ships_rankingreportsAction($request,'overallreports');
+            $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+            $mpdf->defaultheaderline = 0;
+            $mpdf->defaultheaderfontstyle = 'B';
+            $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo_02.png';
+            $mpdf ->SetWatermarkImage($WateMarkImagePath);
+            $mpdf ->showWatermarkImage = true;
+            $graphObject = array(
+                'chart'=>array('renderTo'=>'areaId','type'=>"line"),
+                'exporting'=>array('enabled'=>false),
+                'legend'=>array('layout'=>'vertical','align'=>'right','verticalAlign'=>'middle','borderWidth'=>0),
+                'plotOptions'=>array('series'=>array(
+                    "allowPointSelect"=>true,
+                    "dataLabels"=>array(
+                        "enabled"=>true
+                    )
+                )),
+                'series'=>$reportObject['chartdata'],
+                'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
+                'title'=>array('text'=>''),
+                'xAxis'=>array('categories'=>$reportObject['montharray'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
+                'yAxis'=>array('max'=>100,'title'=>array('text'=>'Values','style'=>array('color'=>'#0000F0'))),
             );
+            //$fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
+            $currentdatetime=date('Y-m-d-H-i-s');
+            $jsondata=json_encode($graphObject);
+            $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/overall_ship.json';
+            file_put_contents($pdffilenamefullpath, $jsondata);
+            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+            $outfile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship.png';
+            $JsonFileDirectroy=$pdffilenamefullpath.' -outfile '.$outfile.' -scale 2.5 -width 1065';
+            $ImageGeneration = 'phantomjs ' . $Highchartconvertjs.$JsonFileDirectroy;
+            $handle = popen($ImageGeneration, 'r');
+            $charamee = fread($handle, 2096);
+            $htmlContentfor_report= $this->renderView('InitialShippingBundle:DashBorad:overall_shipreport_ranking_template.html.twig', array(
+                'screenName' => 'Ranking Report',
+                'userName' => '',
+                'date' => date('Y-m-d'),
+                'link' => 'overall_ship.png',
+            ));
+            $mpdf->AddPage('', 4, '', 'on');
+            $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $mpdf->WriteHTML($htmlContentfor_report);
+            $content = $mpdf->Output('', 'S');
+            $response = new Response();
+            $response->setContent($content);
+            $response->headers->set('Content-Type', 'application/pdf');
             return $response;
         }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+    /**
+     * Allships  Reports Send to Mailing For Ranking
+     *
+     * @Route("/allships_send_rankingreports_mail", name="allships_send_rankingreports_mail")
+     */
+    public function allships_sendreports_mail_rankingAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $email=$user->getEmail();
+        $reportObject = $this->overall_ships_rankingreportsAction($request,'overallreports');
+        $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+        $mpdf->defaultheaderline = 0;
+        $mpdf->defaultheaderfontstyle = 'B';
+        $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo_02.png';
+        $mpdf ->SetWatermarkImage($WateMarkImagePath);
+        $mpdf ->showWatermarkImage = true;
+        $graphObject = array(
+            'chart'=>array('renderTo'=>'areaId','type'=>"line"),
+            'exporting'=>array('enabled'=>false),
+            'legend'=>array('layout'=>'vertical','align'=>'right','verticalAlign'=>'middle','borderWidth'=>0),
+            'plotOptions'=>array('series'=>array(
+                "allowPointSelect"=>true,
+                "dataLabels"=>array(
+                    "enabled"=>true
+                )
+            )),
+            'series'=>$reportObject['chartdata'],
+            'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
+            'title'=>array('text'=>''),
+            'xAxis'=>array('categories'=>$reportObject['montharray'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
+            'yAxis'=>array('max'=>100,'title'=>array('text'=>'Values','style'=>array('color'=>'#0000F0'))),
+        );
+        //$fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
+        $currentdatetime=date('Y-m-d-H-i-s');
+        $jsondata=json_encode($graphObject);
+        $pdffilenamefullpath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/listofjsonfiles/overall_ship.json';
+        file_put_contents($pdffilenamefullpath, $jsondata);
+        $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+        $outfile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship.png';
+        $JsonFileDirectroy=$pdffilenamefullpath.' -outfile '.$outfile.' -scale 2.5 -width 1065';
+        $ImageGeneration = 'phantomjs ' . $Highchartconvertjs.$JsonFileDirectroy;
+        $handle = popen($ImageGeneration, 'r');
+        $charamee = fread($handle, 2096);
+        $htmlContentfor_report= $this->renderView('InitialShippingBundle:DashBorad:overall_shipreport_ranking_template.html.twig', array(
+            'screenName' => 'Ranking Report',
+            'userName' => '',
+            'date' => date('Y-m-d'),
+            'link' => 'overall_ship.png',
+        ));
+        $mpdf->AddPage('', 4, '', 'on');
+        $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+        $mpdf->WriteHTML($htmlContentfor_report);
+        $content = $mpdf->Output('', 'S');
+            $fileName = 'overallshipreports_'. date('Y-m-d H-i-s') . '.pdf';
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' .$fileName;
+            file_put_contents($pdffilenamefullpath, $content);
+            $useremaildid = $request->request->get('clientemail');
+            $mailbox = $request->request->get('comment');
+            $mailidarray = array();
+            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
+            {
+                array_push($mailidarray, $useremaildid);
+            }
+            else
+            {
+                $findsemail = $em->createQueryBuilder()
+                    ->select('a.useremailid')
+                    ->from('InitialShippingBundle:EmailUsers', 'a')
+                    ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                    ->where('b.groupname = :sq')
+                    ->ORwhere('a.useremailid = :sb')
+                    ->setParameter('sq', $useremaildid)
+                    ->setParameter('sb', $useremaildid)
+                    ->getQuery()
+                    ->getResult();
+
+
+                //assign file attachement for mail and Mailing Starts Here...u
+                for ($ma = 0; $ma < count($findsemail); $ma++) {
+                    /* $mailer = $this->container->get('mailer');
+                     $message = \Swift_Message::newInstance()
+                         ->setFrom($clientemailid)
+                         ->setTo($findsemail[$ma]['emailid'])
+                         ->setSubject($kpiname)
+                         ->setBody($comment);
+                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                     $mailer->send($message);*/
+                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                }
+            }
+            //Mailing Ends....
+            $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
+            $gearman = $this->get('gearman');
+            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+            $response = new JsonResponse();
+            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            return $response;
+
     }
 }
