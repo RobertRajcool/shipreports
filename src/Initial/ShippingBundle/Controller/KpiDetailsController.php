@@ -36,6 +36,70 @@ class KpiDetailsController extends Controller
         ));
     }
 
+    /**
+     * Lists all KpiDetails entities.
+     *
+     * @Route("/ajax_edit", name="kpidetails_index")
+     */
+    public function ajax_editAction(Request $request)
+    {
+        $id = $request->request->get('Id');
+        $kpiName = $request->request->get('kpiName');
+        $weightage = $request->request->get('weightage');
+        $description = $request->request->get('description');
+        $cellName = $request->request->get('cellName');
+        $cellDetails = $request->request->get('cellDetails');
+        $rules_array = $request->request->get('rules');
+
+        $em = $this->getDoctrine()->getManager();
+
+        $kpi_id_array= $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.kpiName = :kpi_name')
+            ->setParameter('kpi_name',$kpiName)
+            ->getQuery()
+            ->getResult();
+
+        for($j=0;$j<count($kpi_id_array);$j++)
+        {
+            $entity = $em->getRepository('InitialShippingBundle:KpiDetails')->find($kpi_id_array[$j]);
+
+            $kpiDetail = new KpiDetails();
+            $entity->setKpiName($kpiName);
+            $entity->setDescription($description);
+            $entity->setWeightage($weightage);
+            $entity->setCellName($cellName);
+            $entity->setCellDetails($cellDetails);
+            $em->flush();
+        }
+
+        if(count($rules_array)>0)
+        {
+            $kpi_rules_id_array= $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:KpiRules','a')
+                ->where('a.kpiDetailsId = :kpi_id')
+                ->setParameter('kpi_id',$id)
+                ->getQuery()
+                ->getResult();
+
+            for($i=0;$i<count($rules_array);$i++)
+            {
+                $kpi_rules_obj = $em->getRepository('InitialShippingBundle:KpiRules')->find($kpi_rules_id_array[$i]);
+                $kpi_obj= $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$id));
+
+                $kpi_rules_obj->setRules($rules_array[$i]);
+                $kpi_rules_obj->setKpiDetailsId($kpi_obj);
+                $em->flush();
+            }
+        }
+
+        $show_response = $this->kpi_ajax_showAction($request,'hi');
+
+        return $show_response;
+    }
+
 
     /**
      * Lists all KpiDetails entities.
@@ -393,86 +457,6 @@ class KpiDetailsController extends Controller
 
         return $response;
     }
-
-
-    /**
-     * Finds and displays a KpiDetails entity.
-     *
-     * @Route("/ajax_edit", name="kpidetails_ajax_edit")
-     */
-    public function ajax_editAction(Request $request)
-    {
-        echo "Hi";
-        /*$id = $request->request->get('Id');
-        $kpiName = $request->request->get('kpiName');
-        $weightage = $request->request->get('weightage');
-        $description = $request->request->get('description');
-        $cellName = $request->request->get('cellName');
-        $cellDetails = $request->request->get('cellDetails');
-        $rules_array = $request->request->get('rules');
-
-        $em = $this->getDoctrine()->getManager();
-
-        $kpi_id_array= $em->createQueryBuilder()
-            ->select('a.id')
-            ->from('InitialShippingBundle:KpiDetails','a')
-            ->where('a.kpiName = :kpi_name')
-            ->setParameter('kpi_name',$kpiName)
-            ->getQuery()
-            ->getResult();
-
-        for($j=0;$j<count($kpi_id_array);$j++)
-        {
-            $entity = $em->getRepository('InitialShippingBundle:KpiDetails')->find($kpi_id_array[$j]);
-
-            $kpiDetail = new KpiDetails();
-            $entity->setKpiName($kpiName);
-            $entity->setDescription($description);
-            $entity->setWeightage($weightage);
-            $entity->setCellName($cellName);
-            $entity->setCellDetails($cellDetails);
-            $em->flush();
-        }
-
-        if(count($rules_array)>0)
-        {
-            $kpi_rules_id_array= $em->createQueryBuilder()
-                ->select('a.id')
-                ->from('InitialShippingBundle:KpiRules','a')
-                ->where('a.kpiDetailsId = :kpi_id')
-                ->setParameter('kpi_id',$id)
-                ->getQuery()
-                ->getResult();
-
-            for($i=0;$i<count($rules_array);$i++)
-            {
-                $kpi_rules_obj = $em->getRepository('InitialShippingBundle:KpiRules')->find($kpi_rules_id_array[$i]);
-                $kpi_obj= $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$id));
-
-                $kpi_rules_obj->setRules($rules_array[$i]);
-                $kpi_rules_obj->setKpiDetailsId($kpi_obj);
-                $em->flush();
-            }
-        }
-
-        $show_response = $this->kpi_ajax_showAction($request,'hi');
-
-        return $show_response;*/
-
-    }
-
-
-
-    /**
-     * Finds and displays a KpiDetails entity.
-     *
-     * @Route("/ajaxKpiEdit", name="kpidetails_ajaxKpiEdit")
-     */
-    public function ajaxKpiEditAction()
-    {
-        echo "Hi";
-    }
-
 
     /**
      * Finds and displays a KpiDetails entity.

@@ -1,18 +1,6 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <style>
-        .inlineinput div {
-            display: inline;
-            width :30px;
-        }
-        #kpi_details_endDate_year
-        {
-            display: inline;
-            width :70px;
-        }
-    </style>
-
     {% block javascripts %}
 
         {% javascripts
@@ -79,6 +67,7 @@
                     $('#kpi_details_endDate_month').addClass('add_rule_basic_date_drop ');
                     $('#kpi_details_activeDate_year').addClass('add_rule_basic_year_drop ');
                     $('#kpi_details_endDate_year').addClass('add_rule_basic_year_drop ');
+                    $('#grid_view').show();
                     $('.create_kpi').show();
                 });
 
@@ -181,7 +170,7 @@
 
                             $.each(data.ship_name, function(ii)
                             {
-                                $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
+                                $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(', ');
                             });
 
 
@@ -255,7 +244,6 @@
                     $e.preventDefault();
                     var currentId = $(this).val();
                     var data = {weightage : currentId};
-
                     $.ajax({
                         type: "POST",
                         data: data,
@@ -275,6 +263,125 @@
                     })
                 });
 
+                $('.edit_submit_button').live("click",function($e){
+                    $e.preventDefault();
+                    var count_row = $('.rule_table_edit tr').length;
+                    var rule_array = new Array();
+                    for(var i_i=1;i_i<count_row;i_i++)
+                    {
+                        rule_array.push($('#rule_obj_text-'+i_i).val());
+                    }
+                    var condition_text = "";
+                    var i=0;
+                    var data = {
+                        kpiName : $('.edit_kpi_name').val(),
+                        weightage : $('.edit_kpi_weightage').val(),
+                        description : $('.edit_kpi_description').val(),
+                        cellName : $('.edit_kpi_cellName').val(),
+                        cellDetails : $('.edit_kpi_cellDetails').val(),
+                        Id : $('.kpi_edit_id').val(),
+                        rules : rule_array
+                    };
+                    $('.kpi_name').empty();
+                    $('.kpi_description').empty();
+                    $('.kpi_weightage').empty();
+                    $('.kpi_cellName').empty();
+                    $('.kpi_cellDetail').empty();
+                    $('.ship_name').empty();
+                    $('.rule_table').empty();
+                    $('#rule_obj_text').empty();
+                    $('.kpi_activeDate_month').empty();
+                    $('.kpi_activeDate_year').empty();
+                    $('.kpi_endDate_month').empty();
+                    $('.kpi_endDate_year').empty();
+
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "ajax_edit",
+                        success: function(data) {
+                            $('.grid_edit_kpi').hide();
+                            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                            ];
+                            var active_date = new Date(data.kpi_detail[0].activeDate.date);
+                            var end_date = new Date(data.kpi_detail[0].endDate.date);
+
+                            $('.kpi_name').append(data.kpi_detail[0].kpiName);
+                            $('.kpi_description').append(data.kpi_detail[0].description);
+                            $('.kpi_weightage').append(data.kpi_detail[0].weightage);
+                            $('.kpi_cellName').append(data.kpi_detail[0].cellName);
+                            $('.kpi_cellDetail').append(data.kpi_detail[0].cellDetails);
+                            $('.kpi_activeDate_month').append(monthNames[active_date.getMonth()]);
+                            $('.kpi_activeDate_year').append(active_date.getFullYear());
+                            $('.kpi_endDate_month').append(monthNames[end_date.getMonth()]);
+                            $('.kpi_endDate_year').append(end_date.getFullYear());
+
+                            $('.edit_kpi_name').val(data.kpi_detail[0].kpiName);
+                            $('.edit_kpi_description').val(data.kpi_detail[0].description);
+                            $('.edit_kpi_weightage').val(data.kpi_detail[0].weightage);
+                            $('.edit_kpi_cellName').val(data.kpi_detail[0].cellName);
+                            $('.edit_kpi_cellDetails').val(data.kpi_detail[0].cellDetails);
+                            $('.monthPicker_activeDate').val(data.kpi_detail[0].activeDate.date);
+                            $('.monthPicker_endDate').val(data.kpi_detail[0].endDate.date);
+                            $('.kpi_edit_id').val(data.kpi_detail[0].id);
+
+                            $.each(data.ship_name, function(ii)
+                            {
+                                $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
+                                $('.kpi_name_edit').append('<input>').attr({'type':'checkbox','name':'ships[]'}).val(data.ship_name[i][0]['shipName']).text(data.ship_name[i][0]['shipName']);
+                            });
+
+                            $('.show_kpi').show();
+
+                            if(data.kpi_rules.length>0)
+                            {
+                                $.each(data.kpi_rules,function(k)
+                                {
+                                    i++;
+                                    var rule_obj = JSON.parse(data.kpi_rules[k].rules);
+                                    var new_rule_obj = rule_obj.conditions.all;
+
+                                    $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.kpi_rules[k].rules));
+                                    $('#rule_obj_text').append($('<br>'));
+
+                                    $.each(new_rule_obj, function(j)
+                                    {
+                                        new_rule_obj[j].operator =rule_operator(new_rule_obj[j].operator);
+
+                                        var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
+                                        if(j==0)
+                                        {
+                                            condition_text = condition_text_one;
+                                        }
+                                        if(j>0)
+                                        {
+                                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                                        }
+                                    });
+
+                                    var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
+                                            $('<td>').text(condition_text),
+                                            $('<td>').text(rule_obj.actions.value)
+                                    ).appendTo('.rule_table');
+
+                                    var $tr1 = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
+                                            $('<td>').text(condition_text),
+                                            $('<td>').text(rule_obj.actions.value),
+                                            $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
+                                            $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
+                                    ).appendTo('.rule_table_edit');
+                                });
+                                $('.rule_div').show();
+                                $('.rule_table_edit').empty();
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
 
                 function rule_operator(operator)
                 {
@@ -508,7 +615,7 @@
                                 <legend class="legend_name">Basic details</legend>
 
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Select ship</label>
+                                    <label class="control-label col-xs-4"><strong>Select ship</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.shipDetailsId,{'id':'shipId','label': ''}) }}
                                         <div class="select_all">
@@ -523,25 +630,25 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">KPI name</label>
+                                    <label class="control-label col-xs-4"><strong>KPI name</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.kpiName,{'id':'kpiid','label': ''})  }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Weightage</label>
+                                    <label class="control-label col-xs-4"><strong>Weightage</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Description</label>
+                                    <label class="control-label col-xs-4"><strong>Description</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.description,{'id':'elementId','label': ''}) }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Valid</label>
+                                    <label class="control-label col-xs-4"><strong>Valid</strong></label>
                                     <div class="col-xs-8">
                                         <span>
                                             <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
@@ -602,14 +709,14 @@
                                 <legend class="legend_name">Excel details</legend>
 
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell name</label>
+                                    <label class="control-label col-xs-4"><strong>Cell name</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell detail</label>
+                                    <label class="control-label col-xs-4"><strong>Cell detail</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
                                     </div>
@@ -668,23 +775,23 @@
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic details</legend>
                         <div class="form_view">
-                            <label class="form_labell">Ship Name :</label>
+                            <label class="form_labell"><strong>Ship Name :</strong></label>
                             <label class="form_input ship_name"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">KPI name :</label>
+                            <label class="form_labell"><strong>KPI name :</strong></label>
                             <label class="form_input kpi_name"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">Weightage :</label>
+                            <label class="form_labell"><strong>Weightage :</strong></label>
                             <label class="form_input kpi_weightage"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">Description :</label>
+                            <label class="form_labell"><strong>Description :</strong></label>
                             <label class="form_input kpi_description"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">Valid :</label>
+                            <label class="form_labell"><strong>Valid :</strong></label>
                             <label class="form_input">
                                 <label><span class="kpi_activeDate_month "></span>-<sapn class=" kpi_activeDate_year"></sapn> <strong> To </strong> <span class=" kpi_endDate_month "></span>-<span class="  kpi_endDate_year"></span></label>
                             </label>
@@ -693,11 +800,11 @@
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Excel details</legend>
                         <div class="form_view">
-                            <label class="form_labell">Cell name :</label>
+                            <label class="form_labell"><strong>Cell name :</strong></label>
                             <label class="form_input kpi_cellName"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">Cell detail :</label>
+                            <label class="form_labell"><strong>Cell detail :</strong></label>
                             <label class="form_input kpi_cellDetail"> </label>
                         </div>
                     </fieldset>
@@ -866,129 +973,6 @@
                     {
                         $('#row_edit_id').hide();
                     }
-                });
-
-                $('.edit_submit_button').live("click",function($e){
-                    $e.preventDefault();
-                    var count_row = $('.rule_table_edit tr').length;
-                    var rule_array = new Array();
-                    for(var i_i=1;i_i<count_row;i_i++)
-                    {
-                        rule_array.push($('#rule_obj_text-'+i_i).val());
-                    }
-                    var condition_text = "";
-                    var i=0;
-                    var data = {
-                        kpiName : $('.edit_kpi_name').val(),
-                        weightage : $('.edit_kpi_weightage').val(),
-                        description : $('.edit_kpi_description').val(),
-                        cellName : $('.edit_kpi_cellName').val(),
-                        cellDetails : $('.edit_kpi_cellDetails').val(),
-                        Id : $('.kpi_edit_id').val(),
-                        rules : rule_array
-                    };
-                    $('.kpi_name').empty();
-                    $('.kpi_description').empty();
-                    $('.kpi_weightage').empty();
-                    $('.kpi_cellName').empty();
-                    $('.kpi_cellDetail').empty();
-                    $('.ship_name').empty();
-                    $('.rule_table').empty();
-                    $('.rule_table_edit').empty();
-                    $('#rule_obj_text').empty();
-                    $('.kpi_activeDate_month').empty();
-                    $('.kpi_activeDate_year').empty();
-                    $('.kpi_endDate_month').empty();
-                    $('.kpi_endDate_year').empty();
-
-                    $.ajax({
-                        type: "POST",
-                        data: data,
-                        url: "ajax_edit",
-                        success: function(data) {
-                            $('.grid_edit_kpi').hide();
-                            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                            ];
-                            var active_date = new Date(data.kpi_detail[0].activeDate.date);
-                            var end_date = new Date(data.kpi_detail[0].endDate.date);
-
-                            $('.kpi_name').append(data.kpi_detail[0].kpiName);
-                            $('.kpi_description').append(data.kpi_detail[0].description);
-                            $('.kpi_weightage').append(data.kpi_detail[0].weightage);
-                            $('.kpi_cellName').append(data.kpi_detail[0].cellName);
-                            $('.kpi_cellDetail').append(data.kpi_detail[0].cellDetails);
-                            $('.kpi_activeDate_month').append(monthNames[active_date.getMonth()]);
-                            $('.kpi_activeDate_year').append(active_date.getFullYear());
-                            $('.kpi_endDate_month').append(monthNames[end_date.getMonth()]);
-                            $('.kpi_endDate_year').append(end_date.getFullYear());
-
-                            $('.edit_kpi_name').val(data.kpi_detail[0].kpiName);
-                            $('.edit_kpi_description').val(data.kpi_detail[0].description);
-                            $('.edit_kpi_weightage').val(data.kpi_detail[0].weightage);
-                            $('.edit_kpi_cellName').val(data.kpi_detail[0].cellName);
-                            $('.edit_kpi_cellDetails').val(data.kpi_detail[0].cellDetails);
-                            $('.monthPicker_activeDate').val(data.kpi_detail[0].activeDate.date);
-                            $('.monthPicker_endDate').val(data.kpi_detail[0].endDate.date);
-                            $('.kpi_edit_id').val(data.kpi_detail[0].id);
-
-                            $.each(data.ship_name, function(ii)
-                            {
-                                $('.ship_name').append(data.ship_name[ii][0]['shipName']).append(' ');
-                                $('.kpi_name_edit').append('<input>').attr({'type':'checkbox','name':'ships[]'}).val(data.ship_name[i][0]['shipName']).text(data.ship_name[i][0]['shipName']);
-                            });
-
-                            $('.show_kpi').show();
-
-                            if(data.kpi_rules.length>0)
-                            {
-                                $.each(data.kpi_rules,function(k)
-                                {
-                                    i++;
-                                    var rule_obj = JSON.parse(data.kpi_rules[k].rules);
-                                    var new_rule_obj = rule_obj.conditions.all;
-
-                                    $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.kpi_rules[k].rules));
-                                    $('#rule_obj_text').append($('<br>'));
-
-                                    $.each(new_rule_obj, function(j)
-                                    {
-                                        new_rule_obj[j].operator =rule_operator(new_rule_obj[j].operator);
-
-                                        var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
-                                        if(j==0)
-                                        {
-                                            condition_text = condition_text_one;
-                                        }
-                                        if(j>0)
-                                        {
-                                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
-                                        }
-                                    });
-
-                                    var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
-                                            $('<td>').text(condition_text),
-                                            $('<td>').text(rule_obj.actions.value)
-                                    ).appendTo('.rule_table');
-
-                                    var $tr1 = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
-                                            $('<td>').text(condition_text),
-                                            $('<td>').text(rule_obj.actions.value),
-                                            $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                            $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
-                                    ).appendTo('.rule_table_edit');
-                                });
-                                $('.rule_div').show();
-                            }
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            alert('Error : ' + errorThrown);
-                        }
-
-
-                    });
-
                 });
 
                 function rule_operator(operator) {
