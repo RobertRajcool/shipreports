@@ -60,45 +60,37 @@
         buildConditional: function(ruleData) {
             var kind;
             if(ruleData.all) { kind = "all"; }
-            else if(ruleData.any) { kind = "any"; }
-            else if (ruleData.none) { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind},{"id":"conditional-id"});
-            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper", "id": "all-any-none-wrapper-id"});
-            var select = $("<select>", {"class": "all-any-none"},{"id":"all-any-none-id"});
+            var div = $("<div>", {"class": "conditional " + kind});
+            var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
+            var select = $("<select>", {"class": "all-any-none"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
-            select.append($("<option>", {"value": "any", "text": "Any", "selected": kind == "any"}));
-            select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
             selectWrapper.append(select);
-            /*selectWrapper.append($("<span>", {text: "of the following rules:"}));*/
             div.append(selectWrapper);
+            selectWrapper.hide();
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule","id":"add-rule-id", "text": "Add Rule"});
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
             var _this = this;
             addRuleLink.click(function(e) {
                 e.preventDefault();
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
                 div.append(_this.buildRule(newField));
+                addConditionLink.show();
             });
             div.append(addRuleLink);
+            div.append(" ");
 
-            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition","id":"add-condition-id", "text": "Add Sub-Condition"});
+            var addConditionLink = $("<a>", {"href": "#", "class": "add-condition", "text": "Add Sub-Condition"});
             addConditionLink.click(function(e) {
                 e.preventDefault();
                 var f = _this.fields[0];
-                var newField = {"all": [{ operator: f.operators[0], value: null}]};
-                div.append(_this.buildConditional(newField));
+                var newField = {"all": [{name: f.value, operator: f.operators[0], value: null}]};
+                div.append(_this.subCondition(newField));
             });
             div.append(addConditionLink);
-
-            var removeLink = $("<a>", {"class": "remove","id":"remove-id", "href": "#", "text": "Remove This Sub-Condition"});
-            removeLink.click(function(e) {
-                e.preventDefault();
-                div.remove();
-            });
-            div.append(removeLink);
+            addConditionLink.hide();
 
             var rules = ruleData[kind];
             for(var i=0; i<rules.length; i++) {
@@ -107,14 +99,36 @@
             return div;
         },
 
+        subCondition: function(ruleData) {
+            var kind;
+            if(ruleData.all) { kind = "all"; }
+            if(!kind) { return; }
+
+            var div = $("<div>", {"class": "conditional " + kind});
+
+            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule", "text": "Add Rule"});
+            var _this = this;
+            addRuleLink.click(function(e) {
+                e.preventDefault();
+                var f = _this.fields[0];
+                var newField = {name: f.value, operator: f.operators[0], value: null};
+                div.append(_this.buildRule(newField));
+            });
+            var rules = ruleData[kind];
+            for(var i=0; i<rules.length; i++) {
+                div.append(this.buildRules(rules[i]));
+            }
+            return div;
+        } ,
+
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "rule"},{"id": "rule-id"});
+            var ruleDiv = $("<div>", {"class": "rule "});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
             fieldSelect.change(onFieldSelectChanged.call(this, operatorSelect, ruleData));
 
-            ruleDiv.append(fieldSelect);
+            //ruleDiv.append(fieldSelect);
             ruleDiv.append(operatorSelect);
             ruleDiv.append(removeLink());
 
@@ -134,7 +148,7 @@
     };
 
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field"},{"id": "field-id"});
+        var select = $("<select>", {"class": "field"});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -149,13 +163,14 @@
     }
 
     function getOperatorSelect() {
-        var select = $("<select>", {"class": "operator"},{"id":"operator-id"});
+        var select = $("<select>", {"class": "operator add_rule_drop"});
+        select.append(" ");
         select.change(onOperatorSelectChange);
         return select;
     }
 
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove delete_icon_btn ss-delete","id":"remove1-id", "href": "#"});
+        var removeLink = $("<a>", {"class": "remove delete_icon_btn ss-delete", "href": "#"});
         removeLink.click(onRemoveLinkClicked);
         return removeLink;
     }
@@ -194,21 +209,10 @@
 
         switch(option.data("fieldType")) {
             case "none":
-                $this.after($("<input>", {"type": "hidden", "class": "value"}));
+                $this.after($("<input>", {"type": "hidden", "class": "value "}));
                 break;
             case "text":
-                $this.after($("<input>", {"type": "text", "class": "value"}));
-                break;
-            case "textarea":
-                $this.after($("<textarea>", {"class": "value"}));
-            case "select":
-                var select = $("<select>", {"class": "value"});
-                var options = fieldSelect.find("> :selected").data("options");
-                for(var i=0; i < options.length; i++) {
-                    var opt = options[i];
-                    select.append($("<option>", {"text": opt.label || opt.name, "value": opt.name}));
-                }
-                $this.after(select);
+                $this.after($("<input>", {"type": "text", "class": "value add_rule_input"}));
                 break;
         }
         currentValue.remove();

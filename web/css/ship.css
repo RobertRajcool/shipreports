@@ -907,6 +907,7 @@ select {
 }
 .add_rule_input {
     width:75px;
+    margin-left: 1.5%;
 }
 .add_rule_conditions {
     margin:0 0 5px 0;
@@ -938,6 +939,7 @@ select {
 .delete_icon_btn:hover {
     font-size:14px;
     color:#df5858;
+    margin-left: 2%;
 }
 .edit_screen_show_button {
     width:100%;
@@ -991,13 +993,13 @@ select {
     width:40%;
 }
 .edit_rule_conditions .color {
-    width:40%;
+    width:30%;
 }
 .edit_rule_conditions .edit {
-    width:10%;
+    width:15%;
 }
 .edit_rule_conditions .action {
-    width:10%;
+    width:15%;
 }
 .edit_icon_btn {
     font-size:14px;

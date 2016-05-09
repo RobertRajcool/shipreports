@@ -5,7 +5,12 @@
     {% block javascripts %}
         {% javascripts
             '@AppBundle/Resources/public/js/AAA.js'
+            '@AppBundle/Resources/public/js/rules.js'
         %}
+        <script src="../js/rules/conditions-builder.js"></script>
+        <script src="../js/rules/action-builder.js"></script>
+        <script src="../js/rules/demo.js"></script>
+        {#<script src="../js/rules/sample_first.js"></script>#}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
         <script type="text/javascript">
@@ -24,6 +29,7 @@
                 var editKpi = $('.grid_edit_kpi');
                 var editCancelButton = $('.edit_cancel_button');
                 var editSaveButton = $('.edit_submit_button');
+                var shipNameOptions = $('#shipId option');
                 listView.hide();
                 boxIcon.hide();
                 showKpi.hide();
@@ -57,12 +63,24 @@
                     gridView.show();
                     listIcon.show();
                     createKpi.show();
+                    $('.check').attr('checked',false);
+                    shipNameOptions.attr('selected', false);
                 });
                 createCancelButton.click(function($e){
                     $e.preventDefault();
                     createKpi.hide();
                     editKpi.hide();
                     createForm[0].reset();
+                });
+                $('#check').live("click",function(){
+                    if($('#check').is(':checked')==true)
+                    {
+                        shipNameOptions.attr('selected', 'selected');
+                    }
+                    else
+                    {
+                        shipNameOptions.attr('selected', false);
+                    }
                 });
                 var ruleObjectText = $('#rule_obj_text');
                 var ruleDiv = $('.show_rule_div');
@@ -155,9 +173,9 @@
                     $.each(data.ship_array,function(index)
                     {
                         if(shipIdArray.indexOf(data.ship_array[index]['id']) != -1){
-                            var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', 'selected').appendTo('.ship_name_edit');
+                            var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', true).appendTo('.ship_name_edit');
                         }else{
-                            var $option = $('<option >').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
+                            var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
                         }
                     });
                     $.each(data.ship_name, function(shipNameCount)
@@ -185,47 +203,51 @@
                                     condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
                                 }
                             });
-                            if(rule_obj.actions.value=="Green"){
-                                var $trGreen = $('<tr>').attr({'id':'row_id-'+i}).append(
-                                        $('<td>').text(condition_text),
-                                        $('<td style="color: green">').text(rule_obj.actions.value)
-                                ).appendTo('.rule_table');
-                                var $tr1Green = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
-                                        $('<td class="conditions">').text(condition_text),
-                                        $('<td class="color" style="color: green">').text(rule_obj.actions.value),
-                                        $('<td align="center">').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                        $('<td align="center">').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
-                                ).appendTo('.rule_table_edit');
-                            }
-                            if(rule_obj.actions.value=="Yellow"){
-                                var $trYellow = $('<tr>').attr({'id':'row_id-'+i}).append(
-                                        $('<td>').text(condition_text),
-                                        $('<td style="color: orange">').text(rule_obj.actions.value)
-                                ).appendTo('.rule_table');
-                                var $tr1Yellow = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
-                                        $('<td class="conditions">').text(condition_text),
-                                        $('<td class="color" style="color: orange">').text(rule_obj.actions.value),
-                                        $('<td align="center">').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                        $('<td align="center">').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
-                                ).appendTo('.rule_table_edit');
-                            }
-                            if(rule_obj.actions.value=="Red"){
-                                var $trRed = $('<tr>').attr({'id':'row_id-'+i}).append(
-                                        $('<td>').text(condition_text),
-                                        $('<td style="color: red">').text(rule_obj.actions.value)
-                                ).appendTo('.rule_table');
-                                var $tr1Red = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
-                                        $('<td class="conditions">').text(condition_text),
-                                        $('<td class="color" style="color: red">').text(rule_obj.actions.value),
-                                        $('<td align="center">').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                        $('<td align="center">').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
-                                ).appendTo('.rule_table_edit');
-                            }
+                            var findColor = findColorFunction(rule_obj);
                         });
                         showKpi.show();
                         ruleDiv.show();
                     }
                     showKpi.show();
+                }
+
+                function findColorFunction(rule_obj){
+                    if(rule_obj.actions.value=="Green"){
+                        var $trGreen = $('<tr>').attr({'id':'row_id-'+i}).append(
+                                $('<td>').text(condition_text),
+                                $('<td style="color: green">').text(rule_obj.actions.value)
+                        ).appendTo('.rule_table');
+                        var $tr1Green = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
+                                $('<td class="conditions">').text(condition_text),
+                                $('<td class="color" style="color: green">').text(rule_obj.actions.value),
+                                $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
+                                $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
+                        ).appendTo('.rule_table_edit');
+                    }
+                    if(rule_obj.actions.value=="Yellow"){
+                        var $trYellow = $('<tr>').attr({'id':'row_id-'+i}).append(
+                                $('<td>').text(condition_text),
+                                $('<td style="color: orange">').text(rule_obj.actions.value)
+                        ).appendTo('.rule_table');
+                        var $tr1Yellow = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
+                                $('<td class="conditions">').text(condition_text),
+                                $('<td class="color" style="color: orange">').text(rule_obj.actions.value),
+                                $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
+                                $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
+                        ).appendTo('.rule_table_edit');
+                    }
+                    if(rule_obj.actions.value=="Red"){
+                        var $trRed = $('<tr>').attr({'id':'row_id-'+i}).append(
+                                $('<td>').text(condition_text),
+                                $('<td style="color: red">').text(rule_obj.actions.value)
+                        ).appendTo('.rule_table');
+                        var $tr1Red = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
+                                $('<td class="conditions">').text(condition_text),
+                                $('<td class="color" style="color: red">').text(rule_obj.actions.value),
+                                $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
+                                $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
+                        ).appendTo('.rule_table_edit');
+                    }
                 }
 
                 function rule_operator(operator) {
@@ -254,11 +276,26 @@
                     showKpi.hide();
                     editKpi.show();
                     ruleEditPlace.hide();
+                    $('.check').attr('checked',true);
                 });
                 editCancelButton.click(function($e){
                     $e.preventDefault();
                     editKpi.hide();
                     showKpi.show();
+                });
+                $('#editShipId').live("click",function(){
+                    var editShipNameOptions = $('#editShipId option');
+                    $('.check').attr('checked',false);
+                    $('#edit-check').live("click",function(){
+                        if($('#edit-check').is(':checked')==true)
+                        {
+                            editShipNameOptions.attr('selected', true);
+                        }
+                        else
+                        {
+                            editShipNameOptions.attr('selected', false);
+                        }
+                    });
                 });
                 editSaveButton.live("click",function($e){
                     $e.preventDefault();
@@ -275,6 +312,10 @@
                         cellName : $('.edit_kpi_cellName').val(),
                         cellDetails : $('.edit_kpi_cellDetails').val(),
                         Id : $('.kpi_edit_id').val(),
+                        activeMonth : $('.active_month').val(),
+                        activeYear : $('.active_year').val(),
+                        endMonth : $('.end_month').val(),
+                        endYear : $('.end_year').val(),
                         rules : rule_array
                     };
                     var emptyFunction = emptyTheDetailsFunction(data);
@@ -294,6 +335,101 @@
                     });
                 });
 
+                //Rules concept script
+                var ruleCount = 0;
+                var addAction = $('.add');
+                var addRule = $('.add-rule');
+                var dynamicAdd = $('.dynamic-add');
+                var ruleShowTableRow = $('#row_id');
+                var textBox = "";
+                addAction.hide();
+                ruleShowTableRow.hide();
+
+                addRule.click(function($e){
+                    $e.preventDefault();
+                    ruleCount++;
+                    addAction.show();
+                    dynamicAdd = $("<a>",{"class":"dynamic-add", "id":"dynamicAdd_"+ruleCount, "text":"Add", "href":""});
+                    $('.add_button_place').append(dynamicAdd);
+                    textBox = $("<input>",{"type":"hidden","class":"rulesTextBox","id":"rules-id_"+ruleCount,"name":"rules-"+ruleCount});
+                    $('.textbox-place').append(textBox);
+                });
+
+                dynamicAdd.live("click",function($e){
+                    $e.preventDefault();
+                    var currentId = $(this).attr('id');
+                    var idNum = splitFun(currentId);
+                    var rulesId = $('#rules-id_'+idNum);
+                    var rule = rulesId.val();
+                    var rule_obj = JSON.parse(rule);
+                    var con = rule_obj.conditions.all;
+                    var newRuleObject = con.filter(filterByID);
+                    rule_obj.conditions.all = newRuleObject;
+                    var final_rule = JSON.stringify(rule_obj);
+                    rulesId.val(final_rule);
+                    $(this).remove();
+                    $('.add-condition').hide();
+                    $('.rule').remove();
+                    $('.actionSelect').hide();
+                    addAction.hide();
+
+
+                    $.each(newRuleObject, function(j)
+                    {
+                        newRuleObject[j].operator =rule_operator(newRuleObject[j].operator);
+
+                        var condition_text_one = newRuleObject[j].operator+newRuleObject[j].value;
+                        if(j==0)
+                        {
+                            condition_text = condition_text_one;
+                        }
+                        if(j>0)
+                        {
+                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                        }
+                    });
+                    i++;
+                    var colorValue = " ";
+                    if(rule_obj.actions.value!=null){
+                        colorValue = rule_obj.actions.value;
+                    }
+                    var $tr = $('<tr>').attr({'id':'row-id_'+i}).append(
+                            $('<td>').text(condition_text),
+                            $('<td>').text(colorValue),
+                            $('<td>').append($('<a>').attr({'id':'delete_'+i+'', 'class':'delete_class delete_icon_btn ss-delete'}))
+                    ).appendTo('#rule-table');
+                    var countRow = $('#rule-table tr').length;
+                    if(countRow>1)
+                    {
+                        ruleShowTableRow.show();
+                    }
+                });
+
+                var deleteRow = $('.delete_class');
+                deleteRow.live("click",function($e){
+                    $e.preventDefault();
+                    var currentId = $(this).attr("id");
+                    var idNum = splitFun(currentId);
+                    $('#row-id_'+idNum).remove();
+                    var countRow = $('#rule-table tr').length;
+                    if(countRow<=1)
+                    {
+                        ruleShowTableRow.hide();
+                    }
+                });
+
+                function splitFun(data){
+                    var num = data.split('_');
+                    return num[1];
+                }
+
+                function filterByID(obj) {
+                    if(jQuery.isEmptyObject(obj)) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
             });
         </script>
     {% endblock %}
@@ -483,7 +619,7 @@
                                         {{ form_widget(form.shipDetailsId,{'id':'shipId','label': ''}) }}
                                         <div class="select_all">
                                             <label class="checkbox">
-                                                <input type="checkbox" class="check">
+                                                <input type="checkbox" class="check" id="check">
                                             </label>
                                             <label class="checkbox_text">
                                                 Select all
@@ -587,15 +723,19 @@
                                     <div class="form-group button">
                                         <div class="col-xs-9">
                                             <div id="conditions"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group button">
+                                        <div class="col-xs-9">
                                             <div id="actions"></div>
-                                            <p id="text_box"></p>
-                                            <input type="hidden" id="result" name="value">
                                         </div>
                                     </div>
                                     <div class="form-group button">
                                         <div class="col-xs-9 add_button_place"></div>
+                                        <p class="textbox-place"></p>
+                                        <input type="hidden" id="result" name="value">
                                     </div>
-                                    {#<div class="table-responsive">
+                                    <div class="table-responsive">
                                         <table class="table add_rule_conditions" id="rule-table">
                                             <thead>
                                                 <tr id="row_id">
@@ -606,7 +746,7 @@
                                             </thead>
                                         </table>
                                         <div class="small"></div>
-                                    </div>#}
+                                    </div>
                                 </fieldset>
                             </div>
                         </div>
@@ -690,10 +830,10 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Select ship</label>
                                     <div class="col-xs-8 ">
-                                        <select multiple class="ship_name_edit"></select>
+                                        <select multiple class="ship_name_edit" id="editShipId"></select>
                                         <div class="select_all">
                                             <label class="checkbox">
-                                                <input type="checkbox" class="check">
+                                                <input type="checkbox" class="check" id="edit-check">
                                             </label>
                                             <label class="checkbox_text">
                                                 Select all

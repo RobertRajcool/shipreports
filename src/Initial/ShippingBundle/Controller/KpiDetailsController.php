@@ -49,10 +49,21 @@ class KpiDetailsController extends Controller
         $description = $request->request->get('description');
         $cellName = $request->request->get('cellName');
         $cellDetails = $request->request->get('cellDetails');
+        $activeMonth = $request->request->get('activeMonth');
+        $integerActiveMonth = (int)$activeMonth-1;
+        $activeYear = $request->request->get('activeYear');
+        $endMonth = $request->request->get('endMonth');
+        $endYear = $request->request->get('endYear');
+        $integerEndMonth = (int)$endMonth-1;
         $rules_array = $request->request->get('rules');
+        $activeMonthDate = $activeYear .'-'. $integerActiveMonth .'-'. '01';
+        $activeMonthDateObject = new \DateTime($activeMonthDate);
+        $activeMonthDateObject->modify("last day of this month");
+        $endMonthDate = $endYear .'-'. $integerEndMonth .'-'. '01';
+        $endMonthDateObject = new \DateTime($endMonthDate);
+        $endMonthDateObject->modify("last day of this month");
 
         $em = $this->getDoctrine()->getManager();
-
         $kpi_id_array= $em->createQueryBuilder()
             ->select('a.id')
             ->from('InitialShippingBundle:KpiDetails','a')
@@ -60,20 +71,18 @@ class KpiDetailsController extends Controller
             ->setParameter('kpi_name',$kpiName)
             ->getQuery()
             ->getResult();
-
         for($j=0;$j<count($kpi_id_array);$j++)
         {
             $entity = $em->getRepository('InitialShippingBundle:KpiDetails')->find($kpi_id_array[$j]);
-
-            $kpiDetail = new KpiDetails();
             $entity->setKpiName($kpiName);
             $entity->setDescription($description);
             $entity->setWeightage($weightage);
             $entity->setCellName($cellName);
             $entity->setCellDetails($cellDetails);
+            $entity->setActiveDate($activeMonthDateObject);
+            $entity->setEndDate($endMonthDateObject);
             $em->flush();
         }
-
         if(count($rules_array)>0)
         {
             $kpi_rules_id_array= $em->createQueryBuilder()
@@ -83,7 +92,6 @@ class KpiDetailsController extends Controller
                 ->setParameter('kpi_id',$id)
                 ->getQuery()
                 ->getResult();
-
             for($i=0;$i<count($rules_array);$i++)
             {
                 $kpi_rules_obj = $em->getRepository('InitialShippingBundle:KpiRules')->find($kpi_rules_id_array[$i]);
@@ -94,9 +102,7 @@ class KpiDetailsController extends Controller
                 $em->flush();
             }
         }
-
         $show_response = $this->kpi_ajax_showAction($request,'hi');
-
         return $show_response;
     }
 

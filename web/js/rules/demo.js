@@ -41,22 +41,19 @@ var conditions, actions, ageField, submit;
     function initializeForm() {
 
         submit.live("click",function(e) {
-            var currentId = $(this).attr('id');
-            id_value = splitfun(currentId);
-            /*$('.action-select').val('Red');*/
-            //alert(id_value);
             e.preventDefault();
+            var currentId = $(this).attr('id');
+            var id_value = splitFun(currentId);
             var engine = new RuleEngine({
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
-
             var sample = JSON.stringify(engine);
             $('#rules-id_'+id_value).val(sample);
             $('#result').val(id_value);
         });
 
-        function splitfun(data){
+        function splitFun(data){
             var num = data.split('_');
             return num[1];
         }

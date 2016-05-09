@@ -1,6 +1,4 @@
-
 (function($) {
-
     $.fn.actionsBuilder = function(options) {
         if(options == "data") {
             var builder = $(this).eq(0).data("actionsBuilder");
@@ -13,22 +11,11 @@
         }
     };
 
-    var count = 0;
-    var num = 0;
-
     function ActionsBuilder(element, options) {
         this.element = $(element);
         this.options = options || {};
         this.init();
     }
-
-    $('.add-rule').live("click",function(){
-        num++;
-    });
-    $('.remove-condition').live("click",function(){
-        num--;
-    });
-
 
     ActionsBuilder.prototype = {
         init: function() {
@@ -40,21 +27,18 @@
         },
 
         buildActions: function(data) {
-            var num1 = num;
-            num1++;
-            var container = $("<div>", {"class": "actions"});
+            //var container = $("<div>", {"class": "actions"});
             var buttons = $("<div>", {"class": "action-buttons"});
-            var addButton = $("<a>", {"href": "#", "class": "add form-group button col-xs-9","id":"add-id"+num1, "text": "Add Action"});
+            var addButton = $("<a>", {"href": "#", "class": "add", "text": "Add Action"});
             var _this = this;
 
             addButton.click(function(e) {
                 e.preventDefault();
-                count++;
-                container.append(_this.buildAction({}));
+                buttons.append(_this.buildAction({}));
             });
 
             buttons.append(addButton);
-            container.append(buttons);
+            //container.append(buttons);
 
             for(var i=0; i < data.length; i++) {
                 var actionObj = data[i];
@@ -67,16 +51,16 @@
                     actionDiv.find(":input[name='" + field.name + "']").val(field.value).change();
                     if(field.fields) fields = fields.concat(field.fields);
                 }
-                container.append(actionDiv);
+                buttons.append(actionDiv);
             }
-            return container;
+            return buttons;
         },
 
         buildAction: function(data) {
             var field = this._findField(data.name);
             var div = $("<div>", {"class": "action"});
-            var fieldsDiv = $("<div>", {"class": "subfields","id":"subfields-id"});
-            var select = $("<select>", {"class": "action-select","id":"action-select-id"+count, "name": "action-select"});
+            var fieldsDiv = $("<div>", {"class": "subfields"});
+            var select = $("<select>", {"class": "action-select actionSelect full-width-select", "name": "action-select"});
 
             for(var i=0; i < this.fields.length; i++) {
                 var possibleField = this.fields[i];
@@ -99,17 +83,58 @@
                 div.attr("class", "action " + val);
             });
 
-            var removeLink = $("<a>", {"href": "#", "class": "remove-action","id":"action_remove", "text": "Remove Action"});
-            removeLink.click(function(e) {
-                e.preventDefault();
-                div.remove();
-            });
-
             div.append(select);
             div.append(fieldsDiv);
-            div.append(removeLink);
             return div;
         },
+
+        buildField: function(field) {
+            var div = $("<div>", {"class": "field"});
+            var subfields = $("<div>", {"class": "subfields"});
+            var _this = this;
+
+            var label = $("<label>", {"text": field.label});
+            div.append(label);
+
+            if(field.fieldType == "select") {
+                var label = $("<label>", {"text": field.label});
+                var select = $("<select>", {"name": field.name});
+
+                for(var i=0; i < field.options.length; i++) {
+                    var optionData = field.options[i];
+                    var option = $("<option>", {"text": optionData.label, "value": optionData.name});
+                    option.data("optionData", optionData);
+                    select.append(option);
+                }
+
+                select.change(function() {
+                    var option = $(this).find("> :selected");
+                    var optionData = option.data("optionData");
+                    subfields.empty();
+                    if(optionData.fields) {
+                        for(var i=0; i < optionData.fields.length; i++) {
+                            var f = optionData.fields[i];
+                            subfields.append(_this.buildField(f));
+                        }
+                    }
+                });
+
+                select.change();
+                div.append(select);
+            }
+            else if(field.fieldType == "text") {
+                var input = $("<input>", {"type": "text", "name": field.name});
+                div.append(input);
+            }
+
+            if(field.hint) {
+                div.append($("<p>", {"class": "hint", "text": field.hint}));
+            }
+
+            div.append(subfields);
+            return div;
+        },
+
 
         collectData: function(fields) {
             var _this = this;
@@ -117,17 +142,14 @@
             var out = [];
             fields.each(function() {
                 var input = $(this).find("> :input, > .jstEditor > :input");
-                var subfields = $(this).find("> #subfields-id > .field");
+                var subfields = $(this).find("> .subfields > .field");
                 var action = {name: input.attr("name"), value: input.val()};
                 if(subfields.length > 0) {
                     action.fields = _this.collectData(subfields);
                 }
-                out.push(action);
+                out[0]=action;
             });
-            return {
-                name:'action-select',
-                value: fields.find("#action-select-id"+count).val()
-            };
+            return out[0];
         },
 
         _findField: function(fieldName) {
