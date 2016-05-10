@@ -17,6 +17,13 @@
         this.init();
     }
 
+    var addRuleStatus = 0;
+    var dynamicAdd = $('.dynamic-add');
+    dynamicAdd.live("click",function($e) {
+        $e.preventDefault();
+        addRuleStatus = 1;
+    });
+
     ConditionsBuilder.prototype = {
         init: function() {
             this.fields = this.options.fields;
@@ -74,10 +81,13 @@
             var _this = this;
             addRuleLink.click(function(e) {
                 e.preventDefault();
-                var f = _this.fields[0];
-                var newField = {name: f.value, operator: f.operators[0], value: null};
-                div.append(_this.buildRule(newField));
-                addConditionLink.show();
+                if(addRuleStatus==0){
+                    addRuleStatus=1;
+                    var f = _this.fields[0];
+                    var newField = {name: f.value, operator: f.operators[0], value: null};
+                    div.append(_this.buildRule(newField));
+                    addConditionLink.show();
+                }
             });
             div.append(addRuleLink);
             div.append(" ");

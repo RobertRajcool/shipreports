@@ -64,8 +64,9 @@
                 var condition_text = "";
                 var count = 0;
                 var i = 0;
-                $('.rule_class').live("click",function()
+                $('.rule_class').live("click",function($e)
                 {
+                    $e.preventDefault();
                     $('.rules_create_view').hide();
                     $('.rule_div').hide();
                     count++;

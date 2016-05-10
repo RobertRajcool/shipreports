@@ -1,8 +1,7 @@
 var conditions, actions, ageField, submit;
 
 (function($) {
-
-
+    
     function onReady() {
         conditions = $("#conditions");
         actions = $("#actions");
