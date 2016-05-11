@@ -397,19 +397,21 @@ class ShipDetailsController extends Controller
             ->getQuery()
             ->getResult();
         $index = count($status_value);
-        if($status_value[$index-1]['status']==1)
+        $shipstatusdetails = new ShipStatusDetails();
+        if(count($status_value)!=0)
         {
-            $shipstatusdetails = new ShipStatusDetails();
-            $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
-            //$shipstatusdetails -> setActiveDate($today_obj);
-            $shipstatusdetails -> setEndDate($today_obj);
-            $shipstatusdetails -> setStatus(0);
-            $em->persist($shipstatusdetails);
-            $em->flush();
+            if($status_value[$index-1]['status']==1)
+            {
+                $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
+                //$shipstatusdetails -> setActiveDate($today_obj);
+                $shipstatusdetails -> setEndDate($today_obj);
+                $shipstatusdetails -> setStatus(0);
+                $em->persist($shipstatusdetails);
+                $em->flush();
+            }
         }
         else
         {
-            $shipstatusdetails = new ShipStatusDetails();
             $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
             $shipstatusdetails -> setActiveDate($today_obj);
             //$shipstatusdetails -> setEndDate($today_obj);
@@ -417,6 +419,7 @@ class ShipDetailsController extends Controller
             $em->persist($shipstatusdetails);
             $em->flush();
         }
+
 
         $lastId = $shipstatusdetails->getId();
 
@@ -452,6 +455,10 @@ class ShipDetailsController extends Controller
 
         $activeIndex = 0;
         $inactiveIndex = 0;
+        $activeShipDetails=array();
+        $activeShipType=array();
+        $inactiveShipDetails=array();
+        $inactiveShipType=array();
 
         $ship_id_value = $em->createQueryBuilder()
             ->select ('identity(a.shipDetailsId)')
@@ -508,10 +515,11 @@ class ShipDetailsController extends Controller
                 $inactiveIndex++;
             }
         }
+        $response = new JsonResponse();
 
         if($id == 1)
         {
-            $response = new JsonResponse();
+
             $response->setData(array(
                 'ship_details' => $activeShipDetails,
                 'ship_type' => $activeShipType
@@ -519,7 +527,7 @@ class ShipDetailsController extends Controller
         }
         else if($id == 0)
         {
-            $response = new JsonResponse();
+
             $response->setData(array(
                 'ship_details' => $inactiveShipDetails,
                 'ship_type' => $inactiveShipType
