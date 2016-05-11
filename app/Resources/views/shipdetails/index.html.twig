@@ -13,232 +13,225 @@
         <script type="text/javascript">
             $(document).ready(function()
             {
-                $('.box_icon').hide();
-                $('.create_view').show();
-                $('#list_view').hide();
-                $('.show_view').hide();
-                $('.show_kpi').hide();
-                $('.show_ship_view').hide();
-                $('.Edit_ship').hide();
+                var boxIcon = $('.box_icon');
+                var listIcon = $('.list_icon');
+                var gridView = $('#grid_view');
+                var listView = $('#list_view');
+                var createView = $('.create_view');
+                var showShipView = $('.show_ship_view');
+                var editShip = $('.Edit_ship');
 
-                $('.add-rule').live("click", function () {
-                    $('.field').hide();
-                });
-                $('.add-condition').live("click", function () {
-                    $('.field').hide();
-                });
-                $('.box_icon').click(function () {
-                    $('#list_view').hide();
-                    $('.show_ship_view').hide();
-                    $('.box_icon').hide();
-                    $('#grid_view').show();
-                    $('.list_icon').show();
-                    $('.create_view').show();
-                    $('#nogroupselected').show();
-                });
-                $('.list_icon').click(function () {
-                    $('#nogroupselected').hide();
-                    $('.box_icon').show();
-                    $('#grid_view').hide();
-                    $('#list_view').show();
-                    $('.show_ship_view').hide();
-                    $('.show_kpi').hide();
-                    $('.list_icon').hide();
-                    $('.create_view').hide();
-                });
-                $('.add_btn').live("click", function () {
-                    $('#list_view').hide();
-                    $('.show_ship_view').hide();
-                    $('#nogroupselected').hide();
-                    $('.create_view').show();
-                    $('#grid_view').show();
+                boxIcon.hide();
+                createView.show();
+                listView.hide();
+                showShipView.hide();
+                editShip.hide();
 
-                });
-                $('.cancel_btn').live("click", function () {
-                    $('.create_view').hide();
-                    $('#nogroupselected').show();
-                    $('#grid_view').show();
+                boxIcon.click(function ($e) {
+                    $e.preventDefault();
+                    listView.hide();
+                    showShipView.hide();
+                    boxIcon.hide();
+                    gridView.show();
+                    listIcon.show();
+                    createView.show();
                 });
 
-                $('.submit_btn').live("click", function () {
-                    $('#grid_view').show();
-                    $('#list_view').hide();
+                listIcon.click(function ($e) {
+                    $e.preventDefault();
+                    boxIcon.show();
+                    gridView.hide();
+                    listView.show();
+                    showShipView.hide();
+                    listIcon.hide();
+                    createView.hide();
                 });
 
-                $('.edit_ship_button').live("click",function()
-                {
-                    $('.show_ship_view').hide();
-                    $('.Edit_ship').show();
+                var addButton = $('.add_btn');
+                addButton.live("click", function ($e) {
+                    $e.preventDefault();
+                    listView.hide();
+                    showShipView.hide();
+                    createView.show();
+                    gridView.show();
+
                 });
 
-                $('.edit_cancel_btn').live("click",function(){
-                    $('.Edit_ship').hide();
-                    $('#nogroupselected').hide();
-                    $('.show_ship_view').show();
+                var cancelButton = $('.cancel_btn');
+                cancelButton.live("click", function ($e) {
+                    $e.preventDefault();
+                    createView.hide();
+                    gridView.show();
+                });
+
+                var submitButton = $('.submit_btn');
+                submitButton.live("click", function ($e) {
+                    $e.preventDefault();
+                    gridView.show();
+                    listView.hide();
+                });
+
+                var editShipButton = $('.edit_ship_button');
+                editShipButton.live("click",function($e) {
+                    $e.preventDefault();
+                    showShipView.hide();
+                    editShip.show();
+                });
+
+                var editCancelButton = $('.edit_cancel_btn');
+                editCancelButton.live("click",function($e) {
+                    $e.preventDefault();
+                    editShip.hide();
+                    showShipView.show();
                 });
 
                 var count =0;
-
-                $('.ship_class').live("click",function()
-                {
-                    $('.create_view').hide();
-                    $('#nogroupselected').hide();
+                var shipList = $('.ship_class');
+                shipList.live("click",function($e) {
+                    $e.preventDefault();
+                    createView.hide();
                     count++;
                     var currentId = $(this).attr('id');
                     var data = {'Id':currentId};
-                    if(count>1)
-                    {
-                        $('.Edit_ship').hide();
-                        $('.ship_name').empty();
-                        $('.ship_type').empty();
-                        $('.ship_ImoNumber').empty();
-                        $('.ship_Location').empty();
-                        $('.ship_Country').empty();
-                        $('.ship_Built').empty();
-                        $('.ship_size').empty();
-                        $('.ship_GT').empty();
-                        $('.ship_manufacturingYear').empty();
-                        $('.ship_description').empty();
+                    if(count>1) {
+                        editShip.hide();
+                        var emptyShipDetails = emptyShipDetailsFunction(data);
                     }
-
                     $.ajax({
                         type:"POST",
                         url: "ajax_show",
                         data:data,
-                        success: function(data)
-                        {
-                            $('.ship_name').append(data.Ship_detail[0].shipName);
-                            $('.ship_type').append(data.ship_type[0].shipType);
-                            $('.ship_ImoNumber').append(data.Ship_detail[0].imoNumber);
-                            $('.ship_Location').append(data.Ship_detail[0].location);
-                            $('.ship_Country').append(data.country_name[0].countryName);
-                            $('.ship_Built').append(data.Ship_detail[0].built);
-                            $('.ship_size').append(data.Ship_detail[0].size);
-                            $('.ship_GT').append(data.Ship_detail[0].gt);
-                            $('.ship_manufacturingYear').append(data.Ship_detail[0].manufacturingYear);
-                            $('.ship_description').append(data.Ship_detail[0].description);
-
-                            //Setting value for edit view
-
-                            $('.edit_ship_name').val(data.Ship_detail[0].shipName);
-                            $('.edit_ship_id').val(data.Ship_detail[0].id);
-                            $('.edit_ship_imoNumber').val(data.Ship_detail[0].imoNumber);
-                            $('.edit_ship_location').val(data.Ship_detail[0].location);
-
-                            $('.edit_ship_built').val(data.Ship_detail[0].built);
-                            $('.edit_ship_size').val(data.Ship_detail[0].size);
-                            $('.edit_ship_gt').val(data.Ship_detail[0].gt);
-                            $('.edit_ship_manufacturingYear').val(data.Ship_detail[0].manufacturingYear);
-                            $('.edit_ship_description').val(data.Ship_detail[0].description);
-
-                            $.each(data.shipType_array,function(index){
-                                var $option = $('<option>').append(data.shipType_array[index]['shipType']).val(data.shipType_array[index]['id']).appendTo('.edit_ship_type');
-
-                            });
-                            $.each(data.countryName_array,function(index){
-                                var $country_option = $('<option>').append(data.countryName_array[index]['countryName']).val(data.countryName_array[index]['id']).appendTo('.edit_ship_country');
-
-                            });
-                            $('.edit_ship_type').val(data.ship_type[0].id);
-                            $('.edit_ship_country').val(data.country_name[0].id);
-
+                        success: function(data) {
+                            var setShowShipValues = setShowShipValuesFunction(data);
+                            var setEditShipValues = setEditShipValuesFunction(data);
+                            var successDetails = successFunction(data);
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
-                    $('.show_ship_view').show();
+                    showShipView.show();
                 });
 
-                $('.edit_submit_btn').live("click",function()
-                {
-                    $('.ship_name').empty();
-                    $('.ship_type').empty();
-                    $('.ship_ImoNumber').empty();
-                    $('.ship_Location').empty();
-                    $('.ship_Country').empty();
-                    $('.ship_Built').empty();
-                    $('.ship_size').empty();
-                    $('.ship_GT').empty();
-                    $('.ship_ManufacturingYear').empty();
-                    $('.ship_description').empty();
+                var shipNameText = $('.ship_name');
+                var shipTypeText = $('.ship_type');
+                var shipImoNumber = $('.ship_ImoNumber');
+                var shipLocation = $('.ship_Location');
+                var shipCountry = $('.ship_Country');
+                var shipBuilt = $('.ship_Built');
+                var shipSize = $('.ship_size');
+                var shipGt = $('.ship_GT');
+                var shipManufacturingYear = $('.ship_manufacturingYear');
+                var shipDescription = $('.ship_description');
 
+                function emptyShipDetailsFunction(data){
+                    shipNameText.empty();
+                    shipTypeText.empty();
+                    shipImoNumber.empty();
+                    shipLocation.empty();
+                    shipCountry.empty();
+                    shipBuilt.empty();
+                    shipSize.empty();
+                    shipGt.empty();
+                    shipManufacturingYear.empty();
+                    shipDescription.empty();
+                }
+
+                function setShowShipValuesFunction(data) {
+                    shipNameText.append(data.Ship_detail[0].shipName);
+                    shipTypeText.append(data.ship_type[0].shipType);
+                    shipImoNumber.append(data.Ship_detail[0].imoNumber);
+                    shipLocation.append(data.Ship_detail[0].location);
+                    shipCountry.append(data.country_name[0].countryName);
+                    shipBuilt.append(data.Ship_detail[0].built);
+                    shipSize.append(data.Ship_detail[0].size);
+                    shipGt.append(data.Ship_detail[0].gt);
+                    shipManufacturingYear.append(data.Ship_detail[0].manufacturingYear);
+                    shipDescription.append(data.Ship_detail[0].description);
+                }
+
+                var editShipName = $('.edit_ship_name');
+                var editShipId = $('.edit_ship_id');
+                var editShipImoNumber = $('.edit_ship_imoNumber');
+                var editShipLocation = $('.edit_ship_location');
+                var editShipBuilt = $('.edit_ship_built');
+                var editShipSize = $('.edit_ship_size');
+                var editShipGt = $('.edit_ship_gt');
+                var editShipManufacturingYear = $('.edit_ship_manufacturingYear');
+                var editShipDescription = $('.edit_ship_description');
+                var editShipType = $('.edit_ship_type');
+                var editShipCountry = $('.edit_ship_country');
+
+                function setEditShipValuesFunction(data) {
+                    editShipName.val(data.Ship_detail[0].shipName);
+                    editShipId.val(data.Ship_detail[0].id);
+                    editShipImoNumber.val(data.Ship_detail[0].imoNumber);
+                    editShipLocation.val(data.Ship_detail[0].location);
+                    editShipBuilt.val(data.Ship_detail[0].built);
+                    editShipSize.val(data.Ship_detail[0].size);
+                    editShipGt.val(data.Ship_detail[0].gt);
+                    editShipManufacturingYear.val(data.Ship_detail[0].manufacturingYear);
+                    editShipDescription.val(data.Ship_detail[0].description);
+                }
+
+                function successFunction(data) {
+                    $.each(data.shipType_array,function(index) {
+                        var $option = $('<option>').append(data.shipType_array[index]['shipType']).val(data.shipType_array[index]['id']).appendTo('.edit_ship_type');
+
+                    });
+                    $.each(data.countryName_array,function(index){
+                        var $country_option = $('<option>').append(data.countryName_array[index]['countryName']).val(data.countryName_array[index]['id']).appendTo('.edit_ship_country');
+
+                    });
+                    editShipType.val(data.ship_type[0].id);
+                    editShipCountry.val(data.country_name[0].id);
+                }
+
+                var editSubmitButton = $('.edit_submit_btn');
+                editSubmitButton.live("click",function($e) {
+                    $e.preventDefault();
+                    var emptyShipDetails = emptyShipDetailsFunction(data);
                     var data = {
-                        Id :$('.edit_ship_id').val(),
-                        shipName:$('.edit_ship_name').val(),
-                        imoNumber:$('.edit_ship_imoNumber').val(),
-                        location:$('.edit_ship_location').val(),
-                        built:$('.edit_ship_built').val(),
-                        size:$('.edit_ship_size').val(),
-                        gt:$('.edit_ship_gt').val(),
-                        manufacturingYear:$('.edit_ship_manufacturingYear').val(),
-                        description:$('.edit_ship_description').val(),
-                        shipType:$('.edit_ship_type').val(),
-                        country:$('.edit_ship_country').val()
+                        Id :editShipId.val(),
+                        shipName:editShipName.val(),
+                        imoNumber:editShipImoNumber.val(),
+                        location:editShipLocation.val(),
+                        built:editShipBuilt.val(),
+                        size:editShipSize.val(),
+                        gt:editShipGt.val(),
+                        manufacturingYear:editShipManufacturingYear.val(),
+                        description:editShipDescription.val(),
+                        shipType:editShipType.val(),
+                        country:editShipCountry.val()
                     };
-
                     $.ajax({
                         type:"POST",
                         url:"ajax_edit",
                         data: data,
-                        success: function(data)
-                        {
-                            $('.ship_name').append(data.Ship_detail[0].shipName);
-                            $('.ship_type').append(data.ship_type[0].shipType);
-                            $('.ship_ImoNumber').append(data.Ship_detail[0].imoNumber);
-                            $('.ship_Location').append(data.Ship_detail[0].location);
-                            $('.ship_Country').append(data.country_name[0].countryName);
-                            $('.ship_Built').append(data.Ship_detail[0].built);
-                            $('.ship_size').append(data.Ship_detail[0].size);
-                            $('.ship_GT').append(data.Ship_detail[0].gt);
-                            $('.ship_manufacturingYear').append(data.Ship_detail[0].manufacturingYear);
-                            $('.ship_description').append(data.Ship_detail[0].description);
-
-                            //Setting value for edit view
-
-                            $('.edit_ship_name').val(data.Ship_detail[0].shipName);
-                            $('.edit_ship_id').val(data.Ship_detail[0].id);
-                            $('.edit_ship_imoNumber').val(data.Ship_detail[0].imoNumber);
-                            $('.edit_ship_location').val(data.Ship_detail[0].location);
-
-                            $('.edit_ship_built').val(data.Ship_detail[0].built);
-                            $('.edit_ship_size').val(data.Ship_detail[0].size);
-                            $('.edit_ship_gt').val(data.Ship_detail[0].gt);
-                            $('.edit_ship_manufacturingYear').val(data.Ship_detail[0].manufacturingYear);
-                            $('.edit_ship_description').val(data.Ship_detail[0].description);
-
-                            $.each(data.shipType_array,function(index){
-                                var $option = $('<option>').append(data.shipType_array[index]['shipType']).val(data.shipType_array[index]['id']).appendTo('.edit_ship_type');
-
-                            });
-                            $.each(data.countryName_array,function(index){
-                                var $country_option = $('<option>').append(data.countryName_array[index]['countryName']).val(data.countryName_array[index]['id']).appendTo('.edit_ship_country');
-
-                            });
-                            $('.edit_ship_type').val(data.ship_type[0].id);
-                            $('.edit_ship_country').val(data.country_name[0].id);
+                        success: function(data) {
+                            var setShowShipValues = setShowShipValuesFunction(data);
+                            var setEditShipValues = setEditShipValuesFunction(data);
+                            var successDetails = successFunction(data);
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
-                    $('.Edit_ship').hide();
-                    $('.show_ship_view').show();
+                    editShip.hide();
+                    showShipView.show();
                 });
 
-                // Ship Active and Deactive Coding
+                // Ship Active and Inactive Coding //
 
-                $('.archive_btn').live("click",function()
-                {
-                    var data = {'Id' : $('.edit_ship_id').val()};
+                var archiveButton = $('.archive_btn');
+                archiveButton.live("click",function($e) {
+                    $e.preventDefault();
+                    var data = {'Id' : editShipId.val()};
                     $.ajax({
                         type:"POST",
                         url:"ajax_status",
                         data: data,
-                        success: function(data)
-                        {
+                        success: function(data) {
                             if(data.status[0].status == 1)
                             {
                                 alert('Vessel Activated');
@@ -248,48 +241,47 @@
                                 alert('Vessel InActivated');
                             }
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     })
                 });
 
-                $('.check').live("click",function(){
-                    if($('.check').is(':checked')==true)
+                var check = $('.check');
+                var shipOption = $('#shipId option');
+                check.live("click",function($e) {
+                    $e.preventDefault();
+                    if(check.is(':checked')==true)
                     {
-                        $('#shipId option').attr('selected', 'selected');
+                        shipOption.attr('selected', 'selected');
                     }
                     else
                     {
-                        $('#shipId option').attr('selected', false);
+                        shipOption.attr('selected', false);
                     }
                 });
 
                 var activeCount = 0;
-                $('.status_active').live("click",function()
-                {
-                    $('.status_inactive').not('.status_active').removeAttr('checked');
-                    if(activeCount>0)
-                    {
-                        $('.activePlace').empty();
+                var statusActive = $('.status_active');
+                var statusInactive = $('.status_inactive');
+                var activePlace = $('.activePlace');
+                var activeVessels = $('.active_vessels');
+                var mainVesselsShow = $('.main_vessels_show');
+                statusActive.live("click",function($e) {
+                    $e.preventDefault();
+                    statusInactive.not('.status_active').removeAttr('checked');
+                    if(activeCount>0) {
+                        activePlace.empty();
                     }
-                    if($('.status_active').is(':checked')==true)
-                    {
+                    if(statusActive.is(':checked')==true) {
                         var data = {'Id' : 1};
                         $.ajax({
                             type:"POST",
                             url:"ajax_status_show",
                             data:data,
-                            success: function(data)
-                            {
-                                $('.name_select').empty();
-                                $('.text_select').empty();
-                                $('.main_vessels_show').hide();
-                                $('.active_vessels').show();
-
-                                $.each(data.ship_details, function(i)
-                                {
+                            success: function(data) {
+                                var statusEmpty = statusEmptyFunction(data);
+                                $.each(data.ship_details, function(i) {
                                     var spanPlace = $('<div>').attr({'class':'users_list_grid'}).append(
                                             $('<span>').attr({'class':'users_name_row'}).append(
                                                     $('<span>').attr({'class':'name'}).append(
@@ -300,45 +292,44 @@
                                     ).appendTo('.activePlace');
                                 });
                             },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
                                 alert('Error : ' + errorThrown);
                             }
                         })
                     }
-                    else
-                    {
-                        $('.active_vessels').hide();
-                        $('.main_vessels_show').show();
+                    else {
+                        activeVessels.hide();
+                        mainVesselsShow.show();
                     }
 
                     activeCount ++;
                 });
 
+                var nameSelect = $('.name_select');
+                var textSelect = $('.text_select');
+                function statusEmptyFunction(data) {
+                    nameSelect.empty();
+                    textSelect.empty();
+                    mainVesselsShow.hide();
+                    activeVessels.show();
+                }
+
                 var inactiveCount = 0;
-                $('.status_inactive').live("click",function()
-                {
-                    $('.status_active').not('.status_inactive').removeAttr('checked');
-                    if(inactiveCount>0)
-                    {
-                        $('.activePlace').empty();
+                statusInactive.live("click",function($e) {
+                    $e.preventDefault();
+                    statusActive.not('.status_inactive').removeAttr('checked');
+                    if(inactiveCount>0) {
+                        activePlace.empty();
                     }
-                    if($('.status_inactive').is(':checked')==true)
-                    {
+                    if(statusInactive.is(':checked')==true) {
                         var data = {'Id' : 0};
                         $.ajax({
                             type:"POST",
                             url:"ajax_status_show",
                             data:data,
-                            success: function(data)
-                            {
-                                $('.name_select').empty();
-                                $('.text_select').empty();
-                                $('.main_vessels_show').hide();
-                                $('.active_vessels').show();
-
-                                $.each(data.ship_details, function(i)
-                                {
+                            success: function(data) {
+                                var statusEmpty = statusEmptyFunction(data);
+                                $.each(data.ship_details, function(i) {
                                     var spanPlace = $('<div>').attr({'class':'users_list_grid'}).append(
                                             $('<span>').attr({'class':'users_name_row'}).append(
                                                     $('<span>').attr({'class':'name'}).append(
@@ -349,18 +340,27 @@
                                     ).appendTo('.activePlace');
                                 });
                             },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
                                 alert('Error : ' + errorThrown);
                             }
                         })
                     }
-                    else
-                    {
-                        $('.active_vessels').hide();
-                        $('.main_vessels_show').show();
+                    else {
+                        activeVessels.hide();
+                        mainVesselsShow.show();
                     }
                     inactiveCount ++;
+                });
+
+                var showCheckBox = $('#showCheckbox');
+                var activeInactiveCheckBox = $('#active_inactive_checkbox');
+                showCheckBox.click(function () {
+                    activeInactiveCheckBox.toggleClass('opened');
+                });
+                $(document).click(function (e) {
+                    if (!$(e.target).parents().andSelf().is('#showCheckbox')) {
+                        activeInactiveCheckBox.removeClass("opened");
+                    }
                 });
             });
 
@@ -368,13 +368,12 @@
 
     {% endblock%}
 
-
     <div id="grid_view">
         <section>
             <div class="col-sm-3 users_views">
                 <div class="add_user_btn_main">
                     <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Vessel</a></span>
-                    <span class="user_btn_main"><a href="" class="show_btn" ng-click="myFunc3()">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+                    <span class="user_btn_main"><a href="" class="show_btn" id="showCheckbox">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
@@ -383,7 +382,7 @@
 
                 <div class="users_list_main"><span>Ship ({{ ship_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
 
-                <div class="email_group_show_drap" id="active_inactive_checkbox" ng-show="showMe3">
+                <div class="email_group_show_drap" id="active_inactive_checkbox">
                     <ul>
                         <li><input type="checkbox" class="inline-checkbox status_active">Active Ships</li>
                         <li><input type="checkbox" class="inline-checkbox status_inactive">Inactive Ships</li>
@@ -418,15 +417,6 @@
             </div>
         </section>
     </div>
-
-    {#<section id="nogroupselected">
-        <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
-            <div class="text_image">
-                <img src="/images/no-user.png">
-                <label>No Ship Selected</label>
-            </div>
-        </div>
-    </section>#}
 
     <div id="list_view">
         <section>
