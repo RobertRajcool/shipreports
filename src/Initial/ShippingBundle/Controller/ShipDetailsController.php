@@ -69,8 +69,7 @@ class ShipDetailsController extends Controller
         $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
         $em = $this->getDoctrine()->getManager();
 
-        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
-        {
+        if($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
             $query = $em->createQueryBuilder()
                 ->select('a')
                 ->from('InitialShippingBundle:ShipDetails','a')
@@ -80,8 +79,7 @@ class ShipDetailsController extends Controller
                 ->setParameter('userId',$userId)
                 ->getQuery();
         }
-        else
-        {
+        else {
             $query = $em->createQueryBuilder()
                 ->select('a')
                 ->from('InitialShippingBundle:ShipDetails','a')
@@ -91,37 +89,37 @@ class ShipDetailsController extends Controller
                 ->getQuery();
         }
         $shipDetails = $query->getResult();
-
-        /*$ship_id_value = $em->createQueryBuilder()
-            ->select ('identity(a.shipDetailsId)')
-            ->from('InitialShippingBundle:ShipStatusDetails','a')
-            ->where('a.status = :status')
-            ->setParameter('status',1)
-            ->distinct()
-            ->getQuery()
-            ->getResult();
-        $index = count($ship_id_value);
-
-        for($i=0;$i<$index;$i++)
-        {
-            $ship_detail_query = $em->createQueryBuilder()
-                ->select ('a')
-                ->from('InitialShippingBundle:ShipDetails','a')
-                ->where('a.id = :ship_id')
-                ->setParameter('ship_id',$ship_id_value[$i][1])
-                ->getQuery()
-                ->getResult();
-            $ship_details[$i] = $ship_detail_query;
-        }*/
-
         $count = count($shipDetails);
 
+        $shipStatus = array();
+        for($shipCount=0;$shipCount<$count;$shipCount++) {
+            $shipId = $shipDetails[$shipCount]->getId();
+            $shipStatusQuery = $em->createQueryBuilder()
+                ->select ('a.status')
+                ->from('InitialShippingBundle:ShipStatusDetails','a')
+                ->where('a.shipDetailsId = :ship_id')
+                ->setParameter('ship_id',$shipId)
+                ->groupby('a.id')
+                ->getQuery()
+                ->getResult();
+
+            if(count($shipStatusQuery)!=0) {
+                if((int)$shipStatusQuery[count($shipStatusQuery)-1]['status']==1) {
+                    array_push($shipStatus,"Active");
+                }
+                else {
+                    array_push($shipStatus,"Inactive");
+                }
+            }
+            else {
+                array_push($shipStatus,"Inactive");
+            }
+        }
         $shipDetail = new shipDetails();
         $form = $this->createForm(new shipDetailsType($userId,$role), $shipDetail);
         $form->handleRequest($request);
 
-        if($status == 'status')
-        {
+        if($status == 'status') {
             return $shipDetail;
         }
 
@@ -130,8 +128,7 @@ class ShipDetailsController extends Controller
             'shipDetail' => $shipDetail,
             'form' => $form->createView(),
             'ship_count' => $count,
-            /*'activeShip' => $ship_details*/
-
+            'shipStatus' => $shipStatus
         ));
     }
 
@@ -238,7 +235,6 @@ class ShipDetailsController extends Controller
         $shipstatusdetails = new ShipStatusDetails();
         $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$ship_id)));
         $shipstatusdetails -> setActiveDate($today_obj);
-        //$shipstatusdetails -> setEndDate('');
         $shipstatusdetails -> setStatus(1);
         $em->persist($shipstatusdetails);
         $em->flush();
@@ -397,31 +393,28 @@ class ShipDetailsController extends Controller
             ->getQuery()
             ->getResult();
         $index = count($status_value);
-        $shipstatusdetails = new ShipStatusDetails();
+        $shipStatusDetails = new ShipStatusDetails();
         if(count($status_value)!=0)
         {
             if($status_value[$index-1]['status']==1)
             {
-                $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
-                //$shipstatusdetails -> setActiveDate($today_obj);
-                $shipstatusdetails -> setEndDate($today_obj);
-                $shipstatusdetails -> setStatus(0);
-                $em->persist($shipstatusdetails);
+                $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
+                $shipStatusDetails -> setEndDate($today_obj);
+                $shipStatusDetails -> setStatus(0);
+                $em->persist($shipStatusDetails);
                 $em->flush();
             }
         }
         else
         {
-            $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
-            $shipstatusdetails -> setActiveDate($today_obj);
-            //$shipstatusdetails -> setEndDate($today_obj);
-            $shipstatusdetails -> setStatus(1);
-            $em->persist($shipstatusdetails);
+            $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
+            $shipStatusDetails -> setActiveDate($today_obj);
+            $shipStatusDetails -> setStatus(1);
+            $em->persist($shipStatusDetails);
             $em->flush();
         }
 
-
-        $lastId = $shipstatusdetails->getId();
+        $lastId = $shipStatusDetails->getId();
 
         $statusValue = $em->createQueryBuilder()
             ->select ('a.status')
