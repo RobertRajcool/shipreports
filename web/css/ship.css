@@ -2064,5 +2064,44 @@ input[type="color"],
 }
 */
 
+.profile_list {
+    margin:0px;
+    border-radius:2px;
+    padding:2px 12px;
+    width:70%;
+    height:auto;
+    position: absolute;
+    z-index: 11111;
+    background:#FFFFFF;
+    bottom:45px;
+    left:10px;
+}
+.profile_list ul {
+    margin:0px;
+    padding:0px;
+}
+.profile_list ul li {
+    width:auto;
+    height:auto;
+    margin:0px;
+    padding:0px;
+    list-style:none;
+    border-bottom:1px solid #f0f0f0;
+}
+.profile_list ul li.last {
+    border-bottom:none;
+}
+.profile_list ul li a {
+    color:#333333;
+    outline:none;
+    padding:5px 0px;
+    display:block;
+}
+.add_rule_delete_icon {
+    border:1px solid #dddddd;
+    padding:6px 3px 1px 8px;
+    border-radius:2px;
+    float:right;
+}
 
 

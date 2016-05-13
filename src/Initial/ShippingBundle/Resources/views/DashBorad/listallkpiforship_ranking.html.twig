@@ -374,7 +374,7 @@
                 <tr>
                     <th colspan="4">
                         {{ 'kpiranking.header'|trans }}
-                        {#<a class="linkclass" href="{{ path('dashboardhome', { 'year':currentyear}) }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a>#}
+                        <a class="linkclass" href="{{ path('dashboardhome') }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a>
 
                     </th>
 
@@ -434,7 +434,7 @@
 
                 <tr>
                     <td colspan="" class="kpi_name_thtd"><strong>{{ 'kpiranking.avgscore'|trans }}</strong></td>
-                    <td>100</td>
+                    <td><strong>100</strong></td>
 
                     {% for avg in avgscore %}
                         <td><strong>{{ avg }}</strong></td>

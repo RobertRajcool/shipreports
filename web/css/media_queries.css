@@ -1,41 +1,43 @@
 @media (max-width:1060px) {
-.left_menus-2 {
-	width:16%
-}
-.dashboard_screen_views {
-	width:84%;
-	left: 16%;
-}
+	.left_menus-2 {
+		width:16%
+	}
+	.dashboard_screen_views {
+		width:84%;
+		left: 16%;
+	}
 }
 @media (max-width:930px) {
-.left_menus-2 {
-	width:18%
-}
-.dashboard_screen_views {
-	width:82%;
-	left: 18%;
-}
+	.left_menus-2 {
+		width:18%
+	}
+	.dashboard_screen_views {
+		width:82%;
+		left: 18%;
+	}
+
 }
 @media (max-width:830px) {
-.left_menus-2 {
-	width:20%
-}
-.dashboard_screen_views {
-	width:80%;
-	left: 20%;
-}
+	.left_menus-2 {
+		width:20%
+	}
+	.dashboard_screen_views {
+		width:80%;
+		left: 20%;
+	}
+
 }
 
 
 @media (min-width:850px) {
-.login_main_screen {
-	width:38%;
-	margin-left:31%;	
-}
+	.login_main_screen {
+		width:38%;
+		margin-left:31%;
+	}
 }
 @media (min-width:1050px) {
-.login_main_screen {
-	width:30%;
-	margin-left:35%;	
-}
+	.login_main_screen {
+		width:30%;
+		margin-left:35%;
+	}
 }

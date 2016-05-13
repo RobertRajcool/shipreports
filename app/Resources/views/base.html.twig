@@ -29,44 +29,6 @@
 
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
-    {#<script>
-        var app = angular.module('myApp', []);
-
-        /*app.config(function($interpolateProvider){
-         $interpolateProvider.startSymbol('[[').endSymbol(']]');
-         });*/
-
-        app.controller('myCtrl', function($scope) {
-            $scope.showMe = false;
-            $scope.myFunc = function() {
-                $scope.showMe = !$scope.showMe;
-                $scope.ScoreCard = false;
-                $scope.VesselRanking = false;
-            }
-            $scope.showMe3 = false;
-            $scope.myFunc3 = function() {
-                $scope.showMe3 = !$scope.showMe3;
-            }
-
-            $scope.ScoreCard = false;
-            $scope.myFuncScoreCard = function() {
-                $scope.ScoreCard = !$scope.ScoreCard;
-                $scope.VesselRanking = false;
-                $scope.showMe = false;
-            }
-            $scope.VesselRanking = false;
-            $scope.myFuncVesselRanking = function() {
-                $scope.VesselRanking = !$scope.VesselRanking;
-                $scope.ScoreCard = false;
-                $scope.showMe = false;
-            }
-            $scope.KpiRulesShow = false;
-            $scope.myFuncKpiRulesShow = function() {
-                $scope.KpiRulesShow = !$scope.KpiRulesShow;
-            }
-
-        });
-    </script>#}
     <script type="text/javascript">
         $(window).ready(function()
         {
@@ -80,27 +42,66 @@
             });
             $('.scorecard').hide();
             $('.ranking_submenu').hide();
-            $('.my-account-box').hide();
+            $(".box_new").hide();
+          //  $('.my-account-box').hide();
 
             $(".topmenu_score").click(function()
             {
                 $('.ranking_submenu').hide();
-                $('.my-account-box').hide();
-                $(".scorecard").slideToggle("slow");
+                $(".box_new").hide();
+                if($('#scorecard_submenu').length > 0)
+                {
+                    $('#scorecard_submenu').remove();
+                }
+               else
+                {
+                    $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                    $('#scorecard_submenu').html('');
+                    $('#scorecard_submenu').text('');
+                    $('<li id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                    $('.scorecard').show();
+                }
             });
             $(".topmenu_ranking").click(function()
             {
                 $('.scorecard').hide();
-                $('.my-account-box').hide();
-                $(".ranking_submenu").slideToggle("slow");
-            });
-            $(".x-btn-my-account-small").click(function()
-            {
-                $('.scorecard').hide();
-                $('.ranking_submenu').hide();
-                $('.my-account-box').slideToggle('slow');
+                $(".box_new").hide();
+                if($('#ranking_submenu').length > 0)
+                {
+                    $('#ranking_submenu').remove();
+                }
+                else
+                {
+                    $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                    $('#ranking_submenu').html('');
+                    $('#ranking_submenu').text('');
+                    $('<li id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                    $(".ranking_submenu").show();
+                }
 
             });
+            $(".slide-toggle").click(function()
+            {
+                $('.scorecard').hide();
+                $('.ranking_submenu').hide()
+                if($('#user_login_content').length > 0)
+                {
+                    $('#user_login_content').remove();
+                }
+                else
+                {
+                    $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>Profile</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">Logout</a></li></ul></div>');
+                    $(".box_new").fadeIn('slow');
+                }
+
+            });
+
+            $('#wholecontent').click(function($e)
+            {
+                $('#user_login_content').remove();
+            });
+
+
         });
     </script>
 </head>
@@ -108,7 +109,7 @@
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
     <div class="container" >
         <div class="row">
-            <div  class="col-md-2 left_menus-2">
+            <div  class="col-md-2 left_menus-2" id="afterlogin_appendcontent">
                 <div class="logo"><img src="/images/pioneer_logo.png"></div>
                 <ul class="nav nav-sidebar">
 
@@ -132,7 +133,7 @@
                                     <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
                                     <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                                 </a>
-                                <ul class="submenu scorecard" ng-show="ScoreCard">
+                              {#  <ul class="submenu scorecard" ng-show="ScoreCard">
                                     <li id="kpidetails_select1">
                                         <a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}">
                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
@@ -171,16 +172,16 @@
                                             <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
                                         </a>
                                     </li>
-                                </ul>
+                                </ul>#}
                             </li>
 
                             <li class="topmenu_ranking" id="Vessel_Ranking1">
-                                <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
+                                <a class="layout_name rankinglink" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
                                     <span class="menu-item-icon ss-warehouse">&nbsp;</span>
                                     <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
                                     <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                                 </a>
-                                <ul class="submenu ranking_submenu" ng-show="VesselRanking">
+                               {# <ul class="submenu ranking_submenu" ng-show="VesselRanking">
                                     <li id="rankingkpidetails_select1">
                                         <a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}">
                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
@@ -219,7 +220,7 @@
                                             <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
                                         </a>
                                     </li>
-                                </ul>
+                                </ul>#}
                             </li>
                         {% endif %}
                     {% endif %}
@@ -290,32 +291,28 @@
                 </ul>
 
 
-                <div class="x-btn-my-account-small">
+                <div class="x-btn-my-account-small" id="bottom_content">
                     <div class="x-btn-my-account-small_inner_2">
-                    <div class="menu_logout_button"><a href="{{ path('fos_user_security_logout') }}"><samp class="menu-item-icon ss-logout"></samp><span class="menu-item-text">{{ 'layout.menu.logout'|trans }}</span></a></div>
-                    <div class="user_setting_main" ng-click="myFunc()">
-                        <span class="x-btn-icon-el">
-                            <img src="/images/nouser.png">
-                        </span>
-                        <span class="x-btn-inner">
-                            <div class="user-name">{{app.user.username }}</div>
-                            <div class="company">Company Name</div>
-                        </span>
-                        <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
-                    </div>
-                </div>
-                    </div>
+                        <div class="user_setting_main slide-toggle">
 
-                <div class="my-account-box" ng-show="showMe">
-                    <div class="my-account-box-inner">
-                        <div class="settings"><samp class="ss-settings"><a href={{ path('fos_user_change_password') }}>{{ 'layout.menu.settingsfor'|trans }} {{app.user.username }}</a></samp></div>
-                        <div class="logout"><samp class="ss-logout"><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.menu.logout'|trans }}</a></samp></div>
+    <span class="x-btn-icon-el" id="user_settings">
+    <img src="/images/user.jpg">
+    </span>
+    <span class="x-btn-inner">
+    <div class="user-name">{{app.user.username }}</div>
+    <div class="company">Company Name</div>
+    </span>
+                            <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
+                        </div>
                     </div>
-                    <div class="arrow ss-dropdown">&nbsp;</div>
                 </div>
+
             </div>
+
+
+
             <div class="dashboard_screen_views dashboard_right_ship">
-                <section>
+                <section id="wholecontent">
                     {% block body %}
 
                     {% endblock %}
