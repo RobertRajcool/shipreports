@@ -1460,7 +1460,7 @@ class DashboradController extends Controller
             $ob->exporting->enabled(false);
             $listofcomment = $em->createQueryBuilder()
                 ->select('a.comment')
-                ->from('InitialShippingBundle:SendCommand','a')
+                ->from('InitialShippingBundle:SendCommandRanking','a')
                 ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
                 ->where('a.shipid = :shipid')
                 ->andwhere('b.emailId = :username')
@@ -2040,7 +2040,7 @@ class DashboradController extends Controller
                          ->setBody($comment);
                      $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
                      $mailer->send($message);*/
-                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                    array_push($mailidarray, $findsemail[$ma]['useremailid']);
                 }
             }
             //Mailing Ends....
@@ -2448,6 +2448,8 @@ class DashboradController extends Controller
             $date = date('l jS F Y h:i', time());
             $route = $request->attributes->get('_route');
             $oneyear_montharray = array();
+            $rankingKpiWeightarray = array();
+            $scorecardElementRules = array();
             if ($year == ' ') {
                 for ($m = 1; $m <= 12; $m++) {
                     $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
@@ -2553,10 +2555,9 @@ class DashboradController extends Controller
                 array_push($newcategories, $monthinletter);
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
                 $new_monthdetail_date->modify('last day of this month');
-                $scorecardElementRules = array();
+
                 $scorecardElementValueArray = array();
                 $rankingKpiValueCountArray = array();
-                $rankingKpiWeightarray = array();
                 $Newkpivalue=array();
                 $NewKpiAvg=array();
                 $NewKpiColor=array();
@@ -3628,7 +3629,7 @@ class DashboradController extends Controller
         $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
         $mpdf->WriteHTML($htmlContentfor_report);
         $content = $mpdf->Output('', 'S');
-            $fileName = 'overallshipreports_'. date('Y-m-d H-i-s') . '.pdf';
+            $fileName = 'overallshipreports_' . date('Y-m-d H-i-s') . '.pdf';
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' .$fileName;
             file_put_contents($pdffilenamefullpath, $content);
             $useremaildid = $request->request->get('clientemail');
