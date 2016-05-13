@@ -2042,7 +2042,6 @@ input[type="color"],
     margin-right: 10px;
 }
 #active_inactive_checkbox {
-
     display: none;
 }
 #active_inactive_checkbox.opened {
