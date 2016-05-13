@@ -428,6 +428,12 @@
                 {
                     $('#livesearchdiv').hide();
                 });
+                $('#element_btn_rules').click(function($e)
+                {
+                    $e.preventDefault();
+                    $('#ranking_elementrules').toggle();
+                });
+                $('#ranking_elementrules').hide();
 
             });
 
@@ -470,10 +476,7 @@
                 {% set i=0 %}
                 {% for element in listofelement %}
                     <tr>
-                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}{#<a  style="color: #2b542c"
-                                                       href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true"
-                                                       class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a>#}</td>
-                        {#<td>{{ elementweightage[i] }}%</td>#}
+                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}
 
                         {% for j in 0..countmonth1 %}
                             {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
@@ -515,9 +518,9 @@
                 </tbody>
             </table>
 
-            <div class="rules_ranking"><a ng-click="myFuncKpiRulesShow()" class="rules_show_btn" href="">{{ 'elementranking.ruleshow'|trans }}</a></div>
+            <div class="rules_ranking"><a class="rules_show_btn"  id="element_btn_rules" href="">{{ 'elementranking.ruleshow'|trans }}</a></div>
 
-            <table class="table table-striped-4 kpi_ranking_rules_show_row" ng-show="KpiRulesShow">
+            <table class="table table-striped-4 kpi_ranking_rules_show_row" id="ranking_elementrules">
                 <thead>
                 <tr>
                     <th colspan="3">Rules</th>

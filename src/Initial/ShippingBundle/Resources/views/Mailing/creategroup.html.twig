@@ -17,16 +17,12 @@
     <div class="col-sm-3 users_views">
         <div class="add_user_btn_main">
             <span class="user_btn_main"><a href="" id="adduserscreenbutton" class="ss-plus add_btn"> Add group</a></span>
-            <span class="user_btn_main" ng-click="myFunc3()"><a href="" class="show_btn">Show <span class="show_dropdown_icon">
+            <span class="user_btn_main" ng-click="myFunc3()"><a href="" id="showCheckbox" class="show_btn">Show <span class="show_dropdown_icon">
       <span class="ss-dropdown">&nbsp;</span></span></a></span>
-    <span class="user_btn_main grid_list_main">
-    	<span class="active"><a href="" class="grid_list_icon ss-grid">&nbsp;</a></span>
-      <span><a href="" class="grid_list_icon ss-rows">&nbsp;</a></span>
-    </span>
         </div>
         <div class="users_list_main"><span>Group <span id="countid"> ({{ usercount }})</span></span> <span class="show_dropdown_icon">&nbsp;</span>
         </div>
-        <div class="email_group_show_drap" ng-show="showMe3">
+        <div class="email_group_show_drap" id="active_inactive_checkbox">
             <ul>
                 <li class="commonclass"><input type="checkbox" id="activecheckbox" name="activecheckbox[]" value="1" class="inline-checkbox"> Active Group</li>
                 <li class="commonclass"><input type="checkbox" id="archivecheckbox" name="activecheckbox[]"  value="0" class="inline-checkbox"> Archived Group</li>
@@ -110,7 +106,7 @@
                 <div class="actions_submit">
                     <button class="submit_btn" id="savegroupid" >Save </button>
                     <button class="submit_btn" id="updatebuttonid" >Update</button>
-                    <button class="cancel_btn" id="cancelbuttonid" >Cancel</button>
+
                 </div>
 
             </form>

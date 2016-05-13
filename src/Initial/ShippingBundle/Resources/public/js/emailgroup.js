@@ -86,14 +86,15 @@ $(document).ready(function()
             var numItems = $('.addedemailclass').length
             if(gname=="")
             {
-                alert("Group Name Required");
+                jAlert('', 'Group Name Required');
+                $('#addgroupidhtml').focus();
                 return false
 
             }
             if(numItems==0)
             {
-                alert('Email Required');
-                return false
+                jAlert('', 'Email Required');
+                $('#emailid').focus();
 
             }
             if(gname!="" && numItems>0)
@@ -205,13 +206,15 @@ $(document).ready(function()
             var numItems = $('.addedemailclass').length
             if(gname=="")
             {
-                alert("Group Name Required");
+                jAlert('', 'Group Name Required');
+                $('#addgroupidhtml').focus();
                 return false
 
             }
             if(numItems==0)
             {
-                alert('Email Required');
+                jAlert('', 'Email Required');
+                $('.addedemailclass').focus();
                 return false
 
             }
@@ -235,7 +238,7 @@ $(document).ready(function()
 
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
-                        alert('Error : ' + errorThrown);
+                        window.location.href = 'http://shipreports/login';
                     }
                 });
             }
@@ -262,7 +265,8 @@ $(document).ready(function()
                     $('#addgroupidhtml').val('')
                     $('#groupid').val('');
                     $('#inputforemailid').text('');
-                    alert(data.archivemsg);
+                   // alert(data.archivemsg);
+                    jAlert('', data.archivemsg);
 
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -335,76 +339,15 @@ $(document).ready(function()
         $('#activecheckbox').css('display','block')
 
     }
-    $('.inline-checkbox').live('click change',function ()
-    {
-
-        if($('#archivecheckbox').is(":checked")==true)
-        {
-            $('#activecheckbox').attr("disabled", false);
-            $('#archivecheckbox').attr("disabled", true);
+    var showCheckBox = $('#showCheckbox');
+    var activeInactiveCheckBox = $('#active_inactive_checkbox');
+    showCheckBox.click(function ($e) {
+        $e.preventDefault();
+        activeInactiveCheckBox.toggleClass('opened');
+    });
+    $(document).click(function (e) {
+        if (!$(e.target).parents().andSelf().is('#showCheckbox')) {
+            activeInactiveCheckBox.removeClass("opened");
         }
-        if($('#archivecheckbox').is(":checked")==false)
-        {
-
-            $('#activecheckbox').attr("disabled", true);
-            $('#archivecheckbox').attr("disabled", false);
-        }
-        if($('#activecheckbox').is(":checked")==true)
-        {
-            $('#activecheckbox').attr("disabled", true);
-            $('#archivecheckbox').attr("disabled", false);
-
-
-        }
-        if($('#activecheckbox').is(":checked")==false)
-        {
-            $('#archivecheckbox').attr("disabled", true);
-            $('#activecheckbox').attr("disabled", false);
-
-        }
-        if($('#activecheckbox').is(":checked")==true && $('#archivecheckbox').is(":checked")==true)
-        {
-
-            $('#activecheckbox').attr("disabled", false);
-            $('#archivecheckbox').attr("disabled", false);
-        }
-        if($('#activecheckbox').is(":checked")==false && $('#archivecheckbox').is(":checked")==true)
-        {
-            $('#archivecheckbox').attr("disabled", true);
-            $('#activecheckbox').attr("disabled", false);
-
-        }
-        if($('#activecheckbox').is(":checked")==true && $('#archivecheckbox').is(":checked")==false)
-        {
-
-            $('#activecheckbox').attr("disabled", true);
-            $('#archivecheckbox').attr("disabled", false);
-        }
-
-      /*  var idarray = [];
-        $('.inline-checkbox').each(function ()
-        {
-            //alert("Id: " + $(this).attr("id") + " Value: " + $(this).val() + " Checked: " + $(this).is(":checked"));
-            if($(this).is(":checked")==true)
-            {
-                idarray.push($(this).attr("id"));
-            }
-
-        });
-       var length=idarray.length;
-       if(length==1)
-       {
-
-           var attributeid=idarray[0];
-           $('#'+attributeid).attr("disabled", true);
-       }
-        if(length>1)
-        {
-
-            for(var kk=0;kk<length;kk++)
-            {
-                $('#' + idarray[kk]).attr("disabled", false);
-            }
-        }*/
     });
 });
