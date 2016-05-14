@@ -225,6 +225,8 @@ class RankingElementDetailsController extends Controller
 
         $weightage = $request->request->get('weightage');
         $kpiId = $request->request->get('kpiDetailsId');
+        $elementId = $request->request->get('elementId');
+        $status = $request->request->get('status');
         $em = $this->getDoctrine()->getManager();
 
         $query = $em->createQueryBuilder()
@@ -239,6 +241,9 @@ class RankingElementDetailsController extends Controller
 
         for($i=0;$i<count($query);$i++)
         {
+            if($query[$i]['id']==$elementId && $status==0) {
+                $query[$i]['weightage'] = 0;
+            }
             $sum = $sum + $query[$i]['weightage'];
         }
 
@@ -313,12 +318,9 @@ class RankingElementDetailsController extends Controller
             ->getQuery();
         $elementDetail = $query1->getResult();
 
-        $rules = $this->ranking_element_ruleAction($request,'hi');
-
         $response = new JsonResponse();
         $response->setData(array(
             'element_detail' =>$elementDetail,
-            'element_rules' => $rules,
             'kpi_name' => $kpi_name,
             'kpi_name_array' => $kpi_name_array
         ));
@@ -347,7 +349,6 @@ class RankingElementDetailsController extends Controller
         $description = $request->request->get('description');
         $cellName = $request->request->get('cellName');
         $cellDetails = $request->request->get('cellDetails');
-        $rules_array = $request->request->get('rules');
 
         $em = $this->getDoctrine()->getManager();
 
@@ -362,27 +363,6 @@ class RankingElementDetailsController extends Controller
         $entity->setCellName($cellName);
         $entity->setCellDetails($cellDetails);
         $em->flush();
-
-        if($rules_array != NULL)
-        {
-            $element_rules_id_array= $em->createQueryBuilder()
-                ->select('a.id')
-                ->from('InitialShippingBundle:RankingElementRules','a')
-                ->where('a.elementDetailsId = :element_id')
-                ->setParameter('element_id',$id)
-                ->getQuery()
-                ->getResult();
-
-            for($i=0;$i<count($rules_array);$i++)
-            {
-                $element_rules_obj = $em->getRepository('InitialShippingBundle:RankingElementRules')->find($element_rules_id_array[$i]);
-                $element_obj= $em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id'=>$id));
-
-                $element_rules_obj->setRules($rules_array[$i]);
-                $element_rules_obj->setelementDetailsId($element_obj);
-                $em->flush();
-            }
-        }
 
         $show_response = $this->ranking_ajax_showAction($request,'hi');
 

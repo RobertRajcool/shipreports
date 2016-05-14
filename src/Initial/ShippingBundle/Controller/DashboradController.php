@@ -421,7 +421,6 @@ class DashboradController extends Controller
 
 
 
-
     /**
      * Ajax Call For change of monthdata of Rankinng Chart
      *
@@ -641,10 +640,7 @@ class DashboradController extends Controller
                                 $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
                                 $finalkpivalue += $finddbvaluefomula;
                             }
-
-
                         }
-                        // Kpi color Finding starts Here//
 
                         $kpi_rules = $em->createQueryBuilder()
                             ->select('a.rules')
@@ -655,12 +651,9 @@ class DashboradController extends Controller
                             ->getResult();
                         $read1 = "";
 
-                        //Find the color based on kpi rules
                         for ($kpi_rules_count = 0; $kpi_rules_count < count($kpi_rules); $kpi_rules_count++)
                         {
                             $rule = $kpi_rules[$kpi_rules_count];
-                            /*
-                                                $rule_obj = json_encode($rule);*/
                             $jsfiledirectry = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $rule['rules'] . ' \' ' . $finalkpivalue;
                             $jsfilename = 'node ' . $jsfiledirectry;
                             $handle = popen($jsfilename, 'r');
@@ -670,9 +663,7 @@ class DashboradController extends Controller
                             if ($read1 != "false") {
                                 break;
                             }
-
                         }
-
                     }
                     if (count($findelementidarray) > 0)
                     {
@@ -703,10 +694,7 @@ class DashboradController extends Controller
                                 $finddbvaluefomula = ((float)($dbvalueforelement[0]['value'])) * (((int)$weightage) / 100);
                                 $finalkpivalue += $finddbvaluefomula;
                             }
-
-
                         }
-                        // Kpi color Finding starts Here//
 
                         $kpi_rules = $em->createQueryBuilder()
                             ->select('a.rules')
@@ -1265,7 +1253,7 @@ class DashboradController extends Controller
                     ->setParameter('monthDetail', $new_monthdetail_date)
                     ->getQuery()
                     ->getResult();
-                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery)-1]['status']==4)
                 {
                     $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
                     $statusVerified  = $dateFromDb->format('n');
@@ -1578,7 +1566,7 @@ class DashboradController extends Controller
                     ->setParameter('monthDetail', $new_monthdetail_date)
                     ->getQuery()
                     ->getResult();
-                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery)-1]['status']==4)
                 {
                     $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
                     $statusVerified  = $dateFromDb->format('n');
@@ -1782,18 +1770,6 @@ class DashboradController extends Controller
                     {
                         $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                         $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
-
-                        /*$elementDbValue = $em->createQueryBuilder()
-                            ->select('a.value')
-                            ->from('InitialShippingBundle:RankingMonthlyData', 'a')
-                            ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
-                            ->setParameter('elementId', $scorecardElementId)
-                            ->setParameter('monthName',$new_monthdetail_date)
-                            ->setParameter('shipId',$shipId)
-                            ->setParameter('statusvalue',3)
-                            ->setParameter('kpiId',$newkpiid[0]['id'])
-                            ->getQuery()
-                            ->getResult();*/
 
                         $rankingElementRulesArray = $em->createQueryBuilder()
                             ->select('a.rules')
@@ -2260,16 +2236,6 @@ class DashboradController extends Controller
                     ->getResult();
                 $listofcommentarray = $listofcomment;
             }
-
-
-            /* if($checkboxvalue=="Yes")
-             {
-
-             }
-             else
-             {
-
-             }*/
             $idforrecord = $params['lastid'];
 
             $today = date("Y-m-d H:i:s");
@@ -2306,14 +2272,6 @@ class DashboradController extends Controller
             $mailidarray = array();
             if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL)) {
                 array_push($mailidarray, $useremaildid);
-                /* $mailer = $this->container->get('mailer');
-                 $message = \Swift_Message::newInstance()
-                     ->setFrom($clientemailid)
-                     ->setTo($useremaildid)
-                     ->setSubject($kpiname)
-                     ->setBody($comment);
-                 $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                 $mailer->send($message);*/
             } else {
                 $findsemail = $em->createQueryBuilder()
                     ->select('a.useremailid')
@@ -2503,7 +2461,7 @@ class DashboradController extends Controller
                         ->setParameter('monthDetail', $new_monthdetail_date)
                         ->getQuery()
                         ->getResult();
-                    if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                    if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery)-1]['status']==4)
                     {
                         $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
                         $statusVerified  = $dateFromDb->format('n');
@@ -2598,72 +2556,6 @@ class DashboradController extends Controller
                                 ->setParameter('elementId', $scorecardElementId)
                                 ->getQuery()
                                 ->getResult();
-                            /*$elementDbValue = $em->createQueryBuilder()
-                                ->select('a.value')
-                                ->from('InitialShippingBundle:RankingMonthlyData', 'a')
-                                ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.shipDetailsId = :shipId and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
-                                ->setParameter('elementId', $scorecardElementId)
-                                ->setParameter('monthName',$new_monthdetail_date)
-                                ->setParameter('shipId',$shipid)
-                                ->setParameter('statusvalue',3)
-                                ->setParameter('kpiId',$rankingKpiId)
-                                ->getQuery()
-                                ->getResult();
-
-                            $rankingElementRulesArray = $em->createQueryBuilder()
-                                ->select('a.rules')
-                                ->from('InitialShippingBundle:RankingRules', 'a')
-                                ->where('a.elementDetailsId = :elementId')
-                                ->setParameter('elementId', $scorecardElementId)
-                                ->getQuery()
-                                ->getResult();
-                            $elementResultColor = "";
-                            $elementColorValue=0;
-                            if(count($elementDbValue)!=0)
-                            {
-                                for($elementRulesCount=0;$elementRulesCount<count($rankingElementRulesArray);$elementRulesCount++)
-                                {
-                                    $elementRule = $rankingElementRulesArray[$elementRulesCount];
-                                    $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . $elementDbValue[0]['value'];
-                                    $elementJsFileName = 'node ' . $elementJsFileDirectory;
-                                    $handle = popen($elementJsFileName, 'r');
-                                    $elementColor = fread($handle, 2096);
-                                    $elementResultColor = str_replace("\n", '', $elementColor);
-
-                                    if ($elementResultColor == "false") {
-                                        continue;
-                                    }
-                                    if ($elementResultColor == "Green") {
-                                        $elementColorValue = $scorecardElementWeight;
-                                        break;
-                                    } else if ($elementResultColor == "Yellow") {
-                                        $elementColorValue = $scorecardElementWeight/2;
-                                        break;
-                                    } else if ($elementResultColor == "Red") {
-                                        $elementColorValue = 0;
-                                        break;
-                                    }
-                                }
-                                array_push($scorecardElementRules,$rankingElementRulesArray);
-                                array_push($scorecardElementValueArray,$elementDbValue[0]['value']);
-                                $elementValueWithWeight = $elementColorValue ;
-                                $kpiSumValue+=$elementValueWithWeight;
-                                $rankingElementValueTotal+=$elementColorValue;
-                                // array_push($Element_Color_Array,$elementResultColor);
-                                array_push($Elment_Value,$elementDbValue[0]['value']);
-                                array_push($NewElementColor,$elementResultColor);
-                            }
-                            else
-                            {
-                                $elementDbValue[0]['value']=null;
-                                array_push($scorecardElementRules,$rankingElementRulesArray);
-                                array_push($scorecardElementValueArray,$elementDbValue[0]['value']);
-                                $elementValueWithWeight = $elementColorValue ;
-                                $kpiSumValue+=$elementValueWithWeight;
-                                $rankingElementValueTotal=105;
-                                array_push($Elment_Value,$elementDbValue[0]['value']);
-                                array_push($NewElementColor,$elementResultColor);
-                            }*/
 
                             $rankingElementResult = $em->createQueryBuilder()
                                 ->select('b.elementdata, b.elementcolor')
@@ -3342,7 +3234,7 @@ class DashboradController extends Controller
                         ->setParameter('monthDetail', $new_monthdetail_date)
                         ->getQuery()
                         ->getResult();
-                    if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery-1)]['status']==4)
+                    if(count($statusFieldQuery)!=0 && $statusFieldQuery[count($statusFieldQuery)-1]['status']==4)
                     {
                         $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
                         $statusVerified  = $dateFromDb->format('n');

@@ -241,9 +241,10 @@ class ElementDetailsController extends Controller
      */
     public function element_ajax_weightageAction(Request $request)
     {
-
         $weightage = $request->request->get('weightage');
         $kpiId = $request->request->get('kpiDetailsId');
+        $elementId = $request->request->get('elementId');
+        $status = $request->request->get('status');
         $em = $this->getDoctrine()->getManager();
 
         $query = $em->createQueryBuilder()
@@ -258,6 +259,9 @@ class ElementDetailsController extends Controller
 
         for($i=0;$i<count($query);$i++)
         {
+            if($query[$i]['id']==$elementId && $status==0) {
+                $query[$i]['weightage'] = 0;
+            }
             $sum = $sum + $query[$i]['weightage'];
         }
 
@@ -364,7 +368,6 @@ class ElementDetailsController extends Controller
         $description = $request->request->get('description');
         $cellName = $request->request->get('cellName');
         $cellDetails = $request->request->get('cellDetails');
-        $rules_array = $request->request->get('rules');
 
         $em = $this->getDoctrine()->getManager();
 
@@ -379,27 +382,6 @@ class ElementDetailsController extends Controller
         $entity->setCellName($cellName);
         $entity->setCellDetails($cellDetails);
         $em->flush();
-
-        if($rules_array != NULL)
-        {
-            $element_rules_id_array= $em->createQueryBuilder()
-                ->select('a.id')
-                ->from('InitialShippingBundle:ElementRules','a')
-                ->where('a.elementDetailsId = :element_id')
-                ->setParameter('element_id',$id)
-                ->getQuery()
-                ->getResult();
-
-            for($i=0;$i<count($rules_array);$i++)
-            {
-                $element_rules_obj = $em->getRepository('InitialShippingBundle:ElementRules')->find($element_rules_id_array[$i]);
-                $element_obj= $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id));
-
-                $element_rules_obj->setRules($rules_array[$i]);
-                $element_rules_obj->setelementDetailsId($element_obj);
-                $em->flush();
-            }
-        }
 
         $show_response = $this->ajax_showAction($request,'hi');
 
