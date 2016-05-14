@@ -32,7 +32,172 @@
     <script type="text/javascript">
         $(window).ready(function()
         {
-            //$('#dashboradhome1').addClass("active");
+            var pathname = window.location.pathname
+            console.log(pathname);
+            if(pathname=='/dashboard/')
+            {
+                $('li').removeClass('active');
+                $('#dashboradhome1').addClass('active');
+            }
+            else if(pathname=='/shipdetails/select1')
+            {
+                $('li').removeClass('active');
+                $('#shipdetails_select1').addClass('active');
+            }
+            else if(pathname=='/kpidetails/select')
+            {
+                $('li').removeClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li class="active" id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
+            }
+            else if(pathname=='/elementdetails/select')
+            {
+                $('li').removeClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li  id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li class="active" id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
+            }
+            else if(pathname=='/rules/select')
+            {
+                $('li').removeClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li  id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li class="active" id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
+            }
+            else if(pathname=='/dataverfication/add_data')
+            {
+                $('li').removeClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li  id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li  id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li class="active" id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
+            }
+            else if(pathname=='/add')
+            {
+                $('li').removeClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li  id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li  id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
+            }
+            else if(pathname=='/scorecard_report/')
+            {
+                $('li').removeClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li  id="kpidetails_select1"><a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="elementdetails_select1"><a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span></a></li><li  id="rules_select1"><a class="layout_name" id="rules_select" href="{{ path('rules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span></a></li><li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li  id="data_import1"><a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li class="active" id="reports1"><a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
+            }
+            else if(pathname=='/rankingkpidetails/select')
+            {
+                $('li').removeClass('active');
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li class="active" id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name active" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
+            }
+            else if(pathname=='/rankingelementdetails/select')
+            {
+                $('li').removeClass('active');
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li  id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li class="active" id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name active" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
+            }
+            else if(pathname=='/rankingrules/select')
+            {
+                $('li').removeClass('active');
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li  id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li class="active" id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name active" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
+            }
+            else if(pathname=='/dataverfication/add_data_forranking')
+            {
+                $('li').removeClass('active');
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li  id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li  id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name active" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
+            }
+            else if(pathname=='/dataverfication/uploadfile_ranking')
+            {
+                $('li').removeClass('active');
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li  id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li  id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li  id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li  id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name active" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
+            }
+            else if(pathname=="/dashboard/ranking_reports")
+            {
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li id="rankingkpidetails_select1"><a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span></a></li><li id="rankingelementdetails_select1"><a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span></a></li><li id="rankingrules_select1"><a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}"><span class="menu-item-icon ss-plus">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="Ranking_data_import1"><a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-database">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li><li class="active"  id="Ranking_Reports1"><a id="Ranking_Reports" class="layout_name active" href="{{ path('ranking_reports') }}"><span class="menu-item-icon ss-barchart">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
+            }
+            else if(pathname=='/register/allshow')
+            {
+                $('li').removeClass('active');
+                $('#fos_user_registration_show21').addClass('active');
+            }
+            else if (pathname=='/mailing/creategroup')
+            {
+                $('li').removeClass('active');
+                $('#creategroup1').addClass('active');
+            }
+            else
+            {
+                $('li').removeClass('active');
+                $('#dashboradhome1').addClass('active');
+            }
+
+          /*  //$('#dashboradhome1').addClass("active");
             $('.layout_name').click(function()
             {
                 $('#dashboradhome1').removeClass("active");
@@ -40,10 +205,8 @@
                 var currentId = $(this).attr('id');
                 $('#'+currentId+1).addClass("active");
             });
-            $('.scorecard').hide();
-            $('.ranking_submenu').hide();
-            $(".box_new").hide();
-          //  $('.my-account-box').hide();
+
+          //  $('.my-account-box').hide();*/
 
             $(".topmenu_score").click(function()
             {
@@ -113,7 +276,7 @@
                 <div class="logo"><img src="/images/pioneer_logo.png"></div>
                 <ul class="nav nav-sidebar">
 
-                    <li class="active" id="dashboradhome1">
+                    <li class="" id="dashboradhome1">
                         <a class="layout_name" id="dashboradhome" href="{{ path('dashboardhome') }}">
                             <span class="menu-item-icon ss-thumbnails">&nbsp;</span>
                             <span class="menu-item-text">{{ 'layout.menu.dash'|trans }}</span>
