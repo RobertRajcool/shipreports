@@ -558,10 +558,6 @@ class DataVerficationController extends Controller
         $em = $this->getDoctrine()->getManager();
         //Finding Company for Login user Starts Here//
         $user = $this->getUser();
-        if ($user == null) {
-            return $this->redirectToRoute('fos_user_security_login');
-        }
-        else {
             $userid=$user->getId();
             $shipid = $request->request->get('shipid');
             $returnfromcontroller = $this->findelementkpiid($shipid);
@@ -864,7 +860,7 @@ class DataVerficationController extends Controller
                     'elementvalues' => array()));
                 return $response;
             }
-        }
+
 
     }
 

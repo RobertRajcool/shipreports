@@ -31,8 +31,9 @@
                 $('#livesearchdiv').hide();
                 $('#hidecomment').hide();
 
-                $('#showcommentform').click(function()
+                $('#showcommentform').click(function($e)
                 {
+                    $e.preventDefault();
                     $('#buttonid').hide();
                     $('#viewcommentdiv').hide();
                     $('#commentform').show();
@@ -40,9 +41,9 @@
                     $('#usermycommentid').focus();
 
                 });
-                $('#sendreports').click(function()
+                $('#sendreports').click(function($e)
                 {
-
+                    $e.preventDefault();
                     $('#commentform').hide();
                     $('#mailform').show();
                     $('#viewcommentdiv').hide();
@@ -50,8 +51,9 @@
 
 
                 });
-                $('#viewcomment').click(function()
+                $('#viewcomment').click(function($e)
                 {
+                    $e.preventDefault();
                     $('#mailform').hide();
                     $('#commentform').hide();
                     $('#viewcommentdiv').show();
@@ -59,8 +61,9 @@
                     $('#hidecomment').show();
 
                 });
-                $('#hidecomment').click(function()
+                $('#hidecomment').click(function($e)
                 {
+                    $e.preventDefault();
                     $('#mailform').hide();
                     $('#commentform').hide();
                     $('#viewcommentdiv').hide();
@@ -69,9 +72,9 @@
                     $('#buttonid').show();
 
                 });
-                $('#toemail').keyup(function()
+                $('#toemail').keyup(function($e)
                 {
-
+                    $e.preventDefault();
                     var searchstring=$(this).val();
                     var data = {searchstring :searchstring} ;
                     $.ajaxSetup({
@@ -112,25 +115,27 @@
 
                 $(".dynamiclabel").live("click",function(e)
                 {
+                    $e.preventDefault();
                     var b=$(this).text();
                     $('#toemail').val(b);
                     $('#livesearchdiv').hide();
                 });
-                $('#mycommentid').click(function()
+                $('#mycommentid').click(function($e)
                 {
+                    $e.preventDefault();
                     $('#livesearchdiv').hide();
                 });
-                $('#mycommentid').focus(function()
+                $('#mycommentid').focus(function($e)
                 {
+                    $e.preventDefault();
                     $('#livesearchdiv').hide();
                 });
 
 
 
-                $('#addcommentid').click(function()
+                $('#addcommentid').click(function($e)
                 {
-
-
+                    $e.preventDefault();
                     var kpiid=$('#kpiidforname').val();
                     var comment=$('#usermycommentid').val();
 
@@ -208,16 +213,31 @@
                                 // alert('if');
                                 $.each(data.resultarray, function(i, listelemnt)
                                 {
-
-                                    $('<span>'+listelemnt.comment+'</span>').appendTo('#viewcommentdiv');
-
+                                    var dataObj = JSON.stringify(listelemnt.datetime);
+                                    var jsonobject=JSON.parse(dataObj);
+                                    var myDate = new Date(jsonobject.date);
+                                    var d = myDate,
+                                            dformat = [ (d.getMonth()+1).padLeft(),
+                                                        d.getDate().padLeft(),
+                                                        d.getFullYear()].join('-')+
+                                                    ' ' +
+                                                    [ d.getHours().padLeft(),
+                                                        d.getMinutes().padLeft(),
+                                                        d.getSeconds().padLeft()].join(':');
+                                    $('<p>'+listelemnt.adminName+' -'+dformat+':'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
 
 
                                 });
                             }
-
+                            $('#commentandreportdiv').hide();
                             $('#buttonid').show();
-                            jAlert('', 'Comment Added');
+                            $('#viewcomment').show();
+                            $('#hidecomment').hide();
+                            $('#notifcation_message').text('Command Added');
+                            $('#notifcation_message').show();
+                            setTimeout(function() {
+                                $('#notifcation_message').fadeOut('fast');
+                            }, 7000)
                         }
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -329,9 +349,11 @@
                             $('#commentform').hide();
                             $('#mailform').hide();
                             $('#addcomment').hide();
-
-                            jAlert('', data.updatemsg);
-
+                            $('#notifcation_message').text(data.updatemsg);
+                            $('#notifcation_message').show();
+                            setTimeout(function() {
+                                $('#notifcation_message').fadeOut('fast');
+                            }, 7000)
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
@@ -434,6 +456,11 @@
 
                     return that;
                 }());
+
+                Number.prototype.padLeft = function(base,chr){
+                    var  len = (String(base || 10).length - String(this).length)+1;
+                    return len > 0? new Array(len).join(chr || '0')+this : this;
+                }
 
             });
 
@@ -631,7 +658,8 @@
                         {% endif %}
                         {% if commentarray|length > 0 %}
                             {% for comobject in commentarray %}
-                                {{ comobject.comment }}
+                                <p><strong>{{ comobject.adminName }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
+
 
                             {% endfor %}
                         {% endif %}
@@ -642,6 +670,7 @@
         </div>
         <div class="graph_send_comment">
             <div id="buttonid">
+                <div class="clear_fix"></div><span class="notification_msg" id="notifcation_message"></span></div>
                 <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
                 <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
                 <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'elementranking.viewcomment'|trans }}</button>

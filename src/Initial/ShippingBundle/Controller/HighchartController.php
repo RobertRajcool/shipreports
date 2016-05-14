@@ -495,7 +495,7 @@ class HighchartController extends Controller
         $session->set('commandid', $lastid);
 
         $listofcomment = $em->createQueryBuilder()
-            ->select('a.comment')
+            ->select('a.comment','a.datetime','b.adminName')
             ->from('InitialShippingBundle:SendCommand','a')
             ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
             ->where('a.shipid = :shipid')
@@ -537,7 +537,7 @@ class HighchartController extends Controller
         $session->set('commandid', $lastid);
 
         $listofcomment = $em->createQueryBuilder()
-            ->select('a.comment')
+            ->select('a.comment','a.datetime','b.adminName')
             ->from('InitialShippingBundle:SendCommand','a')
             ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
             ->where('a.kpiid = :kpiid')

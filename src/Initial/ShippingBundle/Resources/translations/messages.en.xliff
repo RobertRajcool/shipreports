@@ -164,7 +164,7 @@
             </trans-unit>
             <trans-unit id="41">
                 <source>elementpdf.commands</source>
-                <target>Commands</target>
+                <target>Comments</target>
             </trans-unit>
             <trans-unit id="42">
                 <source>kpipdf.title</source>
@@ -172,7 +172,7 @@
             </trans-unit>
             <trans-unit id="43">
                 <source>kpipdf.commands</source>
-                <target>Commands</target>
+                <target>Comments</target>
             </trans-unit>
             <trans-unit id="44">
                 <source>layout.menu.dash</source>

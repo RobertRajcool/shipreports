@@ -853,7 +853,14 @@
                             <table class="table kpi_table_form_section">
                                 <thead>
                                 <tr>
-                                    <th colspan=" {{ elementcount }} ">  {{ key }}</th>
+                                    <th {#colspan=" {{ elementcount }} "#}>  {{ key }}</th>
+                                    {% if i == 0 %}
+                                        <th>Wegi</th>
+                                        <th>Value</th>
+                                    {% else %}
+                                        <th></th>
+                                        <th></th>
+                                    {% endif %}
                                 </tr>
                                 </thead>
                                 <tbody>

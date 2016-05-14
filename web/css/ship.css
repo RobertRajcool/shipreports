@@ -2102,5 +2102,12 @@ input[type="color"],
     border-radius:2px;
     float:right;
 }
+.clear_fix {
+    clear: both;
+}
+.notification_msg {
+    margin: 10px 0px;
+    color: #3216BB;
+}
 
 
