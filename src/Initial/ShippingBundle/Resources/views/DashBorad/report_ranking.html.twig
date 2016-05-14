@@ -143,26 +143,28 @@
 
                                 $.each(data.kpigraph, function (key, listofelementvalues) {
                                     $('<table class="table table-striped graph_and_colour_coding_main_title_row"><thead><tr><th>' + data.listofkpi[tempcount]['kpiName'] + '</th></tr></thead><tbody><tr><td></td></tr></tbody></table>').appendTo('#score_color_' + key);
-                                    $('<table class="table table-striped-3 element_ranking_row"><thead><tr id="tableheader_' + key + '"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_' + key + '"></tbody></table>').appendTo('#score_color_' + key)
+                                    $('<table class="table table-striped-3 element_ranking_new_row"><thead><tr id="tableheader_' + key + '"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_' + key + '"></tbody></table>').appendTo('#score_color_' + key)
                                     var datamonthcount
                                     for (datamonthcount = 0; datamonthcount < data.countmonth; datamonthcount++) {
-                                        $('<th class="month">' + data.montharray[datamonthcount] + '</th>').appendTo('#tableheader_' + key);
+                                        $('<th colspan="2" class="month">' + data.montharray[datamonthcount] + '</th>').appendTo('#tableheader_' + key);
 
                                     }
                                     //console.log(data.monthlydata);
 
                                     $.each(data.listofelement[key], function (b) {
                                         $('<tr id="elementid_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
-                                        $('<td  rowspan="2" class="element_name_title">' + data.listofelement[key][b]['elementName'] + '</td>').appendTo('#elementid_' + elementtrdynamic);
-                                        $('<tr id="elementcolor_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
+                                        $('<td  class="element_name_title">' + data.listofelement[key][b]['elementName'] + '</td>').appendTo('#elementid_' + elementtrdynamic);
+
 
                                         var monthcount = 0
                                         for (monthcount = 0; monthcount < data.countmonth; monthcount++) {
                                             var ranking_value = '';
+                                            var ranking_color = '';
 
                                             if (data.monthlydata[key][monthcount].length != 0) {
 
                                                 ranking_value = data.monthlydata[key][monthcount][b];
+                                                ranking_color = data.elementcolorarray[key][monthcount][b];
                                             }
                                             if (ranking_value != 'false' && ranking_value != '' && ranking_value != null && ranking_value != 'undefined') {
                                                 $('<td>' + ranking_value + '</td>').appendTo('#elementid_' + elementtrdynamic);
@@ -171,26 +173,26 @@
                                                 $('<td></td>').appendTo('#elementid_' + elementtrdynamic);
                                             }
 
-                                            /* $('<td>green</td>').appendTo('#elementcolor_'+elementtrdynamic);*/
+                                           /* /!* $('<td>green</td>').appendTo('#elementcolor_'+elementtrdynamic);*!/
                                             var ranking_color = '';
                                             if (data.elementcolorarray[key][monthcount].length != 0) {
                                                 ranking_color = data.elementcolorarray[key][monthcount][b];
 
-                                            }
+                                            }*/
 
                                             if (ranking_color != 'false' && ranking_color != '') {
                                                 if (ranking_color == 'Green') {
-                                                    $('<td><img src="/images/box_green.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                    $('<td><img src="/images/box_green.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
                                                 }
                                                 else if (ranking_color == 'Red') {
-                                                    $('<td><img src="/images/box_red.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                    $('<td><img src="/images/box_red.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
                                                 }
                                                 else if (ranking_color == 'Yellow') {
-                                                    $('<td><img src="/images/box_yellow.png" alt="Loader Image"/></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                    $('<td><img src="/images/box_yellow.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
                                                 }
                                             }
                                             else {
-                                                $('<td></td>').appendTo('#elementcolor_' + elementtrdynamic);
+                                                $('<td></td>').appendTo('#elementid_' + elementtrdynamic);
                                             }
                                         }
                                         elementtrdynamic++;
@@ -198,8 +200,15 @@
                                     $('<tr id="elementavgscore_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
                                     $('<td class="kpi_name_thtd"><strong>Score</strong></td>').appendTo('#elementavgscore_' + elementtrdynamic);
                                     var avgscore = 0
-                                    for (avgscore = 0; avgscore < data.countmonth; avgscore++) {
+                                    for (avgscore = 0; avgscore < data.countmonth; avgscore++)
+                                    {
+                                        var i1=0;
                                         $('<td><strong>' + data.kpigraph[key][avgscore] + '</strong></td>').appendTo('#elementavgscore_' + elementtrdynamic);
+                                        if(i1 != 2 )
+                                        {
+                                            $('<td>&nbsp;</td>').appendTo('#elementavgscore_' + elementtrdynamic);
+                                        }
+                                        i1++;
                                     }
 
 

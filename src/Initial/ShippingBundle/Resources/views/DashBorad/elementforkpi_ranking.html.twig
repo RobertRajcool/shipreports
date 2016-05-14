@@ -483,12 +483,12 @@
                 </tr>
                 </tbody>
             </table>
-            <table class="table table-striped-3 element_ranking_row">
+            <table class="table table-striped-3 element_ranking_new_row">
                 <thead>
                 <tr>
                     <th class="kpi_name">{{ 'elementranking.month'|trans }}</th>
                     {% for monthname in monthdetails %}
-                        <th  class="month">{{ monthname }}</th>
+                        <th  colspan="2" class="month">{{ monthname }}</th>
                     {% endfor %}
 
                 </tr>
@@ -498,7 +498,7 @@
                 {% set i=0 %}
                 {% for element in listofelement %}
                     <tr>
-                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}
+                        <td  class="element_name_title">{{ element.elementName }}
 
                         {% for j in 0..countmonth1 %}
                             {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
@@ -507,25 +507,20 @@
                                 {{ monthlydata[j][i]  }}
                             </td>
 
-                            {# {% set akj=akj+1 %}#}
-
-                        {% endfor %}
-
-                    </tr>
-
-                    <tr>
-                        {% for m in 0..countmonth1 %}
                             <td>
-                                {% if elementcolorarray[m][i]=="Green" %}
+                                {% if elementcolorarray[j][i]=="Green" %}
                                     <img src="/images/box_green.png" alt="Loader Image"/>
-                                {% elseif elementcolorarray[m][i]=="Red" %}
+                                {% elseif elementcolorarray[j][i]=="Red" %}
                                     <img src="/images/box_red.png" alt="Loader Image"/>
-                                {% elseif elementcolorarray[m][i]=="Yellow" %}
+                                {% elseif elementcolorarray[j][i]=="Yellow" %}
                                     <img src="/images/box_yellow.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
+
                         {% endfor %}
+
                     </tr>
+
                     {% set i=i+1 %}
                 {% endfor %}
                 <tr>
@@ -533,7 +528,12 @@
 
 
                     {% for avg in avgscore %}
+                        {% set i1=0 %}
                         <td><strong>{{ avg }}</strong></td>
+                        {% if i1 != 2 %}
+                            <td>&nbsp;</td>
+                        {% endif %}
+                        {% set i1=i1+1 %}
                     {% endfor %}
                 </tr>
 
