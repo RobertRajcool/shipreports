@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Luxifer\DQL\Datetime\DateFormat;
 
 /**
  * DashboradController.
@@ -753,7 +754,7 @@ class DashboradController extends Controller
             $ob->exporting->enabled(false);
 
             $listofcomment = $em->createQueryBuilder()
-                ->select('a.comment')
+                ->select('a.comment','a.datetime','b.adminName')
                 ->from('InitialShippingBundle:SendCommand','a')
                 ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
                 ->where('a.shipid = :shipid')
@@ -992,7 +993,7 @@ class DashboradController extends Controller
             $ob->exporting->enabled(false);
 
             $commentForElementKpi = $em->createQueryBuilder()
-                ->select('a.comment')
+                ->select('a.comment','a.datetime','b.adminName')
                 ->from('InitialShippingBundle:SendCommand', 'a')
                 ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                 ->where('a.kpiid = :kpiid')
@@ -1129,7 +1130,7 @@ class DashboradController extends Controller
         $session->set('commandid', $lastid);
 
         $listofcomment = $em->createQueryBuilder()
-            ->select('a.comment')
+            ->select('a.comment','a.datetime','b.adminName')
             ->from('InitialShippingBundle:SendCommandRanking','a')
             ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
             ->where('a.shipid = :shipid')
@@ -1176,7 +1177,7 @@ class DashboradController extends Controller
         $session->set('commandid', $lastid);
 
         $listofcomment = $em->createQueryBuilder()
-            ->select('a.comment')
+            ->select('a.comment','a.datetime','b.adminName')
             ->from('InitialShippingBundle:SendCommandRanking','a')
             ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
             ->where('a.kpiid = :kpiid')
@@ -1447,7 +1448,7 @@ class DashboradController extends Controller
             $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
             $ob->exporting->enabled(false);
             $listofcomment = $em->createQueryBuilder()
-                ->select('a.comment')
+                ->select('a.comment','a.datetime','b.adminName')
                 ->from('InitialShippingBundle:SendCommandRanking','a')
                 ->join('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.emailId = a.clientemail')
                 ->where('a.shipid = :shipid')
@@ -1688,7 +1689,7 @@ class DashboradController extends Controller
                 $ob->exporting->enabled(false);
 
                 $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment')
+                    ->select('a.comment','a.datetime','b.adminName')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                     ->where('a.kpiid = :kpiid')
@@ -1848,7 +1849,7 @@ class DashboradController extends Controller
                 $ob->exporting->enabled(false);
 
                 $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment')
+                    ->select('a.comment','a.datetime','b.adminName')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                     ->where('a.kpiid = :kpiid')
@@ -2091,7 +2092,7 @@ class DashboradController extends Controller
             } else {
                 $checkboxvalue = $params['addcomment'];
                 $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment')
+                    ->select('a.comment','a.datetime','b.adminName')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                     ->where('a.kpiid = :kpiid')
@@ -2225,7 +2226,7 @@ class DashboradController extends Controller
             } else {
                 $checkboxvalue = $params['addcomment'];
                 $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment')
+                    ->select('a.comment','a.datetime','b.adminName')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
                     ->where('a.shipid = :shipid')
@@ -3384,11 +3385,11 @@ class DashboradController extends Controller
         }
         if($mode=='overallreports')
         {
-          return array(
-              'montharray' => $newcategories,
-              'chartdata'=>$oneChart_Data,
-              'year'=>$year
-                );
+            return array(
+                'montharray' => $newcategories,
+                'chartdata'=>$oneChart_Data,
+                'year'=>$year
+            );
         }
         $response = new JsonResponse();
         $response->setData
@@ -3521,50 +3522,50 @@ class DashboradController extends Controller
         $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
         $mpdf->WriteHTML($htmlContentfor_report);
         $content = $mpdf->Output('', 'S');
-            $fileName = 'overallshipreports_' . date('Y-m-d H-i-s') . '.pdf';
-            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' .$fileName;
-            file_put_contents($pdffilenamefullpath, $content);
-            $useremaildid = $request->request->get('clientemail');
-            $mailbox = $request->request->get('comment');
-            $mailidarray = array();
-            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
-            {
-                array_push($mailidarray, $useremaildid);
-            }
-            else
-            {
-                $findsemail = $em->createQueryBuilder()
-                    ->select('a.useremailid')
-                    ->from('InitialShippingBundle:EmailUsers', 'a')
-                    ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
-                    ->where('b.groupname = :sq')
-                    ->ORwhere('a.useremailid = :sb')
-                    ->setParameter('sq', $useremaildid)
-                    ->setParameter('sb', $useremaildid)
-                    ->getQuery()
-                    ->getResult();
+        $fileName = 'overallshipreports_' . date('Y-m-d H-i-s') . '.pdf';
+        $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' .$fileName;
+        file_put_contents($pdffilenamefullpath, $content);
+        $useremaildid = $request->request->get('clientemail');
+        $mailbox = $request->request->get('comment');
+        $mailidarray = array();
+        if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
+        {
+            array_push($mailidarray, $useremaildid);
+        }
+        else
+        {
+            $findsemail = $em->createQueryBuilder()
+                ->select('a.useremailid')
+                ->from('InitialShippingBundle:EmailUsers', 'a')
+                ->join('InitialShippingBundle:EmailGroup', 'b', 'WITH', 'b.id = a.groupid')
+                ->where('b.groupname = :sq')
+                ->ORwhere('a.useremailid = :sb')
+                ->setParameter('sq', $useremaildid)
+                ->setParameter('sb', $useremaildid)
+                ->getQuery()
+                ->getResult();
 
 
-                //assign file attachement for mail and Mailing Starts Here...u
-                for ($ma = 0; $ma < count($findsemail); $ma++) {
-                    /* $mailer = $this->container->get('mailer');
-                     $message = \Swift_Message::newInstance()
-                         ->setFrom($clientemailid)
-                         ->setTo($findsemail[$ma]['emailid'])
-                         ->setSubject($kpiname)
-                         ->setBody($comment);
-                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                     $mailer->send($message);*/
-                    array_push($mailidarray, $findsemail[$ma]['emailid']);
-                }
+            //assign file attachement for mail and Mailing Starts Here...u
+            for ($ma = 0; $ma < count($findsemail); $ma++) {
+                /* $mailer = $this->container->get('mailer');
+                 $message = \Swift_Message::newInstance()
+                     ->setFrom($clientemailid)
+                     ->setTo($findsemail[$ma]['emailid'])
+                     ->setSubject($kpiname)
+                     ->setBody($comment);
+                 $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
+                 $mailer->send($message);*/
+                array_push($mailidarray, $findsemail[$ma]['emailid']);
             }
-            //Mailing Ends....
-            $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
-            $gearman = $this->get('gearman');
-            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
-            $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
-            return $response;
+        }
+        //Mailing Ends....
+        $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
+        $gearman = $this->get('gearman');
+        $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+        $response = new JsonResponse();
+        $response->setData(array('updatemsg' => "Report Has Been Send"));
+        return $response;
 
     }
 }
