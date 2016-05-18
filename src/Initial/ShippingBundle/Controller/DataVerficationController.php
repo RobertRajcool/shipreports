@@ -2,6 +2,7 @@
 
 namespace Initial\ShippingBundle\Controller;
 
+use Initial\ShippingBundle\Entity\CommonFunctions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -3429,6 +3430,17 @@ class DataVerficationController extends Controller
                 ));
             return $response;
         }
+
+    }
+    /**
+     * Ajax Call For change of Prev monthdata of Scorecard
+     *
+     * @Route("/db_backup", name="database_export")
+     */
+    public function dbBackupAction(Request $request)
+    {
+        $object=new CommonFunctions();
+        return $object->export_Database("localhost","root","Star_123","shipping_development");
 
     }
 

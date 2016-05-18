@@ -1342,6 +1342,9 @@ select {
     padding-left:30px !important;
     text-align:center;
 }
+.kpi_table_form_section .kpi_value {
+    text-align:center;
+}
 
 .mailing_email_list {
     margin:0 0 5px 0;
@@ -2063,6 +2066,10 @@ input[type="color"],
 #active_inactive_checkbox.opened {
     display: block;
 }
+.opened {
+     display: block;
+    color: yellow;
+ }
 
 /*
 .conditional {
@@ -2116,9 +2123,12 @@ input[type="color"],
     border:1px solid #dddddd;
     padding:6px 3px 1px 8px;
     border-radius:2px;
-    float:right;
+    float:left;
 }
-
+.add_rule_fields  {
+    float:left;
+    margin-right:5px;
+}
 .element_ranking_new_row tbody .element_name_title {
     vertical-align: middle;
 }
@@ -2232,7 +2242,7 @@ input[type="color"],
 
 .notification_msg {
     margin: 10px 0px;
-    color: #0000F0;
+    color: #062d60;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .graph_and_colour_coding_dashboard_row .average_score_2_td {

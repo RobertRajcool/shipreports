@@ -248,21 +248,24 @@
                 $('.ranking_submenu').hide()
                 if($('#user_login_content').length > 0)
                 {
-                    $('#user_login_content').remove();
+                    $(".box_new").slideToggle();
+                    //$('#user_login_content').remove();
                 }
                 else
                 {
                     $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>Profile</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">Logout</a></li></ul></div>');
-                    $(".box_new").fadeIn('slow');
+                    //$(".box_new").fadeIn('slow');
+                    $('.box_new').hide();
+                    $(".box_new").slideToggle();
                 }
 
             });
-
-            $('#wholecontent').click(function($e)
-            {
-                $('#user_login_content').remove();
+            $(document).click(function (e) {
+                if (!$(e.target).parents().andSelf().is('.slide-toggle'))
+                {
+                    $('#user_login_content').remove();
+                }
             });
-
 
         });
     </script>
@@ -411,7 +414,7 @@
                         </li>
                     {% endif %}
                     <li>
-                        <a href="">
+                        <a href="{{ path('database_export') }}">
                             <span class="menu-item-icon ss-briefcase">&nbsp;</span>
                             <span class="menu-item-text">{{ 'layout.menu.backup'|trans }}</span>
                         </a>
@@ -421,7 +424,7 @@
 
                 <div class="x-btn-my-account-small" id="bottom_content">
                     <div class="x-btn-my-account-small_inner_2">
-                        <div class="user_setting_main slide-toggle">
+                        <div id="slidetoggleid" class="user_setting_main slide-toggle">
 
     <span class="x-btn-icon-el" id="user_settings">
     <img src="/images/user.jpg">
