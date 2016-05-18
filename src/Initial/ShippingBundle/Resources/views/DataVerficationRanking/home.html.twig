@@ -135,9 +135,9 @@
                                     $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
                                     $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
                                     $('<tr id="firsttable_head_tr_' + i + '"></tr>').appendTo('#firsttable_head_' + i);
-                                    $('<th class="kpi_lement_name">' + data.rankingKpiList[i]['kpiName'] + '</th><th class="kpi_weightage verfication_ranking_text_rotation">Weightage</th>').appendTo('#firsttable_head_tr_' + i);
+                                    $('<th class="kpi_lement_name">' + data.rankingKpiList[i]['kpiName'] + '</th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation">Weightage</div></th>').appendTo('#firsttable_head_tr_' + i);
                                     $.each(data.listofships, function (j) {
-                                        $('<th class="kpi_ship verfication_ranking_text_rotation">' + data.listofships[j]['shipName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
+                                        $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_' + i);
                                     });
                                     var kpiid = data.rankingKpiList[i]['id'];
                                     var elementnamearray = data.elementname[kpiid];
@@ -146,15 +146,15 @@
                                     for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
                                         $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
                                         $('<td class="kpi_lement_name">' + data.elementweightage[kpiid][forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                        $('<td class="kpi_lement_number">' + data.elementname[kpiid][forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                        $('<td class="kpi_lement_number"><strong>' + data.elementname[kpiid][forloopcount] + '</strong></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
                                         $.each(data.listofships, function (j) {
                                             var shipid = data.listofships[j]['id']
                                             var elementvalue = data.elementvalues_ship[shipid][valuecount]
                                             if (elementvalue != null) {
-                                                $('<td class="kpi_lement_inputname">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                                $('<td class="">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
                                             }
                                             else {
-                                                $('<td class="kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                                $('<td class=""></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
                                             }
 
                                         });
@@ -714,7 +714,16 @@
                                         {
                                             var temp=1
 
-                                            $('<table class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                            $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                          
+                                            if(newtemp==0)
+                                           {
+                                               $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                           }
+                                            else
+                                           {
+                                               $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                           }
                                             $.each(listkpi,function(mykey,myvalue)
                                             {
                                                 if(valuearray.length>0)
@@ -905,7 +914,15 @@
                                             {
                                                 var temp=1
 
-                                                $('<table  class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                                $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                                if(newtemp==0)
+                                                {
+                                                    $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                }
+                                                else
+                                                {
+                                                    $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                }
                                                 $.each(listkpi,function(mykey,myvalue)
                                                 {
                                                     if(valuearray.length>0)
@@ -1084,7 +1101,14 @@
                                     <table class="table kpi_table_form_section">
                                         <thead>
                                         <tr>
-                                            <th colspan=" {{ elementcount }} ">  {{ key }}</th>
+                                            <th colspan="{# {{ elementcount }}#} ">  {{ key }}</th>
+                                            {% if i == 0 %}
+                                                <th>Wegi</th>
+                                                <th>Value</th>
+                                            {% else %}
+                                                <th></th>
+                                                <th></th>
+                                            {% endif %}
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -1143,7 +1167,7 @@
             <div class="verfication_ranking_form_screen">
                 <form class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
-                        <div class="title_month">
+                        <div class="title_month_2">
                             <label class="title">&nbsp;</label>
                             <label class="toolbar-title">
                                 <a id="proviousmonth_data" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
