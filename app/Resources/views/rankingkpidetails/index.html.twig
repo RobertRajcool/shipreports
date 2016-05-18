@@ -7,9 +7,6 @@
         '@AppBundle/Resources/public/js/AAA.js'
         '@AppBundle/Resources/public/js/rules.js'
         %}
-        {#<script src="../js/rules/conditions-builder.js"></script>
-        <script src="../js/rules/action-builder.js"></script>
-        <script src="../js/rules/demo.js"></script>#}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
         <script type="text/javascript">
@@ -67,7 +64,6 @@
                 });
                 createCancelButton.click(function($e){
                     $e.preventDefault();
-                    createKpi.hide();
                     editKpi.hide();
                     createForm[0].reset();
                 });
@@ -866,42 +862,10 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            {#<div class="kpi_rules">
-                                <fieldset class="fieldset_box ">
-                                    <legend class="legend_name">Rules</legend>
-                                    <div class="form-group button">
-                                        <div class="col-xs-9">
-                                            <div id="conditions"></div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group button">
-                                        <div class="col-xs-9">
-                                            <div id="actions"></div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group button">
-                                        <div class="col-xs-9 add_button_place"></div>
-                                        <p class="textbox-place"></p>
-                                        <input type="hidden" id="result" name="value">
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table add_rule_conditions" id="rule-table">
-                                            <thead>
-                                            <tr id="row_id">
-                                                <th class="conditions">Conditions</th>
-                                                <th class="color">Color</th>
-                                                <th class="action">&nbsp;</th>
-                                            </tr>
-                                            </thead>
-                                        </table>
-                                        <div class="small"></div>
-                                    </div>
-                                </fieldset>
-                            </div>#}
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id"  value="Submit">Create</button>
-                            <button type="reset" class="cancel_btn" value="Submit">Cancel</button>
+                            <button class="submit_btn" id="submit_id" >Add</button>
+                            <button type="reset" class="cancel_btn" >Reset</button>
                         </div>
                     </form>
                 </div>

@@ -392,15 +392,23 @@ class ShipDetailsController extends Controller
             ->groupby('a.id')
             ->getQuery()
             ->getResult();
-        $index = count($status_value);
+        $index = count($status_value)-1;
         $shipStatusDetails = new ShipStatusDetails();
         if(count($status_value)!=0)
         {
-            if($status_value[$index-1]['status']==1)
+            if($status_value[$index]['status']==1)
             {
                 $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
                 $shipStatusDetails -> setEndDate($today_obj);
                 $shipStatusDetails -> setStatus(0);
+                $em->persist($shipStatusDetails);
+                $em->flush();
+            }
+            else
+            {
+                $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
+                $shipStatusDetails -> setActiveDate($today_obj);
+                $shipStatusDetails -> setStatus(1);
                 $em->persist($shipStatusDetails);
                 $em->flush();
             }

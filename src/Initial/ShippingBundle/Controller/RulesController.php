@@ -35,6 +35,90 @@ class RulesController extends Controller
         ));
     }
 
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/rule_ajax_show", name="rules_rule_ajax_show")
+     */
+    public function rule_ajax_showAction(Request $request,$hi='')
+    {
+        $id = $request->request->get('Id');
+        $em = $this->getDoctrine()->getManager();
+
+        $element_kpi_id = $em->createQueryBuilder()
+            ->select('identity(a.elementDetailsId)','identity(a.kpiDetailsId)')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.id = :rule_id')
+            ->setParameter('rule_id',$id)
+            ->getQuery()
+            ->getResult();
+
+        $element_name = $em->createQueryBuilder()
+            ->select('a.elementName')
+            ->from('InitialShippingBundle:ElementDetails','a')
+            ->where('a.id = :element_id')
+            ->setParameter('element_id',$element_kpi_id[0][1])
+            ->getQuery()
+            ->getResult();
+
+        $element_array = $em->createQueryBuilder()
+            ->select('a.elementName,a.id')
+            ->from('InitialShippingBundle:ElementDetails','a')
+            ->getQuery()
+            ->getResult();
+
+        $kpi_name = $em->createQueryBuilder()
+            ->select('a.kpiName')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->where('a.id = :kpi_id')
+            ->setParameter('kpi_id',$element_kpi_id[0][2])
+            ->getQuery()
+            ->getResult();
+
+        $kpi_array = $em->createQueryBuilder()
+            ->select('a.kpiName,a.id')
+            ->from('InitialShippingBundle:KpiDetails','a')
+            ->groupby('a.kpiName')
+            ->getQuery()
+            ->getResult();
+
+        $rule_id_array = $em->createQueryBuilder()
+            ->select('a.id')
+            ->from('InitialShippingBundle:Rules','a')
+            ->where('a.elementDetailsId = :element_id')
+            ->setParameter('element_id',$element_kpi_id[0][1])
+            ->getQuery()
+            ->getResult();
+        $rules_array = array();
+        for($i=0;$i<count($rule_id_array);$i++)
+        {
+            $rules_query_array = $em->createQueryBuilder()
+                ->select('a.rules')
+                ->from('InitialShippingBundle:Rules','a')
+                ->where('a.id = :rule_id')
+                ->setParameter('rule_id',$rule_id_array[$i]['id'])
+                ->getQuery();
+            $rules_array[$i]=$rules_query_array->getResult();
+        }
+
+        $response = new JsonResponse();
+        $response->setData(array(
+            'rule_id' => $id,
+            'element_kpi_id' => $element_kpi_id,
+            'element_name' => $element_name,
+            'kpi_name' => $kpi_name,
+            'rules' => $rules_array,
+            'element_array' => $element_array,
+            'kpi_array' => $kpi_array
+        ));
+        if($hi=='hi')
+        {
+            return $response;
+        }
+        return $response;
+
+    }
+
 
     /**
      * Lists all Rules entities.
@@ -184,92 +268,6 @@ class RulesController extends Controller
         $response->setData(array('kpiNameArray' => $shipDetails));
 
         return $response;
-    }
-
-
-
-    /**
-     * Finds and displays a KpiDetails entity.
-     *
-     * @Route("/rule_ajax_show", name="rules_rule_ajax_show")
-     */
-    public function rule_ajax_showAction(Request $request,$hi='')
-    {
-        $id = $request->request->get('Id');
-        $em = $this->getDoctrine()->getManager();
-
-        $element_kpi_id = $em->createQueryBuilder()
-            ->select('identity(a.elementDetailsId)','identity(a.kpiDetailsId)')
-            ->from('InitialShippingBundle:Rules','a')
-            ->where('a.id = :rule_id')
-            ->setParameter('rule_id',$id)
-            ->getQuery()
-            ->getResult();
-
-        $element_name = $em->createQueryBuilder()
-            ->select('a.elementName')
-            ->from('InitialShippingBundle:ElementDetails','a')
-            ->where('a.id = :element_id')
-            ->setParameter('element_id',$element_kpi_id[0][1])
-            ->getQuery()
-            ->getResult();
-
-        $element_array = $em->createQueryBuilder()
-            ->select('a.elementName,a.id')
-            ->from('InitialShippingBundle:ElementDetails','a')
-            ->getQuery()
-            ->getResult();
-
-        $kpi_name = $em->createQueryBuilder()
-            ->select('a.kpiName')
-            ->from('InitialShippingBundle:KpiDetails','a')
-            ->where('a.id = :kpi_id')
-            ->setParameter('kpi_id',$element_kpi_id[0][2])
-            ->getQuery()
-            ->getResult();
-
-        $kpi_array = $em->createQueryBuilder()
-            ->select('a.kpiName,a.id')
-            ->from('InitialShippingBundle:KpiDetails','a')
-            ->groupby('a.kpiName')
-            ->getQuery()
-            ->getResult();
-
-        $rule_id_array = $em->createQueryBuilder()
-            ->select('a.id')
-            ->from('InitialShippingBundle:Rules','a')
-            ->where('a.elementDetailsId = :element_id')
-            ->setParameter('element_id',$element_kpi_id[0][1])
-            ->getQuery()
-            ->getResult();
-
-        for($i=0;$i<count($rule_id_array);$i++)
-        {
-            $rules_query_array = $em->createQueryBuilder()
-                ->select('a.rules')
-                ->from('InitialShippingBundle:Rules','a')
-                ->where('a.id = :rule_id')
-                ->setParameter('rule_id',$rule_id_array[$i]['id'])
-                ->getQuery();
-            $rules_array[$i]=$rules_query_array->getResult();
-        }
-
-        $response = new JsonResponse();
-        $response->setData(array(
-            'rule_id' => $id,
-            'element_kpi_id' => $element_kpi_id,
-            'element_name' => $element_name,
-            'kpi_name' => $kpi_name,
-            'rules' => $rules_array,
-            'element_array' => $element_array,
-            'kpi_array' => $kpi_array
-        ));
-        if($hi=='hi')
-        {
-            return $response;
-        }
-        return $response;
-
     }
 
 
