@@ -714,7 +714,16 @@
                                         {
                                             var temp=1
 
-                                            $('<table class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                            $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                          
+                                            if(newtemp==0)
+                                           {
+                                               $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                           }
+                                            else
+                                           {
+                                               $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                           }
                                             $.each(listkpi,function(mykey,myvalue)
                                             {
                                                 if(valuearray.length>0)
@@ -905,7 +914,15 @@
                                             {
                                                 var temp=1
 
-                                                $('<table  class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                                $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                                if(newtemp==0)
+                                                {
+                                                    $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                }
+                                                else
+                                                {
+                                                    $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                }
                                                 $.each(listkpi,function(mykey,myvalue)
                                                 {
                                                     if(valuearray.length>0)
@@ -1084,7 +1101,14 @@
                                     <table class="table kpi_table_form_section">
                                         <thead>
                                         <tr>
-                                            <th colspan=" {{ elementcount }} ">  {{ key }}</th>
+                                            <th colspan="{# {{ elementcount }}#} ">  {{ key }}</th>
+                                            {% if i == 0 %}
+                                                <th>Wegi</th>
+                                                <th>Value</th>
+                                            {% else %}
+                                                <th></th>
+                                                <th></th>
+                                            {% endif %}
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -1143,7 +1167,7 @@
             <div class="verfication_ranking_form_screen">
                 <form class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
-                        <div class="title_month">
+                        <div class="title_month_2">
                             <label class="title">&nbsp;</label>
                             <label class="toolbar-title">
                                 <a id="proviousmonth_data" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
