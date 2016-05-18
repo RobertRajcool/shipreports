@@ -78,6 +78,7 @@ class DataVerficationController extends Controller
             $finddatawithstatus=array();
             $shipid=0;
             $shipname='';
+            $templatechoosen='base.html.twig';
 
             if ($role[0] == 'ROLE_ADMIN')
             {
@@ -97,6 +98,7 @@ class DataVerficationController extends Controller
             }
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
             {
+                $templatechoosen='v-ships_layout.html.twig';
                 $status=0;
                 $index = array_search(0, $statusforship);
                 $shipid=$listallshipforcompany[$index]['id'];
@@ -112,7 +114,7 @@ class DataVerficationController extends Controller
                         'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
                         'elementvalues'=>$finddatawithstatus['elementvalues'],
                         'elementweightage'=>$finddatawithstatus['elementweightage'],
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
                     ));
             }
             else
@@ -122,7 +124,7 @@ class DataVerficationController extends Controller
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray'=>array(),'elementcount'=>0,
                         'elementvalues'=>array(),
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
                     ));
             }
 
@@ -1050,6 +1052,7 @@ class DataVerficationController extends Controller
             $finddatawithstatus=array();
             $shipid=0;
             $shipname='';
+            $templatechoosen='base.html.twig';
 
             if ($role[0] == 'ROLE_ADMIN')
             {
@@ -1070,6 +1073,7 @@ class DataVerficationController extends Controller
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
             {
                 $status=0;
+                $templatechoosen='v-ships_layout.html.twig';
                 $index = array_search(0, $statusforship);
                 $shipid=$listallshipforcompany[$index]['id'];
                 $shipname=$listallshipforcompany[$index]['shipName'];
@@ -1085,7 +1089,7 @@ class DataVerficationController extends Controller
                         'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
                         'elementvalues'=>$finddatawithstatus['elementvalues'],
                         'elementweightage'=>$finddatawithstatus['elementweightage'],
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
                     ));
             }
             else
@@ -1096,7 +1100,7 @@ class DataVerficationController extends Controller
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray'=>array(),'elementcount'=>0,
                         'elementvalues'=>array(),
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,
+                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
                     ));
             }
 
@@ -3151,6 +3155,283 @@ class DataVerficationController extends Controller
             return $response;
         }
     }
+    /**
+     * Ajax Call For change of Prev monthdata of Scorecard
+     *
+     * @Route("/prev_month_change_scorecard", name="prev_month_change_scorecard")
+     */
+    public function prevmonthchangedataverfication_scorecardAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+            $dataofmonth = $request->request->get('dataofmonth');
+            // $time = strtotime($mydate);
+            // $newformat = date('Y-m-d', $time);
+            // $new_date = new \DateTime($newformat);
+            // $new_date->modify('last day of this month');
+            $userId = $user->getId();
+            $username = $user->getUsername();
+            $role = $user->getRoles();
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a.shipName', 'a.id')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->where('b.adminName = :username')
+                    ->setParameter('username', $username)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a.shipName', 'a.id')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+
+
+            $listallshipforcompany = $query->getResult();
+            $statusforship = $this->findshipstatusmonth($dataofmonth, $listallshipforcompany, $role[0]);
+            $counts = array_count_values($statusforship);
+            if ($role[0] == 'ROLE_ADMIN') {
+                if (array_key_exists(3, $counts)) {
+                    $ship_status_done_count = $counts[3];
+                } else {
+                    $ship_status_done_count = 0;
+                }
+
+
+            } else if ($role[0] == 'ROLE_MANAGER') {
+                if (array_key_exists(2, $counts)) {
+                    $ship_status_done_count = $counts[2];
+                } else {
+                    $ship_status_done_count = 0;
+                }
+            } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                if (array_key_exists(1, $counts)) {
+                    $ship_status_done_count = $counts[1];
+                } else {
+                    $ship_status_done_count = 0;
+                }
+            }
+
+
+            if ($ship_status_done_count != count($listallshipforcompany)) {
+                $finddatawithstatus = array();
+                $shipid = 0;
+                $shipname = '';
+
+                if ($role[0] == 'ROLE_ADMIN') {
+                    $status = 2;
+                    $index = array_search(0, $statusforship);
+                    $shipid = $listallshipforcompany[$index]['id'];
+                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
+                }
+                if ($role[0] == 'ROLE_MANAGER') {
+                    $status = 1;
+                    $index = array_search(0, $statusforship);
+                    $shipid = $listallshipforcompany[$index]['id'];
+                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
+                }
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $status = 0;
+                    $index = array_search(0, $statusforship);
+                    $shipid = $listallshipforcompany[$index]['id'];
+                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
+
+                }
+
+                $response = new JsonResponse();
+                if (count($finddatawithstatus) == 4) {
+                    $response->setData(
+                        array('listofships' => $listallshipforcompany,
+                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                            'elementkpiarray' => $finddatawithstatus['elementnamekpiname'], 'elementcount' => $finddatawithstatus['maxelementcount'],
+                            'elementvalues' => $finddatawithstatus['elementvalues'],
+                            'elementweightage' => $finddatawithstatus['elementweightage'],
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
+                        ));
+                    return $response;
+                } else {
+                    $response->setData(
+                        array('listofships' => $listallshipforcompany,
+                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                            'elementkpiarray' => array(), 'elementcount' => 0,
+                            'elementvalues' => array(),
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
+                        ));
+                    return $response;
+                }
+
+            }
+            else
+        {
+            if($dataofmonth=='')
+            {
+                $monthInString=date('Y-m-d');
+                $lastMonthDetail = new \DateTime($monthInString);
+                $lastMonthDetail->modify('last day of this month');
+            }
+            if($dataofmonth!='')
+            {
+                $monthInString='01-'.$dataofmonth;
+                $lastMonthDetail = new \DateTime($monthInString);
+                $lastMonthDetail->modify('last day of this month');
+            }
+
+            $overallShipDetailArray = array();
+            $Ships_Element_Value=array();
+            $ElmentNameArray=array();
+            $ElementWeighate_Array=array();
+            $Element_status_count = 0;
+            $common_RankingKpiList = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id', 'b.weightage')
+                ->from('InitialShippingBundle:KpiDetails', 'b')
+                ->where('b.shipDetailsId = :shipid')
+                ->setParameter('shipid',$listallshipforcompany[0]['id'])
+                ->getQuery()
+                ->getResult();
+            for($shipCount=0;$shipCount<count($listallshipforcompany);$shipCount++)
+            {
+                $rankingKpiValueCountArray = array();
+                $rankingShipName = $listallshipforcompany[$shipCount]['shipName'];
+                $rankingShipId = $listallshipforcompany[$shipCount]['id'];
+
+                $rankingKpiList = $em->createQueryBuilder()
+                    ->select('b.kpiName', 'b.id', 'b.weightage')
+                    ->from('InitialShippingBundle:KpiDetails', 'b')
+                    ->where('b.shipDetailsId = :shipid')
+                    ->setParameter('shipid', $rankingShipId)
+                    ->getQuery()
+                    ->getResult();
+                $ElementValuesfor_Ships=array();
+
+                for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++)
+                {
+
+                    $kpiid = $rankingKpiList[$rankingKpiCount]['id'];
+                    $kpiname = $rankingKpiList[$rankingKpiCount]['kpiName'];
+                    $ElementName_KPI=array();
+                    $ElementWeightage_KPI=array();
+                    $query = $em->createQueryBuilder()
+                        ->select('b.elementName', 'b.id','b.weightage')
+                        ->from('InitialShippingBundle:ElementDetails', 'b')
+                        ->where('b.kpiDetailsId = :kpidetailsid')
+                        ->setParameter('kpidetailsid', $kpiid)
+                        ->add('orderBy', 'b.id  ASC ')
+                        ->getQuery();
+                    $elementids = $query->getResult();
+                    if (count($elementids) == 0)
+                    {
+                        $query1 = $em->createQueryBuilder()
+                            ->select('b.kpiName', 'b.id')
+                            ->from('InitialShippingBundle:KpiDetails', 'b')
+                            ->where('b.kpiName = :kpiName')
+                            ->setParameter('kpiName', $kpiname)
+                            ->add('orderBy', 'b.id  ASC ')
+                            ->groupby('b.kpiName')
+                            ->getQuery();
+
+                        $ids1 = $query1->getResult();
+                        $newkpiid = $ids1[0]['id'];
+                        $newkpiname = $ids1[0]['kpiName'];
+                        $query = $em->createQueryBuilder()
+                            ->select('b.elementName', 'b.id','b.weightage')
+                            ->from('InitialShippingBundle:ElementDetails', 'b')
+                            ->where('b.kpiDetailsId = :kpidetailsid')
+                            ->setParameter('kpidetailsid', $newkpiid)
+                            ->add('orderBy', 'b.id  ASC ')
+                            ->getQuery();
+                        $elementids = $query->getResult();
+                        for ($j = 0; $j < count($elementids); $j++)
+                        {
+                            $ElementId = $elementids[$j]['id'];
+
+                            $ElementValue_Result=$em->createQueryBuilder()
+                                ->select('b.value')
+                                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                ->where('b.shipDetailsId = :shipdetailsid')
+                                ->andWhere('b.monthdetail =:dataofmonth')
+                                ->andWhere('b.kpiDetailsId =:kpiDetailsId')
+                                ->andWhere('b.elementDetailsId =:elementDetailsId')
+                                ->setParameter('shipdetailsid', $rankingShipId)
+                                ->setParameter('dataofmonth', $lastMonthDetail)
+                                ->setParameter('kpiDetailsId', $newkpiid)
+                                ->setParameter('elementDetailsId', $ElementId)
+                                ->getQuery()
+                                ->getResult();
+                            if(count($ElementValue_Result)>0)
+                            {
+                                array_push($ElementValuesfor_Ships,$ElementValue_Result[0]['value']);
+                            }
+                            else
+                            {
+                                array_push($ElementValuesfor_Ships,null);
+                            }
+
+
+
+                        }
+                    }
+                    else
+                    {
+
+                        for ($j = 0; $j < count($elementids); $j++)
+                        {
+                            $ElementId = $elementids[$j]['id'];
+                            array_push($ElementName_KPI,$elementids[$j]['weightage']);
+                            array_push($ElementWeightage_KPI,$elementids[$j]['elementName']);
+                            $ElementValue_Result=$em->createQueryBuilder()
+                                ->select('b.value')
+                                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                ->where('b.shipDetailsId = :shipdetailsid')
+                                ->andWhere('b.monthdetail =:dataofmonth')
+                                ->andWhere('b.kpiDetailsId =:kpiDetailsId')
+                                ->andWhere('b.elementDetailsId =:elementDetailsId')
+                                ->setParameter('shipdetailsid', $rankingShipId)
+                                ->setParameter('dataofmonth', $lastMonthDetail)
+                                ->setParameter('kpiDetailsId', $kpiid)
+                                ->setParameter('elementDetailsId', $ElementId)
+                                ->getQuery()
+                                ->getResult();
+                            if(count($ElementValue_Result)>0)
+                            {
+                                array_push($ElementValuesfor_Ships,$ElementValue_Result[0]['value']);
+                            }
+                            else
+                            {
+                                array_push($ElementValuesfor_Ships,null);
+                            }
+                        }
+                        $ElmentNameArray[$kpiid]=$ElementName_KPI;
+                        $ElementWeighate_Array[$kpiid]=$ElementWeightage_KPI;
+                    }
+
+                }
+                $Ships_Element_Value[$rankingShipId]=$ElementValuesfor_Ships;
+            }
+
+
+            $response = new JsonResponse();
+
+            $response->setData(
+                array('listofships' => $listallshipforcompany,
+                    'shipcount' => count($listallshipforcompany),
+                    'elementvalues_ship'=>$Ships_Element_Value,
+                    'rankingKpiList'=>$common_RankingKpiList,
+                    'elementname'=>$ElmentNameArray,
+                    'elementweightage'=>$ElementWeighate_Array,
+                    'commontext'=>true
+                ));
+            return $response;
+        }
+
+    }
+
 }
 
 

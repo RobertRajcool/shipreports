@@ -386,40 +386,6 @@
                             </li>
                         {% endif %}
                     {% endif %}
-
-                    {%  if is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                        <li id="Scorecard1">
-                            <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
-                                <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
-                                <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
-                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
-                            </a>
-                            <ul class="submenu" ng-show="ScoreCard">
-                                <li id="data_verification1">
-                                    <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
-                                        <span class="menu-item-icon ss-check">&nbsp;</span>
-                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li id="Vessel_Ranking1">
-                            <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
-                                <span class="menu-item-icon ss-warehouse">&nbsp;</span>
-                                <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
-                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
-                            </a>
-                            <ul class="submenu" ng-show="VesselRanking">
-                                <li id="ranking_data_verification1">
-                                    <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
-                                        <span class="menu-item-icon ss-check">&nbsp;</span>
-                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    {% endif %}
-
                     {%  if is_granted("ROLE_ADMIN") %}
                         <li id="fos_user_registration_show21">
                             <a class="layout_name" id="fos_user_registration_show" href="{{ path('fos_user_registration_show') }}">
