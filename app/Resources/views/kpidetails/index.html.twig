@@ -10,7 +10,6 @@
         <script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/action-builder.js"></script>
         <script src="../js/rules/demo.js"></script>
-        {#<script src="../js/rules/sample_first.js"></script>#}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
         <script type="text/javascript">
@@ -66,22 +65,21 @@
                     $('.check').attr('checked',false);
                     shipNameOptions.attr('selected', false);
                 });
-                createCancelButton.click(function($e){
+                createCancelButton.click(function($e) {
                     $e.preventDefault();
-                    createKpi.hide();
                     editKpi.hide();
                     createForm[0].reset();
                 });
-                $('#check').live("click",function(){
-                    if($('#check').is(':checked')==true)
-                    {
+                var check = $('#check');
+                check.live("click",function() {
+                    if(check.is(':checked')==true) {
                         shipNameOptions.attr('selected', 'selected');
                     }
-                    else
-                    {
+                    else {
                         shipNameOptions.attr('selected', false);
                     }
                 });
+
                 var ruleObjectText = $('#rule_obj_text');
                 var ruleDiv = $('.show_rule_div');
                 var editRuleTable = $('.rule_table_edit');
@@ -97,6 +95,7 @@
                 var activeYear = $('.kpi_activeDate_year');
                 var endMonth = $('.kpi_endDate_month');
                 var endYear = $('.kpi_endDate_year');
+                var editShipName = $('.ship_name_edit');
 
                 var condition_text = "";
                 var count = 0;
@@ -108,7 +107,7 @@
                     count++;
                     if(count>1){
                         showKpi.hide();
-                        $('.ship_name_edit').empty();
+                        editShipName.empty();
                         editRuleTable.empty();
                         var emptyFunction = emptyTheDetailsFunction(data);
                     }
@@ -169,40 +168,35 @@
                     $('.end_year').val(end_date.getFullYear());
 
                     var shipIdArray = [];
-                    $.each(data.ship_name, function(shipCount){
+                    $.each(data.ship_name, function(shipCount) {
                         shipIdArray.push(data.ship_name[shipCount][0]['id']);
                     });
 
-                    $.each(data.ship_array,function(index)
-                    {
+                    $.each(data.ship_array,function(index) {
+                        var $option;
                         if(shipIdArray.indexOf(data.ship_array[index]['id']) != -1){
-                            var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', true).appendTo('.ship_name_edit');
+                            $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', true).appendTo('.ship_name_edit');
                         }else{
-                            var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
+                            $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
                         }
                     });
-                    $.each(data.ship_name, function(shipNameCount)
-                    {
-                        $('.ship_name').append(data.ship_name[shipNameCount][0]['shipName']).append(', ');
+                    $.each(data.ship_name, function(shipNameCount) {
+                        shipName.append(data.ship_name[shipNameCount][0]['shipName']).append(', ');
                     });
-                    if(data.kpi_rules.length>0){
-                        $.each(data.kpi_rules,function(k)
-                        {
+                    if(data.kpi_rules.length>0) {
+                        $.each(data.kpi_rules,function(k) {
                             i++;
                             var rule_obj = JSON.parse(data.kpi_rules[k].rules);
                             var new_rule_obj = rule_obj.conditions.all;
                             ruleObjectText.append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.kpi_rules[k].rules));
                             ruleObjectText.append($('<br>'));
-                            $.each(new_rule_obj, function(j)
-                            {
+                            $.each(new_rule_obj, function(j) {
                                 new_rule_obj[j].operator =rule_operator(new_rule_obj[j].operator);
                                 var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
-                                if(j==0)
-                                {
+                                if(j==0) {
                                     condition_text = condition_text_one;
                                 }
-                                if(j>0)
-                                {
+                                if(j>0) {
                                     condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
                                 }
                             });
@@ -248,7 +242,7 @@
                                 $('<td class="conditions">').text(condition_text),
                                 $('<td class="color" style="color: red">').text(rule_obj.actions.value),
                                 $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
+                                $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete edit_delete_class'}))
                         ).appendTo('.rule_table_edit');
                     }
                 }
@@ -286,6 +280,7 @@
                     editKpi.hide();
                     showKpi.show();
                 });
+
                 $('#editShipId').live("click",function(){
                     var editShipNameOptions = $('#editShipId option');
                     $('.check').attr('checked',false);
@@ -300,6 +295,7 @@
                         }
                     });
                 });
+
                 editSaveButton.live("click",function($e){
                     $e.preventDefault();
                     var count_row = $('.rule_table_edit tr').length;
@@ -330,7 +326,7 @@
                             editKpi.hide();
                             editRuleTable.empty();
                             var result = successFunction(data);
-                            
+
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
@@ -507,7 +503,7 @@
                                     });
                                     $(this).remove();
                                     ruleEditPlace.hide();
-                                    conditions.empty();
+                                    conditions.remove();
                                     actions.empty();
                                     var sample = JSON.stringify(engine);
                                     $('#rule_obj_text-'+id_value).val(sample);
@@ -567,6 +563,23 @@
                     var num = data.split('-');
                     return num[1];
                 }
+
+                function splitfun(data){
+                    var num = data.split('_');
+                    return num[1];
+                }
+
+                $('.edit_delete_class').live("click",function($e) {
+                    $e.preventDefault();
+                    var currentId = $(this).attr('id');
+                    var id_value = splitfun(currentId);
+                    $('#row_edit_id-'+id_value).remove();
+                    var count_row = $('.rule_table_edit tr').length;
+                    if(count_row<=1) {
+                        $('#row_edit_id').hide();
+                    }
+                });
+
             });
         </script>
     {% endblock %}
@@ -746,6 +759,7 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
+                    <h2>KPI Create</h2>
                     <form class="form-horizontal no-style create-form" action="{{ path('kpidetails_new1') }}" method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
@@ -888,8 +902,8 @@
                             </div>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id"  value="Submit">Create</button>
-                            <button type="reset" class="cancel_btn" value="Submit">Cancel</button>
+                            <button class="submit_btn" id="submit_id" >Add</button>
+                            <button type="reset" class="cancel_btn">Reset</button>
                         </div>
                     </form>
                 </div>
@@ -960,6 +974,7 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
+                    <h2>KPI Edit</h2>
                     <form class="form-horizontal no-style">
                         <div class="add_new_users_form">
                             <fieldset class="fieldset_box add_rule_form">
@@ -1067,21 +1082,6 @@
                             </fieldset>
                             <fieldset class="fieldset_box add_rule_right_edit_form edit_rule_div">
                                 <legend class="legend_name">Rules</legend>
-                                {#<div class="form-group button">
-                                    <div class="col-xs-9">
-                                        <div id="conditions"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9">
-                                        <div id="actions"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group button">
-                                    <div class="col-xs-9 add_button_place"></div>
-                                    <p class="textbox-place"></p>
-                                    <input type="hidden" id="result" name="value">
-                                </div>#}
                                 <div class="table-responsive">
                                     <table class="table edit_rule_conditions">
                                         <tr class="row_edit_id">
@@ -1092,7 +1092,6 @@
                                         </tr>
                                     </table>
                                     <table class="table edit_rule_conditions rule_table_edit"></table>
-                                    {#<div class="small">&nbsp;</div>#}
                                 </div>
                             </fieldset>
                         </div>

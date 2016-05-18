@@ -17,6 +17,7 @@
                 var listIcon = $('.list_icon');
                 var gridView = $('#grid_view');
                 var listView = $('#list_view');
+                var createForm = $('.create-form');
                 var createView = $('.create_view');
                 var showShipView = $('.show_ship_view');
                 var editShip = $('.Edit_ship');
@@ -61,16 +62,9 @@
                 var cancelButton = $('.cancel_btn');
                 cancelButton.live("click", function ($e) {
                     $e.preventDefault();
-                    createView.hide();
                     gridView.show();
+                    createForm[0].reset();
                 });
-
-                /*var submitButton = $('.submit_btn');
-                 submitButton.live("click", function ($e) {
-                 $e.preventDefault();
-                 gridView.show();
-                 listView.hide();
-                 });*/
 
                 var editShipButton = $('.edit_ship_button');
                 editShipButton.live("click",function($e) {
@@ -463,7 +457,7 @@
             <div class="col-sm-12">
                 <div class="add_new_users_views_screen">
                     <h2>Vessel Create</h2>
-                    <form class="form-horizontal no-style" action="{{ path('shipdetails_new1') }}" method="post">
+                    <form class="form-horizontal no-style create-form" action="{{ path('shipdetails_new1') }}" method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">Basic Info</legend>

@@ -4,219 +4,553 @@
     {% block javascripts %}
 
         {% javascripts
-            '@AppBundle/Resources/public/js/AAA.js'
-            '@AppBundle/Resources/public/js/demo.js'
-            '@AppBundle/Resources/public/js/actions-builder.js'
-            '@AppBundle/Resources/public/js/Element_conditions-builder.js'
-            '@AppBundle/Resources/public/js/rules.js'
-            '@AppBundle/Resources/public/js/sample.js'
-        %}
+        '@AppBundle/Resources/public/js/AAA.js'
+        '@AppBundle/Resources/public/js/rules.js' %}
+        <script src="../js/rules/conditions-builder.js"></script>
+        <script src="../js/rules/action-builder.js"></script>
+        <script src="../js/rules/demo.js"></script>
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
         <script type="text/javascript">
-            $(document).ready(function()
-            {
-                //$('.rules_create_view').hide();
-                $('#rules_list_view').hide();
-                $('.show_rules').hide();
-                $('.grid_edit_rules').hide();
-                $('.box_icon').hide();
+            $(document).ready(function () {
+                var gridView = $('#rules_grid_view');
+                var createRules = $('.rules_create_view');
+                var showRules = $('.show_rules');
+                var editRules = $('.grid_edit_rules');
+                var kpiSelect = $('#kpi-select');
+                var elementSelect = $('#element-select');
+                var editSubmitButton = $('.edit_submit_button');
+                showRules.hide();
+                editRules.hide();
 
-                $('.add-rule').live("click",function()
-                {
-                    $('.field').hide();
-                });
-                $('.add-condition').live("click",function(){
-                    $('.field').hide();
-                });
-                $('.box_icon').click(function(){
-                    $('.box_icon').hide();
-                    $('.list_icon').show();
-                    $('.rules_create_view').show();
-                    $('#rules_list_view').hide();
-                    $('#rules_grid_view').show();
-                });
-                $('.list_icon').click(function(){
-                    $('.list_icon').hide();
-                    $('.box_icon').show();
-                    $('#rules_grid_view').hide();
-                    $('.rules_create_view').hide();
-                    $('#rules_list_view').show();
-                });
-                $('.add_btn').live("click",function(){
-                    $('#rules_grid_view').hide();
-                    $('#rules_list_view').hide();
-                    $('.show_rules').hide();
-                    $('.rules_create_view').show();
-                });
-                $('.cancel_btn').live("click",function(){
-                    $('.rules_create_view').hide();
-                    $('#rules_grid_view').show();
+                kpiSelect.change(function($e) {
+                    $e.preventDefault();
+                    $('#element-select option:gt(0)').remove();
+                    var data = {jsid: kpiSelect.val()};
+                    if ($(this).val()) {
+                        var elementChange = elementChangeFunction(data);
+                    }
                 });
 
-                $('.edit_cancel_button').live("click",function(){
-                    $('.grid_edit_rules').hide();
-                    $('#rules_grid_view').show();
-                    $('.show_rules').show();
+                function elementChangeFunction(data) {
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "new_temp",
+                        success: function (data) {
+                            $.each(data.kpiNameArray, function (i, listkpi) {
+                                elementSelect.append($('<option>', {
+                                    value: listkpi.id, text: listkpi.elementName
+                                }));
+                            });
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                }
+
+                var addButton = $('.add_btn');
+                addButton.live("click", function ($e) {
+                    $e.preventDefault();
+                    showRules.hide();
+                    editRules.hide();
+                    createRules.show();
+                    gridView.show();
                 });
+                $('.cancel_btn').live("click", function ($e) {
+                    $e.preventDefault();
+                    createRules.hide();
+                    gridView.show();
+                });
+
+                var editCancelButton = $('.edit_cancel_button');
+                editCancelButton.live("click", function ($e) {
+                    $e.preventDefault();
+                    editRules.hide();
+                    gridView.show();
+                    showRules.show();
+                });
+
+                var editRuleTable = $('.rule_table_edit');
+                var showRuleTable = $('.rule_table');
+                var kpiName = $('.rule_kpi_name');
+                var elementName = $('.rule_element_name');
+                var editKpiName = $('#edit_kpi');
+                var editElementName = $('#edit_element');
+                var editRuleId = $('.rule_edit_id');
+                var ruleObjectText = $('#rule_obj_text');
+                var ruleDiv = $('.show_rule_div');
+                var ruleEditPlace = $('.rule_edit_place');
 
                 var condition_text = "";
                 var count = 0;
                 var i = 0;
-                $('.rule_class').live("click",function($e)
-                {
+                var ruleList = $('.rule_class');
+                ruleList.live("click", function ($e) {
                     $e.preventDefault();
-                    $('.rules_create_view').hide();
-                    $('.rule_div').hide();
+                    createRules.hide();
+                    editRules.hide();
                     count++;
                     var currentId = $(this).attr('id');
-                    var data = {Id : currentId};
+                    var data = {Id: currentId};
 
-                    if(count>1)
-                    {
-                        $('.show_rules').hide();
-                        $('.rule_kpi_name').empty();
-                        $('.rule_element_name').empty();
-                        $('.rule_table').empty();
-                        $('.rule_table_edit').empty();
-                        $('#rule_obj_text').empty();
+                    if (count > 1) {
+                        showRules.hide();
+                        var emptyFunction = emptyTheDetailsFunction(data);
                     }
 
                     $.ajax({
                         type: "POST",
                         data: data,
                         url: "rule_ajax_show",
-                        success: function(data)
-                        {
-                            $('.rule_kpi_name').append(data.kpi_name[0].kpiName);
-                            $('.rule_element_name').append(data.element_name[0].elementName);
-
-                            $.each(data.kpi_array, function(index)
-                            {
-                                var $option = $('<option>').append(data.kpi_array[index]['kpiName']).val(data.kpi_array[index]['id']).appendTo('.kpi_name_edit');
-                            });
-
-                            $.each(data.element_array, function(index)
-                            {
-                                var $option = $('<option>').append(data.element_array[index]['elementName']).val(data.element_array[index]['id']).appendTo('.element_name_edit');
-                            });
-
-                            $('#edit_kpi').val(data.element_kpi_id[0][2]);
-                            $('#edit_element').val(data.element_kpi_id[0][1]);
-                            $('.rule_edit_id').val(currentId);
-
-                            if(data.rules.length>0)
-                            {
-                                $('.rule_div').show();
-                                $.each(data.rules,function(k)
-                                {
-                                    i++;
-                                    var rule_obj = JSON.parse(data.rules[k][0].rules);
-                                    var new_rule_obj = rule_obj.conditions.all;
-
-                                    $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']','class':'rule_obj_text', 'id':'rule_obj_text-'+i+''}).val(data.rules[k][0].rules));
-                                    $('#rule_obj_text').append($('<br>'));
-
-                                    $.each(new_rule_obj, function(j)
-                                    {
-                                        new_rule_obj[j].operator =rule_operator(new_rule_obj[j].operator);
-
-                                        var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
-                                        if(j==0)
-                                        {
-                                            condition_text = condition_text_one;
-                                        }
-                                        if(j>0)
-                                        {
-                                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
-                                        }
-                                    });
-
-                                    var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
-                                            $('<td>').text(condition_text),
-                                            $('<td>').text(rule_obj.actions.value)
-                                    ).appendTo('.rule_table');
-
-                                    var $tr1 = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
-                                            $('<td>').text(condition_text),
-                                            $('<td>').text(rule_obj.actions.value),
-                                            $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                            $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
-                                    ).appendTo('.rule_table_edit');
-                                });
-                            }
-                            $('.show_rules').show();
+                        success: function (data) {
+                            ruleDiv.hide();
+                            var setKpiDetails = setKpiDetailsFunction(data);
+                            var setElementDetails = setElementDetailsFunction(data);
+                            editRuleId.val(currentId);
+                            var setRulesDetails = setRulesDetailsFunction(data);
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
                 });
 
-                $('.edit_rules_button').live("click",function()
-                {
-                    $('.show_rules').hide();
-                   $('.grid_edit_rules').show();
+                function emptyTheDetailsFunction(data) {
+                    kpiName.empty();
+                    elementName.empty();
+                    showRuleTable.empty();
+                    editRuleTable.empty();
+                    ruleObjectText.empty();
+                }
+
+                function setKpiDetailsFunction(data) {
+                    kpiName.append(data.kpi_name[0].kpiName);
+                    $.each(data.kpi_array, function (index) {
+                        var $option = $('<option>').append(data.kpi_array[index]['kpiName']).val(data.kpi_array[index]['id']).appendTo('.kpi_name_edit');
+                    });
+                    editKpiName.val(data.element_kpi_id[0][2]);
+                }
+
+                function setElementDetailsFunction(data) {
+                    elementName.append(data.element_name[0].elementName);
+                    $.each(data.element_array, function (index) {
+                        var $option = $('<option>').append(data.element_array[index]['elementName']).val(data.element_array[index]['id']).appendTo('.element_name_edit');
+                    });
+                    editElementName.val(data.element_kpi_id[0][1]);
+                }
+
+                function setRulesDetailsFunction(data) {
+                    if (data.rules.length > 0) {
+                        $.each(data.rules, function (k) {
+                            i++;
+                            var rule_obj = JSON.parse(data.rules[k][0].rules);
+                            var new_rule_obj = rule_obj.conditions.all;
+                            ruleObjectText.append($('<input>').attr({
+                                'type': 'hidden',
+                                'name': 'rule_name[' + i + ']',
+                                'class': 'rule_obj_text',
+                                'id': 'rule_obj_text-' + i + ''
+                            }).val(data.rules[k][0].rules));
+                            ruleObjectText.append($('<br>'));
+                            $.each(new_rule_obj, function (j) {
+                                new_rule_obj[j].operator = rule_operator(new_rule_obj[j].operator);
+                                var condition_text_one = new_rule_obj[j].operator + new_rule_obj[j].value;
+                                if (j == 0) {
+                                    condition_text = condition_text_one;
+                                }
+                                if (j > 0) {
+                                    condition_text = condition_text + '   ' + '&&' + '   ' + condition_text_one;
+                                }
+                            });
+                            var findColor = findColorFunction(rule_obj);
+                        });
+                        showRules.show();
+                        ruleDiv.show();
+                    }
+                    showRules.show();
+                }
+
+                function findColorFunction(rule_obj) {
+                    if (rule_obj.actions.value == "Green") {
+                        var $trGreen = $('<tr>').attr({'id': 'row_id-' + i}).append(
+                                $('<td>').text(condition_text),
+                                $('<td style="color: green">').text(rule_obj.actions.value)
+                        ).appendTo('.rule_table');
+                        var $tr1Green = $('<tr>').attr({'id': 'row_edit_id-' + i}).append(
+                                $('<td class="conditions">').text(condition_text),
+                                $('<td class="color" style="color: green">').text(rule_obj.actions.value),
+                                $('<td>').append($('<a></a>').attr({
+                                    'id': 'edit-' + i + '',
+                                    'class': 'edit_icon_btn ss-write edit_class'
+                                })),
+                                $('<td>').append($('<a></a>').attr({
+                                    'id': 'delete-' + i + '',
+                                    'class': 'delete_icon_btn ss-delete delete_class'
+                                }))
+                        ).appendTo('.rule_table_edit');
+                    }
+                    if (rule_obj.actions.value == "Yellow") {
+                        var $trYellow = $('<tr>').attr({'id': 'row_id-' + i}).append(
+                                $('<td>').text(condition_text),
+                                $('<td style="color: orange">').text(rule_obj.actions.value)
+                        ).appendTo('.rule_table');
+                        var $tr1Yellow = $('<tr>').attr({'id': 'row_edit_id-' + i}).append(
+                                $('<td class="conditions">').text(condition_text),
+                                $('<td class="color" style="color: orange">').text(rule_obj.actions.value),
+                                $('<td>').append($('<a></a>').attr({
+                                    'id': 'edit-' + i + '',
+                                    'class': 'edit_icon_btn ss-write edit_class'
+                                })),
+                                $('<td>').append($('<a></a>').attr({
+                                    'id': 'delete-' + i + '',
+                                    'class': 'delete_icon_btn ss-delete delete_class'
+                                }))
+                        ).appendTo('.rule_table_edit');
+                    }
+                    if (rule_obj.actions.value == "Red") {
+                        var $trRed = $('<tr>').attr({'id': 'row_id-' + i}).append(
+                                $('<td>').text(condition_text),
+                                $('<td style="color: red">').text(rule_obj.actions.value)
+                        ).appendTo('.rule_table');
+                        var $tr1Red = $('<tr>').attr({'id': 'row_edit_id-' + i}).append(
+                                $('<td class="conditions">').text(condition_text),
+                                $('<td class="color" style="color: red">').text(rule_obj.actions.value),
+                                $('<td>').append($('<a></a>').attr({
+                                    'id': 'edit-' + i + '',
+                                    'class': 'edit_icon_btn ss-write edit_class'
+                                })),
+                                $('<td>').append($('<a></a>').attr({
+                                    'id': 'delete-' + i + '',
+                                    'class': 'delete_icon_btn ss-delete edit_delete_class'
+                                }))
+                        ).appendTo('.rule_table_edit');
+                    }
+                }
+
+                var editRulesButton = $('.edit_rules_button');
+                editRulesButton.live("click", function ($e) {
+                    $e.preventDefault();
+                    ruleEditPlace.hide();
+                    showRules.hide();
+                    editRules.show();
                 });
 
-                $('#edit_kpi').change(function()
-                {
-                    alert('hi');
-                    var id = $('#edit_kpi').val();
+                editKpiName.change(function ($e) {
+                    $e.preventDefault();
                     $('#edit_element option:gt(0)').remove();
-                    var data = {jsid : $('#edit_kpi').val()};
-                    if($(this).val())
-                    {
+                    var data = {jsid: editKpiName.val()};
+                    if ($(this).val()) {
                         $.ajax({
                             type: "POST",
                             data: data,
                             url: "new_temp",
-                            success: function(data)
-                            {
-                                $.each(data.kpiNameArray, function(i, listkpi) {
-
+                            success: function (data) {
+                                $.each(data.kpiNameArray, function (i, listkpi) {
                                     $('#edit_element').append($('<option>', {
-                                        value: listkpi.id, text : listkpi.elementName
+                                        value: listkpi.id, text: listkpi.elementName
                                     }));
                                 });
                             },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 alert('Error : ' + errorThrown);
                             }
                         });
                     }
                 });
 
-                function rule_operator(operator)
-                {
-                    if(operator=='equalTo')
-                    {
-                        operator = '=';
+                //Rules concept script
+                var ruleCount = 0;
+                var addAction = $('.add');
+                var subCondition = $('.add-condition');
+                var addRule = $('.add-rule');
+                var dynamicAdd = $('.dynamic-add');
+                var ruleShowTableRow = $('#row_id');
+                var availableRow = $('#rule-table tr');
+                var addRuleStatus = 0;
+                var textBox = "";
+                addAction.hide();
+                ruleShowTableRow.hide();
+
+                addRule.click(function ($e) {
+                    $e.preventDefault();
+                    if (addRuleStatus == 0) {
+                        addRuleStatus = 1;
+                        ruleCount++;
+                        addAction.show();
+                        subCondition.show();
+                        dynamicAdd = $("<a>", {
+                            "class": "dynamic-add",
+                            "id": "dynamicAdd_" + ruleCount,
+                            "text": "Add",
+                            "href": ""
+                        });
+                        $('.add_button_place').append(dynamicAdd);
+                        textBox = $("<input>", {
+                            "type": "hidden",
+                            "class": "rulesTextBox",
+                            "id": "rules-id_" + ruleCount,
+                            "name": "rules-" + ruleCount
+                        });
+                        $('.textbox-place').append(textBox);
                     }
-                    else if(operator=='notEqualTo')
-                    {
-                        operator = '!=';
+                    else {
+                        alert('Save the rule');
+                        return false;
                     }
-                    else if(operator=='greaterThan')
-                    {
-                        operator = '>';
+                });
+
+                dynamicAdd.live("click", function ($e) {
+                    $e.preventDefault();
+                    addRuleStatus = 0;
+                    var currentId = $(this).attr('id');
+                    var idNum = splitFun(currentId);
+                    var rulesId = $('#rules-id_' + idNum);
+                    var rule = rulesId.val();
+                    var rule_obj = JSON.parse(rule);
+                    var con = rule_obj.conditions.all;
+                    var newRuleObject = con.filter(filterByID);
+                    rule_obj.conditions.all = newRuleObject;
+                    var final_rule = JSON.stringify(rule_obj);
+                    rulesId.val(final_rule);
+                    $(this).remove();
+                    subCondition.hide();
+                    $('.rule').remove();
+                    $('.actionSelect').hide();
+                    addAction.hide();
+
+                    $.each(newRuleObject, function (j) {
+                        newRuleObject[j].operator = rule_operator(newRuleObject[j].operator);
+
+                        var condition_text_one = newRuleObject[j].operator + newRuleObject[j].value;
+                        if (j == 0) {
+                            condition_text = condition_text_one;
+                        }
+                        if (j > 0) {
+                            condition_text = condition_text + '   ' + '&&' + '   ' + condition_text_one;
+                        }
+                    });
+                    i++;
+                    var colorValue = " ";
+                    if (rule_obj.actions.value != null) {
+                        colorValue = rule_obj.actions.value;
                     }
-                    else if(operator=='greaterThanEqual')
-                    {
-                        operator = '>=';
+                    ruleShowTableRow.show();
+                    var $tr = $('<tr>').attr({'id': 'row-id_' + i}).append(
+                            $('<td>').text(condition_text),
+                            $('<td>').text(colorValue),
+                            $('<td>').append($('<a>').attr({
+                                'id': 'delete_' + i + '',
+                                'class': 'delete_class delete_icon_btn ss-delete'
+                            }))
+                    ).appendTo('#rule-table');
+                });
+
+                var deleteRow = $('.delete_class');
+                deleteRow.live("click", function ($e) {
+                    $e.preventDefault();
+                    var currentId = $(this).attr("id");
+                    var idNum = splitFun(currentId);
+                    $('#row-id_' + idNum).remove();
+                    var countRow = availableRow.length;
+                    if (countRow <= 1) {
+                        ruleShowTableRow.hide();
                     }
-                    else if(operator =='lessThan')
-                    {
-                        operator = '<';
+                });
+
+                var editClassIcon = $('.edit_class');
+                var status = 0;
+                editClassIcon.live("click",function($e){
+                    $e.preventDefault();
+                    if(status==0){
+                        status=1;
+                        var conditions = $('#conditions-edit');
+                        var actions = $('#actions-edit');
+                        var currentId = $(this).attr("id");
+                        var ageField = $("#ageField");
+                        var submit = $('.edit_add_class');
+                        var idNum = editSplitFun(currentId);
+                        $('#row_edit_id-'+idNum).remove();
+                        var ruleString = $('#rule_obj_text-'+idNum).val();
+                        var object_rule = JSON.parse(ruleString);
+                        $('#rule_edit_button').append($('<a href="">Save</a>').attr({'id':'edit_add-'+idNum+'', 'class':'edit_add_class'}));
+                        ruleEditPlace.show();
+                        addAction.show();
+                        subCondition.show();
+
+                        initializeConditions();
+                        initializeActions();
+                        initializeForm();
+
+                        function initializeConditions() {
+                            conditions.conditionsBuilder({
+                                fields: [
+                                    {label: "Value", name: "ageField", operators: [
+                                        {label: "is present", name: "present", fieldType: "none"},
+                                        {label: "is blank", name: "blank", fieldType: "none"},
+                                        {label: "is equal to", name: "equalTo", fieldType: "text"},
+                                        {label: "is not equal to", name: "notEqualTo", fieldType: "text"},
+                                        {label: "is greater than", name: "greaterThan", fieldType: "text"},
+                                        {label: "is greater than or equal to", name: "greaterThanEqual", fieldType: "text"},
+                                        {label: "is less than", name: "lessThan", fieldType: "text"},
+                                        {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
+                                    ]}
+                                ],
+                                data: object_rule.conditions
+                            });
+                        }
+                        function initializeActions() {
+                            actions.actionsBuilder({
+                                fields: [
+                                    {label: "Green", name: "Green"},
+                                    {label: "Red", name: "Red"},
+                                    {label: "Yellow", name: "Yellow"}
+                                ],
+                                data: [object_rule.actions]
+                            });
+                        }
+                        function initializeForm() {
+                            var edit_condition_text="";
+                            submit.live("click",function($e) {
+                                $e.preventDefault();
+                                if(status==1){
+                                    status=0;
+                                    var currentId = $(this).attr('id');
+                                    var id_value = editSplitFun(currentId);
+                                    var engine = new RuleEngine({
+                                        conditions: conditions.conditionsBuilder("data"),
+                                        actions: actions.actionsBuilder("data")
+                                    });
+                                    $(this).remove();
+                                    ruleEditPlace.hide();
+                                    conditions.remove();
+                                    actions.empty();
+                                    var sample = JSON.stringify(engine);
+                                    $('#rule_obj_text-'+id_value).val(sample);
+                                    var newRuleObject = engine.conditions.all;
+                                    $.each(newRuleObject, function(conditionCount){
+                                        newRuleObject[conditionCount].operator =rule_operator(newRuleObject[conditionCount].operator);
+                                        var edit_condition_text_one =newRuleObject[conditionCount].operator+newRuleObject[conditionCount].value;
+
+                                        if(conditionCount==0)
+                                        {
+                                            edit_condition_text = edit_condition_text_one;
+                                        }
+                                        if(conditionCount>0)
+                                        {
+                                            edit_condition_text = edit_condition_text+'   ' + '&&' +'   '+edit_condition_text_one;
+                                        }
+                                        var findColor = editColorFunction(engine.actions.value,id_value,edit_condition_text);
+                                    });
+                                }
+                            });
+                        }
                     }
-                    else if(operator=='lessThanEqual')
-                    {
-                        operator = '<=';
+                    else{
+                        alert("Save the selected rule");
                     }
 
+                });
+
+                function editColorFunction(color,id_value,edit_condition_text){
+                    if(color=="Green"){
+                        var $trGreen = $('<tr>').attr({'id':'row_edit_id-'+id_value}).append(
+                                $('<td>').text(edit_condition_text),
+                                $('<td style="color: green">').text(color),
+                                $('<td>').append($('<a>').attr({ 'id':'edit-'+id_value+'', 'class':'edit_icon_btn ss-write edit_class'})),
+                                $('<td>').append($('<a>').attr({ 'id':'delete-'+id_value+'', 'class':'delete_icon_btn ss-delete delete_class'}))
+                        ).appendTo('.rule_table_edit');
+                    }
+                    if(color=="Yellow"){
+                        var $trYellow = $('<tr>').attr({'id':'row_edit_id-'+id_value}).append(
+                                $('<td>').text(edit_condition_text),
+                                $('<td style="color: orange">').text(color),
+                                $('<td>').append($('<a>').attr({ 'id':'edit-'+id_value+'', 'class':'edit_icon_btn ss-write edit_class'})),
+                                $('<td>').append($('<a>').attr({ 'id':'delete-'+id_value+'', 'class':'delete_icon_btn ss-delete delete_class'}))
+                        ).appendTo('.rule_table_edit');
+                    }
+                    if(color=="Red"){
+                        var $trRed = $('<tr>').attr({'id':'row_edit_id-'+id_value}).append(
+                                $('<td>').text(edit_condition_text),
+                                $('<td style="color: red">').text(color),
+                                $('<td>').append($('<a>').attr({ 'id':'edit-'+id_value+'', 'class':'edit_icon_btn ss-write edit_class'})),
+                                $('<td>').append($('<a>').attr({ 'id':'delete-'+id_value+'', 'class':'delete_icon_btn ss-delete delete_class'}))
+                        ).appendTo('.rule_table_edit');
+                    }
+                }
+
+                editSubmitButton.live("click",function($e) {
+                    $e.preventDefault();
+                    var count_row = $('.rule_table_edit tr').length;
+                    var rule_array = new Array();
+                    for(var rowCount=1;rowCount<=count_row;rowCount++) {
+                        rule_array.push($('#rule_obj_text-'+rowCount).val());
+                    }
+                    var data = {
+                        Id : editRuleId.val(),
+                        kpiName : editKpiName.val(),
+                        elementName : editElementName.val(),
+                        rules : rule_array
+                    };
+                    var emptyFunction = emptyTheDetailsFunction(data);
+                    $.ajax({
+                        type: "POST",
+                        data: data,
+                        url: "rule_ajax_edit",
+                        success: function(data) {
+                            editRules.hide();
+                            ruleDiv.hide();
+                            var setKpiDetails = setKpiDetailsFunction(data);
+                            var setElementDetails = setElementDetailsFunction(data);
+                            //editRuleId.val(currentId);
+                            var setRulesDetails = setRulesDetailsFunction(data);
+
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                function editSplitFun(data){
+                    var num = data.split('-');
+                    return num[1];
+                }
+
+                function splitFun(data) {
+                    var num = data.split('_');
+                    return num[1];
+                }
+
+                function filterByID(obj) {
+                    if(jQuery.isEmptyObject(obj)) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+                function rule_operator(operator) {
+                    if (operator == 'equalTo') {
+                        operator = '=';
+                    }
+                    else if (operator == 'notEqualTo') {
+                        operator = '!=';
+                    }
+                    else if (operator == 'greaterThan') {
+                        operator = '>';
+                    }
+                    else if (operator == 'greaterThanEqual') {
+                        operator = '>=';
+                    }
+                    else if (operator == 'lessThan') {
+                        operator = '<';
+                    }
+                    else if (operator == 'lessThanEqual') {
+                        operator = '<=';
+                    }
                     return operator;
                 }
             });
@@ -224,25 +558,20 @@
 
     {% endblock %}
 
-    <div id="rules_grid_view">
+    <div class="rules_grid_view">
         <section>
             <div class="col-sm-3 users_views">
                 <div class="add_user_btn_main">
                     <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Rules</a></span>
-                    {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
-                        <span class="user_btn_main grid_list_main">
-                            <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
-                            <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
-                        </span>
                 </div>
-
-                <div class="users_list_main"><span>Rules ({{ rule_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
-
+                <div class="users_list_main"><span>Rules ({{ rule_count }})</span> <span class="show_dropdown_icon">&nbsp;</span>
+                </div>
                 <div class="users_list_grid_main">
                     {% for rule in rules %}
                         <div class="users_list_grid">
                                 <span class="users_name_row">
-                                    <span class="name"><a href="" class="rule_class" id="{{ rule.id }}">{{ rule.elementDetailsId }}</a></span>
+                                    <span class="name"><a href="" class="rule_class"
+                                                          id="{{ rule.id }}">{{ rule.elementDetailsId }}</a></span>
                                     <span class="text">{{ rule.kpiDetailsId }}</span>
                                 </span>
                         </div>
@@ -252,13 +581,13 @@
         </section>
     </div>
 
-    <div id="rules_list_view">
+    {#<div id="rules_list_view">
         <section>
             <div class="users_advanced_list_views_screen">
                 <div class="">
                     <div class="add_user_btn_main">
                         <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Rules</a></span>
-                        {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
+                        #}{#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}{#
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
@@ -289,7 +618,7 @@
                 </div>
             </div>
         </section>
-    </div>
+    </div>#}
 
     <div class="rules_create_view">
 
@@ -297,52 +626,40 @@
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
                     <form class="form-horizontal no-style" action="{{ path('rules_new1') }}" method="post">
-
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">Basic details</legend>
-
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Select KPI</label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.kpiDetailsId,{'id' :'jsid','label':' '}) }}
+                                        {{ form_widget(form.kpiDetailsId,{'id' :'kpi-select','label':' '}) }}
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Select Element</label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.elementDetailsId,{'id' :'element','label':' '}) }}
+                                        {{ form_widget(form.elementDetailsId,{'id' :'element-select','label':' '}) }}
                                     </div>
                                 </div>
-
                             </fieldset>
-
                             <div class="kpi_rules">
-                                <fieldset class="fieldset_box add_rule_form">
+                                <fieldset class="fieldset_box ">
                                     <legend class="legend_name">Rules</legend>
                                     <div class="form-group button">
                                         <div class="col-xs-9">
-                                            {#<a href="">Add rule</a> <a href="">Sub condition</a>#}
                                             <div id="conditions"></div>
-
-                                            <p id="text_box"></p>
-                                            <input type="hidden" id="result" name="value">
-
                                         </div>
                                     </div>
                                     <div class="form-group button">
                                         <div class="col-xs-9">
-                                            {#<div id="actions"></div>#}
-                                            <a href="" id="actions">add action</a>
+                                            <div id="actions"></div>
                                         </div>
                                     </div>
                                     <div class="form-group button">
-                                        <div class="col-xs-9 add_button_place">
-
-                                        </div>
+                                        <div class="col-xs-9 add_button_place"></div>
+                                        <p class="textbox-place"></p>
+                                        <input type="hidden" id="result" name="value">
                                     </div>
-
                                     <div class="table-responsive">
                                         <table class="table add_rule_conditions" id="rule-table">
                                             <thead>
@@ -352,59 +669,50 @@
                                                 <th class="action">&nbsp;</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                            </tbody>
                                         </table>
                                         <div class="small"></div>
                                     </div>
                                 </fieldset>
                             </div>
-
                         </div>
-
-
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id"  type="submit" value="Submit">Create</button>
-                            <button class="cancel_btn" type="reset"  value="Submit">Cancel</button>
+                            <button class="submit_btn" id="submit_id" type="submit" value="Submit">Create</button>
+                            <button class="cancel_btn" type="reset" value="Submit">Cancel</button>
                         </div>
                     </form>
                 </div>
             </div>
-
         </section>
     </div>
 
-    <div class = "show_rules">
+    <div class="show_rules">
         <section>
             <div class="col-sm-11">
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
-
                         <a href="" class="edit_btn edit_rules_button"> Edit</a>
-                        {#<a href="" class="edit_btn">Archive</a>#}
                     </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic details</legend>
                         <div class="form_view">
-
                             <label class="form_labell">Kpi Name :</label>
                             <label class="form_input rule_kpi_name"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">Element name :</label>
+                            <label class="form_labell">Element Name :</label>
                             <label class="form_input rule_element_name"> </label>
                         </div>
                     </fieldset>
-
-                    <fieldset class="fieldset_box add_rule_right_edit_form rule_div">
+                    <fieldset class="fieldset_box add_rule_right_edit_form show_rule_div">
                         <legend class="legend_name">Rules</legend>
                         <div class="table-responsive">
-                            <table class="table view_rule_conditions rule_table" >
-                                <tr class="row_head_id">
-                                    <th class="conditions">Conditions</th>
-                                    <th class="color">Color</th>
+                            <table class="table view_rule_conditions">
+                                <tr class="row_id">
+                                    <th class="conditions" align="center">Conditions</th>
+                                    <th class="color" align="center">Color</th>
                                 </tr>
                             </table>
+                            <table class="table view_rule_conditions rule_table"></table>
                         </div>
                         <input type="hidden" id="element_id_reference_text" name="element_id_reference_text" value="">
                     </fieldset>
@@ -414,293 +722,6 @@
     </div>
 
     <div class="grid_edit_rules">
-
-        {#<script src="../js/rules/conditions-builder.js"></script>
-        <script src="../js/rules/action-builder.js"></script>
-
-        <script type="text/javascript">
-
-            $(document).ready(function(){
-                $('.kpi_rules').hide();
-
-                $('.edit_class').live("click",function(){
-                    var conditions, actions;
-                    var currentId = $(this).attr('id');
-                    var ans = splitfun(currentId);
-                    $('#row_edit_id-'+ans).remove();
-                    var ans1 = $('#rule_obj_text-'+ans).val();
-                    var object_rule = JSON.parse(ans1);
-                    $('#rule_edit_button').append($('<a>add</a>').attr({'id':'edit_add-'+ans+'', 'class':'edit_add_class'}));
-                    $('.edit_add_class').hide();
-                    $('#edit_add-'+ans).show();
-                    $('.kpi_rules').show();
-
-                    function onReady() {
-                        conditions = $("#conditions_edit");
-                        actions = $("#actions_edit");
-
-                        initializeConditions();
-                        initializeActions();
-                        initializeForm();
-                    }
-
-                    function initializeConditions() {
-                        conditions.conditionsBuilder({
-                            fields: [
-                                {label: "Value", name: "ageField", operators: [
-                                    {label: "is present", name: "present", fieldType: "none"},
-                                    {label: "is blank", name: "blank", fieldType: "none"},
-                                    {label: "is equal to", name: "equalTo", fieldType: "text"},
-                                    {label: "is not equal to", name: "notEqualTo", fieldType: "text"},
-                                    {label: "is greater than", name: "greaterThan", fieldType: "text"},
-                                    {label: "is greater than or equal to", name: "greaterThanEqual", fieldType: "text"},
-                                    {label: "is less than", name: "lessThan", fieldType: "text"},
-                                    {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
-                                ]}
-                            ],
-                            data: object_rule.conditions
-                        });
-                    }
-                    function initializeActions() {
-                        actions.actionsBuilder({
-                            fields: [
-                                {label: "Green", name: "Green"},
-                                {label: "Red", name: "Red"},
-                                {label: "Yellow", name: "Yellow"}
-                            ],
-                            data: [object_rule.actions]
-                        });
-                    }
-                    function initializeForm() {
-                        var edit_condition_text="";
-
-                        $('.edit_add_class').live("click",function(e) {
-                            var currentId1 = $(this).attr('id');
-                            var ans1 = splitfun(currentId);
-                            e.preventDefault();
-
-                            var engine = new RuleEngine({
-                                conditions: conditions.conditionsBuilder("data"),
-                                actions: actions.actionsBuilder("data")
-                            });
-
-                            var sample = JSON.stringify(engine);
-                            $('#rule_obj_text-'+ans1).val(sample);
-
-                            $.each(engine.conditions.all, function(j)
-                            {
-                                if(engine.conditions.all[j].operator=='equalTo')
-                                {
-                                    engine.conditions.all[j].operator='=';
-                                }
-                                else if(engine.conditions.all[j].operator=='notEqualTo')
-                                {
-                                    engine.conditions.all[j].operator='!=';
-                                }
-                                else if(engine.conditions.all[j].operator=='greaterThan')
-                                {
-                                    engine.conditions.all[j].operator='>';
-                                }
-                                else if(engine.conditions.all[j].operator=='greaterThanEqual')
-                                {
-                                    engine.conditions.all[j].operator='>=';
-                                }
-                                else if(engine.conditions.all[j].operator=='lessThan')
-                                {
-                                    engine.conditions.all[j].operator='<';
-                                }
-                                else if(engine.conditions.all[j].operator=='lessThanEqual')
-                                {
-                                    engine.conditions.all[j].operator='<=';
-                                }
-
-                                var edit_condition_text_one =engine.conditions.all[j].operator+engine.conditions.all[j].value;
-
-                                if(j==0)
-                                {
-                                    edit_condition_text = edit_condition_text_one;
-                                }
-                                if(j>0)
-                                {
-                                    edit_condition_text = edit_condition_text+'   ' + '&&' +'   '+edit_condition_text_one;
-                                }
-
-                            });
-                            var $tr1 = $('<tr>').attr({'id':'row_edit_id-'+ans1}).append(
-                                    $('<td>').text(edit_condition_text),
-                                    $('<td>').text(engine.actions.value),
-                                    $('<td>').append($('<a>').attr({ 'id':'edit-'+ans1+'', 'class':'edit_icon_btn ss-write edit_class'})),
-                                    $('<td>').append($('<a>').attr({ 'id':'delete-'+ans1+'', 'class':'delete_icon_btn ss-delete delete_class'}))
-                            ).appendTo('.rule_table_edit');
-
-                            $('.kpi_rules').hide();
-                            $('.operator').remove();
-                            $('.add-rule').remove();
-                            $('.value').remove();
-                            $('.add-condition').remove();
-                            $('.remove').remove();
-                            $('.field').remove();
-                            $('.add').remove();
-                            $('.action-select').remove();
-                            $(this).remove();
-                        });
-                    }
-                    $(onReady);
-                    $('#remove-id').remove();
-                    $('#action_remove').remove();
-                    $('.all-any-none').hide();
-                });
-
-                $('.delete_class').live("click",function(){
-                    var currentId = $(this).attr('id');
-                    var id_value = splitfun(currentId);
-                    $('#row_edit_id-'+id_value).remove();
-                    var count_row = $('.rule_table_edit tr').length;
-                    if(count_row<=1)
-                    {
-                        $('#row_edit_id').hide();
-                    }
-                });
-
-
-                $('.edit_submit_button').live("click",function()
-                {
-                    var count_row = $('.rule_table_edit tr').length;
-                    var rule_array = new Array();
-
-                    for(var i_i=1;i_i<count_row;i_i++)
-                    {
-                        rule_array.push($('#rule_obj_text-'+i_i).val());
-                    }
-
-                    var condition_text = "";
-                    var i=0;
-                    var data = {
-                        kpiName : $('.kpi_name_edit').val(),
-                        elementName : $('.element_name_edit').val(),
-                        Id : $('.rule_edit_id').val(),
-                        rules : rule_array
-                    };
-
-                    $.ajax({
-                        type: "POST",
-                        data: data,
-                        url: "rule_ajax_edit",
-                        success: function(data)
-                        {
-                            $('.grid_edit_rules').hide();
-
-                            $('.kpi_name').empty();
-                            $('.element_name').empty();
-                            $('.rule_table').empty();
-                            $('.rule_table_edit').empty();
-                            $('.rule_obj_text').empty();
-
-                            $('.rule_kpi_name').append(data.kpi_name[0].kpiName);
-                            $('.rule_element_name').append(data.element_name[0].elementName);
-
-                            $.each(data.kpi_array, function(index)
-                            {
-                                var $option = $('<option>').append(data.kpi_array[index]['kpiName']).val(data.kpi_array[index]['id']).appendTo('.kpi_name_edit');
-                            });
-
-                            $.each(data.element_array, function(index)
-                            {
-                                var $option = $('<option>').append(data.element_array[index]['elementName']).val(data.element_array[index]['id']).appendTo('.element_name_edit');
-                            });
-
-                            $('#edit_kpi').val(data.element_kpi_id[0][2]);
-                            $('#edit_element').val(data.element_kpi_id[0][1]);
-
-                            if(data.rules.length>0)
-                            {
-                                $('.rule_div').show();
-                                $.each(data.rules,function(k)
-                                {
-                                    i++;
-                                    var rule_obj = JSON.parse(data.rules[k].rules);
-                                    var new_rule_obj = rule_obj.conditions.all;
-
-                                    $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']','class':'rule_obj_text', 'id':'rule_obj_text-'+i+''}).val(data.rules[k].rules));
-                                    $('#rule_obj_text').append($('<br>'));
-
-                                    $.each(new_rule_obj, function(j)
-                                    {
-                                        new_rule_obj[j].operator =rule_operator(new_rule_obj[j].operator);
-
-                                        var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
-                                        if(j==0)
-                                        {
-                                            condition_text = condition_text_one;
-                                        }
-                                        if(j>0)
-                                        {
-                                            condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
-                                        }
-                                    });
-
-                                    var $tr = $('<tr>').attr({'id':'row_id-'+i}).append(
-                                            $('<td>').text(condition_text),
-                                            $('<td>').text(rule_obj.actions.value)
-                                    ).appendTo('.rule_table');
-
-                                    var $tr1 = $('<tr>').attr({'id':'row_edit_id-'+i}).append(
-                                            $('<td>').text(condition_text),
-                                            $('<td>').text(rule_obj.actions.value),
-                                            $('<td>').append($('<a></a>').attr({'id':'edit-'+i+'','class':'edit_icon_btn ss-write edit_class'})),
-                                            $('<td>').append($('<a></a>').attr({'id':'delete-'+i+'','class':'delete_icon_btn ss-delete delete_class'}))
-                                    ).appendTo('.rule_table_edit');
-                                });
-                            }
-                            $('.show_rules').show();
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            alert('Error : ' + errorThrown);
-                        }
-                    });
-                });
-
-                function rule_operator(operator)
-                {
-                    if(operator=='equalTo')
-                    {
-                        operator = '=';
-                    }
-                    else if(operator=='notEqualTo')
-                    {
-                        operator = '!=';
-                    }
-                    else if(operator=='greaterThan')
-                    {
-                        operator = '>';
-                    }
-                    else if(operator=='greaterThanEqual')
-                    {
-                        operator = '>=';
-                    }
-                    else if(operator =='lessThan')
-                    {
-                        operator = '<';
-                    }
-                    else if(operator=='lessThanEqual')
-                    {
-                        operator = '<=';
-                    }
-
-                    return operator;
-                }
-
-
-                function splitfun(data){
-                    var num = data.split('-');
-                    return num[1];
-                }
-            });
-
-        </script>#}
-
-
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
@@ -728,51 +749,45 @@
                                 </div>
                             </fieldset>
 
-                            <fieldset class="fieldset_box add_rule_right_edit_form rule_div">
+                            <fieldset class="fieldset_box add_rule_right_edit_form edit_rule_div">
                                 <legend class="legend_name">Rules</legend>
                                 <div class="table-responsive">
-                                    <table class="table edit_rule_conditions rule_table_edit">
+                                    <table class="table edit_rule_conditions">
                                         <tr class="row_edit_id">
                                             <th class="conditions">Conditions</th>
                                             <th class="color">Color</th>
-                                            <th class="edit">&nbsp;</th>
-                                            <th class="action">&nbsp;</th>
+                                            <th class="edit">Edit</th>
+                                            <th class="action">Delete</th>
                                         </tr>
                                     </table>
-                                    <div class="small">&nbsp;</div>
+                                    <table class="table edit_rule_conditions rule_table_edit"></table>
                                 </div>
-                                <div class="rule_obj_text" id="rule_obj_text"></div>
                             </fieldset>
                         </div>
+                        <div id="rule_obj_text"></div>
                         <div class="kpi_rules">
-                            <fieldset class="fieldset_box_right add_rule_right_edit_form">
-                                <legend class="legend_name">Rules create</legend>
+                            <fieldset class="fieldset_box add_rule_right_edit_form rule_edit_place">
+                                <legend class="legend_name">Rules Create</legend>
                                 <div class="form-group button">
                                     <div class="col-xs-9">
-                                        {# &#123;&#35;<a href="">Add rule</a> <a href="">Sub c&#35;&#125;>#}
-                                        <div id="conditions_edit"></div>
-                                        <div id="actions_edit"></div>
-
-                                        <p id="text_box"></p>
-                                        <input type="hidden" id="result" name="value">
-
+                                        <div id="conditions-edit"></div>
                                     </div>
                                 </div>
                                 <div class="form-group button">
                                     <div class="col-xs-9">
-                                        {# &#123;&#35;<div id="act&#35;&#125;>#}
+                                        <div id="actions-edit"></div>
                                     </div>
                                 </div>
                                 <div class="form-group button">
-                                    <div class="col-xs-9 add_button_place">
+                                    <div class="col-xs-9 ">
                                         <div id="rule_edit_button"></div>
                                     </div>
                                 </div>
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save</button>
-                            <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
+                            <button class="submit_btn edit_submit_button" >Save</button>
+                            <button class="cancel_btn edit_cancel_button">Cancel</button>
                         </div>
 
                     </form>
