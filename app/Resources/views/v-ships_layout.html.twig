@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/ship.css" rel="stylesheet">
+
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/media_queries.css" rel="stylesheet">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery-ui.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/aa_jquery-1.8.0.min.js"></script>
+    <script src="/js/jquery.ui.draggable.js"></script>
+    <script src="/js/jquery.alerts.js"></script>
+    <link href="/css/jquery.alerts.css" rel="stylesheet">
+
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script type="text/javascript">
+        $(window).ready(function()
+        {
+            var pathname = window.location.pathname;
+            if(pathname=='/dashboard/')
+            {
+                $('li').removeClass('active');
+                $('#dashboradhome1').addClass('active');
+            }
+            else if(pathname=='/shipdetails/select1')
+            {
+                $('li').removeClass('active');
+                $('#shipdetails_select1').addClass('active');
+            }
+            $(".slide-toggle").click(function()
+            {
+                $('.scorecard').hide();
+                $('.ranking_submenu').hide()
+                if($('#user_login_content').length > 0)
+                {
+                    $('#user_login_content').remove();
+                }
+                else
+                {
+                    $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>Profile</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">Logout</a></li></ul></div>');
+                    $(".box_new").fadeIn('slow');
+                }
+
+            });
+        });
+    </script>
+</head>
+<body>
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    <div class="container" >
+        <div class="row">
+            <div  class="col-md-2 left_menus-2" id="afterlogin_appendcontent">
+                <div class="logo"><img src="/images/pioneer_logo.png"></div>
+                <ul class="nav nav-sidebar">
+
+                        <li id="Scorecard1">
+                            <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
+                                <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
+                                <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="ScoreCard">
+                                <li id="data_verification1">
+                                    <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
+                                        <span class="menu-item-icon ss-check">&nbsp;</span>
+                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li id="Vessel_Ranking1">
+                            <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
+                                <span class="menu-item-icon ss-warehouse">&nbsp;</span>
+                                <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
+                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                            </a>
+                            <ul class="submenu" ng-show="VesselRanking">
+                                <li id="ranking_data_verification1">
+                                    <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
+                                        <span class="menu-item-icon ss-check">&nbsp;</span>
+                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                </ul>
+                <div class="x-btn-my-account-small" id="bottom_content">
+                    <div class="x-btn-my-account-small_inner_2">
+                        <div class="user_setting_main slide-toggle">
+
+    <span class="x-btn-icon-el" id="user_settings">
+    <img src="/images/user.jpg">
+    </span>
+    <span class="x-btn-inner">
+    <div class="user-name">{{app.user.username }}</div>
+    <div class="company">Company Name</div>
+    </span>
+                            <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="dashboard_screen_views dashboard_right_ship">
+                <section id="wholecontent">
+                    {% block body %}
+
+                    {% endblock %}
+                </section>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- end if for overall links -->
+    {% for type, messages in app.session.flashBag.all %}
+        {% for message in messages %}
+            <div class="{{ type }}">
+                {{ message|trans({}, 'FOSUserBundle') }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endif %}
+<div>
+    {% block fos_user_content %}
+    {% endblock fos_user_content %}
+</div>
+</body>
+</html>
