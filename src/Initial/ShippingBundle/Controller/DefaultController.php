@@ -18,7 +18,17 @@ class DefaultController extends Controller
         else
         {
 
-        return $this->render('InitialShippingBundle:Default:index.html.twig');
+            $role = $user->getRoles();
+            if($role[0] == 'ROLE_KPI_INFO_PROVIDER')
+            {
+                return $this->redirectToRoute('adddata_scorecard');
+
+            }
+            else
+            {
+                return $this->render('InitialShippingBundle:Default:index.html.twig');
+            }
+
         }
     }
 }

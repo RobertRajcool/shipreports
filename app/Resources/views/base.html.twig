@@ -32,8 +32,7 @@
     <script type="text/javascript">
         $(window).ready(function()
         {
-            var pathname = window.location.pathname
-            console.log(pathname);
+            var pathname = window.location.pathname;
             if(pathname=='/dashboard/')
             {
                 $('li').removeClass('active');
@@ -474,12 +473,12 @@
 
 
 
-            <div class="dashboard_screen_views dashboard_right_ship">
-                <section id="wholecontent">
+            <div  id="wholecontent" class="dashboard_screen_views dashboard_right_ship">
+
                     {% block body %}
 
                     {% endblock %}
-                </section>
+
             </div>
 
 
