@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shipping</title>
+    <title>Shipping Development</title>
     <!-- Bootstrap -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/app.css" rel="stylesheet">
@@ -33,16 +33,64 @@
         $(window).ready(function()
         {
             var pathname = window.location.pathname;
-            if(pathname=='/dashboard/')
+            if(pathname=='/dataverfication/add_data')
             {
                 $('li').removeClass('active');
-                $('#dashboradhome1').addClass('active');
+                $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                $('#scorecard_submenu').html('');
+                $('#scorecard_submenu').text('');
+                $('<li class="active" id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('.scorecard').show();
+
             }
-            else if(pathname=='/shipdetails/select1')
+            else if(pathname=='/dataverfication/add_data_forranking')
             {
                 $('li').removeClass('active');
-                $('#shipdetails_select1').addClass('active');
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                $('#ranking_submenu').html('');
+                $('#ranking_submenu').text('');
+                //$('#dashboradhome1').removeClass("active");
+                $('li').removeClass('active');
+                $('<li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $(".ranking_submenu").show();
             }
+            $(".topmenu_score").click(function()
+            {
+                $('.ranking_submenu').hide();
+                $(".box_new").hide();
+                if($('#scorecard_submenu').length > 0)
+                {
+                    $('#scorecard_submenu').remove();
+                }
+                else
+                {
+                    $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
+                    $('#scorecard_submenu').html('');
+                    $('#scorecard_submenu').text('');
+                    $('<li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                    $('.scorecard').show();
+                }
+            });
+            $(".topmenu_ranking").click(function()
+            {
+                $('.scorecard').hide();
+                $(".box_new").hide();
+                if($('#ranking_submenu').length > 0)
+                {
+                    $('#ranking_submenu').remove();
+                }
+                else
+                {
+                    $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
+                    $('#ranking_submenu').html('');
+                    $('#ranking_submenu').text('');
+                    $('<li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                    $(".ranking_submenu").show();
+                }
+
+            });
             $(".slide-toggle").click(function()
             {
                 $('.scorecard').hide();
@@ -69,37 +117,22 @@
                 <div class="logo"><img src="/images/pioneer_logo.png"></div>
                 <ul class="nav nav-sidebar">
 
-                        <li id="Scorecard1">
-                            <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
-                                <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
-                                <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
-                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
-                            </a>
-                            <ul class="submenu" ng-show="ScoreCard">
-                                <li id="data_verification1">
-                                    <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
-                                        <span class="menu-item-icon ss-check">&nbsp;</span>
-                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li id="Vessel_Ranking1">
-                            <a class="layout_name" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
-                                <span class="menu-item-icon ss-warehouse">&nbsp;</span>
-                                <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
-                                <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
-                            </a>
-                            <ul class="submenu" ng-show="VesselRanking">
-                                <li id="ranking_data_verification1">
-                                    <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
-                                        <span class="menu-item-icon ss-check">&nbsp;</span>
-                                        <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                    <li class="topmenu_score" id="Scorecard1">
+                        <a class="layout_name" id="Scorecard" ng-click="myFuncScoreCard()">
+                            <span class="menu-item-icon scorecard_icon fa fa-indent">&nbsp;</span>
+                            <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
+                            <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                        </a>
 
+                    </li>
+
+                    <li class="topmenu_ranking" id="Vessel_Ranking1">
+                        <a class="layout_name rankinglink" id="Vessel_Ranking" ng-click="myFuncVesselRanking()">
+                            <span class="menu-item-icon ss-warehouse">&nbsp;</span>
+                            <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
+                            <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
+                        </a>
+                    </li>
                 </ul>
                 <div class="x-btn-my-account-small" id="bottom_content">
                     <div class="x-btn-my-account-small_inner_2">
