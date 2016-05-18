@@ -2209,11 +2209,17 @@ input[type="color"],
 .verfication_ranking_table_form_section .kpi_ship {
     width:40px;
     text-align:center;
-    vertical-align: middle;
+    vertical-align: top;
 }
 .verfication_ranking_table_form_section .verfication_ranking_text_rotation {
-    writing-mode: sideways-lr;
     transform-origin: left top 0;
+    -ms-writing-mode: tb-lr;
+    -webkit-writing-mode: vertical-lr;
+    -moz-writing-mode: vertical-lr;
+    -ms-writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
+    direction: rtl; /* not specified as part of writing-mode property in standard syntax */
+    margin-left: 7px;
 }
 .verfication_ranking_table_form_section .kpi_lement_number {
     color:#949494;
@@ -2226,7 +2232,7 @@ input[type="color"],
 
 .notification_msg {
     margin: 10px 0px;
-    color: #0c3055;
+    color: #0000F0;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .graph_and_colour_coding_dashboard_row .average_score_2_td {
@@ -2236,6 +2242,7 @@ input[type="color"],
         width: 49.4%;
     }
 }
+
 
 
 
