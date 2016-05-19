@@ -190,6 +190,11 @@
                 $('li').removeClass('active');
                 $('#creategroup1').addClass('active');
             }
+            else if (pathname=='/dataverfication/db_backup')
+            {
+                $('li').removeClass('active');
+                $('#backuplist').addClass('active');
+            }
             else
             {
                 $('li').removeClass('active');
@@ -413,7 +418,7 @@
                             </a>
                         </li>
                     {% endif %}
-                    <li>
+                    <li id="backuplist">
                         <a href="{{ path('database_export') }}">
                             <span class="menu-item-icon ss-briefcase">&nbsp;</span>
                             <span class="menu-item-text">{{ 'layout.menu.backup'|trans }}</span>
