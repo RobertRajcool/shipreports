@@ -508,7 +508,7 @@
                 {% for element in listofelement %}
                     {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
                     <tr>
-                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                        <td class="kpi_name_thtd">{{ element.elementName }}></td>
                         <td>{{ element.weightage }}</td>
                         {% for j in 0..countmonth1 %}
                             <td>

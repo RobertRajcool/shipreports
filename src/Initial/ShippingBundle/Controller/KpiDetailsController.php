@@ -50,11 +50,11 @@ class KpiDetailsController extends Controller
         $cellName = $request->request->get('cellName');
         $cellDetails = $request->request->get('cellDetails');
         $activeMonth = $request->request->get('activeMonth');
-        $integerActiveMonth = (int)$activeMonth-1;
+        $integerActiveMonth = (int)$activeMonth+1;
         $activeYear = $request->request->get('activeYear');
         $endMonth = $request->request->get('endMonth');
         $endYear = $request->request->get('endYear');
-        $integerEndMonth = (int)$endMonth-1;
+        $integerEndMonth = (int)$endMonth+1;
         $rules_array = $request->request->get('rules');
         $activeMonthDate = $activeYear .'-'. $integerActiveMonth .'-'. '01';
         $activeMonthDateObject = new \DateTime($activeMonthDate);
@@ -439,22 +439,24 @@ class KpiDetailsController extends Controller
      */
     public function kpi_ajax_weightageAction(Request $request)
     {
-
+        $kpiId = $request->request->get('kpiDetailsId');
+        $status = $request->request->get('status');
         $weightage = $request->request->get('weightage');
         $em = $this->getDoctrine()->getManager();
 
         $query = $em->createQueryBuilder()
             ->select('a.id','a.kpiName','a.weightage')
             ->from('InitialShippingBundle:KpiDetails','a')
-            ->where('a.shipDetailsId = :ship_id')
-            ->setParameter('ship_id',13)
+            ->groupby('a.kpiName')
             ->getQuery()
             ->getResult();
-
         $sum = $weightage;
 
         for($i=0;$i<count($query);$i++)
         {
+            if($query[$i]['id']==$kpiId && $status==0) {
+                $query[$i]['weightage'] = 0;
+            }
             $sum = $sum + $query[$i]['weightage'];
         }
 

@@ -196,16 +196,16 @@
                 $('#dashboradhome1').addClass('active');
             }
 
-          /*  //$('#dashboradhome1').addClass("active");
-            $('.layout_name').click(function()
-            {
-                $('#dashboradhome1').removeClass("active");
-                $('.layout_name').removeClass("active");
-                var currentId = $(this).attr('id');
-                $('#'+currentId+1).addClass("active");
-            });
+            /*  //$('#dashboradhome1').addClass("active");
+             $('.layout_name').click(function()
+             {
+             $('#dashboradhome1').removeClass("active");
+             $('.layout_name').removeClass("active");
+             var currentId = $(this).attr('id');
+             $('#'+currentId+1).addClass("active");
+             });
 
-          //  $('.my-account-box').hide();*/
+             //  $('.my-account-box').hide();*/
 
             $(".topmenu_score").click(function()
             {
@@ -215,7 +215,7 @@
                 {
                     $('#scorecard_submenu').remove();
                 }
-               else
+                else
                 {
                     $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
                     $('#scorecard_submenu').html('');
@@ -298,46 +298,46 @@
                                     <span class="menu-item-text" id="Scorecard">{{ 'layout.menu.scorecard'|trans }}</span>
                                     <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                                 </a>
-                              {#  <ul class="submenu scorecard" ng-show="ScoreCard">
-                                    <li id="kpidetails_select1">
-                                        <a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}">
-                                            <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                            <span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span>
-                                        </a>
-                                    </li>
-                                    <li id="elementdetails_select1">
-                                        <a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}">
-                                            <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                            <span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span>
-                                        </a>
-                                    </li>
-                                    <li id="rules_select1">
-                                        <a class="layout_name" id="rules_select" href="{{ path('rules_select') }}">
-                                            <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                            <span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span>
-                                        </a>
-                                    </li>
+                                {#  <ul class="submenu scorecard" ng-show="ScoreCard">
+                                      <li id="kpidetails_select1">
+                                          <a class="layout_name" id="kpidetails_select" href="{{ path('kpidetails_select1') }}">
+                                              <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                              <span class="menu-item-text " id="kpidetails_select">{{ 'layout.menu.addkpi'|trans }}</span>
+                                          </a>
+                                      </li>
+                                      <li id="elementdetails_select1">
+                                          <a class="layout_name" id="elementdetails_select" href="{{ path('elementdetails_select1') }}">
+                                              <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                              <span class="menu-item-text" id="elementdetails_select">{{ 'layout.menu.element'|trans }}</span>
+                                          </a>
+                                      </li>
+                                      <li id="rules_select1">
+                                          <a class="layout_name" id="rules_select" href="{{ path('rules_select') }}">
+                                              <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                              <span class="menu-item-text" id="rules_select">{{ 'layout.menu.rule'|trans }}</span>
+                                          </a>
+                                      </li>
 
-                                    <li id="data_verification1">
-                                        <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
-                                            <span class="menu-item-icon ss-check">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
-                                        </a>
-                                    </li>
+                                      <li id="data_verification1">
+                                          <a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}">
+                                              <span class="menu-item-icon ss-check">&nbsp;</span>
+                                              <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
+                                          </a>
+                                      </li>
 
-                                    <li id="data_import1">
-                                        <a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}">
-                                            <span class="menu-item-icon ss-database">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span>
-                                        </a>
-                                    </li>
-                                    <li id="reports1">
-                                        <a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}">
-                                            <span class="menu-item-icon ss-barchart">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
-                                        </a>
-                                    </li>
-                                </ul>#}
+                                      <li id="data_import1">
+                                          <a class="layout_name" id="data_import" href="{{ path('scorecard_import') }}">
+                                              <span class="menu-item-icon ss-database">&nbsp;</span>
+                                              <span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span>
+                                          </a>
+                                      </li>
+                                      <li id="reports1">
+                                          <a class="layout_name" id="reports" href="{{ path('scorecard_report_home') }}">
+                                              <span class="menu-item-icon ss-barchart">&nbsp;</span>
+                                              <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
+                                          </a>
+                                      </li>
+                                  </ul>#}
                             </li>
 
                             <li class="topmenu_ranking" id="Vessel_Ranking1">
@@ -346,46 +346,46 @@
                                     <span class="menu-item-text layout_name">{{ 'layout.menu.vesselranking'|trans }}</span>
                                     <span class="x-btn-icon-arrow"><img src="/images/arrow-buttom.png"></span>
                                 </a>
-                               {# <ul class="submenu ranking_submenu" ng-show="VesselRanking">
-                                    <li id="rankingkpidetails_select1">
-                                        <a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}">
-                                            <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span>
-                                        </a>
-                                    </li>
-                                    <li id="rankingelementdetails_select1">
-                                        <a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}">
-                                            <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span>
-                                        </a>
-                                    </li>
-                                    <li id="rankingrules_select1">
-                                        <a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}">
-                                            <span class="menu-item-icon ss-plus">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span>
-                                        </a>
-                                    </li>
+                                {# <ul class="submenu ranking_submenu" ng-show="VesselRanking">
+                                     <li id="rankingkpidetails_select1">
+                                         <a class="layout_name" id="rankingkpidetails_select" href="{{ path('rankingkpidetails_select') }}">
+                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                             <span class="menu-item-text">{{ 'layout.menu.addkpi'|trans }}</span>
+                                         </a>
+                                     </li>
+                                     <li id="rankingelementdetails_select1">
+                                         <a class="layout_name" id="rankingelementdetails_select" href="{{ path('rankingelementdetails_select1') }}">
+                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                             <span class="menu-item-text">{{ 'layout.menu.element'|trans }}</span>
+                                         </a>
+                                     </li>
+                                     <li id="rankingrules_select1">
+                                         <a class="layout_name" id="rankingrules_select1" href="{{ path('rankingrules_select') }}">
+                                             <span class="menu-item-icon ss-plus">&nbsp;</span>
+                                             <span class="menu-item-text">{{ 'layout.menu.rule'|trans }}</span>
+                                         </a>
+                                     </li>
 
-                                    <li id="ranking_data_verification1">
-                                        <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
-                                            <span class="menu-item-icon ss-check">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
-                                        </a>
-                                    </li>
+                                     <li id="ranking_data_verification1">
+                                         <a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}">
+                                             <span class="menu-item-icon ss-check">&nbsp;</span>
+                                             <span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span>
+                                         </a>
+                                     </li>
 
-                                    <li id="Ranking_data_import1">
-                                        <a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}">
-                                            <span class="menu-item-icon ss-database">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span>
-                                        </a>
-                                    </li>
-                                    <li  id="Ranking_Reports1">
-                                        <a id="Ranking_Reports" class="layout_name" href="{{ path('ranking_reports') }}">
-                                            <span class="menu-item-icon ss-barchart">&nbsp;</span>
-                                            <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
-                                        </a>
-                                    </li>
-                                </ul>#}
+                                     <li id="Ranking_data_import1">
+                                         <a class="layout_name" id="Ranking_data_import" href="{{ path('uploadfile_ranking') }}">
+                                             <span class="menu-item-icon ss-database">&nbsp;</span>
+                                             <span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span>
+                                         </a>
+                                     </li>
+                                     <li  id="Ranking_Reports1">
+                                         <a id="Ranking_Reports" class="layout_name" href="{{ path('ranking_reports') }}">
+                                             <span class="menu-item-icon ss-barchart">&nbsp;</span>
+                                             <span class="menu-item-text">{{ 'layout.menu.report'|trans }}</span>
+                                         </a>
+                                     </li>
+                                 </ul>#}
                             </li>
                         {% endif %}
                     {% endif %}
@@ -444,9 +444,9 @@
 
             <div  id="wholecontent" class="dashboard_screen_views dashboard_right_ship">
 
-                    {% block body %}
+                {% block body %}
 
-                    {% endblock %}
+                {% endblock %}
 
             </div>
 

@@ -26,6 +26,8 @@
                 var editCancelButton = $('.edit_cancel_button');
                 var editSaveButton = $('.edit_submit_button');
                 var shipNameOptions = $('#shipId option');
+                var createWeight = $('#weightageId');
+                var editWeight = $('.edit_kpi_weightage');
                 listView.hide();
                 boxIcon.hide();
                 showKpi.hide();
@@ -68,15 +70,55 @@
                     createForm[0].reset();
                 });
                 $('#check').live("click",function(){
-                    if($('#check').is(':checked')==true)
-                    {
+                    if($('#check').is(':checked')==true) {
                         shipNameOptions.attr('selected', 'selected');
                     }
-                    else
-                    {
+                    else {
                         shipNameOptions.attr('selected', false);
                     }
                 });
+
+                createWeight.change(function($e) {
+                    $e.preventDefault();
+                    var weight = $(this).val();
+                    var data = {
+                        kpiDetailsId : 0,
+                        weightage : weight,
+                        status : 1
+                    };
+                    var checkElementWeight = checkKpiWeightFunction(data);
+                });
+
+                editWeight.change(function($e) {
+                    $e.preventDefault();
+                    var weight = $(this).val();
+                    var data = {
+                        kpiDetailsId : $('.kpi_edit_id').val(),
+                        weightage : weight,
+                        status : 0
+                    };
+                    var checkElementWeight = checkKpiWeightFunction(data);
+                });
+
+                function checkKpiWeightFunction(data) {
+                    if(createWeight.val() != null) {
+                        $.ajax({
+                            type: "POST",
+                            data: data,
+                            url: "ranking_kpi_ajax_weightage",
+                            success: function(data) {
+                                if(data.Weightage>100) {
+                                    var weight = data.Weightage - 100;
+                                    alert('Weightage value exceeded - '+weight);
+                                }
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        })
+                    }
+                }
+
                 var ruleObjectText = $('#rule_obj_text');
                 var ruleDiv = $('.show_rule_div');
                 var editRuleTable = $('.rule_table_edit');
@@ -675,8 +717,8 @@
                                 <th>Description</th>
                                 <th>StartDate</th>
                                 <th>EndDate</th>
-                                <th>CellName</th>
-                                <th>CellDetails</th>
+                                {#<th>CellName</th>
+                                <th>CellDetails</th>#}
                             </tr>
                             </thead>
                             <tbody>
@@ -738,8 +780,8 @@
                                             Dec-{{ kpiDetail.endDate|date('Y') }}
                                         {% endif %}
                                     </td>
-                                    <td>{{ kpiDetail.cellName }}</td>
-                                    <td>{{ kpiDetail.cellDetails }}</td>
+                                    {#<td>{{ kpiDetail.cellName }}</td>
+                                    <td>{{ kpiDetail.cellDetails }}</td>#}
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -848,7 +890,7 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            <fieldset class="fieldset_box">
+                            {#<fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel details</legend>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>Cell name</strong></label>
@@ -862,7 +904,7 @@
                                         {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
                                     </div>
                                 </div>
-                            </fieldset>
+                            </fieldset>#}
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="submit_id" >Add</button>
@@ -905,7 +947,7 @@
                             </label>
                         </div>
                     </fieldset>
-                    <fieldset class="fieldset_box">
+                   {# <fieldset class="fieldset_box">
                         <legend class="legend_name">Excel details</legend>
                         <div class="form_view">
                             <label class="form_labell"><strong>Cell name :</strong></label>
@@ -915,7 +957,7 @@
                             <label class="form_labell"><strong>Cell detail :</strong></label>
                             <label class="form_input kpi_cellDetail"> </label>
                         </div>
-                    </fieldset>
+                    </fieldset>#}
                     {#<fieldset class="fieldset_box add_rule_right_edit_form show_rule_div">
                         <legend class="legend_name">Rules</legend>
                         <div class="table-responsive">
@@ -1027,7 +1069,7 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            <fieldset class="fieldset_box">
+                           {# <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel details</legend>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Cell name</label>
@@ -1041,7 +1083,7 @@
                                         <input type="text" class="edit_kpi_cellDetails" value="" placeholder="">
                                     </div>
                                 </div>
-                            </fieldset>
+                            </fieldset>#}
                             {#<fieldset class="fieldset_box add_rule_right_edit_form edit_rule_div">
                                 <legend class="legend_name">Rules</legend>
                                 <div class="table-responsive">
