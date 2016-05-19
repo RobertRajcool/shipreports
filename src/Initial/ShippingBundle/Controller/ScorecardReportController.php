@@ -190,7 +190,7 @@ class ScorecardReportController extends Controller
                 {
                     array_push($scorecardKpiColorArray,$kpiResult[0]['kpiColor']);
                     $monthlyScorecardKpiWeightAverageValueTotal+=($kpiResult[0]['individualKpiAverageScore']*$scorecardKpiWeight)/100;
-                    array_push($monthlyKpiSumValue,$kpiResult[0]['individualKpiAverageScore']);
+                    array_push($monthlyKpiSumValue,(int)$kpiResult[0]['individualKpiAverageScore']);
                 }
                 else
                 {
@@ -319,7 +319,7 @@ class ScorecardReportController extends Controller
             array_push($elementNameList,$returnObject['elementNameList'][$kpiCount]);
             for($monthCount=0;$monthCount<count($returnObject['monthName']);$monthCount++)
             {
-                array_push($kpiDataArray,$returnObject['elementLevelChartData'][$monthCount][$kpiCount]);
+                array_push($kpiDataArray,(int)$returnObject['elementLevelChartData'][$monthCount][$kpiCount]);
                 array_push($elementColorArray,$returnObject['elementColorArray'][$monthCount][$kpiCount]);
                 array_push($kpiColorArray,$returnObject['yearKpiColorArray'][$monthCount][$kpiCount]);
             }
