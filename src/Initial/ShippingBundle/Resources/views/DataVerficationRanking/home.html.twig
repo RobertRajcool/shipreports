@@ -247,7 +247,16 @@
                                     {
                                         var temp=1
 
-                                        $('<table class="table kpi_table_form_section"><thead><tr><th colspan="'+data.elementcount+'">'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                        $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+
+                                        if(newtemp==0)
+                                        {
+                                            $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                        }
+                                        else
+                                        {
+                                            $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                        }
                                         $.each(listkpi,function(mykey,myvalue)
                                         {
                                             if(data.elementvalues.length>0)
@@ -532,7 +541,16 @@
                                         if (!k) {
                                             var temp = 1
 
-                                            $('<table class="table kpi_table_form_section"><thead><tr><th colspan="' + data.elementcount + '">' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                            $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+
+                                            if(newtemp==0)
+                                            {
+                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                            }
+                                            else
+                                            {
+                                                $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                            }
                                             $.each(listkpi, function (mykey, myvalue) {
                                                 if (data.elementvalues.length > 0) {
 
@@ -702,7 +720,7 @@
                                           
                                             if(newtemp==0)
                                            {
-                                               $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                               $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                            }
                                             else
                                            {
@@ -901,7 +919,7 @@
                                                 $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
                                                 if(newtemp==0)
                                                 {
-                                                    $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                                 }
                                                 else
                                                 {
@@ -1087,7 +1105,7 @@
                                         <tr>
                                             <th colspan="{# {{ elementcount }}#} ">  {{ key }}</th>
                                             {% if i == 0 %}
-                                                <th>Wegi</th>
+                                                <th class="kpi_value">Wt</th>
                                                 <th class="kpi_value">Value</th>
                                             {% else %}
                                                 <th></th>

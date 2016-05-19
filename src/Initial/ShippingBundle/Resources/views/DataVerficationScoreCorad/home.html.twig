@@ -732,7 +732,7 @@
 
                                     if(newtemp==0)
                                     {
-                                        $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                     }
                                     else
                                     {
@@ -925,7 +925,7 @@
                                                 $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
                                                 if(newtemp==0)
                                                 {
-                                                    $(' <th>Wegi</th><th>Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                                 }
                                                 else
                                                 {
@@ -1103,8 +1103,8 @@
                                         <tr>
                                             <th {#colspan=" {{ elementcount }} "#}>  {{ key }}</th>
                                             {% if i == 0 %}
-                                                <th>Wegi</th>
-                                                <th>Value</th>
+                                                <th class="kpi_value">Wt</th>
+                                                <th class="kpi_value">Value</th>
                                             {% else %}
                                                 <th></th>
                                                 <th></th>
