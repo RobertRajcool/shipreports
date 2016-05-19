@@ -97,14 +97,21 @@
                 $('.ranking_submenu').hide()
                 if($('#user_login_content').length > 0)
                 {
-                    $('#user_login_content').remove();
+                    $(".box_new").slideToggle();
                 }
                 else
                 {
                     $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>Profile</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">Logout</a></li></ul></div>');
-                    $(".box_new").fadeIn('slow');
+                    $('.box_new').hide();
+                    $(".box_new").slideToggle();
                 }
 
+            });
+            $(document).click(function (e) {
+                if (!$(e.target).parents().andSelf().is('.slide-toggle'))
+                {
+                    $('#user_login_content').remove();
+                }
             });
         });
     </script>

@@ -16,7 +16,11 @@
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
-
+<style>
+    .pass{
+        color:white;
+    }
+</style>
 
     {#{%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -50,13 +54,16 @@
                 $('.box_icon').hide();
 
 
-                $('.add-rule').live("click",function(){
+                $('.add-rule').live("click",function($e){
+                    $e.preventDefault();
                     $('.field').hide();
                 });
-                $('.add-condition').live("click",function(){
+                $('.add-condition').live("click",function($e){
+                    $e.preventDefault();
                     $('.field').hide();
                 });
-                $('.box_icon').click(function(){
+                $('.box_icon').click(function($e){
+                    $e.preventDefault();
                     $('#list_view').hide();
                     $('#grid_view').show();
                     $('.edit_view').hide();
@@ -66,7 +73,8 @@
                     $('.create_view').show();
 
                 });
-                $('.list_icon').click(function(){
+                $('.list_icon').click(function($e){
+                    $e.preventDefault();
                     $('#grid_view').hide();
                     $('#list_view').show();
                     $('.create_view').hide();
@@ -75,7 +83,8 @@
                     $('.box_icon').show();
                     $('.list_icon').hide();
                 });
-                $('.add_btn').live("click",function(){
+                $('.add_btn').live("click",function($e){
+                    $e.preventDefault();
                     $('#grid_view').show();
                     $('#list_view').hide();
                     $('.create_view').show();
@@ -83,16 +92,21 @@
                     $('.show_view').hide();
 
                 });
-                $('.cancel_btn').live("click",function(){
-                    $('.create_view').hide();
+                $('.cancel_btn').live("click",function($e){
+                    $e.preventDefault();
+                    $('.create_view').show();
                     $('#grid_view').show();
                     $('.edit_view').hide();
                     $('.show_view').hide();
+                    $('.fos_user_registration_register')[0].reset();
 
                 });
 
 
-                $('.submit_btn').live("click",function(){
+
+
+                $('.submit_btn').live("click",function($e){
+                    $e.preventDefault();
                     $('#grid_view').show();
                     $('#list_view').hide();
                     $('.show_view').show();
@@ -101,7 +115,8 @@
                 });
 
 
-                $('.edit_btn').live("click", function () {
+                $('.edit_btn').live("click", function ($e) {
+                    $e.preventDefault();
                     $('#grid_view').show();
                     $('#list_view').hide();
                     $('.show_view').hide();
@@ -111,21 +126,25 @@
                 });
 
 
-                $('.edit_user_button').live("click",function()
+                $('.edit_user_button').live("click",function($e)
                 {
+                    $e.preventDefault();
                     $('.show_view').hide();
                     $('.edit_view').show();
                 });
 
-                $('.edit_cancel_btn').live("click",function(){
+                $('.edit_cancel_btn').live("click",function($e){
+                    $e.preventDefault();
                     $('.edit_view').hide();
                     $('.show_view').show();
+                    $(".create_view").hide();
                 });
 
                 //var condition_text = "";
                 var count = 0;
-                $('.user_class').live("click",function()
+                $('.user_class').live("click",function($e)
                 {
+                    $e.preventDefault();
                     $('.create_view').hide();
                     count++;
                     var currentId = $(this).attr('id');
@@ -174,14 +193,14 @@
                                 if($(this).val()==data.User_detail[0].roles[0])
                                 {
                                     var a=$(this).attr('id');
-                                    //alert(a);
+                                    ///alert(a);
                                     $('#'+a).attr('checked','checked');
-                                    // alert("hi");
+                                   //alert("hi");
                                 }
 
                             });
 
-
+                           // $('.inline-checkbox').val(data.User_detail[0].roles[0]);
 
                             // $('.').show();
 
@@ -196,8 +215,9 @@
 
 
 
-                $('.edit_submit_btn').live("click",function()
+                $('.edit_submit_btn').live("click",function($e)
                 {
+                    $e.preventDefault();
                     $('.user_name').empty();
                     $('.user_email').empty();
                     $('.user_roles').empty();
@@ -234,9 +254,7 @@
                             $('.edit_username').val(data.User_detail[0].username);
                             $('edit_email').val(data.User_detail[0].email);
                             $('.edit_mobile').append(data.User_detail[0].mobile);
-
-
-                            $('.inline-checkbox').val(data.User_detail[0].roles[o]);
+                            $('.inline-checkbox').val(data.User_detail[0].roles[0]);
 
 
                         },
@@ -370,7 +388,7 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">User name</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.username,{'label': ' '}) }}
+                                    {{ form_row(form.username,{'label': ' ' }) }}
                                 </div>
                             </div>
 
@@ -401,7 +419,7 @@
                                     </div>
                                 </div>
                             {% endif %}
-                            <div class="form-group">
+                           {# <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
                                     <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER"> Report user</label>
@@ -410,9 +428,18 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_KPI_INFO PROVIDER"> KPI info provider</label>
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_KPI_INFO_PROVIDER"> KPI info provider</label>
+                                </div>
+                            </div>#}
+
+
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_VSHIPS"> Vship</label>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
@@ -423,7 +450,8 @@
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">Security</legend>
                             <div class="form-group">
-                                <label class="control-label require_field col-xs-4"> Password  </label>
+                                <label class="control-label require_field col-xs-4">Password<label class="pass"> .</label> <label>Confirm password</label> </label>
+
                                 <div class="col-xs-8">
                                     {{ form_row(form.plainPassword) }}
                                 </div>
@@ -436,7 +464,7 @@
                     </div>
                     <div class="actions_submit">
                         <button class="submit_btn" type="submit" value="Submit">Create</button>
-                        <button class="cancel_btn" type="submit" value="Submit">Cancel</button>
+                        <button class="cancel_btn" type="submit" value="Submit">Reset</button>
 
                     </div>
                     {{ form_end(form) }}
@@ -542,26 +570,33 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ADMIN"> Admin</label>
+                                    <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ROLE_ADMIN"> Admin</label>
                                 </div>
                             </div>
                               {% endif %}
-                            <div class="form-group">
+                           {#<div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" id="2" name="privileges"  class="inline-checkbox" placeholder="" value="REPORT USER">REPORT USER</label>
+                                    <label><input type="radio" id="2" name="privileges"  class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER">REPORT USER</label>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value="KPI Info provider"> KPI info provider</label>
+                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_KPI_INFO_PROVIDER"> KPI info provider</label>
+                                </div>
+                            </div>#}
+
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8">
+                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_VSHIPS"> Vship</label>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" id="4"  name="privileges" class="inline-checkbox" placeholder="" value="KPI MANAGER"> KPI MANAGER</label>
+                                    <label><input type="radio" id="4"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_MANAGER"> KPI MANAGER</label>
                                 </div>
                             </div>
                             <div class="actions_submit">

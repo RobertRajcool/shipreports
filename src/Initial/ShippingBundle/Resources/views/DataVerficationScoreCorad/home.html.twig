@@ -34,18 +34,21 @@
                         month = nowdate.toLocaleString(locale, { month: "long" }),
                         year=nowdate.getFullYear();
                 $('#currentid').text(month+'-'+year)
-                $('#datofmonthid').val(month+'-'+year)
+                $('#currentid_data').text(month+'-'+year)
+                $('#datofmonthid').val(nowdate);
+                $('#datofmonthid_data').val(nowdate);
                 $('.prevmonth').live('click',function($e)
                 {
                     $e.preventDefault();
                     var linkid = $(this).attr('id');
                     if(linkid=='proviousmonth_data')
                     {
-                        var currentdate=new Date($('#currentid_data').text());
+
+                        var currentdate=new Date($('#datofmonthid_data').val());
                     }
                     else
                     {
-                        var currentdate=new Date($('#currentid').text());
+                        var currentdate=new Date($('#datofmonthid').val());
                     }
 
                     currentdate.setMonth(currentdate.getMonth() - 1);
@@ -196,15 +199,15 @@
 
                                 if (linkid == 'proviousmonth_data') {
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(month + '-' + year);
+                                    $('#datofmonthid_data').val(currentdate);
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(month + '-' + year);
+                                    $('#datofmonthid').val(currentdate);
                                 }
                                 else {
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(month + '-' + year);
+                                    $('#datofmonthid').val(currentdate);
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(month + '-' + year);
+                                    $('#datofmonthid_data').val(currentdate);
                                 }
                                 $('#kpiformforship').hide();
                                 $('#currentmonhthdetails').hide();
@@ -233,7 +236,8 @@
                                 $('#elementformid').text('');
                                 $('#shipname').text(data.currentshipname);
                                 $('#currentid').text(month+'-'+year);
-                                $('#datofmonthid').val(month+'-'+year);
+                                $('#currentid_data').text(month+'-'+year)
+                                $('#datofmonthid').val(currentdate);
                                 $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
                                 //alert(data.shipstatusstring)
                                 if(data.shipcount !=shipstatus)
@@ -332,18 +336,20 @@
                     var linkid = $(this).attr('id');
                     if(linkid=='proviousmonth_data')
                     {
-                        var currentdate=new Date($('#currentid_data').text());
+
+                        var currentdate=new Date($('#datofmonthid_data').val());
                     }
                     else
                     {
-                        var currentdate=new Date($('#currentid').text());
+                        var currentdate=new Date($('#datofmonthid').val());
                     }
-
                     currentdate.setMonth(currentdate.getMonth() + 1);
                     currentdate,locale = "en-us",
                             month = currentdate.toLocaleString(locale, { month: "long" }),
                             year=currentdate.getFullYear();
-                    // var data={'dataofmonth':month+'-'+year};
+                    var nowdate=new Date();
+                    if(currentdate<=nowdate)
+                    {
                     var current=month+'-'+year;
                     var data = {
                         dataofmonth :current
@@ -413,7 +419,6 @@
                         data:data,
                         success: function(data)
                         {
-                            console.log(data.commontext);
                             if (data.commontext == true)
                             {
                                 $('#prvieoustablecontent').html(' ');
@@ -487,15 +492,15 @@
 
                                 if (linkid == 'proviousmonth_data') {
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(month + '-' + year);
+                                    $('#datofmonthid_data').val(currentdate);
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(month + '-' + year);
+                                    $('#datofmonthid').val(currentdate);
                                 }
                                 else {
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(month + '-' + year);
+                                    $('#datofmonthid').val(currentdate);
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(month + '-' + year);
+                                    $('#datofmonthid_data').val(currentdate);
                                 }
                                 $('#kpiformforship').hide();
                                 $('#currentmonhthdetails').hide();
@@ -527,7 +532,8 @@
                                 $('#elementformid').text('');
                                 $('#shipname').text(data.currentshipname);
                                 $('#currentid').text(month+'-'+year);
-                                $('#datofmonthid').val(month+'-'+year);
+                                $('#currentid_data').text(month+'-'+year)
+                                $('#datofmonthid').val(currentdate);
                                 $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
                                 //alert(data.shipstatusstring)
                                 if(data.shipcount !=shipstatus)
@@ -616,10 +622,18 @@
                             $('body').css('cursor', 'default');
                             window.location.href = 'http://shipreports/login';
                         }
-                    });
+                    }); }
+                else
+                {
+                    $('#spantext').text('Date Exceed...');
+                    $('#spantext').show();
+                    setTimeout(function() {
+                        $('#spantext').fadeOut('fast');
+                    }, 4000)
 
-
-                });
+                }
+            });
+            $('#spantext').hide();
 
                 $('.linkclass').live('click',function()
                 {
@@ -637,7 +651,7 @@
                         type: "post",
                         'url': Routing.generate('shipskpielment', {'shipid':linkid,'monthdetail':dataofmonth}),
                         beforeSend: function () {
-                            var text='Please Wait';
+                            var text='';
 
                             if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
                                 $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
@@ -981,6 +995,7 @@
 
                         }
                 );
+                $('#previousmonthdata').hide();
 
 
             });
@@ -1063,6 +1078,7 @@
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
                             <label class="title"> <span id="shipname"> </span></label>
+                            <span id="spantext" class="errormsg">March-2016</span>
                             <label class="toolbar-title">
 
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>

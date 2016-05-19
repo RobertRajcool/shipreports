@@ -29,11 +29,13 @@
                             month = nowdate.toLocaleString(locale, { month: "long" }),
                             year=nowdate.getFullYear();
                     $('#currentid').text(month+'-'+year)
+                    $('#dataofmonth').val(nowdate)
+
 
                     $('#proviousmonth').click(function($e)
                     {
                         $e.preventDefault();
-                        var currentdate=new Date($('#currentid').text());
+                        var currentdate=new Date($('#dataofmonth').val());
                         currentdate.setMonth(currentdate.getMonth() - 1);
                         currentdate,locale = "en-us",
                                 month = currentdate.toLocaleString(locale, { month: "long" }),
@@ -105,6 +107,7 @@
                                 $('#area').highcharts().series[0].setData(data.changechartdata);
                                 $('#area').highcharts().series[0].update({ name: month+'-'+year});
                                 $('#currentid').text(month+'-'+year);
+                                $('#dataofmonth').val(currentdate)
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
@@ -123,83 +126,99 @@
                     $('#nextmonth').click(function($e)
                     {
                         $e.preventDefault();
-                        var currentdate=new Date($('#currentid').text());
+                        var currentdate=new Date($('#dataofmonth').val());
+                        var nowdate=new Date();
                         currentdate.setMonth(currentdate.getMonth() + 1);
                         currentdate,locale = "en-us",
                                 month = currentdate.toLocaleString(locale, { month: "long" }),
                                 year=currentdate.getFullYear();
+                        if(currentdate<=nowdate)
+                        {
+                            $.ajaxSetup({
+                                global: false,
+                                type: "post",
+                                'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
+                                beforeSend: function () {
+                                    var text='';
 
-                        $.ajaxSetup({
-                            global: false,
-                            type: "post",
-                            'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
-                            beforeSend: function () {
-                                var text='';
+                                    if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
+                                        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                                    }
 
-                                if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                    $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+                                    $('#resultLoading').css({
+                                        'width':'100%',
+                                        'height':'100%',
+                                        'position':'fixed',
+                                        'z-index':'10000000',
+                                        'top':'0',
+                                        'left':'0',
+                                        'right':'0',
+                                        'bottom':'0',
+                                        'margin':'auto'
+                                    });
+
+                                    $('#resultLoading .bg').css({
+                                        'background':'#000000',
+                                        'opacity':'0.7',
+                                        'width':'100%',
+                                        'height':'100%',
+                                        'position':'absolute',
+                                        'top':'0'
+                                    });
+
+                                    $('#resultLoading>div:first').css({
+                                        'width': '250px',
+                                        'height':'75px',
+                                        'text-align': 'center',
+                                        'position': 'fixed',
+                                        'top':'0',
+                                        'left':'0',
+                                        'right':'0',
+                                        'bottom':'0',
+                                        'margin':'auto',
+                                        'font-size':'16px',
+                                        'z-index':'10',
+                                        'color':'#ffffff'
+
+                                    });
+
+                                    $('#resultLoading .bg').height('100%');
+                                    $('#resultLoading').fadeIn(300);
+                                    $('body').css('cursor', 'wait');
+                                },
+                                complete: function () {
+                                    $('#resultLoading .bg').height('100%');
+                                    $('#resultLoading').fadeOut(300);
+                                    $('body').css('cursor', 'default');
                                 }
+                            });
+                            $.ajax({
+                                success: function(data)
+                                {
+                                    $('#area').highcharts().series[0].setData(data.changechartdata);
+                                    $('#area').highcharts().series[0].update({ name: month+'-'+year});
+                                    $('#currentid').text(month+'-'+year)
+                                    $('#dataofmonth').val(currentdate)
+                                },
+                                error: function(XMLHttpRequest, textStatus, errorThrown)
+                                {
+                                    alert('Error : ' + errorThrown);
+                                }
+                            });
+                        }
+                        else
+                        {
+                            $('#spantext').text('Date Exceed...');
+                            $('#spantext').show();
+                            setTimeout(function() {
+                                $('#spantext').fadeOut('fast');
+                            }, 4000)
 
-                                $('#resultLoading').css({
-                                    'width':'100%',
-                                    'height':'100%',
-                                    'position':'fixed',
-                                    'z-index':'10000000',
-                                    'top':'0',
-                                    'left':'0',
-                                    'right':'0',
-                                    'bottom':'0',
-                                    'margin':'auto'
-                                });
+                        }
 
-                                $('#resultLoading .bg').css({
-                                    'background':'#000000',
-                                    'opacity':'0.7',
-                                    'width':'100%',
-                                    'height':'100%',
-                                    'position':'absolute',
-                                    'top':'0'
-                                });
 
-                                $('#resultLoading>div:first').css({
-                                    'width': '250px',
-                                    'height':'75px',
-                                    'text-align': 'center',
-                                    'position': 'fixed',
-                                    'top':'0',
-                                    'left':'0',
-                                    'right':'0',
-                                    'bottom':'0',
-                                    'margin':'auto',
-                                    'font-size':'16px',
-                                    'z-index':'10',
-                                    'color':'#ffffff'
-
-                                });
-
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeIn(300);
-                                $('body').css('cursor', 'wait');
-                            },
-                            complete: function () {
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeOut(300);
-                                $('body').css('cursor', 'default');
-                            }
-                        });
-                        $.ajax({
-                            success: function(data)
-                            {
-                                $('#area').highcharts().series[0].setData(data.changechartdata);
-                                $('#area').highcharts().series[0].update({ name: month+'-'+year});
-                                $('#currentid').text(month+'-'+year)
-                            },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
-                                alert('Error : ' + errorThrown);
-                            }
-                        });
                     });
+                    $('#spantext').hide();
 
                     $('.yearViewContent').hide();
 
@@ -566,9 +585,11 @@
                     <div class="widget time">
                         <div class="x-header">
                             <div class="x-panel-header-text">{{ 'dashboard.main.content'|trans }}</div>
+                            <span id="spantext" class="errormsg">March-2016</span>
                             <div class="toolbar-title">
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
                                 <span id="currentid" class="item">March-2016</span>
+                                <input type="hidden" id="dataofmonth" name="dataofmonth">
                                 <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                             </div>
 

@@ -2,6 +2,7 @@
 
 namespace Initial\ShippingBundle\Controller;
 
+use Initial\ShippingBundle\Entity\CommonFunctions;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -558,7 +559,6 @@ class DataVerficationController extends Controller
     public function addkpivaluesAction(Request $request, $buttonid)
     {
         $em = $this->getDoctrine()->getManager();
-        //Finding Company for Login user Starts Here//
         $user = $this->getUser();
         $userid=$user->getId();
         $shipid = $request->request->get('shipid');
@@ -566,10 +566,11 @@ class DataVerficationController extends Controller
         $kpiandelementids = $returnfromcontroller['elementids'];
         $elementvalues = $request->request->get('newelemetvalues');
         $dataofmonth = $request->request->get('dataofmonth');
-        $mydate = '01-' . $dataofmonth;
-        $time = strtotime($mydate);
+        $date=date_create($dataofmonth);
+        $tempdate = date_format($date,"d-M-Y");
+        $newtemp_date=date_format($date,"M-Y");
+        $time = strtotime($tempdate);
         $newformat = date('Y-m-d', $time);
-        $em = $this->getDoctrine()->getManager();
         $new_date = new \DateTime($newformat);
         $new_date->modify('last day of this month');
         $k = 0;
@@ -610,7 +611,7 @@ class DataVerficationController extends Controller
 
             if($buttonid == 'adminbuttonid')
             {
-                $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
+                $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$tempdate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
                 // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                 $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
                 if(count($lookstatus)!=0)
@@ -812,7 +813,7 @@ class DataVerficationController extends Controller
         $user = $this->getUser();
         $role = $user->getRoles();
         $kpielementarray = $this->findnumofshipsAction($request, 'nextshipajaxcall');
-        $statusforship = $this->findshipstatusmonth($dataofmonth, $kpielementarray, $role[0]);
+        $statusforship = $this->findshipstatusmonth($newtemp_date, $kpielementarray, $role[0]);
         $finddatawithstatus = array();
 
 
@@ -821,21 +822,21 @@ class DataVerficationController extends Controller
             $index = array_search(0, $statusforship);
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
-            $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
+            $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
         }
         if ($role[0] == 'ROLE_MANAGER') {
             $status = 1;
             $index = array_search(0, $statusforship);
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
-            $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
+            $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
         }
         if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
             $status = 0;
             $index = array_search(0, $statusforship);
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
-            $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $dataofmonth);
+            $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
 
         }
 
@@ -1452,10 +1453,12 @@ class DataVerficationController extends Controller
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
             $dataofmonth = $request->request->get('dataofmonth');
-            $mydate = '01-' . $dataofmonth;
-            $time = strtotime($mydate);
-            $newformat = date('Y-m-d', $time);
             $em = $this->getDoctrine()->getManager();
+            $date=date_create($dataofmonth);
+            $tempdate = date_format($date,"d-M-Y");
+            $newtemp_date=date_format($date,"M-Y");
+            $time = strtotime($tempdate);
+            $newformat = date('Y-m-d', $time);
             $new_date = new \DateTime($newformat);
             $new_date->modify('last day of this month');
             $k = 0;
@@ -1502,7 +1505,7 @@ class DataVerficationController extends Controller
                 if($buttonid == 'adminbuttonid')
                 {
 
-                    $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$mydate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
+                    $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$tempdate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
                     // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $newlookupstatus->setStatus(3);
                     $newlookupstatus->setDatetime(new \DateTime());
@@ -1584,7 +1587,7 @@ class DataVerficationController extends Controller
             $user = $this->getUser();
             $role = $user->getRoles();
             $kpielementarray = $this->findnumofshipsforrankingAction($request,'nextshipajaxcall');
-            $statusforship = $this->findshipstatus_ranking($dataofmonth, $kpielementarray, $role[0]);
+            $statusforship = $this->findshipstatus_ranking($newtemp_date, $kpielementarray, $role[0]);
             $finddatawithstatus=array();
 
 
@@ -1594,7 +1597,7 @@ class DataVerficationController extends Controller
                 $index = array_search(0, $statusforship);
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$dataofmonth);
+                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$newtemp_date);
             }
             if ($role[0] == 'ROLE_MANAGER')
             {
@@ -1602,7 +1605,7 @@ class DataVerficationController extends Controller
                 $index = array_search(0, $statusforship);
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$dataofmonth);
+                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$newtemp_date);
             }
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
             {
@@ -1610,7 +1613,7 @@ class DataVerficationController extends Controller
                 $index = array_search(0, $statusforship);
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$dataofmonth);
+                $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$newtemp_date);
 
             }
             $response = new JsonResponse();
@@ -3429,6 +3432,17 @@ class DataVerficationController extends Controller
                 ));
             return $response;
         }
+
+    }
+    /**
+     * Ajax Call For change of Prev monthdata of Scorecard
+     *
+     * @Route("/db_backup", name="database_export")
+     */
+    public function dbBackupAction(Request $request)
+    {
+        $object=new CommonFunctions();
+        return $object->export_Database("localhost","root","Star_123","shipping_development");
 
     }
 
