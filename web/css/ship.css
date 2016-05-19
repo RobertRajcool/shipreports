@@ -1335,7 +1335,7 @@ select {
 .kpi_table_form_section .kpi_lement_number {
     width:8%;
     padding:3px 4px 3px 4px !important;
-    color:#949494;
+    color:#000;
     text-align:center;
 }
 .kpi_table_form_section .kpi_lement_inputname {

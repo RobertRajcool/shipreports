@@ -3441,8 +3441,7 @@ class DataVerficationController extends Controller
      */
     public function dbBackupAction(Request $request)
     {
-        $object=new CommonFunctions();
-        return $object->export_Database("localhost","root","Star_123","shipping_development");
+        return $this->render('InitialShippingBundle:DataVerficationRanking:backup.html.twig', array());
 
     }
 
