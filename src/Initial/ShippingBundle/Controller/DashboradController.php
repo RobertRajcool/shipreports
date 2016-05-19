@@ -2791,6 +2791,7 @@ class DashboradController extends Controller
             $mpdf->defaultheaderfontstyle = 'B';
             $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo_02.png';
             $mpdf ->SetWatermarkImage($WateMarkImagePath);
+            $mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $mpdf ->showWatermarkImage = true;
             $graphObject = array(
                 'chart'=>array('renderTo'=>'areaId','type'=>"line"),
@@ -2925,6 +2926,7 @@ class DashboradController extends Controller
             $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
+            $mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $WateMarkImagePath= $this->container->getParameter('kernel.root_dir').'/../web/images/pioneer_logo_02.png';
             $mpdf ->SetWatermarkImage($WateMarkImagePath);
             $mpdf ->showWatermarkImage = true;
