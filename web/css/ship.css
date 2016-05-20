@@ -910,10 +910,12 @@ select {
 }
 .add_rule_drop {
     width:208px;
+    float: left;
 }
 .add_rule_input {
     width:75px;
     margin-left: 1.5%;
+    float: left;
 }
 .add_rule_conditions {
     margin:0 0 5px 0;
@@ -2115,10 +2117,11 @@ input[type="color"],
     display:block;
 }
 .add_rule_delete_icon {
-    border:1px solid #dddddd;
-    padding:6px 3px 1px 8px;
-    border-radius:2px;
-    float:left;
+    border: 1px solid #dddddd;
+    padding: 4px 5px 1px 4px;
+    border-radius: 2px;
+    float: left;
+    margin-left: 1%;
 }
 .add_rule_fields  {
     float:left;
