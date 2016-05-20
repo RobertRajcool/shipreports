@@ -82,11 +82,11 @@
             addRuleLink.click(function(e) {
                 e.preventDefault();
                 if(addRuleStatus==0){
-                    addRuleStatus=1;
                     var f = _this.fields[0];
                     var newField = {name: f.value, operator: f.operators[0], value: null};
                     div.append(_this.buildRule(newField));
                     addConditionLink.show();
+                    addRuleStatus=1;
                 }
             });
             div.append(addRuleLink);
@@ -138,7 +138,6 @@
 
             fieldSelect.change(onFieldSelectChanged.call(this, operatorSelect, ruleData));
 
-            //ruleDiv.append(fieldSelect);
             ruleDiv.append(operatorSelect);
             ruleDiv.append(removeLink());
 
@@ -180,9 +179,11 @@
     }
 
     function removeLink() {
+        var spanLink = $("<span>",{"class":"add_rule_delete_icon"});
         var removeLink = $("<a>", {"class": "remove delete_icon_btn ss-delete", "href": "#"});
         removeLink.click(onRemoveLinkClicked);
-        return removeLink;
+        spanLink.append(removeLink);
+        return spanLink;
     }
 
     function onRemoveLinkClicked(e) {
@@ -222,7 +223,9 @@
                 $this.after($("<input>", {"type": "hidden", "class": "value "}));
                 break;
             case "text":
-                $this.after($("<input>", {"type": "text", "class": "value add_rule_input"}));
+                var field = $("<input>", {"type": "text", "class": "value add_rule_input"});
+                //var spanLink = $("<span>", { "class": "add_rule_fields"});
+                $this.after(field);
                 break;
         }
         currentValue.remove();
