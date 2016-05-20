@@ -21,6 +21,7 @@
                 var createView = $('.create_view');
                 var showShipView = $('.show_ship_view');
                 var editShip = $('.Edit_ship');
+                var statusText = $('#status-text');
 
                 boxIcon.hide();
                 createView.show();
@@ -92,10 +93,19 @@
                         editShip.hide();
                         var emptyShipDetails = emptyShipDetailsFunction(data);
                     }
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type:"POST",
                         url: "ajax_show",
                         data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data) {
                             var setShowShipValues = setShowShipValuesFunction(data);
                             var setEditShipValues = setEditShipValuesFunction(data);
@@ -130,6 +140,7 @@
                     shipGt.empty();
                     shipManufacturingYear.empty();
                     shipDescription.empty();
+                    statusText.empty();
                 }
 
                 function setShowShipValuesFunction(data) {
@@ -143,6 +154,19 @@
                     shipGt.append(data.Ship_detail[0].gt);
                     shipManufacturingYear.append(data.Ship_detail[0].manufacturingYear);
                     shipDescription.append(data.Ship_detail[0].description);
+                    var setShipStatus = setShipStatusFunction(data);
+                }
+
+                var statusId = $('#statusId');
+                function setShipStatusFunction(data) {
+                    if(data.shipStatus=="Active") {
+                        statusId.removeClass("status_0 ss-delete");
+                        statusId.addClass("status_1 ss-check");
+                    }
+                    else if(data.shipStatus=="Inactive") {
+                        statusId.removeClass("status_1 ss-check");
+                        statusId.addClass("status_0 ss-delete");
+                    }
                 }
 
                 var editShipName = $('.edit_ship_name');
@@ -199,10 +223,19 @@
                         shipType:editShipType.val(),
                         country:editShipCountry.val()
                     };
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type:"POST",
                         url:"ajax_edit",
                         data: data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data) {
                             var setShowShipValues = setShowShipValuesFunction(data);
                             var setEditShipValues = setEditShipValuesFunction(data);
@@ -220,18 +253,29 @@
                 archiveButton.live("click",function($e) {
                     $e.preventDefault();
                     var data = {'Id' :editShipId.val()};
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
+                        data: data,
                         type:"POST",
                         url:"ajax_status",
-                        data: data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data) {
                             if(data.status[0].status == 1) {
-                                alert('Vessel Activated');
-                                $('.status-text').text("Vessel Activated");
+                                statusText.text(data.shipName + " is Activated...").addClass(" status-text green");
+                                statusId.removeClass("status_0 ss-delete");
+                                statusId.addClass("status_1 ss-check");
                             }
                             else if(data.status[0].status == 0) {
-                                alert('Vessel InActivated');
-                                $('.status-text').text("Vessel Activated");
+                                statusText.text(data.shipName + " is Inactivated...").addClass("status-text red");
+                                statusId.removeClass("status_1 ss-check");
+                                statusId.addClass("status_0 ss-delete");
                             }
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -265,10 +309,19 @@
                     }
                     if(statusActive.is(':checked')==true) {
                         var data = {'Id' : 1};
-                        $.ajax({
+                        $.ajaxSetup({
+                            global: false,
                             type:"POST",
                             url:"ajax_status_show",
                             data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
                             success: function(data) {
                                 var statusEmpty = statusEmptyFunction(data);
                                 $.each(data.ship_details, function(i) {
@@ -311,10 +364,19 @@
                     }
                     if(statusInactive.is(':checked')==true) {
                         var data = {'Id' : 0};
-                        $.ajax({
+                        $.ajaxSetup({
+                            global: false,
                             type:"POST",
                             url:"ajax_status_show",
                             data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
                             success: function(data) {
                                 var statusEmpty = statusEmptyFunction(data);
                                 $.each(data.ship_details, function(i) {
@@ -351,6 +413,60 @@
                         activeInactiveCheckBox.removeClass("opened");
                     }
                 });
+
+                function setAjaxBeforeSendFunction() {
+                    var text = '';
+
+                    if ($('body').find('#resultLoading').attr('id') != 'resultLoading') {
+                        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>' + text + '</div></div><div class="bg"></div></div>');
+                    }
+
+                    $('#resultLoading').css({
+                        'width': '100%',
+                        'height': '100%',
+                        'position': 'fixed',
+                        'z-index': '10000000',
+                        'top': '0',
+                        'left': '0',
+                        'right': '0',
+                        'bottom': '0',
+                        'margin': 'auto'
+                    });
+
+                    $('#resultLoading .bg').css({
+                        'background': '#000000',
+                        'opacity': '0.7',
+                        'width': '100%',
+                        'height': '100%',
+                        'position': 'absolute',
+                        'top': '0'
+                    });
+
+                    $('#resultLoading>div:first').css({
+                        'width': '250px',
+                        'height': '75px',
+                        'text-align': 'center',
+                        'position': 'fixed',
+                        'top': '0',
+                        'left': '0',
+                        'right': '0',
+                        'bottom': '0',
+                        'margin': 'auto',
+                        'font-size': '16px',
+                        'z-index': '10',
+                        'color': '#ffffff'
+                    });
+
+                    $('#resultLoading .bg').height('100%');
+                    $('#resultLoading').fadeIn(300);
+                    $('body').css('cursor', 'wait');
+                }
+
+                function setAjaxCompleteFunction() {
+                    $('#resultLoading .bg').height('100%');
+                    $('#resultLoading').fadeOut(300);
+                    $('body').css('cursor', 'default');
+                }
             });
         </script>
 
@@ -546,7 +662,11 @@
                         <a href="" class="edit_btn edit_ship_button"> Edit</a>
                         <a href="" class="edit_btn active_btn archive_btn">Active / Inactive</a>
                     </div>
-                    <span class="status-text"> </span>
+                    <div id="status-text"> </div>
+                    <div class="status_field">
+                        <span><div id="statusId"></div></span>
+                        <div>Status</div>
+                    </div>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic Info</legend>
                         <div class="form_view">
