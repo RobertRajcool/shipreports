@@ -16,11 +16,11 @@
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
-<style>
-    .pass{
-        color:white;
-    }
-</style>
+    <style>
+        .pass{
+            color:white;
+        }
+    </style>
 
     {#{%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -105,7 +105,7 @@
 
 
 
-                $('.submit_btn').live("click",function($e){
+                $('.edit_submit_btn').live("click",function($e){
                     $e.preventDefault();
                     $('#grid_view').show();
                     $('#list_view').hide();
@@ -195,12 +195,12 @@
                                     var a=$(this).attr('id');
                                     ///alert(a);
                                     $('#'+a).attr('checked','checked');
-                                   //alert("hi");
+                                    //alert("hi");
                                 }
 
                             });
 
-                           // $('.inline-checkbox').val(data.User_detail[0].roles[0]);
+                            // $('.inline-checkbox').val(data.User_detail[0].roles[0]);
 
                             // $('.').show();
 
@@ -292,7 +292,7 @@
                 <div class="add_user_btn_main">
                     <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add User</a></span>
                     {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
-          <span class="user_btn_main grid_list_main">
+                    <span class="user_btn_main grid_list_main">
               <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
               <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
           </span>
@@ -324,7 +324,7 @@
                     <div class="add_user_btn_main">
                         <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add User</a></span>
                         {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
-                     <span class="user_btn_main grid_list_main">
+                        <span class="user_btn_main grid_list_main">
                          <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                          <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
                       </span>
@@ -419,18 +419,18 @@
                                     </div>
                                 </div>
                             {% endif %}
-                           {# <div class="form-group">
-                                <label class="control-label col-xs-4">&nbsp;</label>
-                                <div class="col-xs-8">
-                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER"> Report user</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-xs-4">&nbsp;</label>
-                                <div class="col-xs-8">
-                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_KPI_INFO_PROVIDER"> KPI info provider</label>
-                                </div>
-                            </div>#}
+                            {# <div class="form-group">
+                                 <label class="control-label col-xs-4">&nbsp;</label>
+                                 <div class="col-xs-8">
+                                     <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER"> Report user</label>
+                                 </div>
+                             </div>
+                             <div class="form-group">
+                                 <label class="control-label col-xs-4">&nbsp;</label>
+                                 <div class="col-xs-8">
+                                     <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_KPI_INFO_PROVIDER"> KPI info provider</label>
+                                 </div>
+                             </div>#}
 
 
                             <div class="form-group">
@@ -566,26 +566,26 @@
 
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">Privileges</legend>
-                          {%  if is_granted("ROLE_SUPER_ADMIN") %}
-                            <div class="form-group">
-                                <label class="control-label col-xs-4">&nbsp;</label>
-                                <div class="col-xs-8">
-                                    <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ROLE_ADMIN"> Admin</label>
+                            {%  if is_granted("ROLE_SUPER_ADMIN") %}
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">&nbsp;</label>
+                                    <div class="col-xs-8">
+                                        <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ROLE_ADMIN"> Admin</label>
+                                    </div>
                                 </div>
-                            </div>
-                              {% endif %}
-                           {#<div class="form-group">
-                                <label class="control-label col-xs-4">&nbsp;</label>
-                                <div class="col-xs-8">
-                                    <label><input type="radio" id="2" name="privileges"  class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER">REPORT USER</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-xs-4">&nbsp;</label>
-                                <div class="col-xs-8">
-                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_KPI_INFO_PROVIDER"> KPI info provider</label>
-                                </div>
-                            </div>#}
+                            {% endif %}
+                            {#<div class="form-group">
+                                 <label class="control-label col-xs-4">&nbsp;</label>
+                                 <div class="col-xs-8">
+                                     <label><input type="radio" id="2" name="privileges"  class="inline-checkbox" placeholder="" value="ROLE_REPORT_USER">REPORT USER</label>
+                                 </div>
+                             </div>
+                             <div class="form-group">
+                                 <label class="control-label col-xs-4">&nbsp;</label>
+                                 <div class="col-xs-8">
+                                     <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_KPI_INFO_PROVIDER"> KPI info provider</label>
+                                 </div>
+                             </div>#}
 
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
