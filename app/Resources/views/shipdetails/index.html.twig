@@ -227,9 +227,11 @@
                         success: function(data) {
                             if(data.status[0].status == 1) {
                                 alert('Vessel Activated');
+                                $('.status-text').text("Vessel Activated");
                             }
                             else if(data.status[0].status == 0) {
                                 alert('Vessel InActivated');
+                                $('.status-text').text("Vessel Activated");
                             }
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -353,7 +355,6 @@
         </script>
 
     {% endblock%}
-
 
     <div id="grid_view">
         <section>
@@ -545,6 +546,7 @@
                         <a href="" class="edit_btn edit_ship_button"> Edit</a>
                         <a href="" class="edit_btn active_btn archive_btn">Active / Inactive</a>
                     </div>
+                    <span class="status-text"> </span>
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Basic Info</legend>
                         <div class="form_view">

@@ -2,7 +2,7 @@
 
 
 {% block body %}
-    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+    {% if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
         {% block javascripts %}
             {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
             <script src="{{ asset_url }}"></script>
@@ -21,447 +21,335 @@
                 {{ chart(chart) }}
             </script>
             <script>
-                $(document).ready(function()
-                {
+                $(document).ready(function () {
                     var newchart;
-                    var nowdate=new Date(),
+                    var nowdate = new Date(),
                             locale = "en-us",
-                            month = nowdate.toLocaleString(locale, { month: "long" }),
-                            year=nowdate.getFullYear();
-                    $('#currentid').text(month+'-'+year)
-                    $('#dataofmonth').val(nowdate)
+                            month = nowdate.toLocaleString(locale, {month: "long"}),
+                            year = nowdate.getFullYear();
+                    $('#currentid').text(month + '-' + year);
+                    $('#dataofmonth').val(nowdate);
 
-
-                    $('#proviousmonth').click(function($e)
-                    {
+                    var areaId = $('#area');
+                    $('#proviousmonth').click(function ($e) {
                         $e.preventDefault();
-                        var currentdate=new Date($('#dataofmonth').val());
+                        var currentdate = new Date($('#dataofmonth').val());
                         currentdate.setMonth(currentdate.getMonth() - 1);
-                        currentdate,locale = "en-us",
-                                month = currentdate.toLocaleString(locale, { month: "long" }),
-                                year=currentdate.getFullYear();
+                        currentdate, locale = "en-us",
+                                month = currentdate.toLocaleString(locale, {month: "long"}),
+                                year = currentdate.getFullYear();
 
                         $.ajaxSetup({
                             global: false,
                             type: "post",
-                            'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
+                            'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth': month + '-' + year}),
                             beforeSend: function () {
-                                var text='';
-
-                                if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                    $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                                }
-
-                                $('#resultLoading').css({
-                                    'width':'100%',
-                                    'height':'100%',
-                                    'position':'fixed',
-                                    'z-index':'10000000',
-                                    'top':'0',
-                                    'left':'0',
-                                    'right':'0',
-                                    'bottom':'0',
-                                    'margin':'auto'
-                                });
-
-                                $('#resultLoading .bg').css({
-                                    'background':'#000000',
-                                    'opacity':'0.7',
-                                    'width':'100%',
-                                    'height':'100%',
-                                    'position':'absolute',
-                                    'top':'0'
-                                });
-
-                                $('#resultLoading>div:first').css({
-                                    'width': '250px',
-                                    'height':'75px',
-                                    'text-align': 'center',
-                                    'position': 'fixed',
-                                    'top':'0',
-                                    'left':'0',
-                                    'right':'0',
-                                    'bottom':'0',
-                                    'margin':'auto',
-                                    'font-size':'16px',
-                                    'z-index':'10',
-                                    'color':'#ffffff'
-
-                                });
-
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeIn(300);
-                                $('body').css('cursor', 'wait');
-
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                             },
-                            complete: function ()
-                            {
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeOut(300);
-                                $('body').css('cursor', 'default');
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
-                            success: function(data)
-                            {
-                                $('#area').highcharts().series[0].setData(data.changechartdata);
-                                $('#area').highcharts().series[0].update({ name: month+'-'+year});
-                                $('#currentid').text(month+'-'+year);
+                            success: function (data) {
+                                areaId.highcharts().series[0].setData(data.changechartdata);
+                                areaId.highcharts().series[0].update({name: month + '-' + year});
+                                $('#currentid').text(month + '-' + year);
                                 $('#dataofmonth').val(currentdate)
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
 
                             },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeOut(300);
-                                $('body').css('cursor', 'default');
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                var setAjaxComplete = setAjaxCompleteFunction();
                                 alert('Error : ' + errorThrown);
                             }
                         });
                     });
 
-                    $('#nextmonth').click(function($e)
-                    {
+                    $('#nextmonth').click(function ($e) {
                         $e.preventDefault();
-                        var currentdate=new Date($('#dataofmonth').val());
-                        var nowdate=new Date();
+                        var currentdate = new Date($('#dataofmonth').val());
+                        var nowdate = new Date();
                         currentdate.setMonth(currentdate.getMonth() + 1);
-                        currentdate,locale = "en-us",
-                                month = currentdate.toLocaleString(locale, { month: "long" }),
-                                year=currentdate.getFullYear();
-                        if(currentdate<=nowdate)
-                        {
+                        currentdate, locale = "en-us",
+                                month = currentdate.toLocaleString(locale, {month: "long"}),
+                                year = currentdate.getFullYear();
+                        if (currentdate <= nowdate) {
                             $.ajaxSetup({
                                 global: false,
                                 type: "post",
-                                'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth':month+'-'+year}),
+                                'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth': month + '-' + year}),
                                 beforeSend: function () {
-                                    var text='';
-
-                                    if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                                    }
-
-                                    $('#resultLoading').css({
-                                        'width':'100%',
-                                        'height':'100%',
-                                        'position':'fixed',
-                                        'z-index':'10000000',
-                                        'top':'0',
-                                        'left':'0',
-                                        'right':'0',
-                                        'bottom':'0',
-                                        'margin':'auto'
-                                    });
-
-                                    $('#resultLoading .bg').css({
-                                        'background':'#000000',
-                                        'opacity':'0.7',
-                                        'width':'100%',
-                                        'height':'100%',
-                                        'position':'absolute',
-                                        'top':'0'
-                                    });
-
-                                    $('#resultLoading>div:first').css({
-                                        'width': '250px',
-                                        'height':'75px',
-                                        'text-align': 'center',
-                                        'position': 'fixed',
-                                        'top':'0',
-                                        'left':'0',
-                                        'right':'0',
-                                        'bottom':'0',
-                                        'margin':'auto',
-                                        'font-size':'16px',
-                                        'z-index':'10',
-                                        'color':'#ffffff'
-
-                                    });
-
-                                    $('#resultLoading .bg').height('100%');
-                                    $('#resultLoading').fadeIn(300);
-                                    $('body').css('cursor', 'wait');
+                                    var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                                 },
                                 complete: function () {
-                                    $('#resultLoading .bg').height('100%');
-                                    $('#resultLoading').fadeOut(300);
-                                    $('body').css('cursor', 'default');
+                                     var setAjaxComplete = setAjaxCompleteFunction();
                                 }
                             });
                             $.ajax({
-                                success: function(data)
-                                {
-                                    $('#area').highcharts().series[0].setData(data.changechartdata);
-                                    $('#area').highcharts().series[0].update({ name: month+'-'+year});
-                                    $('#currentid').text(month+'-'+year)
+                                success: function (data) {
+                                    areaId.highcharts().series[0].setData(data.changechartdata);
+                                    areaId.highcharts().series[0].update({name: month + '-' + year});
+                                    $('#currentid').text(month + '-' + year)
                                     $('#dataofmonth').val(currentdate)
                                 },
-                                error: function(XMLHttpRequest, textStatus, errorThrown)
-                                {
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
                                     alert('Error : ' + errorThrown);
                                 }
                             });
                         }
-                        else
-                        {
+                        else {
                             $('#spantext').text('Date Exceed...');
                             $('#spantext').show();
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 $('#spantext').fadeOut('fast');
                             }, 4000)
 
                         }
-
-
                     });
                     $('#spantext').hide();
 
-                    $('.yearViewContent').hide();
+                    function setAjaxBeforeSendFunction() {
+                        var text = '';
 
-                    $('.yearView').click(function($e)
-                    {
+                        if ($('body').find('#resultLoading').attr('id') != 'resultLoading') {
+                            $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>' + text + '</div></div><div class="bg"></div></div>');
+                        }
+
+                        $('#resultLoading').css({
+                            'width': '100%',
+                            'height': '100%',
+                            'position': 'fixed',
+                            'z-index': '10000000',
+                            'top': '0',
+                            'left': '0',
+                            'right': '0',
+                            'bottom': '0',
+                            'margin': 'auto'
+                        });
+
+                        $('#resultLoading .bg').css({
+                            'background': '#000000',
+                            'opacity': '0.7',
+                            'width': '100%',
+                            'height': '100%',
+                            'position': 'absolute',
+                            'top': '0'
+                        });
+
+                        $('#resultLoading>div:first').css({
+                            'width': '250px',
+                            'height': '75px',
+                            'text-align': 'center',
+                            'position': 'fixed',
+                            'top': '0',
+                            'left': '0',
+                            'right': '0',
+                            'bottom': '0',
+                            'margin': 'auto',
+                            'font-size': '16px',
+                            'z-index': '10',
+                            'color': '#ffffff'
+                        });
+
+                        $('#resultLoading .bg').height('100%');
+                        $('#resultLoading').fadeIn(300);
+                        $('body').css('cursor', 'wait');
+                    }
+
+                    function setAjaxCompleteFunction() {
+                        $('#resultLoading .bg').height('100%');
+                        $('#resultLoading').fadeOut(300);
+                        $('body').css('cursor', 'default');
+                    }
+
+                    var wholeViewContent = $('.wholeContent');
+                    var yearViewContent = $('.yearViewContent');
+                    var yearView = $('.yearView');
+                    yearViewContent.hide();
+                    yearView.click(function ($e) {
                         $e.preventDefault();
-                        $('.wholeContent').hide();
-                        $('.yearViewContent').show();
-                    })
+                        wholeViewContent.hide();
+                        yearViewContent.show();
+                    });
 
-                    $('.fullYearView').click(function($e)
-                    {
+                    var previousYearView = $('.previousYearViewContent');
+                    var scorePreviousCurrentYear = $('#scorePreviousCurrentYear');
+                    var scoreCurrentYear = $('#scoreCurrentYear');
+                    var fullYearView = $('.fullYearView');
+                    previousYearView.hide();
+                    fullYearView.click(function ($e) {
                         $e.preventDefault();
-                        $('.yearViewContent').hide();
-                        $('.previousYearViewContent').hide();
-                        $('#scorePreviousCurrentYear').val(2016);
-                        $('#scoreCurrentYear').val(2016);
-                        $('.wholeContent').show();
-                    })
+                        yearViewContent.hide();
+                        previousYearView.hide();
+                        scorePreviousCurrentYear.val(2016);
+                        scoreCurrentYear.val(2016);
+                        wholeViewContent.show();
+                    });
 
-                    $('.previousYearViewContent').hide();
-
-                    $('.previousYear').click(function($e)
-                    {
+                    var previousYear = $('.previousYear');
+                    var previousYearShow = $('#previousYearShow');
+                    var previousScorecardTable = $('#previousScorecardTable');
+                    previousYear.click(function ($e) {
                         $e.preventDefault();
                         var data = {
-                            Year : $('#scoreCurrentYear').val()
+                            Year: scoreCurrentYear.val()
                         };
 
-                        $.ajax({
-                            type: "POST",
+                        $.ajaxSetup({
+                            global: false,
                             data: data,
+                            type: "POST",
                             url: " previousYearChange",
-                            success: function(data)
-                            {
-                                $('#previousYearShow').empty();
-                                $('#previousScorecardTable').empty();
-                                $('#previousYearShow').append(data.currentYear);
-                                $('#scorePreviousCurrentYear').val(data.currentYear);
-                                $('#scoreCurrentYear').val(data.currentYear);
-                                $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
-                                $.each(data.yearMonthName, function(i){
-                                    $('<th colspan="2">'+data.yearMonthName[i]+'</th>').appendTo('#previousRowPlace');
-                                });
-                                var inn =0;
-                                {% for kpi in kpi_list %}
-                                $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
-                                $.each(data.yearKpiColorArray, function(j)
-                                {
-                                    var color = data.yearKpiColorArray[j][inn];
-                                    if(color != 'false' && color != '')
-                                    {
-                                        if(color == 'Green')
-                                        {
-                                            $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color == 'Red')
-                                        {
-                                            $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color == 'Yellow')
-                                        {
-                                            $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                    }else
-                                    {
-                                        $('<td class="month"></td>').appendTo('#praviousRowId'+inn);
-                                    }
-
-                                    if(j < data.yearMonthName.length-1)
-                                    {
-                                        var status = data.yearKpiColorArray[j+1][inn];
-
-                                        if(color=='Green' && status=='Green' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Green' && status=='Yellow' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Green' && status=='Red' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Yellow' && status=='Green' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Yellow' && status=='Yellow' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Yellow' && status=='Red' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Red' && status=='Green' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Red' && status=='Yellow' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else if(color=='Red' && status=='Red' )
-                                        {
-                                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                        else
-                                        {
-                                            $('<td class="month_difference"></td>').appendTo('#praviousRowId'+inn);
-                                        }
-                                    }
-                                });
-                                inn++;
-                                {% endfor %}
-                                $('<tr id="avgRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> <strong>Average Score </strong> </td> <td class="weightage"></td> ').appendTo('#previousTableBody');
-                                $.each(data.yearAvgScore, function(avgCount)
-                                {
-                                    $('<td colspan="2">'+data.yearAvgScore[avgCount]+'</td>').appendTo('#avgRowId'+inn);
-                                });
-                                $('.yearViewContent').hide();
-                                $('.previousYearViewContent').show();
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                             },
-                            error: function(XMLHttpRequest, textStatus, errorThrown)
-                            {
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function (data) {
+                                var setYearValue = setYearValueFunction(data);
+                                var createScorecardTable = createScorecardTableFunction(data);
+                                var setMonthName = setMonthNameFunction(data);
+                                var setScorecardTableDetails = setScorecardTableDetailsFunction(data);
+                                yearViewContent.hide();
+                                previousYearView.show();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 alert('Error : ' + errorThrown);
                             }
                         })
                     });
 
-                    $('.nextYear').click(function($e)
-                    {
+                    function setYearValueFunction(data) {
+                        previousYearShow.empty();
+                        previousScorecardTable.empty();
+                        previousYearShow.append(data.currentYear);
+                        scorePreviousCurrentYear.val(data.currentYear);
+                        scoreCurrentYear.val(data.currentYear);
+                    }
+
+                    function createScorecardTableFunction(data) {
+                        $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
+                    }
+
+                    function setMonthNameFunction(data) {
+                        var monthName = data.yearMonthName;
+                        $.each(monthName, function (i) {
+                            $('<th colspan="2">' + monthName[i] + '</th>').appendTo('#previousRowPlace');
+                        });
+                    }
+
+                    function setScorecardTableDetailsFunction(data) {
+                        var kpiNameList = data.kpiNameList;
+                        var inn = 0;
+                        {% for kpi in kpi_list %}
+                            $('<tr id="praviousRowId' + inn + '"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" ' + kpiNameList[inn]['id'] + ' " > ' + kpiNameList[inn]['kpiName'] + ' </a> </td> <td class="weightage asdf">' + kpiNameList[inn]['weightage'] + ' </td> ').appendTo('#previousTableBody');
+                            var yearColorArray = data.yearKpiColorArray;
+                            $.each(yearColorArray, function (j) {
+                                var color = yearColorArray[j][inn];
+                                if (color != 'false' && color != '') {
+                                    var setKpiColor = setKpiColorFunction(color, inn);
+                                }
+                                else {
+                                    $('<td class="month"></td>').appendTo('#praviousRowId' + inn);
+                                }
+
+                                if (j < data.yearMonthName.length - 1) {
+                                    var status = yearColorArray[j + 1][inn];
+                                    var setKpiStatus = setKpiStatusFunction(color, status, inn);
+                                }
+                            });
+                            inn++;
+                        {% endfor %}
+                        $('<tr id="avgRowId' + inn + '"> <td class="kpi_name kpi_name_thtd"> <strong>Average Score </strong> </td> <td class="weightage"><strong>100</strong></td> ').appendTo('#previousTableBody');
+                        var yearAvgScore = data.yearAvgScore;
+                        $.each(yearAvgScore, function (avgCount) {
+                            $('<td colspan="2"><strong>' + yearAvgScore[avgCount] + '</strong></td>').appendTo('#avgRowId' + inn);
+                        });
+                    }
+
+                    function setKpiColorFunction(color, inn) {
+                        if (color == 'Green') {
+                            $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Red') {
+                            $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Yellow') {
+                            $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                    }
+
+                    function setKpiStatusFunction(color, status, inn) {
+                        if (color == 'Green' && status == 'Green') {
+                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Green' && status == 'Yellow') {
+                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Green' && status == 'Red') {
+                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Yellow' && status == 'Green') {
+                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Yellow' && status == 'Yellow') {
+                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Yellow' && status == 'Red') {
+                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Red' && status == 'Green') {
+                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Red' && status == 'Yellow') {
+                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else if (color == 'Red' && status == 'Red') {
+                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        }
+                        else {
+                            $('<td class="month_difference"></td>').appendTo('#praviousRowId' + inn);
+                        }
+                    }
+
+                    var nextYear = $('.nextYear');
+                    nextYear.click(function ($e) {
                         $e.preventDefault();
                         var data = {
-                            Year : $('#scoreCurrentYear').val()
+                            Year: scoreCurrentYear.val()
                         };
-                        if($('#scoreCurrentYear').val()==2016)
-                        {
+                        if (scoreCurrentYear.val() == 2016) {
                             alert('This is the current year');
                         }
-                        else
-                        {
-                            $.ajax({
-                                type: "POST",
+                        else {
+                            $.ajaxSetup({
+                                global: false,
                                 data: data,
+                                type: "POST",
                                 url: " nextYearChange",
-                                success: function(data)
-                                {
-                                    $('#previousYearShow').empty();
-                                    $('#previousScorecardTable').empty();
-                                    $('#previousYearShow').append(data.currentYear);
-                                    $('#scorePreviousCurrentYear').val(data.currentYear);
-                                    $('#scoreCurrentYear').val(data.currentYear);
-
-                                    $('<table class="table table-striped-2 year_view_score_card_row"><thead><tr id="previousRowPlace"><th class="kpi_name_thtd"> KPI </th> <th>Weightage</th></tr> </thead> <tbody id="previousTableBody"> </tbody> </table>').appendTo('#previousScorecardTable');
-                                    $.each(data.yearMonthName, function(i){
-                                        $('<th colspan="2">'+data.yearMonthName[i]+'</th>').appendTo('#previousRowPlace');
-                                    });
-                                    var inn =0;
-                                    {% for kpi in kpi_list %}
-                                    $('<tr id="praviousRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id=" '+data.kpiNameList[inn]['id']+' " > '+data.kpiNameList[inn]['kpiName']+' </a> </td> <td class="weightage asdf">'+data.kpiNameList[inn]['weightage']+' </td> ').appendTo('#previousTableBody');
-                                    $.each(data.yearKpiColorArray, function(j)
-                                    {
-                                        var color = data.yearKpiColorArray[j][inn];
-                                        if(color != 'false' && color != '')
-                                        {
-                                            if(color == 'Green')
-                                            {
-                                                $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color == 'Red')
-                                            {
-                                                $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color == 'Yellow')
-                                            {
-                                                $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                        }else
-                                        {
-                                            $('<td class="month"></td>').appendTo('#praviousRowId'+inn);
-                                        }
-
-                                        if(j < data.yearMonthName.length-1)
-                                        {
-                                            var status = data.yearKpiColorArray[j+1][inn];
-
-                                            if(color=='Green' && status=='Green' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Green' && status=='Yellow' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Green' && status=='Red' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Yellow' && status=='Green' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Yellow' && status=='Yellow' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Yellow' && status=='Red' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Red' && status=='Green' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Red' && status=='Yellow' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else if(color=='Red' && status=='Red' )
-                                            {
-                                                $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                            else
-                                            {
-                                                $('<td class="month_difference"></td>').appendTo('#praviousRowId'+inn);
-                                            }
-                                        }
-                                    });
-                                    inn++;
-                                    {% endfor %}
-                                    $('<tr id="avgRowId'+inn+'"> <td class="kpi_name kpi_name_thtd"> <strong>Average Score </strong> </td> <td class="weightage"></td> ').appendTo('#previousTableBody');
-                                    $.each(data.yearAvgScore, function(avgCount)
-                                    {
-                                        $('<td colspan="2">'+data.yearAvgScore[avgCount]+'</td>').appendTo('#avgRowId'+inn);
-                                    });
-                                    $('.yearViewContent').hide();
-                                    $('.previousYearViewContent').show();
+                                beforeSend: function () {
+                                    var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                                 },
-                                error: function(XMLHttpRequest, textStatus, errorThrown)
-                                {
+                                complete: function () {
+                                    var setAjaxComplete = setAjaxCompleteFunction();
+                                }
+                            });
+                            $.ajax({
+                                success: function (data) {
+                                    var setYearValue = setYearValueFunction(data);
+                                    var createScorecardTable = createScorecardTableFunction(data);
+                                    var setMonthName = setMonthNameFunction(data);
+                                    var setScorecardTableDetails = setScorecardTableDetailsFunction(data);
+                                    yearViewContent.hide();
+                                    previousYearView.show();
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
                                     alert('Error : ' + errorThrown);
                                 }
                             })
@@ -488,11 +376,6 @@
                                 </th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                {#<td>Year-2016</td>#}
-                            </tr>
-                            </tbody>
                         </table>
 
                         <div class="table_container_dashboard">
@@ -519,7 +402,9 @@
                                 {% for kpi in kpi_list %}
 
                                     <tr>
-                                        <td class="kpi_name_td kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                                        <td class="kpi_name_td kpi_name_thtd"><a
+                                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}"
+                                                    class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
                                         <td class="weightage_td">{{ kpi.weightage }}</td>
                                         {% set j=0 %}
                                         {% for kpiColor in kpicolorarray %}
@@ -564,7 +449,7 @@
                                 {% set i1=0 %}
                                 <tr>
                                     <td class="kpi_name_td kpi_name_thtd"><strong>Average score</strong></td>
-                                    <td class="weightage_td">100</td>
+                                    <td class="weightage_td"><strong>100</strong></td>
                                     {% for avg in kpiAverageScore %}
                                         <td>
                                             <strong>{{ avg }}</strong>
@@ -592,8 +477,6 @@
                                 <input type="hidden" id="dataofmonth" name="dataofmonth">
                                 <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                             </div>
-
-
                         </div>
                         <div id="area" class="chart large_chart">
                         </div>
@@ -609,7 +492,9 @@
                     <div class="ship_name">
                         <div class="dashboard_ship_list">
                             <ul>   {% for shipobject in allships %}
-                                    <li><a href="{{ path('listallkpiforship_ranking', { 'shipid': shipobject.id,'year': currentyear }) }}">{{ shipobject.shipName }}</a></li>
+                                    <li>
+                                        <a href="{{ path('listallkpiforship_ranking', { 'shipid': shipobject.id,'year': currentyear }) }}">{{ shipobject.shipName }}</a>
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -651,8 +536,9 @@
                                         <th>Management Performance
                                             <div class="year_view_btn">
                                                 <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
-                                                <a href=""><span class="item yearView fullYearView">{{ currentYear }}</span></a>
-                                                <a href="#"  class="right-arrow ss-navigateright nextYear">&nbsp;</a>
+                                                <a href=""><span
+                                                            class="item yearView fullYearView">{{ currentYear }}</span></a>
+                                                <a href="#" class="right-arrow ss-navigateright nextYear">&nbsp;</a>
                                                 <input type="hidden" value="{{ currentYear }}" id="scoreCurrentYear">
                                             </div>
                                         </th>
@@ -674,7 +560,9 @@
                                     {% set i=0 %}
                                     {% for kpi in kpi_list %}
                                         <tr>
-                                            <td class="kpi_name kpi_name_thtd"><a href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}" class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                                            <td class="kpi_name kpi_name_thtd"><a
+                                                        href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}"
+                                                        class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
                                             <td class="weightage">{{ kpi.weightage }}</td>
                                             {% set j=0 %}
                                             {% for monthName in yearMonthName %}
@@ -720,11 +608,11 @@
                                     {% endfor %}
                                     <tr>
                                         <td class="kpi_name_thtd"><strong>Average Score</strong></td>
-                                        <td></td>
+                                        <td><strong>100</strong></td>
                                         {% set colCount=0 %}
                                         {% for avgScore in yearAvgScore %}
                                             {% if colCount != yearMonthName|length-1 %}
-                                                <td colspan="2">{{ avgScore }}</td>
+                                                <td colspan="2"><strong>{{ avgScore }}</strong></td>
                                             {% endif %}
                                             {% if colCount == yearMonthName|length-1 %}
                                                 <td>{{ avgScore }}</td>
@@ -754,7 +642,8 @@
                                         <th>Management Performance
                                             <div class="year_view_btn">
                                                 <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
-                                                <a href=""><span id="previousYearShow" class="item fullYearView"> </span></a>
+                                                <a href=""><span id="previousYearShow"
+                                                                 class="item fullYearView"> </span></a>
                                                 <a href="#" class="right-arrow ss-navigateright nextYear ">&nbsp;</a>
                                                 <input type="hidden" value="" id="scorePreviousCurrentYear">
                                             </div>
