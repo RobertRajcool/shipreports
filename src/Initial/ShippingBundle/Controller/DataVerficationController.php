@@ -3441,9 +3441,38 @@ class DataVerficationController extends Controller
      */
     public function dbBackupAction(Request $request)
     {
-        return $this->render('InitialShippingBundle:DataVerficationRanking:backup.html.twig', array());
+        $tables=false; $backup_name=false; $replacements=array('OLD_DOMAIN.com','NEW_DOMAIN.com');
+        set_time_limit(3000);
+        $em = $this->getDoctrine()->getManager();
+        $connection=$em->getConnection();
+        $refConn = new \ReflectionObject($connection);
+        $refParams = $refConn->getProperty('_params');
+        $refParams->setAccessible('public');
+        $params = $refParams->getValue($connection);
+
+        $filelocation=$this->container->getParameter('kernel.root_dir') . '/../web/sqlfiles';
+        if (! is_dir($filelocation)) {
+            mkdir($filelocation);
+        }
+        $outfile_filepath=$filelocation.'/'.$params['dbname'].'.sql';
+        if(file_exists($outfile_filepath) )
+        {
+            unlink($outfile_filepath);
+        }
+
+        $command = 'mysqldump -u'.$params['user'].' -p'.$params['password'].' '.$params['dbname'].'  > '.$outfile_filepath;
+        system($command);
+        $content = file_get_contents($outfile_filepath);
+        $response = new Response();
+        $response->setContent($content);
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: attachment; filename=\"".$params['dbname'].".sql\"");
+        return $response;
+
 
     }
+
 
 }
 

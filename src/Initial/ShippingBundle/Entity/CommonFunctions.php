@@ -73,14 +73,15 @@ class CommonFunctions
         return $query->getResult();
     }
 
-    public function export_Database($host,$user,$pass,$name,$tables=false, $backup_name=false, $replacements=array('OLD_DOMAIN.com','NEW_DOMAIN.com'))
+    public function export_Database()
     {
         set_time_limit(3000);
-        $em=
-        $mysql = new mysql($host,$user,$pass,$name);
-        $mysql->select_db($name); $mysql->query("SET NAMES 'utf8'");
-        $queryTables = $mysql->query('SHOW TABLES');
-        while($row = $queryTables->fetch_row())
+        $em = $this->getDoctrine()->getManager();
+        $connection = $em->getConnection();
+        $statement = $connection->prepare("SHOW TABLES");
+        $statement->execute();
+        $results = $statement->fetchAll();
+        while($row = $statement->fetchAll())
         {
             $target_tables[] = $row[0];
         }
