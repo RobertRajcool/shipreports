@@ -206,7 +206,11 @@
                         description : editElementDescription.val(),
                         cellName : editCellName.val(),
                         cellDetails : editCellDetails.val(),
-                        Id : editElementId.val()
+                        Id : editElementId.val(),
+                        activeMonth : editActiveMonth.val(),
+                        activeYear : editActiveYear.val(),
+                        endMonth : editEndMonth.val(),
+                        endYear : editEndYear.val()
                     };
                     var emptyDetails = emptyDetailsFunction(data);
                     $.ajax({

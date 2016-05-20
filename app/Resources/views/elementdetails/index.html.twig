@@ -5,13 +5,12 @@
     {% block javascripts %}
 
         {% javascripts
-            '@AppBundle/Resources/public/js/AAA.js'
-        %}
+        '@AppBundle/Resources/public/js/AAA.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
         <script type="text/javascript">
-            $(document).ready(function() {
+            $(document).ready(function () {
                 var boxIcon = $('.box_icon');
                 var listIcon = $('.list_icon');
                 var gridView = $('#element_grid_view');
@@ -26,7 +25,7 @@
                 listView.hide();
                 editElement.hide();
 
-                boxIcon.click(function($e) {
+                boxIcon.click(function ($e) {
                     $e.preventDefault();
                     listView.hide();
                     showElement.hide();
@@ -37,7 +36,7 @@
                     createView.show();
                 });
 
-                listIcon.click(function($e){
+                listIcon.click(function ($e) {
                     $e.preventDefault();
                     gridView.hide();
                     showElement.hide();
@@ -49,7 +48,7 @@
                 });
 
                 var editButton = $('.edit_element_button');
-                editButton.live("click",function($e) {
+                editButton.live("click", function ($e) {
                     $e.preventDefault();
                     showElement.hide();
                     createView.hide();
@@ -57,7 +56,7 @@
                 });
 
                 var addButton = $('.add_btn');
-                addButton.live("click",function($e) {
+                addButton.live("click", function ($e) {
                     $e.preventDefault();
                     listView.hide();
                     boxIcon.hide();
@@ -68,7 +67,7 @@
                 });
 
                 var cancelButton = $('.cancel_btn');
-                cancelButton.live("click",function($e) {
+                cancelButton.live("click", function ($e) {
                     $e.preventDefault();
                     boxIcon.hide();
                     listIcon.show();
@@ -77,7 +76,7 @@
                 });
 
                 var editCancelButton = $('.edit_cancel_button');
-                editCancelButton.live("click",function($e) {
+                editCancelButton.live("click", function ($e) {
                     $e.preventDefault();
                     editElement.hide();
                     boxIcon.hide();
@@ -88,9 +87,9 @@
 
                 var count = 0;
                 var num = 0;
-                var rule_value =0;
+                var rule_value = 0;
                 var elementList = $('.element_class');
-                elementList.live("click",function($e) {
+                elementList.live("click", function ($e) {
                     $e.preventDefault();
                     createView.hide();
                     boxIcon.hide();
@@ -98,9 +97,9 @@
                     listIcon.show();
                     count++;
                     var currentId = $(this).attr('id');
-                    var data = {Id : currentId};
+                    var data = {Id: currentId};
 
-                    if(count>1) {
+                    if (count > 1) {
                         showElement.hide();
                         var emptyDetails = emptyDetailsFunction(data);
                     }
@@ -108,18 +107,18 @@
                         type: "POST",
                         data: data,
                         url: "ajax_show",
-                        success: function(data) {
+                        success: function (data) {
                             var monthNames = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
                             var active_date = new Date(data.element_detail[0].activatedDate.date);
                             var end_date = new Date(data.element_detail[0].endDate.date);
 
-                            var setShowValue = setShowValueFunction(data,monthNames,active_date,end_date);
-                            var setEditValue = setEditValueFunction(data,active_date,end_date);
+                            var setShowValue = setShowValueFunction(data, monthNames, active_date, end_date);
+                            var setEditValue = setEditValueFunction(data, active_date, end_date);
                             var setKpiName = setKpiNameFunction(data);
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
@@ -150,7 +149,7 @@
                     endYear.empty();
                 }
 
-                function setShowValueFunction(data,monthNames,active_date,end_date) {
+                function setShowValueFunction(data, monthNames, active_date, end_date) {
                     kpiName.append(data.kpi_name[0].kpiName);
                     elementName.append(data.element_detail[0].elementName);
                     elementDescription.append(data.element_detail[0].description);
@@ -175,7 +174,7 @@
                 var editEndMonth = $('.end_month');
                 var editEndYear = $('.end_year');
 
-                function setEditValueFunction(data,active_date,end_date) {
+                function setEditValueFunction(data, active_date, end_date) {
                     editElementName.val(data.element_detail[0].elementName);
                     editElementDescription.val(data.element_detail[0].description);
                     editElementWeight.val(data.element_detail[0].weightage);
@@ -189,31 +188,35 @@
                 }
 
                 function setKpiNameFunction(data) {
-                    $.each(data.kpi_name_array, function(index){
+                    $.each(data.kpi_name_array, function (index) {
                         var kpi_option = $('<option>').append(data.kpi_name_array[index]['kpiName']).val(data.kpi_name_array[index]['id']).appendTo('.edit_kpiName');
                     });
                     editKpiName.val(data.kpi_name[0].id);
                 }
 
                 var editSubmitButton = $('.edit_element_submit_button');
-                editSubmitButton.live("click",function($e) {
+                editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
-                    var i=0;
+                    var i = 0;
                     var data = {
-                        kpiDetailsId : editKpiName.val(),
-                        elementName : editElementName.val(),
-                        weightage : editElementWeight.val(),
-                        description : editElementDescription.val(),
-                        cellName : editCellName.val(),
-                        cellDetails : editCellDetails.val(),
-                        Id : editElementId.val()
+                        kpiDetailsId: editKpiName.val(),
+                        elementName: editElementName.val(),
+                        weightage: editElementWeight.val(),
+                        description: editElementDescription.val(),
+                        cellName: editCellName.val(),
+                        cellDetails: editCellDetails.val(),
+                        Id: editElementId.val(),
+                        activeMonth : editActiveMonth.val(),
+                        activeYear : editActiveYear.val(),
+                        endMonth : editEndMonth.val(),
+                        endYear : editEndYear.val()
                     };
                     var emptyDetails = emptyDetailsFunction(data);
                     $.ajax({
                         type: "POST",
                         data: data,
                         url: "ajax_element_edit",
-                        success: function(data) {
+                        success: function (data) {
                             editElement.hide();
                             var monthNames = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -221,12 +224,12 @@
                             var active_date = new Date(data.element_detail[0].activatedDate.date);
                             var end_date = new Date(data.element_detail[0].endDate.date);
 
-                            var setShowValue = setShowValueFunction(data,monthNames,active_date,end_date);
-                            var setEditValue = setEditValueFunction(data,active_date,end_date);
+                            var setShowValue = setShowValueFunction(data, monthNames, active_date, end_date);
+                            var setEditValue = setEditValueFunction(data, active_date, end_date);
                             var setKpiName = setKpiNameFunction(data);
                             showElement.show();
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
@@ -234,44 +237,44 @@
 
                 var createWeight = $('#weight-id');
                 var kpiId = $('#kpi_id');
-                createWeight.change(function($e) {
+                createWeight.change(function ($e) {
                     $e.preventDefault();
                     var currentId = $(this).val();
                     var data = {
-                        elementId:editElementId.val(),
-                        kpiDetailsId :editKpiName.val(),
-                        weightage : currentId,
-                        status : 1
+                        elementId: editElementId.val(),
+                        kpiDetailsId: editKpiName.val(),
+                        weightage: currentId,
+                        status: 1
                     };
                     var checkElementWeight = checkElementWeightFunction(data);
                 });
 
                 var editWeight = $('#edit-weight-id');
-                editWeight.change(function($e) {
+                editWeight.change(function ($e) {
                     $e.preventDefault();
                     var currentId = $(this).val();
                     var data = {
-                        elementId:editElementId.val(),
-                        kpiDetailsId :editKpiName.val(),
-                        weightage : currentId,
-                        status : 0
+                        elementId: editElementId.val(),
+                        kpiDetailsId: editKpiName.val(),
+                        weightage: currentId,
+                        status: 0
                     };
                     var checkElementWeight = checkElementWeightFunction(data);
                 });
 
                 function checkElementWeightFunction(data) {
-                    if(kpiId.val() != null) {
+                    if (kpiId.val() != null) {
                         $.ajax({
                             type: "POST",
                             data: data,
                             url: "element_ajax_weightage",
-                            success: function(data) {
-                                if(data.Weightage>100) {
+                            success: function (data) {
+                                if (data.Weightage > 100) {
                                     var weight = data.Weightage - 100;
-                                    alert('Weightage value exceeded - '+weight);
+                                    alert('Weightage value exceeded - ' + weight);
                                 }
                             },
-                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 alert('Error : ' + errorThrown);
                             }
                         })
@@ -289,16 +292,18 @@
                 <div class="add_user_btn_main">
                     <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Element</a></span>
                     <span class="user_btn_main grid_list_main">
-                        <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
-                        <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+                        <span class="active"><a href="" class="grid_list_icon ss-grid box_icon">&nbsp;</a></span>
+                        <span><a href="" class="grid_list_icon ss-rows list_icon">&nbsp;</a></span>
                     </span>
                 </div>
-                <div class="users_list_main"><span>Element ({{ element_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
+                <div class="users_list_main"><span>Element ({{ element_count }})</span> <span
+                            class="show_dropdown_icon">&nbsp;</span></div>
                 <div class="users_list_grid_main">
                     {% for elementDetail in elementDetails %}
                         <div class="users_list_grid">
                             <span class="users_name_row">
-                                <span class="name"><a href="" class="element_class" id={{ elementDetail.id }}>{{ elementDetail.elementName }}</a> </span>
+                                <span class="name"><a href="" class="element_class"
+                                                      id={{ elementDetail.id }}>{{ elementDetail.elementName }}</a> </span>
                                 <span class="text">{{ elementDetail.kpiDetailsId }}</span>
                             </span>
                         </div>
@@ -315,8 +320,8 @@
                     <div class="add_user_btn_main">
                         <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add Element</a></span>
                         <span class="user_btn_main grid_list_main">
-                            <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
-                            <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+                            <span class="active"><a href="" class="grid_list_icon ss-grid box_icon">&nbsp;</a></span>
+                            <span><a href="" class="grid_list_icon ss-rows list_icon">&nbsp;</a></span>
                          </span>
                     </div>
                     <div class="spacing"></div>
@@ -408,7 +413,8 @@
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
                     <h2>Add Element</h2>
-                    <form class="form-horizontal no-style create-form" action="{{ path('elementdetails_new1') }}" method="post">
+                    <form class="form-horizontal no-style create-form" action="{{ path('elementdetails_new1') }}"
+                          method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">Basic details</legend>
@@ -440,7 +446,8 @@
                                     <label class="control-label col-xs-4">Valid</label>
                                     <div class="col-xs-8">
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
+                                            <select class="add_rule_basic_date_drop" name="activeMonth"
+                                                    class="full-width-select">
                                                 <option selected="selected">--</option>
                                                 <option value="1">Jan</option>
                                                 <option value="2">Feb</option>
@@ -457,7 +464,8 @@
                                             </select>
                                         </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="activeyear" class="full-width-select">
+                                            <select class="add_rule_basic_year_drop" name="activeyear"
+                                                    class="full-width-select">
                                                 <option selected="selected">--</option>
                                                 {% for i in 2000..2020 %}
                                                     <option value={{ i }}>{{ i }}</option>
@@ -466,7 +474,8 @@
                                         </span>
                                         To
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
+                                            <select class="add_rule_basic_date_drop" name="endMonth"
+                                                    class="full-width-select">
                                                 <option selected="selected">--</option>
                                                 <option value="1">Jan</option>
                                                 <option value="2">Feb</option>
@@ -483,7 +492,8 @@
                                             </select>
                                         </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="endYear" class="full-width-select">
+                                            <select class="add_rule_basic_year_drop" name="endYear"
+                                                    class="full-width-select">
                                                 <option selected="selected">--</option>
                                                 {% for i in 2000..2020 %}
                                                     <option value={{ i }}>{{ i }}</option>
@@ -510,8 +520,8 @@
                             </fieldset>#}
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn" id="get_value"  type="submit">Add</button>
-                            <button class="cancel_btn" type="reset" >Reset</button>
+                            <button class="submit_btn" id="get_value" type="submit">Add</button>
+                            <button class="cancel_btn" type="reset">Reset</button>
                         </div>
                     </form>
                 </div>
@@ -520,7 +530,7 @@
         </section>
     </div>
 
-    <div class = "show_element">
+    <div class="show_element">
         <section>
             <div class="col-sm-11">
                 <div class="view_new_user_screen_2 form_view_screen">
@@ -549,21 +559,24 @@
                         <div class="form_view">
                             <label class="form_labell">Valid :</label>
                             <label class="form_input">
-                                <label><span class="element_activeDate_month "></span>-<sapn class=" element_activeDate_year"></sapn> <strong> To </strong> <span class=" element_endDate_month "></span>-<span class="  element_endDate_year"></span></label>
+                                <label><span class="element_activeDate_month "></span>-
+                                    <sapn class=" element_activeDate_year"></sapn>
+                                    <strong> To </strong> <span class=" element_endDate_month "></span>-<span
+                                            class="  element_endDate_year"></span></label>
                             </label>
                         </div>
                     </fieldset>
-                   {# <fieldset class="fieldset_box">
-                        <legend class="legend_name">Excel details</legend>
-                        <div class="form_view">
-                            <label class="form_labell">Cell name :</label>
-                            <label class="form_input element_cellName"> </label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell">Cell detail :</label>
-                            <label class="form_input element_cellDetail"> </label>
-                        </div>
-                    </fieldset>#}
+                    {# <fieldset class="fieldset_box">
+                         <legend class="legend_name">Excel details</legend>
+                         <div class="form_view">
+                             <label class="form_labell">Cell name :</label>
+                             <label class="form_input element_cellName"> </label>
+                         </div>
+                         <div class="form_view">
+                             <label class="form_labell">Cell detail :</label>
+                             <label class="form_input element_cellDetail"> </label>
+                         </div>
+                     </fieldset>#}
                 </div>
             </div>
         </section>
@@ -598,7 +611,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Weightage</label>
                                     <div class="col-xs-8">
-                                        <input type="text" class="edit_element_weightage" id="edit-weight-id" value="" placeholder="">
+                                        <input type="text" class="edit_element_weightage" id="edit-weight-id" value=""
+                                               placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group">

@@ -9,15 +9,14 @@
         '@AppBundle/Resources/public/js/demo.js'
         '@AppBundle/Resources/public/js/actions-builder.js'
         '@AppBundle/Resources/public/js/Element_conditions-builder.js'
-        '@AppBundle/Resources/public/js/rules.js'
-        %}
+        '@AppBundle/Resources/public/js/rules.js' %}
 
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
 
         <script type="text/javascript">
-            $(document).ready(function(){
+            $(document).ready(function () {
                 $('.add').remove();
                 $('.add-condition').remove();
                 $('.all-any-none').remove();
@@ -29,7 +28,7 @@
                 var count = 0;
                 var num = 0;
 
-                $('.add-rule').live('click',function(){
+                $('.add-rule').live('click', function () {
                     count++;
                     $('.remove').remove();
                     $('.remove-condition').remove();
@@ -37,57 +36,44 @@
                     $('.operator').remove();
                     $('.value').remove();
                     $('#row_id').show();
-                    var data = {Id : $('#id').val()};
+                    var data = {Id: $('#id').val()};
                     var condition_text = "";
 
                     $.ajax({
                         type: "POST",
-                        data:data,
+                        data: data,
                         url: "rule1",
-                        success: function(data)
-                        {
+                        success: function (data) {
 
-                            if(count==1)
-                            {
-                                $.each(data.Rule_Array, function(i)
-                                {
-                                    var rule_obj = JSON.parse( data.Rule_Array[i].rules);
-                                    $.each(rule_obj.conditions.all, function(j)
-                                    {
-                                        if(i==num)
-                                        {
-                                            if(rule_obj.conditions.all[j].operator=='equalTo')
-                                            {
-                                                rule_obj.conditions.all[j].operator='=';
+                            if (count == 1) {
+                                $.each(data.Rule_Array, function (i) {
+                                    var rule_obj = JSON.parse(data.Rule_Array[i].rules);
+                                    $.each(rule_obj.conditions.all, function (j) {
+                                        if (i == num) {
+                                            if (rule_obj.conditions.all[j].operator == 'equalTo') {
+                                                rule_obj.conditions.all[j].operator = '=';
                                             }
-                                            else if(rule_obj.conditions.all[j].operator=='notEqualTo')
-                                            {
-                                                rule_obj.conditions.all[j].operator='!=';
+                                            else if (rule_obj.conditions.all[j].operator == 'notEqualTo') {
+                                                rule_obj.conditions.all[j].operator = '!=';
                                             }
-                                            else if(rule_obj.conditions.all[j].operator=='greaterThan')
-                                            {
-                                                rule_obj.conditions.all[j].operator='>';
+                                            else if (rule_obj.conditions.all[j].operator == 'greaterThan') {
+                                                rule_obj.conditions.all[j].operator = '>';
                                             }
-                                            else if(rule_obj.conditions.all[j].operator=='greaterThanEqual')
-                                            {
-                                                rule_obj.conditions.all[j].operator='>=';
+                                            else if (rule_obj.conditions.all[j].operator == 'greaterThanEqual') {
+                                                rule_obj.conditions.all[j].operator = '>=';
                                             }
-                                            else if(rule_obj.conditions.all[j].operator=='lessThan')
-                                            {
-                                                rule_obj.conditions.all[j].operator='<';
+                                            else if (rule_obj.conditions.all[j].operator == 'lessThan') {
+                                                rule_obj.conditions.all[j].operator = '<';
                                             }
-                                            else if(rule_obj.conditions.all[j].operator=='lessThanEqual')
-                                            {
-                                                rule_obj.conditions.all[j].operator='<=';
+                                            else if (rule_obj.conditions.all[j].operator == 'lessThanEqual') {
+                                                rule_obj.conditions.all[j].operator = '<=';
                                             }
-                                            var condition_text_one =rule_obj.conditions.all[j].operator+rule_obj.conditions.all[j].value;
-                                            if(j==0)
-                                            {
+                                            var condition_text_one = rule_obj.conditions.all[j].operator + rule_obj.conditions.all[j].value;
+                                            if (j == 0) {
                                                 condition_text = condition_text_one;
                                             }
-                                            if(j>0)
-                                            {
-                                                condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
+                                            if (j > 0) {
+                                                condition_text = condition_text + '   ' + '&&' + '   ' + condition_text_one;
                                             }
                                         }
                                     });
@@ -97,13 +83,16 @@
                                     ).appendTo('#rule-table');
                                     num++;
                                     var rule_string = JSON.stringify(rule_obj);
-                                    $('#rule_obj_text').append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(rule_string));
+                                    $('#rule_obj_text').append($('<input>').attr({
+                                        'type': 'hidden',
+                                        'name': 'rule_name[' + i + ']',
+                                        'id': 'rule_obj_text-' + i + ''
+                                    }).val(rule_string));
                                     $('#rule_obj_text').append($('<br>'))
                                 });
                             }
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
