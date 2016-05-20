@@ -281,7 +281,7 @@
                                     {
                                         var dataObj = JSON.stringify(listelemnt.datetime);
                                         var jsonobject=JSON.parse(dataObj);
-                                        var myDate = new Date(jsonobject.date);
+                                        var myDate = new Date(jsonobject.date.replace(/-/g,"/"));
                                         var d = myDate,
                                                 dformat = [ (d.getMonth()+1).padLeft(),
                                                             d.getDate().padLeft(),
