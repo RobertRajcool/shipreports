@@ -112,6 +112,7 @@
                     $('.show_view').show();
                     $('.edit_view').hide();
 
+
                 });
 
 
@@ -339,8 +340,8 @@
 
                                 <th>Username</th>
                                 <th>Email id</th>
+                                <th>Mobile</th>
                                 <th> Roles</th>
-
                             </tr>
                             </thead>
                             <tbody>
@@ -349,6 +350,7 @@
 
                                     <td>{{ listofuser.username }}</td>
                                     <td>{{ listofuser.email }}</td>
+                                    <td>{{ listofuser.mobile }}</td>
                                     <td>{{ listofuser.roles[0] }}</td>
                                     {# <td>
                                          <a href="{{ path('mycontroller', { 'id': listofuser.id }) }}">Edit</a>
