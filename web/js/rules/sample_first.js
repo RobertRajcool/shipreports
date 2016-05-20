@@ -50,7 +50,6 @@ $(document).ready(function(){
         return '<input type = "hidden" id="rules-id_'+j+'" name="rules-'+j+'">'
     }
 
-
     var k =1;
     $('.add-condition').live("click", function () {
         $('.all-any-none').hide();

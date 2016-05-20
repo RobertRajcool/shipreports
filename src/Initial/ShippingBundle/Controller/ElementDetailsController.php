@@ -368,6 +368,18 @@ class ElementDetailsController extends Controller
         $description = $request->request->get('description');
         $cellName = $request->request->get('cellName');
         $cellDetails = $request->request->get('cellDetails');
+        $activeMonth = $request->request->get('activeMonth');
+        $integerActiveMonth = (int)$activeMonth+1;
+        $activeYear = $request->request->get('activeYear');
+        $endMonth = $request->request->get('endMonth');
+        $endYear = $request->request->get('endYear');
+        $integerEndMonth = (int)$endMonth+1;
+        $activeMonthDate = $activeYear .'-'. $integerActiveMonth .'-'. '01';
+        $activeMonthDateObject = new \DateTime($activeMonthDate);
+        $activeMonthDateObject->modify("last day of this month");
+        $endMonthDate = $endYear .'-'. $integerEndMonth .'-'. '01';
+        $endMonthDateObject = new \DateTime($endMonthDate);
+        $endMonthDateObject->modify("last day of this month");
 
         $em = $this->getDoctrine()->getManager();
 
@@ -381,6 +393,8 @@ class ElementDetailsController extends Controller
         $entity->setWeightage($weightage);
         $entity->setCellName($cellName);
         $entity->setCellDetails($cellDetails);
+        $entity->setActivatedDate($activeMonthDateObject);
+        $entity->setEndDate($endMonthDateObject);
         $em->flush();
 
         $show_response = $this->ajax_showAction($request,'hi');
