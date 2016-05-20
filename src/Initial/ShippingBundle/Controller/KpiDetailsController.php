@@ -246,6 +246,7 @@ class KpiDetailsController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        $id = 0;
         for($i=0;$i<$val;$i++)
         {
             $kpidetails = new KpiDetails();
@@ -260,8 +261,7 @@ class KpiDetailsController extends Controller
             $em->persist($kpidetails);
             $em->flush();
 
-            if($i==0)
-            {
+            if($i==0) {
                 $id = $kpidetails->getId();
             }
         }
