@@ -508,7 +508,7 @@
                 {% for element in listofelement %}
                     {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
                     <tr>
-                        <td class="kpi_name_thtd">{{ element.elementName }}></td>
+                        <td class="kpi_name_thtd">{{ element.elementName }}</td>
                         <td>{{ element.weightage }}</td>
                         {% for j in 0..countmonth1 %}
                             <td>
