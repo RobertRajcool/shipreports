@@ -75,7 +75,7 @@ class ElementDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="Weightage", type="string", length=50)
+     * @ORM\Column(name="Weightage", type="integer", length=50)
      */
     private $weightage;
 
