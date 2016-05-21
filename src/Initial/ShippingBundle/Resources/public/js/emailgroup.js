@@ -35,7 +35,8 @@ $(document).ready(function()
             var dotpos = email.lastIndexOf(".");
             if (atpos<1 || dotpos<atpos+2 || dotpos+2>=email.length)
             {
-                alert("Not a valid e-mail address");
+
+                jAlert('', "Not a valid e-mail address");
 
             }
             else
@@ -110,12 +111,12 @@ $(document).ready(function()
                         $('#addgroupidhtml').val('')
                         $('#groupid').val('');
                         $('#inputforemailid').text('');
-                        alert(data.savemsg);
+                        jAlert('', data.savemsg);
 
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown)
                     {
-                        alert('Error : ' + errorThrown);
+                        window.location.href = 'http://shipreports/login';
                     }
                 });
             }
@@ -175,7 +176,7 @@ $(document).ready(function()
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown)
                 {
-                    alert('Error : ' + errorThrown);
+                    window.location.href = 'http://shipreports/login';
                 }
             });
 
@@ -227,8 +228,8 @@ $(document).ready(function()
                         $('#addgroupidhtml').val('')
                         $('#groupid').val('');
                         $('#inputforemailid').text('');
-                        alert(data.updatemsg);
 
+                        jAlert('', data.updatemsg);
                     },
                     error: function (XMLHttpRequest, textStatus, errorThrown) {
                         window.location.href = 'http://shipreports/login';
@@ -263,7 +264,7 @@ $(document).ready(function()
 
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert('Error : ' + errorThrown);
+                    window.location.href = 'http://shipreports/login';
                 }
             });
 
@@ -315,7 +316,7 @@ $(document).ready(function()
 
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert('Error : ' + errorThrown);
+                    window.location.href = 'http://shipreports/login';
                 }
             });
         }
