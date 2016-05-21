@@ -154,6 +154,7 @@ class RankingKpiDetailsController extends Controller
         $new_date1=new \DateTime($monthtostring1);
         $em = $this->getDoctrine()->getManager();
 
+        $id = 0;
         for($i=0;$i<$val;$i++)
         {
             $kpidetails = new RankingKpiDetails();
@@ -168,8 +169,7 @@ class RankingKpiDetailsController extends Controller
             $em->persist($kpidetails);
             $em->flush();
 
-            if($i==0)
-            {
+            if($i==0) {
                 $id = $kpidetails->getId();
             }
         }

@@ -106,10 +106,19 @@
 
                 function checkKpiWeightFunction(data) {
                     if(createWeight.val() != null) {
-                        $.ajax({
+                        $.ajaxSetup({
+                            global: false,
                             type: "POST",
                             data: data,
                             url: "kpi_ajax_weightage",
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
                             success: function(data) {
                                 if(data.Weightage>100) {
                                     var weight = data.Weightage - 100;
@@ -156,10 +165,19 @@
                     }
                     var currentId = $(this).attr('id');
                     var data = {Id : currentId};
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
                         url: "kpi_ajax_show",
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data){
                             ruleDiv.hide();
                             var result = successFunction(data);
@@ -251,7 +269,7 @@
                     showKpi.show();
                 }
 
-                function findColorFunction(rule_obj){
+                function findColorFunction(rule_obj) {
                     if(rule_obj.actions.value=="Green"){
                         var $trGreen = $('<tr>').attr({'id':'row_id-'+i}).append(
                                 $('<td>').text(condition_text),
@@ -311,40 +329,37 @@
                     }
                     return operator;
                 }
-                editButton.click(function($e){
+                editButton.click(function($e) {
                     $e.preventDefault();
                     showKpi.hide();
                     editKpi.show();
                     ruleEditPlace.hide();
                     $('.check').attr('checked',true);
                 });
-                editCancelButton.click(function($e){
+                editCancelButton.click(function($e) {
                     $e.preventDefault();
                     editKpi.hide();
                     showKpi.show();
                 });
 
-                $('#editShipId').live("click",function(){
+                $('#editShipId').live("click",function() {
                     var editShipNameOptions = $('#editShipId option');
                     $('.check').attr('checked',false);
-                    $('#edit-check').live("click",function(){
-                        if($('#edit-check').is(':checked')==true)
-                        {
+                    $('#edit-check').live("click",function() {
+                        if($('#edit-check').is(':checked')==true) {
                             editShipNameOptions.attr('selected', true);
                         }
-                        else
-                        {
+                        else {
                             editShipNameOptions.attr('selected', false);
                         }
                     });
                 });
 
-                editSaveButton.live("click",function($e){
+                editSaveButton.live("click",function($e) {
                     $e.preventDefault();
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
-                    for(var i_i=1;i_i<count_row;i_i++)
-                    {
+                    for(var i_i=1;i_i<count_row;i_i++) {
                         rule_array.push($('#rule_obj_text-'+i_i).val());
                     }
                     var data = {
@@ -361,18 +376,26 @@
                         rules : rule_array
                     };
                     var emptyFunction = emptyTheDetailsFunction(data);
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
                         url: "ajax_edit",
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data) {
                             editKpi.hide();
                             editRuleTable.empty();
                             var result = successFunction(data);
 
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
@@ -391,9 +414,9 @@
                 addAction.hide();
                 ruleShowTableRow.hide();
 
-                addRule.click(function($e){
+                addRule.click(function($e) {
                     $e.preventDefault();
-                    if(addRuleStatus==0){
+                    if(addRuleStatus==0) {
                         addRuleStatus=1;
                         ruleCount++;
                         addAction.show();
@@ -403,7 +426,7 @@
                         textBox = $("<input>",{"type":"hidden","class":"rulesTextBox","id":"rules-id_"+ruleCount,"name":"rules-"+ruleCount});
                         $('.textbox-place').append(textBox);
                     }
-                    else{
+                    else {
                         alert('Save the rule');
                         return false;
                     }
@@ -428,23 +451,19 @@
                     $('.actionSelect').hide();
                     addAction.hide();
 
-                    $.each(newRuleObject, function(j)
-                    {
+                    $.each(newRuleObject, function(j) {
                         newRuleObject[j].operator =rule_operator(newRuleObject[j].operator);
-
                         var condition_text_one = newRuleObject[j].operator+newRuleObject[j].value;
-                        if(j==0)
-                        {
+                        if(j==0) {
                             condition_text = condition_text_one;
                         }
-                        if(j>0)
-                        {
+                        if(j>0) {
                             condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
                         }
                     });
                     i++;
                     var colorValue = " ";
-                    if(rule_obj.actions.value!=null){
+                    if(rule_obj.actions.value!=null) {
                         colorValue = rule_obj.actions.value;
                     }
                     ruleShowTableRow.show();
@@ -456,14 +475,13 @@
                 });
 
                 var deleteRow = $('.delete_class');
-                deleteRow.live("click",function($e){
+                deleteRow.live("click",function($e) {
                     $e.preventDefault();
                     var currentId = $(this).attr("id");
                     var idNum = splitFun(currentId);
                     $('#row-id_'+idNum).remove();
                     var countRow = availableRow.length;
-                    if(countRow<=1)
-                    {
+                    if(countRow<=1) {
                         ruleShowTableRow.hide();
                     }
                 });
@@ -476,7 +494,8 @@
                 function filterByID(obj) {
                     if(jQuery.isEmptyObject(obj)) {
                         return false;
-                    } else {
+                    }
+                    else {
                         return true;
                     }
                 }
@@ -623,6 +642,58 @@
                     }
                 });
 
+                function setAjaxBeforeSendFunction() {
+                    var text = '';
+                    if ($('body').find('#resultLoading').attr('id') != 'resultLoading') {
+                        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>' + text + '</div></div><div class="bg"></div></div>');
+                    }
+
+                    $('#resultLoading').css({
+                        'width': '100%',
+                        'height': '100%',
+                        'position': 'fixed',
+                        'z-index': '10000000',
+                        'top': '0',
+                        'left': '0',
+                        'right': '0',
+                        'bottom': '0',
+                        'margin': 'auto'
+                    });
+
+                    $('#resultLoading .bg').css({
+                        'background': '#000000',
+                        'opacity': '0.7',
+                        'width': '100%',
+                        'height': '100%',
+                        'position': 'absolute',
+                        'top': '0'
+                    });
+
+                    $('#resultLoading>div:first').css({
+                        'width': '250px',
+                        'height': '75px',
+                        'text-align': 'center',
+                        'position': 'fixed',
+                        'top': '0',
+                        'left': '0',
+                        'right': '0',
+                        'bottom': '0',
+                        'margin': 'auto',
+                        'font-size': '16px',
+                        'z-index': '10',
+                        'color': '#ffffff'
+                    });
+
+                    $('#resultLoading .bg').height('100%');
+                    $('#resultLoading').fadeIn(300);
+                    $('body').css('cursor', 'wait');
+                }
+
+                function setAjaxCompleteFunction() {
+                    $('#resultLoading .bg').height('100%');
+                    $('#resultLoading').fadeOut(300);
+                    $('body').css('cursor', 'default');
+                }
             });
         </script>
     {% endblock %}
@@ -721,17 +792,19 @@
                             <tr>
                                 <th>KpiName</th>
                                 <th>Description</th>
+                                <th>Weightage</th>
                                 <th>StartDate</th>
                                 <th>EndDate</th>
-                                {#<th>CellName</th>
-                                <th>CellDetails</th>#}
+                                <th>Description</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for kpiDetail in kpiDetails %}
                                 <tr>
+                                    <td style="color: black">{{ kpiDetail.kpiName }}</td>
                                     <td>{{ kpiDetail.kpiName }}</td>
                                     <td>{{ kpiDetail.description }}</td>
+                                    <td>{{ kpiDetail.weightage }}</td>
                                     <td>
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
                                             Jan-{{ kpiDetail.activeDate|date('Y') }}
@@ -786,6 +859,7 @@
                                             Dec-{{ kpiDetail.endDate|date('Y') }}
                                         {% endif %}
                                     </td>
+                                    <td>{{ kpiDetail.description }}</td>
                                     {#<td>{{ kpiDetail.cellName }}</td>
                                     <td>{{ kpiDetail.cellDetails }}</td>#}
                                 </tr>
