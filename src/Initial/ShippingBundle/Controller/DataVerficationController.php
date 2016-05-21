@@ -806,8 +806,6 @@ class DataVerficationController extends Controller
             }
 
         }
-        //$newlookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupData')->findBy(array('monthdetail'=>$new_date));
-
         $shipname = $newshipid->getShipName();
         $nextshipid = 0;
         $nextshipname = '';

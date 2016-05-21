@@ -33,7 +33,7 @@
                     $('#commentandreportdiv').show();
                     $('#commentform').show();
                     $('#usermycommentid').focus();
-                    $('#buttonid').hide();
+                    $('#buttonid').show();
 
                 });
 
@@ -230,7 +230,7 @@
                                 $('#buttonid').show();
                                 $('#viewcomment').show();
                                 $('#hidecomment').hide();
-                                $('#notifcation_message').text('Command Added');
+                                $('#notifcation_message').text('Comment Added');
                                 $('#notifcation_message').show();
                                 setTimeout(function() {
                                     $('#notifcation_message').fadeOut('fast');
@@ -487,8 +487,7 @@
             </tr>
             </tbody>
         </table>
-        </div>
-        <table class="table table-striped normal_table">
+        <table class="table table-striped normal_table graph_comment">
             <tbody>
             <tr>
                 <td id="viewcommentdiv" >
@@ -506,12 +505,16 @@
             </tr>
             </tbody>
         </table>
-        <div id="buttonid">
-            <div class="clear_fix"></div><span class="notification_msg" id="notifcation_message"></span></div>
-            <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
-            <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
-            <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
-            <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
+        </div>
+        <span class="notification_msg" id="notifcation_message"></span>
+        <div class="clear_fix"></div>
+        <div class="graph_send_comment">
+            <div id="buttonid">
+                <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
+                <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
+                <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
+                <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
+            </div>
         </div>
         <div id="commentandreportdiv" class="graph_send_comment">
             <div class="add_new_users_form">
@@ -574,8 +577,8 @@
                 <!--Form for Send Reports Ends Here  -->
 
             </div>
-
-
         </div>
+
+    </div>
     </div>
 {% endblock %}

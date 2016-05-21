@@ -2296,8 +2296,10 @@ input[type="color"],
 
 
 .notification_msg {
-    margin: 10px 0px;
+    margin: -20px 0 0 450px;
     color: #062d60;
+    float: left;
+    font-weight: bold;
 }
 .errormsg
 {
@@ -2305,6 +2307,15 @@ input[type="color"],
     padding-left: 35%;
     color: rgba(240, 50, 37, 0.9);
 }
+
+.graph_comment p
+{
+    border-bottom:1px solid #fafafa;
+    padding: 6px 0px;
+    margin: 0;
+}
+
+
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .graph_and_colour_coding_dashboard_row .average_score_2_td {
         width: 60.2%;

@@ -34,11 +34,13 @@
                 $('#showcommentform').click(function($e)
                 {
                     $e.preventDefault();
-                    $('#buttonid').hide();
+                    $('#usermycommentid').val(' ');
+                    $('#buttonid').show();
                     $('#viewcommentdiv').hide();
                     $('#commentform').show();
                     $('#mailform').hide();
                     $('#usermycommentid').focus();
+
 
                 });
                 $('#sendreports').click(function($e)
@@ -138,7 +140,12 @@
                     $e.preventDefault();
                     var kpiid=$('#kpiidforname').val();
                     var comment=$('#usermycommentid').val();
-                    if(comment!='')
+                    if(comment==' ')
+                    {
+                        jAlert('','Enter Comment!!!');
+                        $('#usermycommentid').focus();
+                    }
+                    else
                     {
 
                         var data = {kpiid :kpiid,comment:comment} ;
@@ -235,7 +242,7 @@
                                 $('#buttonid').show();
                                 $('#viewcomment').show();
                                 $('#hidecomment').hide();
-                                $('#notifcation_message').text('Command Added');
+                                $('#notifcation_message').text('Comment Added');
                                 $('#notifcation_message').show();
                                 setTimeout(function() {
                                     $('#notifcation_message').fadeOut('fast');
@@ -249,11 +256,7 @@
                             }
                         });
                     }
-                    else
-                    {
-                        jAlert('','Enter Comment!!!');
-                        $('#usermycommentid').focus();
-                    }
+
 
 
 
@@ -658,7 +661,7 @@
                 </tr>
                 </tbody>
             </table>
-            <table class="table table-striped normal_table">
+            <table class="table table-striped normal_table graph_comment">
                 <tbody>
                 <tr>
                     <td id="viewcommentdiv" >
@@ -678,13 +681,15 @@
                 </tbody>
             </table>
         </div>
+        <span class="notification_msg" id="notifcation_message"></span>
+        <div class="clear_fix"></div>
         <div class="graph_send_comment">
             <div id="buttonid">
-                <div class="clear_fix"></div><span class="notification_msg" id="notifcation_message"></span></div>
                 <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'elementranking.addcomment'|trans }}</button>
                 <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'elementranking.sendreport'|trans }}</button>
                 <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'elementranking.viewcomment'|trans }}</button>
                 <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'elementranking.hidecomment'|trans }}</button>
+            </div>
             </div>
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->
@@ -696,7 +701,9 @@
 
                         <div class="form-group">
                             <div class="col-xs-12">
-                                <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
+                                <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required>
+
+                                </textarea>
                             </div>
                         </div>
                         <input  class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">

@@ -614,10 +614,23 @@
     </section>
 
     <section class="reportShow">
+
         <div class="col-sm-12">
-            <div class="table-responsive">
+            <div class="actions_report_top">
+                <form id="" class="form-horizontal no-style" action="{{ path('scorecard_report_pdfReport') }}" target="_blank"  method="post">
+                    <input type="hidden" class="activeMonthText" name="activeMonth" value="">
+                    <input type="hidden" class="activeYearText" name="activeYear" value="">
+                    <input type="hidden" class="endMonthText" name="endMonth" value="">
+                    <input type="hidden" class="endYearText" name="endYear" value="">
+                    <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
+                </form>
+                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
+                {#<a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>#}
+
+            </div>
+            <div class="table-responsive rankingreport">
                 <div class="dashboard">
-                    <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
+                   {# <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>#}
                     <div>
                         <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row" id="top">
                             <thead>
@@ -652,7 +665,7 @@
     </section>
 
     <div class="reportElementShowSection">
-        <form action="{{ path('scorecard_report_pdfReport') }}" target="_blank" method="post">
+        {#<form action="{{ path('scorecard_report_pdfReport') }}" target="_blank" method="post">
             <input type="hidden" class="activeMonthText" name="activeMonth" value="">
             <input type="hidden" class="activeYearText" name="activeYear" value="">
             <input type="hidden" class="endMonthText" name="endMonth" value="">
@@ -661,7 +674,7 @@
                 <input type="submit" class="submit_btn send_report" value="Print" />
             </div>
 
-        </form>
+        </form>#}
 
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog model_content">
