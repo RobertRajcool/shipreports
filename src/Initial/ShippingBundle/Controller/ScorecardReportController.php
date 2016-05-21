@@ -371,75 +371,8 @@ class ScorecardReportController extends Controller
         $content = $pdfObject->Output('', 'S');
         $response->setContent($content);
         $response->headers->set('Content-Type', 'application/pdf');
-
         return $response;
 
-       /* $em = $this->getDoctrine()->getManager();
-        $returnObject = $this->reportGenerateAction( $request,1);
-        $series = array
-        (
-            array("name" => "Management Performance", 'color' => '#103a71', "data" => $returnObject['changeChartData']),
-        );
-        $ob = new Highchart();
-        $ob->chart->renderTo('area');
-        $ob->chart->type('line');
-        $ob->title->text(' ', array('style' => array('color' => 'red')));
-        $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
-        $ob->xAxis->categories($returnObject['monthName']);
-        $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
-        $ob->yAxis->max(3);
-        $ob->series($series);
-        $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
-        $ob->exporting->enabled(false);
-
-        return $this->render('InitialShippingBundle:ScorecardReport:reportPdfTemplate.html.twig',
-            array(
-                'chart'=>$ob,
-                'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
-                'kpiAvgScore' => $returnObject['kpiAvgScore'],
-                'monthName' => $returnObject['monthName'],
-                'kpiNameList' => $returnObject['kpiNameList'],
-                'elementNameList' => $returnObject['elementNameList'],
-                'elementColorArray' => $returnObject['elementColorArray'],
-                'changeChartData' => $returnObject['changeChartData'],
-                'elementLevelChartData' => $returnObject['elementLevelChartData']
-            ));*/
-
-        /*$graphObject = array(
-            'chart'=>array('renderTo'=>'areaId','type'=>"line"),
-            'exporting'=>array('enabled'=>false),
-            'plotOptions'=>array('series'=>array(
-            "allowPointSelect"=>true,
-            "dataLabels"=>array(
-                "enabled"=>true
-                )
-            )),
-            'series'=>array(
-                    array('name'=>'Series','showInLegend'=>false,'color'=>'blue','data'=>$returnObject['changeChartData'])
-                    ),
-            'subtitle'=>array('style'=>array('color'=>'#0000f0','fontWeight'=>'bold')),
-            'title'=>array('text'=>'Graph Title'),
-            'xAxis'=>array('categories'=>$returnObject['monthName'],'labels'=>array('style'=>array('color'=>'#0000F0'))),
-        );
-        $jsonFileData=json_encode($graphObject);
-        $jsonFilePath= $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/scorecard/graphJsonFile/graphData_2.json';
-        file_put_contents($jsonFilePath, $jsonFileData);
-        $HighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
-        $inFile = $this->container->getParameter('kernel.root_dir').'/../web/phantomjs/scorecard/graphJsonFile/graphData_1.json ';
-        $outFile=$this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/shipImage.png ';
-        $imageGeneration = 'phantomjs '.$HighChartLocation.'-infile '.$inFile.'-outfile '.$outFile.' -scale 2.5 -width 1065';
-        $fileHandle = popen($imageGeneration, 'r');
-        $result = fread($fileHandle, 2096);
-
-        $client = new HighchartController();
-        $client->setContainer($this->container);
-        $printPdf = $this->createPdf($customerListDesign, 'Scorecard Report');
-
-        $response = new Response();
-        $response->setContent($printPdf);
-        $response->headers->set('Content-Type', 'application/pdf');
-
-        return $response;*/
     }
 
     /**
