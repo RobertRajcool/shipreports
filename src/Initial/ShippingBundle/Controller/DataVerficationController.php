@@ -3167,111 +3167,111 @@ class DataVerficationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-            $dataofmonth = $request->request->get('dataofmonth');
-            // $time = strtotime($mydate);
-            // $newformat = date('Y-m-d', $time);
-            // $new_date = new \DateTime($newformat);
-            // $new_date->modify('last day of this month');
-            $userId = $user->getId();
-            $username = $user->getUsername();
-            $role = $user->getRoles();
-            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
-                $query = $em->createQueryBuilder()
-                    ->select('a.shipName', 'a.id')
-                    ->from('InitialShippingBundle:ShipDetails', 'a')
-                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
-                    ->where('b.adminName = :username')
-                    ->setParameter('username', $username)
-                    ->getQuery();
+        $dataofmonth = $request->request->get('dataofmonth');
+        // $time = strtotime($mydate);
+        // $newformat = date('Y-m-d', $time);
+        // $new_date = new \DateTime($newformat);
+        // $new_date->modify('last day of this month');
+        $userId = $user->getId();
+        $username = $user->getUsername();
+        $role = $user->getRoles();
+        if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                ->where('b.adminName = :username')
+                ->setParameter('username', $username)
+                ->getQuery();
+        } else {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                ->where('b.id = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery();
+        }
+
+
+        $listallshipforcompany = $query->getResult();
+        $statusforship = $this->findshipstatusmonth($dataofmonth, $listallshipforcompany, $role[0]);
+        $counts = array_count_values($statusforship);
+        if ($role[0] == 'ROLE_ADMIN') {
+            if (array_key_exists(3, $counts)) {
+                $ship_status_done_count = $counts[3];
             } else {
-                $query = $em->createQueryBuilder()
-                    ->select('a.shipName', 'a.id')
-                    ->from('InitialShippingBundle:ShipDetails', 'a')
-                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                    ->where('b.id = :userId')
-                    ->setParameter('userId', $userId)
-                    ->getQuery();
+                $ship_status_done_count = 0;
             }
 
 
-            $listallshipforcompany = $query->getResult();
-            $statusforship = $this->findshipstatusmonth($dataofmonth, $listallshipforcompany, $role[0]);
-            $counts = array_count_values($statusforship);
+        } else if ($role[0] == 'ROLE_MANAGER') {
+            if (array_key_exists(2, $counts)) {
+                $ship_status_done_count = $counts[2];
+            } else {
+                $ship_status_done_count = 0;
+            }
+        } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+            if (array_key_exists(1, $counts)) {
+                $ship_status_done_count = $counts[1];
+            } else {
+                $ship_status_done_count = 0;
+            }
+        }
+
+
+        if ($ship_status_done_count != count($listallshipforcompany)) {
+            $finddatawithstatus = array();
+            $shipid = 0;
+            $shipname = '';
+
             if ($role[0] == 'ROLE_ADMIN') {
-                if (array_key_exists(3, $counts)) {
-                    $ship_status_done_count = $counts[3];
-                } else {
-                    $ship_status_done_count = 0;
-                }
+                $status = 2;
+                $index = array_search(0, $statusforship);
+                $shipid = $listallshipforcompany[$index]['id'];
+                $shipname = $listallshipforcompany[$index]['shipName'];
+                $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
+            }
+            if ($role[0] == 'ROLE_MANAGER') {
+                $status = 1;
+                $index = array_search(0, $statusforship);
+                $shipid = $listallshipforcompany[$index]['id'];
+                $shipname = $listallshipforcompany[$index]['shipName'];
+                $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
+            }
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                $status = 0;
+                $index = array_search(0, $statusforship);
+                $shipid = $listallshipforcompany[$index]['id'];
+                $shipname = $listallshipforcompany[$index]['shipName'];
+                $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
 
-
-            } else if ($role[0] == 'ROLE_MANAGER') {
-                if (array_key_exists(2, $counts)) {
-                    $ship_status_done_count = $counts[2];
-                } else {
-                    $ship_status_done_count = 0;
-                }
-            } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                if (array_key_exists(1, $counts)) {
-                    $ship_status_done_count = $counts[1];
-                } else {
-                    $ship_status_done_count = 0;
-                }
             }
 
-
-            if ($ship_status_done_count != count($listallshipforcompany)) {
-                $finddatawithstatus = array();
-                $shipid = 0;
-                $shipname = '';
-
-                if ($role[0] == 'ROLE_ADMIN') {
-                    $status = 2;
-                    $index = array_search(0, $statusforship);
-                    $shipid = $listallshipforcompany[$index]['id'];
-                    $shipname = $listallshipforcompany[$index]['shipName'];
-                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
-                }
-                if ($role[0] == 'ROLE_MANAGER') {
-                    $status = 1;
-                    $index = array_search(0, $statusforship);
-                    $shipid = $listallshipforcompany[$index]['id'];
-                    $shipname = $listallshipforcompany[$index]['shipName'];
-                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
-                }
-                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                    $status = 0;
-                    $index = array_search(0, $statusforship);
-                    $shipid = $listallshipforcompany[$index]['id'];
-                    $shipname = $listallshipforcompany[$index]['shipName'];
-                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
-
-                }
-
-                $response = new JsonResponse();
-                if (count($finddatawithstatus) == 4) {
-                    $response->setData(
-                        array('listofships' => $listallshipforcompany,
-                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
-                            'elementkpiarray' => $finddatawithstatus['elementnamekpiname'], 'elementcount' => $finddatawithstatus['maxelementcount'],
-                            'elementvalues' => $finddatawithstatus['elementvalues'],
-                            'elementweightage' => $finddatawithstatus['elementweightage'],
-                            'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
-                        ));
-                    return $response;
-                } else {
-                    $response->setData(
-                        array('listofships' => $listallshipforcompany,
-                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
-                            'elementkpiarray' => array(), 'elementcount' => 0,
-                            'elementvalues' => array(),
-                            'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
-                        ));
-                    return $response;
-                }
-
+            $response = new JsonResponse();
+            if (count($finddatawithstatus) == 4) {
+                $response->setData(
+                    array('listofships' => $listallshipforcompany,
+                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                        'elementkpiarray' => $finddatawithstatus['elementnamekpiname'], 'elementcount' => $finddatawithstatus['maxelementcount'],
+                        'elementvalues' => $finddatawithstatus['elementvalues'],
+                        'elementweightage' => $finddatawithstatus['elementweightage'],
+                        'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
+                    ));
+                return $response;
+            } else {
+                $response->setData(
+                    array('listofships' => $listallshipforcompany,
+                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                        'elementkpiarray' => array(), 'elementcount' => 0,
+                        'elementvalues' => array(),
+                        'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
+                    ));
+                return $response;
             }
-            else
+
+        }
+        else
         {
             if($dataofmonth=='')
             {
@@ -3441,36 +3441,39 @@ class DataVerficationController extends Controller
      */
     public function dbBackupAction(Request $request)
     {
-        $tables=false; $backup_name=false; $replacements=array('OLD_DOMAIN.com','NEW_DOMAIN.com');
-        set_time_limit(3000);
         $em = $this->getDoctrine()->getManager();
-        $connection=$em->getConnection();
-        $refConn = new \ReflectionObject($connection);
-        $refParams = $refConn->getProperty('_params');
-        $refParams->setAccessible('public');
-        $params = $refParams->getValue($connection);
-
-        $filelocation=$this->container->getParameter('kernel.root_dir') . '/../web/sqlfiles';
-        if (! is_dir($filelocation)) {
-            mkdir($filelocation);
-        }
-        $outfile_filepath=$filelocation.'/'.$params['dbname'].'.sql';
-        if(file_exists($outfile_filepath) )
+        $user = $this->getUser();
+        if ($user == null)
         {
-            unlink($outfile_filepath);
+            return $this->redirectToRoute('fos_user_security_login');
         }
+        else
+        {
+            $connection = $em->getConnection();
+            $refConn = new \ReflectionObject($connection);
+            $refParams = $refConn->getProperty('_params');
+            $refParams->setAccessible('public');
+            $params = $refParams->getValue($connection);
 
-        $command = 'mysqldump -u'.$params['user'].' -p'.$params['password'].' '.$params['dbname'].'  > '.$outfile_filepath;
-        system($command);
-        $content = file_get_contents($outfile_filepath);
-        $response = new Response();
-        $response->setContent($content);
-        header('Content-Type: application/octet-stream');
-        header("Content-Transfer-Encoding: Binary");
-        header("Content-disposition: attachment; filename=\"".$params['dbname'].".sql\"");
-        return $response;
+            $filelocation = $this->container->getParameter('kernel.root_dir') . '/../web/sqlfiles';
+            if (!is_dir($filelocation)) {
+                mkdir($filelocation);
+            }
+            $outfile_filepath = $filelocation . '/' . $params['dbname'] . '.sql';
+            if (file_exists($outfile_filepath)) {
+                unlink($outfile_filepath);
+            }
 
-
+            $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . '  > ' . $outfile_filepath;
+            system($command);
+            $content = file_get_contents($outfile_filepath);
+            $response = new Response();
+            $response->setContent($content);
+            header('Content-Type: application/octet-stream');
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"" . $params['dbname'] . ".sql\"");
+            return $response;
+        }
     }
 
 

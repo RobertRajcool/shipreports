@@ -791,6 +791,7 @@
                             <thead>
                             <tr>
                                 <th>KpiName</th>
+                                <th>Description</th>
                                 <th>Weightage</th>
                                 <th>StartDate</th>
                                 <th>EndDate</th>
@@ -801,6 +802,8 @@
                             {% for kpiDetail in kpiDetails %}
                                 <tr>
                                     <td style="color: black">{{ kpiDetail.kpiName }}</td>
+                                    <td>{{ kpiDetail.kpiName }}</td>
+                                    <td>{{ kpiDetail.description }}</td>
                                     <td>{{ kpiDetail.weightage }}</td>
                                     <td>
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
