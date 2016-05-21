@@ -153,8 +153,8 @@ class ElementDetailsController extends Controller
         $kpiDetailsId  = $params['kpiDetailsId'];
         $elementName   = $params['elementName'];
         $description   = $params['description'];
-        $cellName      = $params['cellName'];
-        $cellDetails   = $params['cellDetails'];
+        $cellName      = " ";
+        $cellDetails   = " ";
         $activeMonth = $request->request->get('activeMonth');
         $activeYear = $request->request->get('activeYear');;
         $endMonth = $request->request->get('endMonth');;
@@ -167,7 +167,7 @@ class ElementDetailsController extends Controller
         $new_date1=new \DateTime($monthtostring1);
 
         $weightage     = $params['weightage'];
-        $rules         = $request->request->get('value');
+        //$rules         = $request->request->get('value');
 
         $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id'=>$kpiDetailsId));
 
@@ -180,14 +180,14 @@ class ElementDetailsController extends Controller
         $elementDetail->setactivatedDate($new_date);
         $elementDetail->setendDate($new_date1);
         $elementDetail->setweightage($weightage);
-        $elementDetail->setrules($rules);
+        //$elementDetail->setrules($rules);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($elementDetail);
         $em->flush();
 
         $id = $elementDetail->getId();
-
+/*
         for ($i=1;$i<=$rules;$i++)
         {
             $variable = "rules-$i";
@@ -200,7 +200,7 @@ class ElementDetailsController extends Controller
                 $em->persist($elementRules);
                 $em->flush();
             }
-        }
+        }*/
         return $this->redirectToRoute('elementdetails_select1');
     }
 

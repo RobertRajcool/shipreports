@@ -75,7 +75,7 @@ class RankingKpiDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="Weightage", type="string", length=255)
+     * @ORM\Column(name="Weightage", type="integer", length=255)
      */
     private $weightage;
 
