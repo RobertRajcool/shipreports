@@ -122,7 +122,7 @@
                             success: function(data) {
                                 if(data.Weightage>100) {
                                     var weight = data.Weightage - 100;
-                                    alert('Weightage value exceeded - '+weight);
+                                    $('.weight-error-message').text('Weightage value exceeded ! - '+weight);
                                     createWeight.focus();
                                 }
                             },
@@ -862,8 +862,6 @@
                                         {% endif %}
                                     </td>
                                     <td>{{ kpiDetail.description }}</td>
-                                    {#<td>{{ kpiDetail.cellName }}</td>
-                                    <td>{{ kpiDetail.cellDetails }}</td>#}
                                 </tr>
                             {% endfor %}
                             </tbody>
@@ -908,6 +906,7 @@
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>Description</strong></label>
@@ -1122,8 +1121,9 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Weightage</label>
                                     <div class="col-xs-8">
-                                        <input type="text" class="edit_kpi_weightage" value="" placeholder="">
+                                        <input type="number" class="edit_kpi_weightage" value="" placeholder="">
                                     </div>
+                                    <div class="col-xs-8 weight-error-message"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Description</label>
