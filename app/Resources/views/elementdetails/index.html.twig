@@ -413,8 +413,8 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>KpiName</th>
                                 <th>ElementName</th>
+                                <th>KpiName</th>
                                 <th>Weightage</th>
                                 <th>StartDate</th>
                                 <th>EndDate</th>
@@ -423,8 +423,8 @@
                             <tbody>
                             {% for elementDetail in elementDetails %}
                                 <tr>
+                                    <td style="color: black">{{ elementDetail.elementName }}</td>
                                     <td>{{ elementDetail.kpiDetailsId }}</td>
-                                    <td>{{ elementDetail.elementName }}</td>
                                     <td>{{ elementDetail.weightage }}</td>
                                     <td>
                                         {% if elementDetail.activatedDate|date('m') == 01 %}

@@ -295,8 +295,7 @@
                         shipOption.attr('selected', false);
                     }
                 });
-
-                var activeCount = 0;
+                
                 var statusActive = $('.status_active');
                 var statusInactive = $('.status_inactive');
                 var activePlace = $('.activePlace');
@@ -304,9 +303,7 @@
                 var mainVesselsShow = $('.main_vessels_show');
                 statusActive.live("click",function() {
                     statusInactive.not('.status_active').removeAttr('checked');
-                    if(activeCount>0) {
-                        activePlace.empty();
-                    }
+                    activePlace.empty();
                     if(statusActive.is(':checked')==true) {
                         var data = {'Id' : 1};
                         $.ajaxSetup({
@@ -344,7 +341,6 @@
                         activeVessels.hide();
                         mainVesselsShow.show();
                     }
-                    activeCount ++;
                 });
 
                 var nameSelect = $('.name_select');
@@ -356,12 +352,9 @@
                     activeVessels.show();
                 }
 
-                var inactiveCount = 0;
                 statusInactive.live("click",function() {
                     statusActive.not('.status_inactive').removeAttr('checked');
-                    if(inactiveCount>0) {
-                        activePlace.empty();
-                    }
+                    activePlace.empty();
                     if(statusInactive.is(':checked')==true) {
                         var data = {'Id' : 0};
                         $.ajaxSetup({
@@ -399,7 +392,6 @@
                         activeVessels.hide();
                         mainVesselsShow.show();
                     }
-                    inactiveCount ++;
                 });
 
                 var showCheckBox = $('#showCheckbox');
