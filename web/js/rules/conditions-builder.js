@@ -21,7 +21,7 @@
     var dynamicAdd = $('.dynamic-add');
     dynamicAdd.live("click",function($e) {
         $e.preventDefault();
-        addRuleStatus = 1;
+        addRuleStatus = 0;
     });
 
     ConditionsBuilder.prototype = {
