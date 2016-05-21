@@ -12,12 +12,9 @@ $(document).ready(function()
     $('#activecheckbox').attr("disabled", true);
     /*checboxcheckeddisplay(defalutchecboxid);*/
     var count=1;
-
-
-
-    $('#adduserscreenbutton').click(
-        function()
+    $('#adduserscreenbutton').click(function($e)
         {
+            $e.preventDefault();
             $('#nogroupselected').hide();
             $('#addgroupidhtml').val('');
             $('#inputforemailid').text('');
@@ -30,10 +27,9 @@ $(document).ready(function()
         }
     );
 //Script For Add email group
-    $('#addemailid').click
-    (
-        function()
+    $('#addemailid').click(function($e)
         {
+            $e.preventDefault();
             var email=$('#emailid').val();
             var atpos = email.indexOf("@");
             var dotpos = email.lastIndexOf(".");
@@ -53,9 +49,9 @@ $(document).ready(function()
         }
     );
 //Script For Edit email group
-    $('.edit_icon_btn').live('click',
-        function()
+    $('.edit_icon_btn').live('click',function($e)
         {
+            $e.preventDefault();
             var id = $(this).attr('id');
             var idarray = id.split('_');
             var data=$('#emaildata_'+idarray[1]).text();
@@ -66,11 +62,10 @@ $(document).ready(function()
         }
     );
     //Remove email form email group
-    $('.delete_icon_btn').live('click',
-        function()
+    $('.delete_icon_btn').live('click',function($e)
         {
+            $e.preventDefault();
             var id = $(this).attr('id');
-
             var idarray = id.split('_');
             $('#'+idarray[1]).remove();
             $('#inputid_'+idarray[1]).remove();
@@ -131,9 +126,9 @@ $(document).ready(function()
     );
     //Script for add email group Ends Here
     //Script for View Particular email group Starts Here
-    $('.name').live('click',
-        function()
+    $('.name').live('click',function($e)
         {
+            $e.preventDefault();
             $('#nogroupselected').hide();
             var textboxid = $(this).attr('id');
             var grouptextbox = textboxid.split('_');
@@ -187,8 +182,9 @@ $(document).ready(function()
         }
     );
     //Script for View Particular email group Ends Here
-    $('#editbuttonid').click(function()
+    $('#editbuttonid').click(function($e)
     {
+        $e.preventDefault();
         $('#viewcontentid').hide();
         $('#registercontentid').show();
         $('#nogroupselected').hide();
@@ -197,8 +193,7 @@ $(document).ready(function()
 
     });
     //Script for Edit email group Starts Here
-    $('#updatebuttonid').click(
-        function($e)
+    $('#updatebuttonid').click(function($e)
         {
             $e.preventDefault();
             var form = $('#addemailgroupform');
@@ -219,8 +214,6 @@ $(document).ready(function()
 
             }
             if(gname!="" && numItems>0) {
-
-
                 $.ajax({
                     type: "post",
                     data: form.serialize(),
@@ -247,9 +240,9 @@ $(document).ready(function()
     );
     //Script for Edit email group Ends Here
     //Script for Archive email group Starts Here
-    $('#archivebuttonid').click(function($e){
-            $e.preventDefault();
-
+    $('#archivebuttonid').click(function($e)
+    {
+        $e.preventDefault();
             var groupid = $('#groupid').val();
             var sendingdata = {groupid : groupid};
             $.ajax({
@@ -345,8 +338,8 @@ $(document).ready(function()
         $e.preventDefault();
         activeInactiveCheckBox.toggleClass('opened');
     });
-    $(document).click(function (e) {
-        if (!$(e.target).parents().andSelf().is('#showCheckbox')) {
+    $(document).click(function ($e) {
+        if (!$($e.target).parents().andSelf().is('#showCheckbox')) {
             activeInactiveCheckBox.removeClass("opened");
         }
     });
