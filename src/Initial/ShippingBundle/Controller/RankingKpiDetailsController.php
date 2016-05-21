@@ -137,14 +137,13 @@ class RankingKpiDetailsController extends Controller
         $kpiName = $params['kpiName'];
         $shipDetailsId = $params['shipDetailsId'];
         $val = count($shipDetailsId);
-
         $description = $params['description'];
         $activeMonth = $request->request->get('activeMonth');
         $activeYear = $request->request->get('activeYear');;
         $endMonth = $request->request->get('endMonth');;
         $endYear = $request->request->get('endYear');;
-        $cellName = $params['cellName'];
-        $cellDetails = $params['cellDetails'];
+        $cellName = " ";
+        $cellDetails = " ";
         $weightage = $params['weightage'];
         $day = 1;
 

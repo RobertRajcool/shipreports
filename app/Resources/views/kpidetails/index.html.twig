@@ -123,6 +123,7 @@
                                 if(data.Weightage>100) {
                                     var weight = data.Weightage - 100;
                                     alert('Weightage value exceeded - '+weight);
+                                    createWeight.focus();
                                 }
                             },
                             error: function(XMLHttpRequest, textStatus, errorThrown) {

@@ -134,8 +134,8 @@ class RankingElementDetailsController extends Controller
         $kpiDetailsId  = $params['kpiDetailsId'];
         $elementName   = $params['elementName'];
         $description   = $params['description'];
-        $cellName      = $params['cellName'];
-        $cellDetails   = $params['cellDetails'];
+        $cellName      = " ";
+        $cellDetails   = " ";
         $activeMonth = $request->request->get('activeMonth');
         $activeYear = $request->request->get('activeYear');;
         $endMonth = $request->request->get('endMonth');;
