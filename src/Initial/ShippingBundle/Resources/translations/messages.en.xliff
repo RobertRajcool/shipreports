@@ -290,6 +290,14 @@
                 <source>elementranking.element</source>
                 <target>Element </target>
             </trans-unit>
+            <trans-unit id="73">
+                <source>layout.changepass</source>
+                <target>Change Password</target>
+            </trans-unit>
+             <trans-unit id="74">
+                <source>layout.logout</source>
+                <target>Logout</target>
+            </trans-unit>
 
 
         </body>

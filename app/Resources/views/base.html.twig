@@ -26,6 +26,7 @@
     <script src="/js/date.js"></script>
     <script src="/js/jquery.ui.draggable.js"></script>
     <script src="/js/jquery.alerts.js"></script>
+    <script src="/js/functions.js"></script>
     <link href="/css/jquery.alerts.css" rel="stylesheet">
 
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
@@ -259,7 +260,7 @@
                 }
                 else
                 {
-                    $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>Change Password</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">Logout</a></li></ul></div>');
+                    $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>{{ 'layout.changepass'|trans }}</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans }}</a></li></ul></div>');
                     //$(".box_new").fadeIn('slow');
                     $('.box_new').hide();
                     $(".box_new").slideToggle();
@@ -359,7 +360,17 @@
     </span>
     <span class="x-btn-inner">
     <div class="user-name">{{app.user.username }}</div>
-    <div class="company">{{app.user.roles[0] }}</div>
+    <div class="company">
+        {% if app.user.roles[0]=='ROLE_ADMIN' %}
+            Administrator
+        {% elseif app.user.roles[0]=='ROLE_MANAGER' %}
+            Manager
+        {% elseif app.user.roles[0]=='ROLE_KPI_INFO_PROVIDER' %}
+            V-ship
+        {% else %}
+            User
+        {% endif %}
+    </div>
     </span>
                             <span class="x-btn-icon-arrow"><img src="/images/arrow-top.png"></span>
                         </div>
