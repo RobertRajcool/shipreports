@@ -83,7 +83,7 @@ class RankingElementDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="Rules", type="string", length=255)
+     * @ORM\Column(name="Rules", type="string", length=255, nullable=true)
      */
     private $rules;
 

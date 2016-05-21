@@ -148,7 +148,7 @@ class RankingElementDetailsController extends Controller
         $new_date1=new \DateTime($monthtostring1);
 
         $weightage     = $params['weightage'];
-        $rules         = $params['rules'];
+        //$rules         = $params['rules'];
 
         $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id'=>$kpiDetailsId));
 
@@ -161,7 +161,7 @@ class RankingElementDetailsController extends Controller
         $elementDetail->setactiveDate($new_date);
         $elementDetail->setendDate($new_date1);
         $elementDetail->setweightage($weightage);
-        $elementDetail->setrules($rules);
+        //$elementDetail->setrules($rules);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($elementDetail);
@@ -169,7 +169,7 @@ class RankingElementDetailsController extends Controller
 
         $id = $elementDetail->getId();
 
-        for ($i=1;$i<=$rules;$i++)
+        /*for ($i=1;$i<=$rules;$i++)
         {
             $variable = "rules-$i";
             $engine_rules = $request->request->get($variable);
@@ -181,7 +181,7 @@ class RankingElementDetailsController extends Controller
                 $em->persist($elementRules);
                 $em->flush();
             }
-        }
+        }*/
         return $this->redirectToRoute('rankingelementdetails_select1');
     }
 

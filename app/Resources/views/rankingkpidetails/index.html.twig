@@ -100,6 +100,7 @@
                     var checkElementWeight = checkKpiWeightFunction(data);
                 });
 
+                var errorMessage = $('.weight-error-message');
                 function checkKpiWeightFunction(data) {
                     if(createWeight.val() != null) {
                         $.ajaxSetup({
@@ -116,9 +117,10 @@
                         });
                         $.ajax({
                             success: function(data) {
+                                errorMessage.empty();
                                 if(data.Weightage>100) {
                                     var weight = data.Weightage - 100;
-                                    $('.weight-error-message').text('Weightage value exceeded ! - '+weight);
+                                    errorMessage.text('Weightage value exceeded ! - '+weight);
                                     createWeight.focus();
                                 }
                             },
@@ -784,17 +786,17 @@
                             <thead>
                             <tr>
                                 <th>KpiName</th>
+                                <th>Weightage</th>
                                 <th>Description</th>
                                 <th>StartDate</th>
                                 <th>EndDate</th>
-                                {#<th>CellName</th>
-                                <th>CellDetails</th>#}
                             </tr>
                             </thead>
                             <tbody>
                             {% for kpiDetail in kpiDetails %}
                                 <tr>
-                                    <td>{{ kpiDetail.kpiName }}</td>
+                                    <td style="color:black">{{ kpiDetail.kpiName }}</td>
+                                    <td>{{ kpiDetail.weightage }}</td>
                                     <td>{{ kpiDetail.description }}</td>
                                     <td>
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
@@ -850,8 +852,6 @@
                                             Dec-{{ kpiDetail.endDate|date('Y') }}
                                         {% endif %}
                                     </td>
-                                    {#<td>{{ kpiDetail.cellName }}</td>
-                                    <td>{{ kpiDetail.cellDetails }}</td>#}
                                 </tr>
                             {% endfor %}
                             </tbody>

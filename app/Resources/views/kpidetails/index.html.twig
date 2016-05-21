@@ -104,6 +104,7 @@
                     var checkElementWeight = checkKpiWeightFunction(data);
                 });
 
+                var errorMessage = $('.weight-error-message');
                 function checkKpiWeightFunction(data) {
                     if(createWeight.val() != null) {
                         $.ajaxSetup({
@@ -120,9 +121,10 @@
                         });
                         $.ajax({
                             success: function(data) {
+                                errorMessage.empty();
                                 if(data.Weightage>100) {
                                     var weight = data.Weightage - 100;
-                                    $('.weight-error-message').text('Weightage value exceeded ! - '+weight);
+                                    errorMessage.text('Weightage value exceeded ! - '+weight);
                                     createWeight.focus();
                                 }
                             },
