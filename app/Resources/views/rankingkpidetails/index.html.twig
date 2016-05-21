@@ -102,10 +102,19 @@
 
                 function checkKpiWeightFunction(data) {
                     if(createWeight.val() != null) {
-                        $.ajax({
-                            type: "POST",
+                        $.ajaxSetup({
+                            global: false,
+                            typtype: "POST",
                             data: data,
                             url: "ranking_kpi_ajax_weightage",
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
                             success: function(data) {
                                 if(data.Weightage>100) {
                                     var weight = data.Weightage - 100;
@@ -151,10 +160,19 @@
                     }
                     var currentId = $(this).attr('id');
                     var data = {Id : currentId};
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
                         url: "ranking_kpi_ajax_show",
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data){
                             ruleDiv.hide();
                             var result = successFunction(data);
@@ -210,36 +228,31 @@
                         shipIdArray.push(data.ship_name[shipCount][0]['id']);
                     });
 
-                    $.each(data.ship_array,function(index)
-                    {
-                        if(shipIdArray.indexOf(data.ship_array[index]['id']) != -1){
+                    $.each(data.ship_array,function(index) {
+                        if(shipIdArray.indexOf(data.ship_array[index]['id']) != -1) {
                             var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).attr('selected', true).appendTo('.ship_name_edit');
-                        }else{
+                        }
+                        else {
                             var $option = $('<option>').append(data.ship_array[index]['shipName']).val(data.ship_array[index]['id']).appendTo('.ship_name_edit');
                         }
                     });
-                    $.each(data.ship_name, function(shipNameCount)
-                    {
+                    $.each(data.ship_name, function(shipNameCount) {
                         $('.ship_name').append(data.ship_name[shipNameCount][0]['shipName']).append(', ');
                     });
                     if(data.kpi_rules.length>0){
-                        $.each(data.kpi_rules,function(k)
-                        {
+                        $.each(data.kpi_rules,function(k) {
                             i++;
                             var rule_obj = JSON.parse(data.kpi_rules[k].rules);
                             var new_rule_obj = rule_obj.conditions.all;
                             ruleObjectText.append($('<input>').attr({'type':'hidden','name':'rule_name['+i+']', 'id':'rule_obj_text-'+i+''}).val(data.kpi_rules[k].rules));
                             ruleObjectText.append($('<br>'));
-                            $.each(new_rule_obj, function(j)
-                            {
+                            $.each(new_rule_obj, function(j) {
                                 new_rule_obj[j].operator =rule_operator(new_rule_obj[j].operator);
                                 var condition_text_one = new_rule_obj[j].operator+new_rule_obj[j].value;
-                                if(j==0)
-                                {
+                                if(j==0) {
                                     condition_text = condition_text_one;
                                 }
-                                if(j>0)
-                                {
+                                if(j>0) {
                                     condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
                                 }
                             });
@@ -323,16 +336,14 @@
                     editKpi.hide();
                     showKpi.show();
                 });
-                $('#editShipId').live("click",function(){
+                $('#editShipId').live("click",function() {
                     var editShipNameOptions = $('#editShipId option');
                     $('.check').attr('checked',false);
                     $('#edit-check').live("click",function(){
-                        if($('#edit-check').is(':checked')==true)
-                        {
+                        if($('#edit-check').is(':checked')==true) {
                             editShipNameOptions.attr('selected', true);
                         }
-                        else
-                        {
+                        else {
                             editShipNameOptions.attr('selected', false);
                         }
                     });
@@ -341,8 +352,7 @@
                     $e.preventDefault();
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
-                    for(var i_i=1;i_i<count_row;i_i++)
-                    {
+                    for(var i_i=1;i_i<count_row;i_i++) {
                         rule_array.push($('#rule_obj_text-'+i_i).val());
                     }
                     var data = {
@@ -359,10 +369,19 @@
                         rules : rule_array
                     };
                     var emptyFunction = emptyTheDetailsFunction(data);
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
                         url: "ranking_ajax_edit",
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = setAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
                         success: function(data) {
                             editKpi.hide();
                             editRuleTable.empty();
@@ -407,7 +426,7 @@
                     }
                 });
 
-                dynamicAdd.live("click",function($e){
+                dynamicAdd.live("click",function($e) {
                     $e.preventDefault();
                     addRuleStatus=0;
                     var currentId = $(this).attr('id');
@@ -426,17 +445,14 @@
                     $('.actionSelect').hide();
                     addAction.hide();
 
-                    $.each(newRuleObject, function(j)
-                    {
+                    $.each(newRuleObject, function(j) {
                         newRuleObject[j].operator =rule_operator(newRuleObject[j].operator);
 
                         var condition_text_one = newRuleObject[j].operator+newRuleObject[j].value;
-                        if(j==0)
-                        {
+                        if(j==0) {
                             condition_text = condition_text_one;
                         }
-                        if(j>0)
-                        {
+                        if(j>0) {
                             condition_text = condition_text+'   ' + '&&' +'   '+condition_text_one;
                         }
                     });
@@ -616,6 +632,59 @@
                         $('#row_edit_id').hide();
                     }
                 });
+
+                function setAjaxBeforeSendFunction() {
+                    var text = '';
+                    if ($('body').find('#resultLoading').attr('id') != 'resultLoading') {
+                        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>' + text + '</div></div><div class="bg"></div></div>');
+                    }
+
+                    $('#resultLoading').css({
+                        'width': '100%',
+                        'height': '100%',
+                        'position': 'fixed',
+                        'z-index': '10000000',
+                        'top': '0',
+                        'left': '0',
+                        'right': '0',
+                        'bottom': '0',
+                        'margin': 'auto'
+                    });
+
+                    $('#resultLoading .bg').css({
+                        'background': '#000000',
+                        'opacity': '0.7',
+                        'width': '100%',
+                        'height': '100%',
+                        'position': 'absolute',
+                        'top': '0'
+                    });
+
+                    $('#resultLoading>div:first').css({
+                        'width': '250px',
+                        'height': '75px',
+                        'text-align': 'center',
+                        'position': 'fixed',
+                        'top': '0',
+                        'left': '0',
+                        'right': '0',
+                        'bottom': '0',
+                        'margin': 'auto',
+                        'font-size': '16px',
+                        'z-index': '10',
+                        'color': '#ffffff'
+                    });
+
+                    $('#resultLoading .bg').height('100%');
+                    $('#resultLoading').fadeIn(300);
+                    $('body').css('cursor', 'wait');
+                }
+
+                function setAjaxCompleteFunction() {
+                    $('#resultLoading .bg').height('100%');
+                    $('#resultLoading').fadeOut(300);
+                    $('body').css('cursor', 'default');
+                }
 
             });
         </script>
