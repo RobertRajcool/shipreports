@@ -313,9 +313,25 @@ $(document).ready(function()
                             '<span id="userlistid_'+groupemail.id+'" class="name">'+groupemail.groupname+'</span></span></div>').appendTo('#listgroupcontent');
                     });
                     $('#activecheckbox').attr("disabled", false);
+                    if(chkArray.length==2)
+                    {
+                     $('#archivebuttonid').text('Active/Archive')
+                    }
+                    else
+                    {
+                        if(chkArray[0]==0)
+                        {
+                            $('#archivebuttonid').text('Archive')
+                        }
+                        else
+                        {
+                            $('#archivebuttonid').text('Active')
+                        }
+                    }
 
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                error: function (XMLHttpRequest, textStatus, errorThrown)
+                {
                     window.location.href = 'http://shipreports/login';
                 }
             });
@@ -335,7 +351,8 @@ $(document).ready(function()
     }
     var showCheckBox = $('#showCheckbox');
     var activeInactiveCheckBox = $('#active_inactive_checkbox');
-    showCheckBox.click(function ($e) {
+    showCheckBox.click(function ($e)
+    {
         $e.preventDefault();
         activeInactiveCheckBox.toggleClass('opened');
     });
