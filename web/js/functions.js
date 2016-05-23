@@ -6,7 +6,7 @@ function ajaxbefore_send()
     var text='';
 
     if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/2f1e164_loading_1.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/482.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
     }
 
     $('#resultLoading').css({
