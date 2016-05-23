@@ -146,11 +146,14 @@
                 $('.user_class').live("click",function($e)
                 {
                     $e.preventDefault();
-                    $('.create_view').hide();
+
+                    //$('.create_view').hide();
+
                     count++;
                     var currentId = $(this).attr('id');
-                    //alert(currentId)
-                    $('#kpi_id_reference_text').val(currentId);
+
+                   //alert(currentId)
+                   // $('#kpi_id_reference_text').val(currentId);
                     var data = {Id: currentId};
                     if (count > 1) {
                         $('.show_view').show();
@@ -163,11 +166,21 @@
 
 
                     }
-
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         url: "sample",
                         data: data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete =  ajax_complete();
+                        }
+                    });
+
+                    $.ajax({
+
                         success: function (data) {
                             //alert(success);
 
@@ -237,11 +250,21 @@
                         privileges: $('.inline-checkbox:checked').val()
 
                     };
+                    $.ajaxSetup({
+                        global: false,
+                        type: "POST",
+                        url: "sample_edit",
+                        data: data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete =  ajax_complete();
+                        }
+                    });
 
                     $.ajax({
-                        type:"POST",
-                        url:"sample_edit",
-                        data: data,
+
                         success: function(data) {
                             $('.user_name').append(data.User_detail[0].username);
                             $('.user_email').append(data.User_detail[0].email);
@@ -509,7 +532,7 @@
 
 
 
-                    <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
+                   {#<input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">#}
                 </div>
             </div>
         </section>
