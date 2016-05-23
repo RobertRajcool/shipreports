@@ -131,6 +131,7 @@ class ShipDetailsController extends Controller
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
+        
     }
 
 
@@ -249,7 +250,7 @@ class ShipDetailsController extends Controller
     /**
      * Finds and displays a KpiDetails entity.
      *
-     * @Route("/ajax_show", name="kpidetails_ajax_show")
+     * @Route("/ajax_show", name="shipdetails_ajax_show")
      */
     public function ajax_showAction(Request $request, $hi = '')
     {
@@ -355,7 +356,7 @@ class ShipDetailsController extends Controller
     /**
      * Finds and displays a KpiDetails entity.
      *
-     * @Route("/ajax_edit", name="kpidetails_ajax_edit")
+     * @Route("/ajax_edit", name="shipdetails_ajax_edit")
      */
     public function ajax_editAction(Request $request)
     {
@@ -406,7 +407,7 @@ class ShipDetailsController extends Controller
     /**
      * Finds and displays a KpiDetails entity.
      *
-     * @Route("/ajax_status", name="kpidetails_ajax_status")
+     * @Route("/ajax_status", name="shipdetails_ajax_status")
      */
     public function ajax_statusAction(Request $request)
     {
@@ -482,7 +483,7 @@ class ShipDetailsController extends Controller
     /**
      * Finds and displays a KpiDetails entity.
      *
-     * @Route("/ajax_status_show", name="kpidetails_ajax_status_show")
+     * @Route("/ajax_status_show", name="shipdetails_ajax_status_show")
      */
     public function ajax_status_showAction(Request $request)
     {
