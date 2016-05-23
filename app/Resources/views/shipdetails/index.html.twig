@@ -268,11 +268,13 @@
                     $.ajax({
                         success: function(data) {
                             if(data.status[0].status == 1) {
+                                statusText.removeClass("red");
                                 statusText.text(data.shipName + " is Activated...").addClass(" status-text green");
                                 statusId.removeClass("status_0 ss-delete");
                                 statusId.addClass("status_1 ss-check");
                             }
                             else if(data.status[0].status == 0) {
+                                statusText.removeClass("green");
                                 statusText.text(data.shipName + " is Inactivated...").addClass("status-text red");
                                 statusId.removeClass("status_1 ss-check");
                                 statusId.addClass("status_0 ss-delete");
@@ -295,7 +297,7 @@
                         shipOption.attr('selected', false);
                     }
                 });
-                
+
                 var statusActive = $('.status_active');
                 var statusInactive = $('.status_inactive');
                 var activePlace = $('.activePlace');
