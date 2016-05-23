@@ -100,7 +100,7 @@
             </trans-unit>
             <trans-unit id="25">
                  <source>elementranking.ruleshow</source>
-                 <target>Show Rules</target>
+                 <target>Rules</target>
             </trans-unit>
             <trans-unit id='26'>
                  <source>elementranking.rule</source>
