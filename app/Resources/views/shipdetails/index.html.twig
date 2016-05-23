@@ -96,7 +96,7 @@
                     $.ajaxSetup({
                         global: false,
                         type:"POST",
-                        url: "ajax_show",
+                        url:Routing.generate('kpidetails_ajax_show'),/*"ajax_show",*/
                         data:data,
                         beforeSend: function () {
                             var setAjaxBeforeSend = setAjaxBeforeSendFunction();
@@ -226,7 +226,7 @@
                     $.ajaxSetup({
                         global: false,
                         type:"POST",
-                        url:"ajax_edit",
+                        url:Routing.generate('kpidetails_ajax_edit'),/*"ajax_edit",*/
                         data: data,
                         beforeSend: function () {
                             var setAjaxBeforeSend = setAjaxBeforeSendFunction();
@@ -257,7 +257,7 @@
                         global: false,
                         data: data,
                         type:"POST",
-                        url:"ajax_status",
+                        url:Routing.generate('kpidetails_ajax_status'),/*ajax_status*/
                         beforeSend: function () {
                             var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                         },
@@ -311,7 +311,7 @@
                         $.ajaxSetup({
                             global: false,
                             type:"POST",
-                            url:"ajax_status_show",
+                            url:Routing.generate('kpidetails_ajax_status_show'),/*"ajax_status_show",*/
                             data:data,
                             beforeSend: function () {
                                 var setAjaxBeforeSend = setAjaxBeforeSendFunction();
@@ -362,7 +362,7 @@
                         $.ajaxSetup({
                             global: false,
                             type:"POST",
-                            url:"ajax_status_show",
+                            url:Routing.generate('kpidetails_ajax_status_show'),/*"ajax_status_show",*/
                             data:data,
                             beforeSend: function () {
                                 var setAjaxBeforeSend = setAjaxBeforeSendFunction();
