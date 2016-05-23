@@ -20,6 +20,10 @@
         .pass{
             color:white;
         }
+     
+        .change{
+            color:red;
+        }
     </style>
 
     {#{%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
@@ -475,7 +479,7 @@
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">Security</legend>
                             <div class="form-group">
-                                <label class="control-label require_field col-xs-4">Password<label class="pass"> .</label> <label>Confirm password</label> </label>
+                                <label class="control-label required_field col-xs-4" >Password <span class="change">*</span><label class="pass">.</label> <labe >Confirm password</label></label>
 
                                 <div class="col-xs-8">
                                     {{ form_row(form.plainPassword) }}
