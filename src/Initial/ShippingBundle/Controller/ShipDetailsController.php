@@ -62,76 +62,76 @@ class ShipDetailsController extends Controller
      * @Route("/select1", name="shipdetails_select1")
      * @Method("GET")
      */
-    public function select1Action(Request $request,$status = '')
+    public function select1Action(Request $request, $status = '')
     {
         $user = $this->getUser();
         $userId = $user->getId();
-        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
+        if ($user != null) {
+            $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
+            $em = $this->getDoctrine()->getManager();
 
-        if($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
-            $query = $em->createQueryBuilder()
-                ->select('a')
-                ->from('InitialShippingBundle:ShipDetails','a')
-                ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyDetailsId')
-                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
-                ->where('c.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
-        }
-        else {
-            $query = $em->createQueryBuilder()
-                ->select('a')
-                ->from('InitialShippingBundle:ShipDetails','a')
-                ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = a.companyDetailsId')
-                ->where('b.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
-        }
-        $shipDetails = $query->getResult();
-        $count = count($shipDetails);
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                    ->where('c.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+            $shipDetails = $query->getResult();
+            $count = count($shipDetails);
 
-        $shipStatus = array();
-        for($shipCount=0;$shipCount<$count;$shipCount++) {
-            $shipId = $shipDetails[$shipCount]->getId();
-            $shipStatusQuery = $em->createQueryBuilder()
-                ->select ('a.status')
-                ->from('InitialShippingBundle:ShipStatusDetails','a')
-                ->where('a.shipDetailsId = :ship_id')
-                ->setParameter('ship_id',$shipId)
-                ->groupby('a.id')
-                ->getQuery()
-                ->getResult();
+            $shipStatus = array();
+            for ($shipCount = 0; $shipCount < $count; $shipCount++) {
+                $shipId = $shipDetails[$shipCount]->getId();
+                $shipStatusQuery = $em->createQueryBuilder()
+                    ->select('a.status')
+                    ->from('InitialShippingBundle:ShipStatusDetails', 'a')
+                    ->where('a.shipDetailsId = :ship_id')
+                    ->setParameter('ship_id', $shipId)
+                    ->groupby('a.id')
+                    ->getQuery()
+                    ->getResult();
 
-            if(count($shipStatusQuery)!=0) {
-                if((int)$shipStatusQuery[count($shipStatusQuery)-1]['status']==1) {
-                    array_push($shipStatus,"Active");
-                }
-                else {
-                    array_push($shipStatus,"Inactive");
+                if (count($shipStatusQuery) != 0) {
+                    if ((int)$shipStatusQuery[count($shipStatusQuery) - 1]['status'] == 1) {
+                        array_push($shipStatus, "Active");
+                    } else {
+                        array_push($shipStatus, "Inactive");
+                    }
+                } else {
+                    array_push($shipStatus, "Inactive");
                 }
             }
-            else {
-                array_push($shipStatus,"Inactive");
+            $shipDetail = new shipDetails();
+            $form = $this->createForm(new shipDetailsType($userId, $role), $shipDetail);
+            $form->handleRequest($request);
+
+            if ($status == 'status') {
+                return $shipDetail;
             }
-        }
-        $shipDetail = new shipDetails();
-        $form = $this->createForm(new shipDetailsType($userId,$role), $shipDetail);
-        $form->handleRequest($request);
 
-        if($status == 'status') {
-            return $shipDetail;
+            return $this->render('shipdetails/index.html.twig', array(
+                'shipDetails' => $shipDetails,
+                'shipDetail' => $shipDetail,
+                'form' => $form->createView(),
+                'ship_count' => $count,
+                'shipStatus' => $shipStatus
+            ));
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
         }
-
-        return $this->render('shipdetails/index.html.twig', array(
-            'shipDetails' => $shipDetails,
-            'shipDetail' => $shipDetail,
-            'form' => $form->createView(),
-            'ship_count' => $count,
-            'shipStatus' => $shipStatus
-        ));
     }
-
 
 
     /**
@@ -169,77 +169,79 @@ class ShipDetailsController extends Controller
      */
     public function new1Action(Request $request)
     {
-        $params = $request->request->get('ship_details');
-        $shipName = $params['shipName'];
-        $shipType = $params['shipType'];
-        $imoNumber = $params['imoNumber'];
-        $country = $params['country'];
-        $location = $params['location'];
-        $description = $params['description'];
-        $manufacturingYear = $params['manufacturingYear'];
-        $built = $params['built'];
-        $size = $params['size'];
-        $gt = $params['gt'];
-
         $user = $this->getUser();
-        $userId = $user->getId();
-        $em = $this->getDoctrine()->getManager();
+        if ($user != null) {
+            $params = $request->request->get('ship_details');
+            $shipName = $params['shipName'];
+            $shipType = $params['shipType'];
+            $imoNumber = $params['imoNumber'];
+            $country = $params['country'];
+            $location = $params['location'];
+            $description = $params['description'];
+            $manufacturingYear = $params['manufacturingYear'];
+            $built = $params['built'];
+            $size = $params['size'];
+            $gt = $params['gt'];
 
-        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
-        {
-            $query = $em->createQueryBuilder()
-                ->select('a.id')
-                ->from('InitialShippingBundle:CompanyDetails','a')
-                ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = a.adminName')
-                ->where('c.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
+            $user = $this->getUser();
+            $userId = $user->getId();
+            $em = $this->getDoctrine()->getManager();
+
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a.id')
+                    ->from('InitialShippingBundle:CompanyDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = a.adminName')
+                    ->where('c.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('identity(a.companyid)')
+                    ->from('InitialShippingBundle:User', 'a')
+                    ->where('a.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+
+            $ans = $query->getResult();
+            $companyName = $ans[0]['id'];
+
+            $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id' => $companyName));
+            $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id' => $shipType));
+            $countryObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:AppsCountries')->findOneBy(array('id' => $country));
+
+            $shipdetails = new ShipDetails();
+            $shipdetails->setCompanyDetailsId($course);
+            $shipdetails->setShipName($shipName);
+            $shipdetails->setShipType($shipTypeObj);
+            $shipdetails->setImoNumber($imoNumber);
+            $shipdetails->setCountry($countryObj);
+            $shipdetails->setLocation($location);
+            $shipdetails->setDescription($description);
+            $shipdetails->setBuilt($built);
+            $shipdetails->setSize($size);
+            $shipdetails->setGt($gt);
+            $shipdetails->setManufacturingYear($manufacturingYear);
+
+            $em->persist($shipdetails);
+            $em->flush();
+
+            $ship_id = $shipdetails->getId();
+            $today = date("Y-m-d H:i:s");
+            $today_obj = date_create($today);
+
+            $shipstatusdetails = new ShipStatusDetails();
+            $shipstatusdetails->setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $ship_id)));
+            $shipstatusdetails->setActiveDate($today_obj);
+            $shipstatusdetails->setStatus(1);
+            $em->persist($shipstatusdetails);
+            $em->flush();
+
+            return $this->redirectToRoute('shipdetails_select1');
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
         }
-        else
-        {
-            $query = $em->createQueryBuilder()
-                ->select ('identity(a.companyid)')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
-        }
-
-        $ans = $query->getResult();
-        $companyName=$ans[0]['id'];
-
-        $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
-        $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id'=>$shipType));
-        $countryObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:AppsCountries')->findOneBy(array('id'=>$country));
-
-        $shipdetails = new ShipDetails();
-        $shipdetails->setCompanyDetailsId($course);
-        $shipdetails->setShipName($shipName);
-        $shipdetails->setShipType($shipTypeObj);
-        $shipdetails->setImoNumber($imoNumber);
-        $shipdetails->setCountry($countryObj);
-        $shipdetails->setLocation($location);
-        $shipdetails->setDescription($description);
-        $shipdetails->setBuilt($built);
-        $shipdetails->setSize($size);
-        $shipdetails->setGt($gt);
-        $shipdetails->setManufacturingYear($manufacturingYear);
-
-        $em->persist($shipdetails);
-        $em->flush();
-
-        $ship_id = $shipdetails->getId();
-        $today = date("Y-m-d H:i:s");
-        $today_obj = date_create($today);
-
-        $shipstatusdetails = new ShipStatusDetails();
-        $shipstatusdetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$ship_id)));
-        $shipstatusdetails -> setActiveDate($today_obj);
-        $shipstatusdetails -> setStatus(1);
-        $em->persist($shipstatusdetails);
-        $em->flush();
-
-        return $this->redirectToRoute('shipdetails_select1');
 
     }
 
@@ -249,101 +251,104 @@ class ShipDetailsController extends Controller
      *
      * @Route("/ajax_show", name="kpidetails_ajax_show")
      */
-    public function ajax_showAction(Request $request,$hi='')
+    public function ajax_showAction(Request $request, $hi = '')
     {
-        $id = $request->request->get('Id');
-        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $id = $request->request->get('Id');
+            $em = $this->getDoctrine()->getManager();
 
-        $query = $em->createQueryBuilder()
-            ->select('a.id','a.shipName','a.description','a.location','a.size','a.built','a.gt','a.manufacturingYear','a.imoNumber')
-            ->from('InitialShippingBundle:ShipDetails','a')
-            ->where('a.id = :Ship_id')
-            ->setParameter('Ship_id',$id)
-            ->getQuery();
-        $ShipDetail = $query->getResult();
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.shipName', 'a.description', 'a.location', 'a.size', 'a.built', 'a.gt', 'a.manufacturingYear', 'a.imoNumber')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->where('a.id = :Ship_id')
+                ->setParameter('Ship_id', $id)
+                ->getQuery();
+            $ShipDetail = $query->getResult();
 
-        $shipTypeId = $em->createQueryBuilder()
-            ->select('identity(a.shipType)')
-            ->from('InitialShippingBundle:ShipDetails','a')
-            ->where('a.id = :Ship_id')
-            ->setParameter('Ship_id',$id)
-            ->getQuery()
-            ->getResult();
+            $shipTypeId = $em->createQueryBuilder()
+                ->select('identity(a.shipType)')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->where('a.id = :Ship_id')
+                ->setParameter('Ship_id', $id)
+                ->getQuery()
+                ->getResult();
 
-        $shipTypeName = $em->createQueryBuilder()
-            ->select('a.shipType','a.id')
-            ->from('InitialShippingBundle:ShipTypes','a')
-            ->where('a.id = :Ship_id')
-            ->setParameter('Ship_id',$shipTypeId[0][1])
-            ->getQuery()
-            ->getResult();
+            $shipTypeName = $em->createQueryBuilder()
+                ->select('a.shipType', 'a.id')
+                ->from('InitialShippingBundle:ShipTypes', 'a')
+                ->where('a.id = :Ship_id')
+                ->setParameter('Ship_id', $shipTypeId[0][1])
+                ->getQuery()
+                ->getResult();
 
-        $countryId = $em->createQueryBuilder()
-            ->select('identity(a.country)')
-            ->from('InitialShippingBundle:ShipDetails','a')
-            ->where('a.id = :Ship_id')
-            ->setParameter('Ship_id',$id)
-            ->getQuery()
-            ->getResult();
+            $countryId = $em->createQueryBuilder()
+                ->select('identity(a.country)')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->where('a.id = :Ship_id')
+                ->setParameter('Ship_id', $id)
+                ->getQuery()
+                ->getResult();
 
-        $countryName = $em->createQueryBuilder()
-            ->select('a.countryName','a.id')
-            ->from('InitialShippingBundle:AppsCountries','a')
-            ->where('a.id = :country_id')
-            ->setParameter('country_id',$countryId[0][1])
-            ->getQuery()
-            ->getResult();
+            $countryName = $em->createQueryBuilder()
+                ->select('a.countryName', 'a.id')
+                ->from('InitialShippingBundle:AppsCountries', 'a')
+                ->where('a.id = :country_id')
+                ->setParameter('country_id', $countryId[0][1])
+                ->getQuery()
+                ->getResult();
 
-        $shipType_array = $em->createQueryBuilder()
-            ->select('a.shipType','a.id')
-            ->from('InitialShippingBundle:ShipTypes','a')
-            ->getQuery()
-            ->getResult();
+            $shipType_array = $em->createQueryBuilder()
+                ->select('a.shipType', 'a.id')
+                ->from('InitialShippingBundle:ShipTypes', 'a')
+                ->getQuery()
+                ->getResult();
 
-        $countryName_array = $em->createQueryBuilder()
-            ->select('a.countryName','a.id')
-            ->from('InitialShippingBundle:AppsCountries','a')
-            ->getQuery()
-            ->getResult();
+            $countryName_array = $em->createQueryBuilder()
+                ->select('a.countryName', 'a.id')
+                ->from('InitialShippingBundle:AppsCountries', 'a')
+                ->getQuery()
+                ->getResult();
 
-        $shipStatus =" ";
-        $shipStatusQuery = $em->createQueryBuilder()
-            ->select ('a.status')
-            ->from('InitialShippingBundle:ShipStatusDetails','a')
-            ->where('a.shipDetailsId = :ship_id')
-            ->setParameter('ship_id',$id)
-            ->groupby('a.id')
-            ->getQuery()
-            ->getResult();
+            $shipStatus = " ";
+            $shipStatusQuery = $em->createQueryBuilder()
+                ->select('a.status')
+                ->from('InitialShippingBundle:ShipStatusDetails', 'a')
+                ->where('a.shipDetailsId = :ship_id')
+                ->setParameter('ship_id', $id)
+                ->groupby('a.id')
+                ->getQuery()
+                ->getResult();
 
-        if(count($shipStatusQuery)!=0) {
-            if((int)$shipStatusQuery[count($shipStatusQuery)-1]['status']==1) {
-                $shipStatus ="Active";
+            if (count($shipStatusQuery) != 0) {
+                if ((int)$shipStatusQuery[count($shipStatusQuery) - 1]['status'] == 1) {
+                    $shipStatus = "Active";
+                } else {
+                    $shipStatus = "Inactive";
+                }
+            } else {
+                $shipStatus = "Inactive";
             }
-            else {
-                $shipStatus ="Inactive";
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'Ship_detail' => $ShipDetail,
+                'ship_type' => $shipTypeName,
+                'country_name' => $countryName,
+                'shipType_array' => $shipType_array,
+                'countryName_array' => $countryName_array,
+                'shipStatus' => $shipStatus
+            ));
+
+            if ($hi == 'hi') {
+                return $response;
             }
-        }
-        else {
-            $shipStatus ="Inactive";
-        }
 
-        $response = new JsonResponse();
-        $response->setData(array(
-            'Ship_detail' => $ShipDetail,
-            'ship_type' => $shipTypeName,
-            'country_name' => $countryName,
-            'shipType_array' => $shipType_array,
-            'countryName_array' => $countryName_array,
-            'shipStatus' => $shipStatus
-        ));
-
-        if($hi=='hi')
-        {
             return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
         }
 
-        return $response;
     }
 
 
@@ -354,42 +359,46 @@ class ShipDetailsController extends Controller
      */
     public function ajax_editAction(Request $request)
     {
-        $id = $request->request->get('Id');
+        $user = $this->getUser();
+        if ($user != null) {
+            $id = $request->request->get('Id');
 
-        $shipName = $request->request->get('shipName');
-        $shipType = $request->request->get('shipType');
-        $imoNumber = $request->request->get('imoNumber');
-        $country = $request->request->get('country');
-        $location = $request->request->get('location');
-        $description = $request->request->get('description');
-        $manufacturingYear = $request->request->get('manufacturingYear');
-        $built = $request->request->get('built');
-        $size = $request->request->get('size');
-        $gt = $request->request->get('gt');
-        $em = $this->getDoctrine()->getManager();
+            $shipName = $request->request->get('shipName');
+            $shipType = $request->request->get('shipType');
+            $imoNumber = $request->request->get('imoNumber');
+            $country = $request->request->get('country');
+            $location = $request->request->get('location');
+            $description = $request->request->get('description');
+            $manufacturingYear = $request->request->get('manufacturingYear');
+            $built = $request->request->get('built');
+            $size = $request->request->get('size');
+            $gt = $request->request->get('gt');
+            $em = $this->getDoctrine()->getManager();
 
-        $shipdetails = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id));
-        //$course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
-        $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id'=>$shipType));
-        $countryObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:AppsCountries')->findOneBy(array('id'=>$country));
+            $shipdetails = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $id));
+            $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id' => $shipType));
+            $countryObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:AppsCountries')->findOneBy(array('id' => $country));
 
-        $entity = new ShipDetails();
-        $shipdetails->setShipName($shipName);
-        $shipdetails->setShipType($shipTypeObj);
-        $shipdetails->setImoNumber($imoNumber);
-        $shipdetails->setCountry($countryObj);
-        $shipdetails->setLocation($location);
-        $shipdetails->setDescription($description);
-        $shipdetails->setBuilt($built);
-        $shipdetails->setSize($size);
-        $shipdetails->setGt($gt);
-        $shipdetails->setManufacturingYear($manufacturingYear);
+            $entity = new ShipDetails();
+            $shipdetails->setShipName($shipName);
+            $shipdetails->setShipType($shipTypeObj);
+            $shipdetails->setImoNumber($imoNumber);
+            $shipdetails->setCountry($countryObj);
+            $shipdetails->setLocation($location);
+            $shipdetails->setDescription($description);
+            $shipdetails->setBuilt($built);
+            $shipdetails->setSize($size);
+            $shipdetails->setGt($gt);
+            $shipdetails->setManufacturingYear($manufacturingYear);
 
-        $em->flush();
+            $em->flush();
 
-        $show_response = $this->ajax_showAction($request,'hi');
+            $show_response = $this->ajax_showAction($request, 'hi');
 
-        return $show_response;
+            return $show_response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
 
     }
 
@@ -401,69 +410,72 @@ class ShipDetailsController extends Controller
      */
     public function ajax_statusAction(Request $request)
     {
-        $id = $request->request->get('Id');
-        $today = date("Y-m-d H:i:s");
-        $today_obj = date_create($today);
+        $user = $this->getUser();
+        if ($user != null) {
+            $id = $request->request->get('Id');
+            $today = date("Y-m-d H:i:s");
+            $today_obj = date_create($today);
 
-        $em = $this->getDoctrine()->getManager();
+            $em = $this->getDoctrine()->getManager();
 
-        $status_value = $em->createQueryBuilder()
-            ->select ('a.status')
-            ->from('InitialShippingBundle:ShipStatusDetails','a')
-            ->where('a.shipDetailsId = :ship_id')
-            ->setParameter('ship_id',$id)
-            ->groupby('a.id')
-            ->getQuery()
-            ->getResult();
-        $index = count($status_value)-1;
-        $shipStatusDetails = new ShipStatusDetails();
-        if(count($status_value)!=0) {
-            if($status_value[$index]['status']==1) {
-                $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
-                $shipStatusDetails -> setEndDate($today_obj);
-                $shipStatusDetails -> setStatus(0);
+            $status_value = $em->createQueryBuilder()
+                ->select('a.status')
+                ->from('InitialShippingBundle:ShipStatusDetails', 'a')
+                ->where('a.shipDetailsId = :ship_id')
+                ->setParameter('ship_id', $id)
+                ->groupby('a.id')
+                ->getQuery()
+                ->getResult();
+            $index = count($status_value) - 1;
+            $shipStatusDetails = new ShipStatusDetails();
+            if (count($status_value) != 0) {
+                if ($status_value[$index]['status'] == 1) {
+                    $shipStatusDetails->setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $id)));
+                    $shipStatusDetails->setEndDate($today_obj);
+                    $shipStatusDetails->setStatus(0);
+                    $em->persist($shipStatusDetails);
+                    $em->flush();
+                } else {
+                    $shipStatusDetails->setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $id)));
+                    $shipStatusDetails->setActiveDate($today_obj);
+                    $shipStatusDetails->setStatus(1);
+                    $em->persist($shipStatusDetails);
+                    $em->flush();
+                }
+            } else {
+                $shipStatusDetails->setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $id)));
+                $shipStatusDetails->setActiveDate($today_obj);
+                $shipStatusDetails->setStatus(1);
                 $em->persist($shipStatusDetails);
                 $em->flush();
             }
-            else {
-                $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
-                $shipStatusDetails -> setActiveDate($today_obj);
-                $shipStatusDetails -> setStatus(1);
-                $em->persist($shipStatusDetails);
-                $em->flush();
-            }
+
+            $lastId = $shipStatusDetails->getId();
+
+            $statusValue = $em->createQueryBuilder()
+                ->select('a.status')
+                ->from('InitialShippingBundle:ShipStatusDetails', 'a')
+                ->where('a.id = :status_id')
+                ->setParameter('status_id', $lastId)
+                ->getQuery()
+                ->getResult();
+            $shipNameQuery = $em->createQueryBuilder()
+                ->select('a.shipName')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->where('a.id = :ship_id')
+                ->setParameter('ship_id', $id)
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'status' => $statusValue,
+                'shipName' => $shipNameQuery[0]['shipName']
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
         }
-        else {
-            $shipStatusDetails -> setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id'=>$id)));
-            $shipStatusDetails -> setActiveDate($today_obj);
-            $shipStatusDetails -> setStatus(1);
-            $em->persist($shipStatusDetails);
-            $em->flush();
-        }
-
-        $lastId = $shipStatusDetails->getId();
-
-        $statusValue = $em->createQueryBuilder()
-            ->select ('a.status')
-            ->from('InitialShippingBundle:ShipStatusDetails','a')
-            ->where('a.id = :status_id')
-            ->setParameter('status_id',$lastId)
-            ->getQuery()
-            ->getResult();
-        $shipNameQuery = $em->createQueryBuilder()
-            ->select ('a.shipName')
-            ->from('InitialShippingBundle:ShipDetails','a')
-            ->where('a.id = :ship_id')
-            ->setParameter('ship_id',$id)
-            ->getQuery()
-            ->getResult();
-
-        $response = new JsonResponse();
-        $response->setData(array(
-            'status' => $statusValue,
-            'shipName' => $shipNameQuery[0]['shipName']
-        ));
-        return $response;
 
     }
 
@@ -475,94 +487,87 @@ class ShipDetailsController extends Controller
     public function ajax_status_showAction(Request $request)
     {
         $user = $this->getUser();
-        $userId = $user->getId();
-        $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
-        $em = $this->getDoctrine()->getManager();
+        if ($user != null) {
+            $em = $this->getDoctrine()->getManager();
+            $id = $request->request->get('Id');
 
-        $id = $request->request->get('Id');
+            $activeIndex = 0;
+            $inactiveIndex = 0;
+            $activeShipDetails = array();
+            $activeShipType = array();
+            $inactiveShipDetails = array();
+            $inactiveShipType = array();
 
-        $activeIndex = 0;
-        $inactiveIndex = 0;
-        $activeShipDetails=array();
-        $activeShipType=array();
-        $inactiveShipDetails=array();
-        $inactiveShipType=array();
-
-        $ship_id_value = $em->createQueryBuilder()
-            ->select ('identity(a.shipDetailsId)')
-            ->from('InitialShippingBundle:ShipStatusDetails','a')
-            ->where('a.status = :status')
-            ->setParameter('status',1)
-            ->distinct()
-            ->getQuery()
-            ->getResult();
-        $index = count($ship_id_value);
-
-        for($i=0;$i<$index;$i++)
-        {
-            $findShipActiveQuery = $em->createQueryBuilder()
-                ->select ('a.id','a.status')
-                ->from('InitialShippingBundle:ShipStatusDetails','a')
-                ->where('a.shipDetailsId = :ship_id')
-                ->setParameter('ship_id',$ship_id_value[$i][1])
-                ->orderby('a.id')
+            $ship_id_value = $em->createQueryBuilder()
+                ->select('identity(a.shipDetailsId)')
+                ->from('InitialShippingBundle:ShipStatusDetails', 'a')
+                ->where('a.status = :status')
+                ->setParameter('status', 1)
+                ->distinct()
                 ->getQuery()
                 ->getResult();
+            $index = count($ship_id_value);
 
-            $shipCount = count($findShipActiveQuery)-1;
-            $shipStatusValue = $findShipActiveQuery[$shipCount]['status'];
+            for ($i = 0; $i < $index; $i++) {
+                $findShipActiveQuery = $em->createQueryBuilder()
+                    ->select('a.id', 'a.status')
+                    ->from('InitialShippingBundle:ShipStatusDetails', 'a')
+                    ->where('a.shipDetailsId = :ship_id')
+                    ->setParameter('ship_id', $ship_id_value[$i][1])
+                    ->orderby('a.id')
+                    ->getQuery()
+                    ->getResult();
 
-            $ship_detail_query = $em->createQueryBuilder()
-                ->select ('a.id','a.shipName','a.description','a.location','a.size','a.built','a.gt','a.manufacturingYear','a.imoNumber','identity(a.shipType)')
-                ->from('InitialShippingBundle:ShipDetails','a')
-                ->where('a.id = :ship_id')
-                ->setParameter('ship_id',$ship_id_value[$i][1])
-                ->getQuery()
-                ->getResult();
-            $ship_details[$i] = $ship_detail_query;
+                $shipCount = count($findShipActiveQuery) - 1;
+                $shipStatusValue = $findShipActiveQuery[$shipCount]['status'];
 
-            $shipType = $em->createQueryBuilder()
-                ->select ('a.shipType')
-                ->from('InitialShippingBundle:ShipTypes','a')
-                ->where('a.id = :shipType_id')
-                ->setParameter('shipType_id',$ship_detail_query[0][1])
-                ->getQuery()
-                ->getResult();
-            $ship_types[$i] = $shipType;
+                $ship_detail_query = $em->createQueryBuilder()
+                    ->select('a.id', 'a.shipName', 'a.description', 'a.location', 'a.size', 'a.built', 'a.gt', 'a.manufacturingYear', 'a.imoNumber', 'identity(a.shipType)')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->where('a.id = :ship_id')
+                    ->setParameter('ship_id', $ship_id_value[$i][1])
+                    ->getQuery()
+                    ->getResult();
+                $ship_details[$i] = $ship_detail_query;
 
-            if($shipStatusValue == 1)
-            {
-                $activeShipDetails[$activeIndex] = $ship_detail_query;
-                $activeShipType[$activeIndex] = $shipType;
-                $activeIndex++;
+                $shipType = $em->createQueryBuilder()
+                    ->select('a.shipType')
+                    ->from('InitialShippingBundle:ShipTypes', 'a')
+                    ->where('a.id = :shipType_id')
+                    ->setParameter('shipType_id', $ship_detail_query[0][1])
+                    ->getQuery()
+                    ->getResult();
+                $ship_types[$i] = $shipType;
+
+                if ($shipStatusValue == 1) {
+                    $activeShipDetails[$activeIndex] = $ship_detail_query;
+                    $activeShipType[$activeIndex] = $shipType;
+                    $activeIndex++;
+                } else {
+                    $inactiveShipDetails[$inactiveIndex] = $ship_detail_query;
+                    $inactiveShipType[$inactiveIndex] = $shipType;
+                    $inactiveIndex++;
+                }
             }
-            else
-            {
-                $inactiveShipDetails[$inactiveIndex] = $ship_detail_query;
-                $inactiveShipType[$inactiveIndex] = $shipType;
-                $inactiveIndex++;
+            $response = new JsonResponse();
+
+            if ($id == 1) {
+                $response->setData(array(
+                    'ship_details' => $activeShipDetails,
+                    'ship_type' => $activeShipType
+                ));
+            } else if ($id == 0) {
+                $response->setData(array(
+                    'ship_details' => $inactiveShipDetails,
+                    'ship_type' => $inactiveShipType
+                ));
             }
-        }
-        $response = new JsonResponse();
 
-        if($id == 1)
-        {
-
-            $response->setData(array(
-                'ship_details' => $activeShipDetails,
-                'ship_type' => $activeShipType
-            ));
-        }
-        else if($id == 0)
-        {
-
-            $response->setData(array(
-                'ship_details' => $inactiveShipDetails,
-                'ship_type' => $inactiveShipType
-            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
         }
 
-        return $response;
     }
 
 
@@ -632,16 +637,15 @@ class ShipDetailsController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $ship_id_array= $em->createQueryBuilder()
+        $ship_id_array = $em->createQueryBuilder()
             ->select('a.id')
-            ->from('InitialShippingBundle:ShipDetails','a')
+            ->from('InitialShippingBundle:ShipDetails', 'a')
             ->where('a.shipName = :ship_name')
-            ->setParameter('ship_name',$shipName)
+            ->setParameter('ship_name', $shipName)
             ->getQuery()
             ->getResult();
 
-        for($j=0;$j<count($ship_id_array);$j++)
-        {
+        for ($j = 0; $j < count($ship_id_array); $j++) {
             $entity = $em->getRepository('InitialShippingBundle:ShipDetails')->find($ship_id_array[$j]['id']);
             $shipType_ob = $em->getRepository('InitialShippingBundle:ShipDetails')->find($shipType);
             $country_obj = $em->getRepository('InitialShippingBundle:ShipDetails')->find($country);
@@ -697,7 +701,6 @@ class ShipDetailsController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('shipdetails_delete', array('id' => $shipDetail->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-            ;
+            ->getForm();
     }
 }
