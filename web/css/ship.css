@@ -1879,6 +1879,15 @@ input[type="color"],
     flex: 0 0 auto;
     width: calc(100% - 0px);
 }
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+    .graph_and_colour_coding_dashboard_row thead {
+        /* head takes the height it requires,
+        and it's not scaled when table is resized */
+        flex: 0 0 auto;
+        width: calc(100% - -1px);
+    }
+}
 .graph_and_colour_coding_dashboard_row thead th {
     text-align:center;
     background:#989898;
@@ -1955,7 +1964,7 @@ input[type="color"],
 }
 /* webkit ->(Safari, NetNewsWire, OmniWeb, Shiira, Google Chrome)*/
 .linux.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
-    width: 6.3%;
+    width: 6.2%;
 }
 /* gecko-> (Mozilla, Firefox (all versions), Camino )*/
 .linux.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
