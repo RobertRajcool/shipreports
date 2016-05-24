@@ -25,7 +25,7 @@
                 showRules.hide();
                 editRules.hide();
 
-                kpiSelect.change(function($e) {
+                kpiSelect.change(function ($e) {
                     $e.preventDefault();
                     $('#element-select option:gt(0)').remove();
                     var data = {jsid: kpiSelect.val()};
@@ -35,10 +35,19 @@
                 });
 
                 function elementChangeFunction(data) {
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
-                        url: "new_temp",
+                        url: Routing.generate('rankingrules_new_temp'), /*"new_temp",*/
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
                         success: function (data) {
                             $.each(data.kpiNameArray, function (i, listkpi) {
                                 elementSelect.append($('<option>', {
@@ -102,11 +111,19 @@
                         showRules.hide();
                         var emptyFunction = emptyTheDetailsFunction(data);
                     }
-
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
-                        url: "rule_ajax_show",
+                        url: Routing.generate('rankingrules_rule_ajax_show'), /*"rule_ajax_show",*/
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
                         success: function (data) {
                             ruleDiv.hide();
                             var setKpiDetails = setKpiDetailsFunction(data);
@@ -245,10 +262,19 @@
                     $('#edit_element option:gt(0)').remove();
                     var data = {jsid: editKpiName.val()};
                     if ($(this).val()) {
-                        $.ajax({
+                        $.ajaxSetup({
+                            global: false,
                             type: "POST",
                             data: data,
-                            url: "new_temp",
+                            url: Routing.generate('rankingrules_new_temp'), /*"new_temp",*/
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = ajax_complete();
+                            }
+                        });
+                        $.ajax({
                             success: function (data) {
                                 $.each(data.kpiNameArray, function (i, listkpi) {
                                     $('#edit_element').append($('<option>', {
@@ -364,20 +390,23 @@
 
                 var editClassIcon = $('.edit_class');
                 var status = 0;
-                editClassIcon.live("click",function($e){
+                editClassIcon.live("click", function ($e) {
                     $e.preventDefault();
-                    if(status==0){
-                        status=1;
+                    if (status == 0) {
+                        status = 1;
                         var conditions = $('#conditions-edit');
                         var actions = $('#actions-edit');
                         var currentId = $(this).attr("id");
                         var ageField = $("#ageField");
                         var submit = $('.edit_add_class');
                         var idNum = editSplitFun(currentId);
-                        $('#row_edit_id-'+idNum).remove();
-                        var ruleString = $('#rule_obj_text-'+idNum).val();
+                        $('#row_edit_id-' + idNum).remove();
+                        var ruleString = $('#rule_obj_text-' + idNum).val();
                         var object_rule = JSON.parse(ruleString);
-                        $('#rule_edit_button').append($('<a href="">Save</a>').attr({'id':'edit_add-'+idNum+'', 'class':'edit_add_class'}));
+                        $('#rule_edit_button').append($('<a href="">Save</a>').attr({
+                            'id': 'edit_add-' + idNum + '',
+                            'class': 'edit_add_class'
+                        }));
                         ruleEditPlace.show();
                         addAction.show();
                         subCondition.show();
@@ -389,20 +418,27 @@
                         function initializeConditions() {
                             conditions.conditionsBuilder({
                                 fields: [
-                                    {label: "Value", name: "ageField", operators: [
+                                    {
+                                        label: "Value", name: "ageField", operators: [
                                         {label: "is present", name: "present", fieldType: "none"},
                                         {label: "is blank", name: "blank", fieldType: "none"},
                                         {label: "is equal to", name: "equalTo", fieldType: "text"},
                                         {label: "is not equal to", name: "notEqualTo", fieldType: "text"},
                                         {label: "is greater than", name: "greaterThan", fieldType: "text"},
-                                        {label: "is greater than or equal to", name: "greaterThanEqual", fieldType: "text"},
+                                        {
+                                            label: "is greater than or equal to",
+                                            name: "greaterThanEqual",
+                                            fieldType: "text"
+                                        },
                                         {label: "is less than", name: "lessThan", fieldType: "text"},
                                         {label: "is less than or equal to", name: "lessThanEqual", fieldType: "text"}
-                                    ]}
+                                    ]
+                                    }
                                 ],
                                 data: object_rule.conditions
                             });
                         }
+
                         function initializeActions() {
                             actions.actionsBuilder({
                                 fields: [
@@ -413,12 +449,13 @@
                                 data: [object_rule.actions]
                             });
                         }
+
                         function initializeForm() {
-                            var edit_condition_text="";
-                            submit.live("click",function($e) {
+                            var edit_condition_text = "";
+                            submit.live("click", function ($e) {
                                 $e.preventDefault();
-                                if(status==1){
-                                    status=0;
+                                if (status == 1) {
+                                    status = 0;
                                     var currentId = $(this).attr('id');
                                     var id_value = editSplitFun(currentId);
                                     var engine = new RuleEngine({
@@ -430,93 +467,117 @@
                                     conditions.remove();
                                     actions.empty();
                                     var sample = JSON.stringify(engine);
-                                    $('#rule_obj_text-'+id_value).val(sample);
+                                    $('#rule_obj_text-' + id_value).val(sample);
                                     var newRuleObject = engine.conditions.all;
-                                    $.each(newRuleObject, function(conditionCount){
-                                        newRuleObject[conditionCount].operator =rule_operator(newRuleObject[conditionCount].operator);
-                                        var edit_condition_text_one =newRuleObject[conditionCount].operator+newRuleObject[conditionCount].value;
+                                    $.each(newRuleObject, function (conditionCount) {
+                                        newRuleObject[conditionCount].operator = rule_operator(newRuleObject[conditionCount].operator);
+                                        var edit_condition_text_one = newRuleObject[conditionCount].operator + newRuleObject[conditionCount].value;
 
-                                        if(conditionCount==0)
-                                        {
+                                        if (conditionCount == 0) {
                                             edit_condition_text = edit_condition_text_one;
                                         }
-                                        if(conditionCount>0)
-                                        {
-                                            edit_condition_text = edit_condition_text+'   ' + '&&' +'   '+edit_condition_text_one;
+                                        if (conditionCount > 0) {
+                                            edit_condition_text = edit_condition_text + '   ' + '&&' + '   ' + edit_condition_text_one;
                                         }
-                                        var findColor = editColorFunction(engine.actions.value,id_value,edit_condition_text);
+                                        var findColor = editColorFunction(engine.actions.value, id_value, edit_condition_text);
                                     });
                                 }
                             });
                         }
                     }
-                    else{
+                    else {
                         alert("Save the selected rule");
                     }
 
                 });
 
-                function editColorFunction(color,id_value,edit_condition_text){
-                    if(color=="Green"){
-                        var $trGreen = $('<tr>').attr({'id':'row_edit_id-'+id_value}).append(
+                function editColorFunction(color, id_value, edit_condition_text) {
+                    if (color == "Green") {
+                        var $trGreen = $('<tr>').attr({'id': 'row_edit_id-' + id_value}).append(
                                 $('<td>').text(edit_condition_text),
                                 $('<td style="color: green">').text(color),
-                                $('<td>').append($('<a>').attr({ 'id':'edit-'+id_value+'', 'class':'edit_icon_btn ss-write edit_class'})),
-                                $('<td>').append($('<a>').attr({ 'id':'delete-'+id_value+'', 'class':'delete_icon_btn ss-delete delete_class'}))
+                                $('<td>').append($('<a>').attr({
+                                    'id': 'edit-' + id_value + '',
+                                    'class': 'edit_icon_btn ss-write edit_class'
+                                })),
+                                $('<td>').append($('<a>').attr({
+                                    'id': 'delete-' + id_value + '',
+                                    'class': 'delete_icon_btn ss-delete delete_class'
+                                }))
                         ).appendTo('.rule_table_edit');
                     }
-                    if(color=="Yellow"){
-                        var $trYellow = $('<tr>').attr({'id':'row_edit_id-'+id_value}).append(
+                    if (color == "Yellow") {
+                        var $trYellow = $('<tr>').attr({'id': 'row_edit_id-' + id_value}).append(
                                 $('<td>').text(edit_condition_text),
                                 $('<td style="color: orange">').text(color),
-                                $('<td>').append($('<a>').attr({ 'id':'edit-'+id_value+'', 'class':'edit_icon_btn ss-write edit_class'})),
-                                $('<td>').append($('<a>').attr({ 'id':'delete-'+id_value+'', 'class':'delete_icon_btn ss-delete delete_class'}))
+                                $('<td>').append($('<a>').attr({
+                                    'id': 'edit-' + id_value + '',
+                                    'class': 'edit_icon_btn ss-write edit_class'
+                                })),
+                                $('<td>').append($('<a>').attr({
+                                    'id': 'delete-' + id_value + '',
+                                    'class': 'delete_icon_btn ss-delete delete_class'
+                                }))
                         ).appendTo('.rule_table_edit');
                     }
-                    if(color=="Red"){
-                        var $trRed = $('<tr>').attr({'id':'row_edit_id-'+id_value}).append(
+                    if (color == "Red") {
+                        var $trRed = $('<tr>').attr({'id': 'row_edit_id-' + id_value}).append(
                                 $('<td>').text(edit_condition_text),
                                 $('<td style="color: red">').text(color),
-                                $('<td>').append($('<a>').attr({ 'id':'edit-'+id_value+'', 'class':'edit_icon_btn ss-write edit_class'})),
-                                $('<td>').append($('<a>').attr({ 'id':'delete-'+id_value+'', 'class':'delete_icon_btn ss-delete delete_class'}))
+                                $('<td>').append($('<a>').attr({
+                                    'id': 'edit-' + id_value + '',
+                                    'class': 'edit_icon_btn ss-write edit_class'
+                                })),
+                                $('<td>').append($('<a>').attr({
+                                    'id': 'delete-' + id_value + '',
+                                    'class': 'delete_icon_btn ss-delete delete_class'
+                                }))
                         ).appendTo('.rule_table_edit');
                     }
                 }
 
-                editSubmitButton.live("click",function($e) {
+                editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
-                    for(var rowCount=1;rowCount<=count_row;rowCount++) {
-                        rule_array.push($('#rule_obj_text-'+rowCount).val());
+                    for (var rowCount = 1; rowCount <= count_row; rowCount++) {
+                        rule_array.push($('#rule_obj_text-' + rowCount).val());
                     }
                     var data = {
-                        Id : editRuleId.val(),
-                        kpiName : editKpiName.val(),
-                        elementName : editElementName.val(),
-                        rules : rule_array
+                        Id: editRuleId.val(),
+                        kpiName: editKpiName.val(),
+                        elementName: editElementName.val(),
+                        rules: rule_array
                     };
                     var emptyFunction = emptyTheDetailsFunction(data);
-                    $.ajax({
+                    $.ajaxSetup({
+                        global: false,
                         type: "POST",
                         data: data,
-                        url: "rule_ajax_edit",
-                        success: function(data) {
+                        url: Routing.generate('rankingrules_rule_ajax_edit'), /*"rule_ajax_edit",*/
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function (data) {
                             editRules.hide();
                             ruleDiv.hide();
                             var setKpiDetails = setKpiDetailsFunction(data);
                             var setElementDetails = setElementDetailsFunction(data);
-                            //editRuleId.val(currentId);
                             var setRulesDetails = setRulesDetailsFunction(data);
 
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
                         }
                     });
                 });
 
-                function editSplitFun(data){
+                function editSplitFun(data) {
                     var num = data.split('-');
                     return num[1];
                 }
@@ -527,7 +588,7 @@
                 }
 
                 function filterByID(obj) {
-                    if(jQuery.isEmptyObject(obj)) {
+                    if (jQuery.isEmptyObject(obj)) {
                         return false;
                     } else {
                         return true;
@@ -628,7 +689,8 @@
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
                     <h2>Add Rules</h2>
-                    <form class="form-horizontal no-style create-form" action="{{ path('rankingrules_new1') }}" method="post">
+                    <form class="form-horizontal no-style create-form" action="{{ path('rankingrules_new1') }}"
+                          method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">Basic details</legend>
@@ -728,8 +790,8 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
+                    <h2>Rules Edit</h2>
                     <form class="form-horizontal no-style">
-
                         <div class="add_new_users_form">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">Basic details</legend>
@@ -789,7 +851,7 @@
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_submit_button" >Save</button>
+                            <button class="submit_btn edit_submit_button">Save</button>
                             <button class="cancel_btn edit_cancel_button">Cancel</button>
                         </div>
 
