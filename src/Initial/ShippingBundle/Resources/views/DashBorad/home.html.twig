@@ -408,18 +408,31 @@
                                         <td class="weightage_td">{{ kpi.weightage }}</td>
                                         {% set j=0 %}
                                         {% for kpiColor in kpicolorarray %}
-                                            <td class="month_td">
-                                                {% if kpicolorarray[j][i]=="Green" %}
-                                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                                {% elseif kpicolorarray[j][i]=="Red" %}
-                                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                                {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                                {% endif %}
-                                            </td>
+                                            {% if j != 2 %}
+                                                <td class="month_td_1">
+                                                    {% if kpicolorarray[j][i]=="Green" %}
+                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                    {% elseif kpicolorarray[j][i]=="Red" %}
+                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
+                                            {% if j == 2 %}
+                                                <td class="month_td_3">
+                                                    {% if kpicolorarray[j][i]=="Green" %}
+                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                    {% elseif kpicolorarray[j][i]=="Red" %}
+                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                    {% endif %}
+                                                </td>
+                                            {% endif %}
                                             {% if j != 2 %}
                                                 {% set j1=j+1 %}
-                                                <td class="month_difference_td">
+                                                <td class="month_difference_td_1">
                                                     {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
