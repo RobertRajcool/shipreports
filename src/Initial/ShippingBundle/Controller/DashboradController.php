@@ -883,7 +883,7 @@ class DashboradController extends Controller
 
             $series = array
             (
-                array("name" => "$scorecardKpiName", 'showInLegend' => false, 'color' => 'blue', "data" => $monthlyElementValueArray),
+                array("name" => "$scorecardKpiName", 'showInLegend' => false, 'color' => '#103a71', "data" => $monthlyElementValueArray),
 
             );
 
@@ -1306,7 +1306,7 @@ class DashboradController extends Controller
             }
 
             $series = array(
-                array("name" => "$shipname", 'showInLegend' => false, 'color' => 'blue', "data" => $monthlyKpiAverageScore)
+                array("name" => "$shipname", 'showInLegend' => false, 'color' => '#103a71', "data" => $monthlyKpiAverageScore)
             );
             $ob = new Highchart();
             $ob->chart->renderTo('area');
@@ -1524,7 +1524,7 @@ class DashboradController extends Controller
 
                 $series = array
                 (
-                    array("name" => "$kpiName", 'showInLegend' => false, 'color' => 'blue', "data" => $monthlyKpiAverageValueTotal),
+                    array("name" => "$kpiName", 'showInLegend' => false, 'color' => '#103a71', "data" => $monthlyKpiAverageValueTotal),
 
                 );
                 $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipId));
@@ -1668,7 +1668,7 @@ class DashboradController extends Controller
 
                 $series = array
                 (
-                    array("name" => "$kpiName", 'showInLegend' => false, 'color' => 'blue', "data" => $monthlyKpiAverageValueTotal),
+                    array("name" => "$kpiName", 'showInLegend' => false, 'color' => '#103a71', "data" => $monthlyKpiAverageValueTotal),
 
                 );
                 $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipId));
@@ -2183,7 +2183,7 @@ class DashboradController extends Controller
                     ->getQuery();
             }
             $series = array(
-                array("name" => "", 'showInLegend' => false, 'color' => 'blue', "data" => array())
+                array("name" => "", 'showInLegend' => false, 'color' => '#103a71', "data" => array())
             );
             $ob = new Highchart();
             $ob->chart->renderTo('area');
@@ -2618,7 +2618,7 @@ class DashboradController extends Controller
                     )
                 )),
                 'series' => array(
-                    array('name' => 'Series', 'showInLegend' => false, 'color' => 'blue', 'data' => $reportObject['chartdata'])
+                    array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['chartdata'])
                 ),
                 'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
                 'title' => array('text' => $reportObject['shipname']),
@@ -2667,7 +2667,7 @@ class DashboradController extends Controller
                         )
                     )),
                     'series' => array(
-                        array('name' => 'Series', 'showInLegend' => false, 'color' => 'blue', 'data' => $reportObject['kpigraph'][$kpiid])
+                        array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['kpigraph'][$kpiid])
                     ),
                     'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
                     'title' => array('text' => $kpiName),
@@ -2752,7 +2752,7 @@ class DashboradController extends Controller
                     )
                 )),
                 'series' => array(
-                    array('name' => 'Series', 'showInLegend' => false, 'color' => 'blue', 'data' => $reportObject['chartdata'])
+                    array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['chartdata'])
                 ),
                 'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
                 'title' => array('text' => $reportObject['shipname']),
@@ -2801,7 +2801,7 @@ class DashboradController extends Controller
                         )
                     )),
                     'series' => array(
-                        array('name' => 'Series', 'showInLegend' => false, 'color' => 'blue', 'data' => $reportObject['kpigraph'][$kpiid])
+                        array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['kpigraph'][$kpiid])
                     ),
                     'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
                     'title' => array('text' => $kpiName),
