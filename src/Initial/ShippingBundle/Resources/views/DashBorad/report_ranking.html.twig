@@ -417,7 +417,7 @@
     <section>
         <div id="emptyresultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
-                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
+                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">{{ 'ranking_report.back'|trans }}</a>
             </div>
             <div id="emptyrecord" style="margin-top: 40px;">
 
@@ -430,7 +430,7 @@
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
-                    <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
+                    <button type="submit" class="actions_report_btn" id="sendreportid" >{{ 'ranking_report.print'|trans }}</button>
                 </form>
                 {# <a href="{{ path('dashboardhome', { 'year':currentyear,'shipid':}) }}" class="actions_report_btn">Print</a>#}
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>

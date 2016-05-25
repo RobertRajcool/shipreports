@@ -298,6 +298,98 @@
                 <source>layout.logout</source>
                 <target>Logout</target>
             </trans-unit>
+            <trans-unit id="75">
+                <source>mail.ad</source>
+                <target>Add group</target>
+            </trans-unit>
+             <trans-unit id="76">
+                <source>mail.show</source>
+                <target>Show</target>
+            </trans-unit>
+             <trans-unit id="77">
+                <source>mail.activegroup</source>
+                <target>Active Group</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>mail.archivedgroup</source>
+                <target>Archived Group </target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>mail.baseinfo</source>
+                <target>Basic Info</target>
+            </trans-unit>
+             <trans-unit id="80">
+                <source>mail.gname</source>
+                <target>Group name</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>mail.email</source>
+                <target>Email</target>
+            </trans-unit>
+             <trans-unit id="82">
+                <source>mail.addedemail</source>
+                <target>Added email</target>
+            </trans-unit>
+             <trans-unit id="83">
+                <source>mail.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>mail.update</source>
+                <target>Update</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>mail.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+             <trans-unit id="86">
+                <source>mail.archive</source>
+                <target>Archive</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>ranking_report.print</source>
+                <target>Print</target>
+            </trans-unit>
+             <trans-unit id="89">
+                <source>ranking_report.sendreport</source>
+                <target>Send Report</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>ranking_report.back</source>
+                <target>Back</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>ranking_report.baseinfo</source>
+                <target>Basic Info</target>
+            </trans-unit>
+             <trans-unit id="92">
+                <source>ranking_report.gname</source>
+                <target>Group name</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>mail.email</source>
+                <target>Email</target>
+            </trans-unit>
+             <trans-unit id="94">
+                <source>mail.addedemail</source>
+                <target>Added email</target>
+            </trans-unit>
+             <trans-unit id="95">
+                <source>mail.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>mail.update</source>
+                <target>Update</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>mail.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+             <trans-unit id="98">
+                <source>mail.archive</source>
+                <target>Archive</target>
+            </trans-unit>
 
 
         </body>
