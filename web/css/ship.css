@@ -1246,6 +1246,7 @@ select {
     top:0px;
     margin:-1px 0 0 -24px;
     width:100%;
+    z-index: 1;
 }
 .add_new_kpi_top_title .title_month {
     width:794px;
@@ -1878,6 +1879,15 @@ input[type="color"],
     flex: 0 0 auto;
     width: calc(100% - 0px);
 }
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+    .graph_and_colour_coding_dashboard_row thead {
+        /* head takes the height it requires,
+        and it's not scaled when table is resized */
+        flex: 0 0 auto;
+        width: calc(100% - -1px);
+    }
+}
 .graph_and_colour_coding_dashboard_row thead th {
     text-align:center;
     background:#989898;
@@ -1888,19 +1898,19 @@ input[type="color"],
     border-right:1px solid #989898;
 }
 .graph_and_colour_coding_dashboard_row .kpi_name_th {
-    width: 49.3%;
+    width: 50%;
 }
 .graph_and_colour_coding_dashboard_row .weightage_th {
-    width: 9.9%;
+    width: 10%;
 }
 .graph_and_colour_coding_dashboard_row .month_th_1 {
-    width: 15.8%;
+    width: 16%;
 }
 .graph_and_colour_coding_dashboard_row .month_th_2 {
-    width: 15.8%;
+    width: 16%;
 }
 .graph_and_colour_coding_dashboard_row .month_th_3 {
-    width: 9.1%;
+    width: 7.99%;
 }
 .graph_and_colour_coding_dashboard_row .kpi_name_thtd {
     text-align:left;
@@ -1933,10 +1943,16 @@ input[type="color"],
 .graph_and_colour_coding_dashboard_row .weightage_td {
     width: 10%;
 }
-.graph_and_colour_coding_dashboard_row .month_td {
+.graph_and_colour_coding_dashboard_row .month_td_1 {
     width: 8%;
 }
-.graph_and_colour_coding_dashboard_row .month_difference_td{
+.graph_and_colour_coding_dashboard_row .month_difference_td_1 {
+    width: 8%;
+}
+.graph_and_colour_coding_dashboard_row .month_td_2 {
+    width: 8%;
+}
+.graph_and_colour_coding_dashboard_row .month_difference_td_2 {
     width: 8%;
 }
 .graph_and_colour_coding_dashboard_row .average_score_2_td {
@@ -1945,6 +1961,32 @@ input[type="color"],
 .graph_and_colour_coding_dashboard_row thead, .graph_and_colour_coding_dashboard_row tbody tr {
     display: table;
     table-layout: fixed;
+}
+/* webkit ->(Safari, NetNewsWire, OmniWeb, Shiira, Google Chrome)*/
+.linux.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.2%;
+}
+/* gecko-> (Mozilla, Firefox (all versions), Camino )*/
+.linux.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.5%;
+}
+.mac.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.9%;
+}
+.mac.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.9%;
+}
+.mac.safari .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 8%;
+}
+.win.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.8%;
+}
+.win.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.7%;
+}
+.win.ie .graph_and_colour_coding_dashboard_row .month_td_3 {
+    width: 6.7%;
 }
 
 .file_upload {
@@ -2321,15 +2363,19 @@ input[type="color"],
     margin: 0;
 }
 
-
 @media screen and (-webkit-min-device-pixel-ratio:0) {
+    /* Safari and Chrome */
+    .graph_and_colour_coding_dashboard_row .month_td_3 {
+        width: 6.8%;
+    }
     .graph_and_colour_coding_dashboard_row .average_score_2_td {
         width: 60.2%;
     }
-    .graph_and_colour_coding_dashboard_row .kpi_name_th {
-        width: 49.4%;
-    }
 }
+
+
+
+
 
 
 

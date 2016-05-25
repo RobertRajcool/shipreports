@@ -55,6 +55,7 @@
                     $e.preventDefault();
                     listView.hide();
                     showShipView.hide();
+                    editShip.hide();
                     createView.show();
                     gridView.show();
 
@@ -272,12 +273,14 @@
                                 statusText.text(data.shipName + " is Activated...").addClass(" status-text green");
                                 statusId.removeClass("status_0 ss-delete");
                                 statusId.addClass("status_1 ss-check");
+                                statusText.delay(3000).fadeOut();
                             }
                             else if(data.status[0].status == 0) {
                                 statusText.removeClass("green");
                                 statusText.text(data.shipName + " is Inactivated...").addClass("status-text red");
                                 statusId.removeClass("status_1 ss-check");
                                 statusId.addClass("status_0 ss-delete");
+                                statusText.delay(3000).fadeOut();
                             }
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -298,6 +301,7 @@
                     }
                 });
 
+                var shipCount = $('.ship-count');
                 var statusActive = $('.status_active');
                 var statusInactive = $('.status_inactive');
                 var activePlace = $('.activePlace');
@@ -322,6 +326,8 @@
                         });
                         $.ajax({
                             success: function(data) {
+                                shipCount.empty();
+                                shipCount.text("Ship ("+data.ship_details.length+")");
                                 var statusEmpty = statusEmptyFunction(data);
                                 $.each(data.ship_details, function(i) {
                                     var spanPlace = $('<div>').attr({'class':'users_list_grid'}).append(
@@ -338,10 +344,10 @@
                                 alert('Error : ' + errorThrown);
                             }
                         })
-                    }
-                    else {
+                    } else {
                         activeVessels.hide();
                         mainVesselsShow.show();
+                        shipCount.text("Ship ({{ ship_count }})");
                     }
                 });
 
@@ -373,6 +379,8 @@
                         });
                         $.ajax({
                             success: function(data) {
+                                shipCount.empty();
+                                shipCount.text("Ship ("+data.ship_details.length+")");
                                 var statusEmpty = statusEmptyFunction(data);
                                 $.each(data.ship_details, function(i) {
                                     var spanPlace = $('<div>').attr({'class':'users_list_grid'}).append(
@@ -389,10 +397,10 @@
                                 alert('Error : ' + errorThrown);
                             }
                         })
-                    }
-                    else {
+                    } else {
                         activeVessels.hide();
                         mainVesselsShow.show();
+                        shipCount.text("Ship ({{ ship_count }})");
                     }
                 });
 
@@ -424,8 +432,8 @@
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
                         </span>
                 </div>
-                <div class="users_list_main"><span>Ship ({{ ship_count }})</span> <span class="show_dropdown_icon">&nbsp;</span></div>
-                <div class="email_group_show_drap" id="active_inactive_checkbox" onblur="myfunction()" >
+                <div class="users_list_main"><span><strong class="ship-count">Ship ({{ ship_count }})</strong></span> <span class="show_dropdown_icon">&nbsp;</span></div>
+                <div class="email_group_show_drap" id="active_inactive_checkbox">
                     <ul id="ul_active_inactive_checkbx">
                         <li><input type="checkbox" class="inline-checkbox status_active">Active Ships</li>
                         <li><input type="checkbox" class="inline-checkbox status_inactive">Inactive Ships</li>
@@ -669,71 +677,72 @@
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">Basic Info</legend>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Vessel Name</label>
+                                <label class="control-label required_field col-xs-4"><strong>Vessel Name</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_name" value="" placeholder="">
-                                    <input type="hidden" class="edit_ship_id" value="" placeholder="">
+                                    <input type="text" class="edit_ship_name" required>
+                                    <input type="hidden" class="edit_ship_id" >
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Vessel Type</label>
+                                <label class="control-label required_field col-xs-4"><strong>Vessel Type</strong></label>
                                 <div class="col-xs-8">
-                                    <select class="edit_ship_type">
+                                    <select class="edit_ship_type" required>
                                         <option selected>--Select Vessel Type--</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">IMO Number</label>
+                                <label class="control-label required_field col-xs-4"><strong>IMO Number</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_imoNumber" value="" placeholder="">
+                                    <input type="text" class="edit_ship_imoNumber" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Country</label>
+                                <label class="control-label required_field col-xs-4"><strong>Country</strong></label>
                                 <div class="col-xs-8">
-                                    <select class="edit_ship_country">
+                                    <select class="edit_ship_country" required>
                                         <option selected>--Select Country--</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Location</label>
+                                <label class="control-label required_field col-xs-4"><strong>Location</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_location" value="" placeholder="">
+                                    <input type="text" class="edit_ship_location" required>
                                 </div>
                             </div>
                         </fieldset>
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">Specification</legend>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Ship Yard</label>
+                                <label class="control-label required_field col-xs-4"><strong>Ship Yard</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_built" value="" placeholder="">
+                                    <input type="text" class="edit_ship_built" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Size</label>
+                                <label class="control-label required_field col-xs-4"><strong>Size</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_size" value="" placeholder="">
+                                    <input type="text" class="edit_ship_size" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">GT</label>
+                                <label class="control-label required_field col-xs-4"><strong>GT</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_gt" value="" placeholder="">
+                                    <input type="text" class="edit_ship_gt" required>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Manufaturing Year</label>
+                                <label class="control-label required_field col-xs-4"><strong>Manufacturing Year</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_manufacturingYear" value="" placeholder="">
+                                    <input type="text" class="edit_ship_manufacturingYear" required>
                                 </div>
+                                <div class="col-xs-8">&nbsp;</div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Description</label>
+                                <label class="control-label required_field col-xs-4"><strong>Description</strong></label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_description" value="" placeholder="">
+                                    <input type="text" class="edit_ship_description" >
                                 </div>
                             </div>
                         </fieldset>
@@ -746,6 +755,5 @@
             </div>
         </section>
     </div>
-
 
 {% endblock %}
