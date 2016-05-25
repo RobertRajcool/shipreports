@@ -359,20 +359,20 @@
                 <target>Back</target>
             </trans-unit>
             <trans-unit id="91">
-                <source>ranking_report.baseinfo</source>
-                <target>Basic Info</target>
+                <source>ranking_report.viewreport</source>
+                <target>View Report</target>
             </trans-unit>
              <trans-unit id="92">
-                <source>ranking_report.gname</source>
-                <target>Group name</target>
+                <source>ranking_report.cho_year</source>
+                <target>Choose Year</target>
             </trans-unit>
             <trans-unit id="93">
-                <source>mail.email</source>
-                <target>Email</target>
+                <source>ranking_report.cho_vessels</source>
+                <target>Choose Vessels</target>
             </trans-unit>
              <trans-unit id="94">
-                <source>mail.addedemail</source>
-                <target>Added email</target>
+                <source>ranking_report.vessel_reports</source>
+                <target>Vessel Reports</target>
             </trans-unit>
              <trans-unit id="95">
                 <source>mail.save</source>
