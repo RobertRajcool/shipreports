@@ -464,7 +464,7 @@
                                     });
                                     $(this).remove();
                                     ruleEditPlace.hide();
-                                    conditions.remove();
+                                    conditions.empty();
                                     actions.empty();
                                     var sample = JSON.stringify(engine);
                                     $('#rule_obj_text-' + id_value).val(sample);
