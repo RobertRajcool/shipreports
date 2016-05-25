@@ -464,11 +464,16 @@
                                     <td class="kpi_name_td kpi_name_thtd"><strong>Average score</strong></td>
                                     <td class="weightage_td"><strong>100</strong></td>
                                     {% for avg in kpiAverageScore %}
-                                        <td>
-                                            <strong>{{ avg }}</strong>
-                                        </td>
                                         {% if i1 != 2 %}
-                                            <td>&nbsp;</td>
+                                            <td class="month_td_1">
+                                                <strong>{{ avg }}</strong>
+                                            </td>
+                                            <td class="month_difference_td_1">&nbsp;</td>
+                                        {% endif %}
+                                        {% if i1 == 2 %}
+                                            <td class="month_td_3">
+                                                <strong>{{ avg }}</strong>
+                                            </td>
                                         {% endif %}
                                         {% set i1=i1+1 %}
                                     {% endfor %}
