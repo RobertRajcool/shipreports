@@ -16,16 +16,16 @@
 <section>
     <div class="col-sm-3 users_views">
         <div class="add_user_btn_main">
-            <span class="user_btn_main"><a href="" id="adduserscreenbutton" class="ss-plus add_btn"> Add group</a></span>
-            <span class="user_btn_main" ng-click="myFunc3()"><a href="" id="showCheckbox" class="show_btn">Show <span class="show_dropdown_icon">
+            <span class="user_btn_main"><a href="" id="adduserscreenbutton" class="ss-plus add_btn"> {{ 'mail.ad'|trans }}</a></span>
+            <span class="user_btn_main" ng-click="myFunc3()"><a href="" id="showCheckbox" class="show_btn">{{ 'mail.show'|trans }} <span class="show_dropdown_icon">
       <span class="ss-dropdown">&nbsp;</span></span></a></span>
         </div>
         <div class="users_list_main"><span>Group <span id="countid"> ({{ usercount }})</span></span> <span class="show_dropdown_icon">&nbsp;</span>
         </div>
         <div class="email_group_show_drap" id="active_inactive_checkbox">
             <ul>
-                <li class="commonclass"><input type="checkbox" id="activecheckbox" name="activecheckbox[]" value="1" class="inline-checkbox"> Active Group</li>
-                <li class="commonclass"><input type="checkbox" id="archivecheckbox" name="activecheckbox[]"  value="0" class="inline-checkbox"> Archived Group</li>
+                <li class="commonclass"><input type="checkbox" id="activecheckbox" name="activecheckbox[]" value="1" class="inline-checkbox">{{ 'mail.activegroup'|trans }}</li>
+                <li class="commonclass"><input type="checkbox" id="archivecheckbox" name="activecheckbox[]"  value="0" class="inline-checkbox"> {{ 'mail.archivedgroup'|trans }}</li>
             </ul>
         </div>
 
@@ -64,27 +64,27 @@
 
                 <div class="add_new_users_form">
                     <fieldset class="fieldset_box">
-                        <legend class="legend_name">Basic Info</legend>
+                        <legend class="legend_name"> {{ 'mail.baseinfo'|trans }}</legend>
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-4">Group name</label>
+                            <label class="control-label required_field col-xs-4">{{ 'mail.gname'|trans }}</label>
                             <div class="col-xs-8">
                                 <input type="text" id="addgroupidhtml" name="groupnameintextbox" novalidate placeholder="">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label required_field col-xs-4">Email</label>
+                            <label class="control-label required_field col-xs-4">{{ 'mail.email'|trans }}</label>
                             <div class="col-xs-8">
                                 <input type="text" id="emailid" class="add_group_email_input" placeholder=""> <a id="addemailid" class="add_email_btn ss-plus">&nbsp;</a>
                             </div>
                         </div>
                     </fieldset>
                     <fieldset class="fieldset_box">
-                        <legend class="legend_name">Added email</legend>
+                        <legend class="legend_name">{{ 'mail.addedemail'|trans }}</legend>
                         <div class="table-responsive">
                             <table id="viewmailtable" class="table mailing_email_list">
                                 <thead>
                                 <tr>
-                                    <th class="email">Email</th>
+                                    <th class="email">{{ 'mail.email'|trans }}</th>
                                     <th class="edit">&nbsp;</th>
                                     <th class="delete">&nbsp;</th>
                                 </tr>
@@ -104,8 +104,8 @@
                 </div>
                 <input type="hidden" id="groupid" name="viewgroupid">
                 <div class="actions_submit">
-                    <button class="submit_btn" id="savegroupid" >Save </button>
-                    <button class="submit_btn" id="updatebuttonid" >Update</button>
+                    <button class="submit_btn" id="savegroupid" >{{ 'mail.save'|trans }} </button>
+                    <button class="submit_btn" id="updatebuttonid" >{{ 'mail.update'|trans }}</button>
 
                 </div>
 
@@ -117,25 +117,25 @@
         <div class="col-sm-11">
             <div class="view_new_user_screen_2 form_view_screen">
                 <div class="actions_edit_button">
-                    <a id="editbuttonid" href="" class="edit_btn"> Edit </a>
+                    <a id="editbuttonid" href="" class="edit_btn"> {{ 'mail.edit'|trans }} </a>
 
-                    <a id="archivebuttonid" href="" class="edit_btn">Archive</a>
+                    <a id="archivebuttonid" href="" class="edit_btn">{{ 'mail.archive'|trans }}</a>
                 </div>
                 <fieldset class="fieldset_box">
-                    <legend class="legend_name">Basic Info</legend>
+                    <legend class="legend_name">{{ 'mail.baseinfo'|trans }}</legend>
                     <div class="form_view">
-                        <label class="form_labell">Group name :</label>
+                        <label class="form_labell">{{ 'mail.gname'|trans }}</label>
                         <label id="groupname" class="form_input">Kali</label>
                     </div>
                 </fieldset>
 
                 <fieldset class="fieldset_box add_rule_right_edit_form">
-                    <legend class="legend_name">Added email</legend>
+                    <legend class="legend_name">{{ 'mail.addedemail'|trans }}</legend>
                     <div class="table-responsive">
                         <table class="table mailing_email_list">
                             <thead>
                             <tr>
-                                <th>Email</th>
+                                <th>{{ 'mail.email'|trans }}</th>
                             </tr>
                             </thead>
                             <tbody id="viewtabledata">

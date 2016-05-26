@@ -71,7 +71,7 @@
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
+                            window.location.href = 'http://shipreports/login';
 
                         }
                     });
@@ -131,65 +131,19 @@
                         global: false,
                         type: "post",
                         url:Routing.generate('allships_send_rankingreports_mail'),
-                        beforeSend: function () {
-                            var text='';
-
-                            if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-                                $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
-                            }
-
-                            $('#resultLoading').css({
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'fixed',
-                                'z-index':'10000000',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto'
-                            });
-
-                            $('#resultLoading .bg').css({
-                                'background':'#000000',
-                                'opacity':'0.7',
-                                'width':'100%',
-                                'height':'100%',
-                                'position':'absolute',
-                                'top':'0'
-                            });
-
-                            $('#resultLoading>div:first').css({
-                                'width': '250px',
-                                'height':'75px',
-                                'text-align': 'center',
-                                'position': 'fixed',
-                                'top':'0',
-                                'left':'0',
-                                'right':'0',
-                                'bottom':'0',
-                                'margin':'auto',
-                                'font-size':'16px',
-                                'z-index':'10',
-                                'color':'#ffffff'
-
-                            });
-
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeIn(300);
-                            $('body').css('cursor', 'wait');
+                        beforeSend: function ()
+                        {
+                            var beforsend=ajaxbefore_send();
                         },
                         complete: function () {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                            $('#toemail').val('');
+                            var complete=ajax_complete();
                         }
                     });
                     $.ajax({
                         data: data,
                         success: function (data)
                         {
+                            $('#toemail').val('');
                             jAlert('', data.updatemsg);
                         }
                         ,
@@ -234,10 +188,10 @@
 
                     <div class="kpi_basic_details">
                         <fieldset class="fieldset_box add_rule_form">
-                            <legend class="legend_name">Reports</legend>
+                            <legend class="legend_name">{{ 'layout.menu.report'|trans }}</legend>
 
                             <div class="form-group">
-                                <label class="control-label col-xs-4">Choose Year</label>
+                                <label class="control-label col-xs-4">{{ 'ranking_report.cho_year'|trans }}</label>
                                 <div class="col-xs-8">
                                     <select required class="add_rule_basic_drop"  name="year">
                                         <option value="">Select</option>
@@ -270,7 +224,7 @@
                     </div>
 
                     <div class="actions_submit">
-                        <input type="submit" class="submit_btn" id="viewreportid" value="View Report" />
+                        <input type="submit" class="submit_btn" id="viewreportid" value="{{ 'ranking_report.viewreport'|trans }}" />
                     </div>
                 </form>
             </div>
@@ -283,10 +237,10 @@
             <div class="actions_report_top">
                 <form id="" class="form-horizontal no-style" action="{{ path('allships_send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="yearid" name="year">
-                    <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
+                    <button type="submit" class="actions_report_btn" id="sendreportid" >{{ 'ranking_report.print'|trans }}</button>
                 </form>
-                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
-                <a href="{{ path('allships_ranking_reports') }}" class="actions_report_btn">Back</a>
+                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">{{ 'ranking_report.sendreport'|trans }}</a>
+                <a href="{{ path('allships_ranking_reports') }}" class="actions_report_btn">{{ 'ranking_report.back'|trans }}</a>
 
             </div>
 
@@ -294,7 +248,7 @@
                 <table id="shipchart" style="margin-top: 100px;" class="table table-striped normal_table">
                     <thead>
                     <tr>
-                        <th id="graphtitle">Vessel Ranking</th>
+                        <th id="graphtitle">{{ 'dashboard.main.content'|trans }}</th>
                     </tr>
                     </thead>
                     <tbody>

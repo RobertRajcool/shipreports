@@ -352,7 +352,7 @@
     <section>
         <div id="formcontentid" class="col-sm-12">
             <div class="actions_report_vessel_top">
-                <a class="actions_report_btn" href="{{ path('allships_ranking_reports') }}"  >Vessel Reports</a>
+                <a class="actions_report_btn" href="{{ path('allships_ranking_reports') }}"  >{{ 'ranking_report.vessel_reports'|trans }}</a>
             </div>
             <div class="add_kpi_views_screen report_top">
 
@@ -360,9 +360,9 @@
 
                     <div class="kpi_basic_details">
                         <fieldset class="fieldset_box add_rule_form">
-                            <legend class="legend_name">Reports</legend>
+                            <legend class="legend_name">{{ 'layout.menu.report'|trans }}</legend>
                             <div class="form-group">
-                                <label class="control-label col-xs-4">Choose Vessels</label>
+                                <label class="control-label col-xs-4">{{ 'ranking_report.cho_vessels'|trans }}</label>
                                 <div class="col-xs-8">
                                     <select required name="shipid" >
                                         <option value="">Select</option>
@@ -373,7 +373,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-xs-4">Choose Year</label>
+                                <label class="control-label col-xs-4">{{ 'ranking_report.cho_year'|trans }}</label>
                                 <div class="col-xs-8">
                                     <select required class="add_rule_basic_drop"  name="year">
                                         <option value="">Select</option>
@@ -406,7 +406,7 @@
                     </div>
 
                     <div class="actions_submit">
-                        <input type="submit" class="submit_btn" id="viewreportid" value="View Report" />
+                        <input type="submit" class="submit_btn" id="viewreportid" value="{{ 'ranking_report.viewreport'|trans }}" />
                     </div>
 
                 </form>
@@ -417,7 +417,7 @@
     <section>
         <div id="emptyresultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
-                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
+                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">{{ 'ranking_report.back'|trans }}</a>
             </div>
             <div id="emptyrecord" style="margin-top: 40px;">
 
@@ -430,11 +430,11 @@
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
-                    <button type="submit" class="actions_report_btn" id="sendreportid" >Print</button>
+                    <button type="submit" class="actions_report_btn" id="sendreportid" >{{ 'ranking_report.print'|trans }}</button>
                 </form>
                 {# <a href="{{ path('dashboardhome', { 'year':currentyear,'shipid':}) }}" class="actions_report_btn">Print</a>#}
-                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">Send Report</a>
-                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">Back</a>
+                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">{{ 'ranking_report.sendreport'|trans }}</a>
+                <a href="{{ path('ranking_reports') }}" class="actions_report_btn">{{ 'ranking_report.back'|trans }}</a>
 
             </div>
             <div id="listalltable" class="table-responsive rankingreport">

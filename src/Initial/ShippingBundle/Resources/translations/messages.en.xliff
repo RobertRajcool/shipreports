@@ -298,6 +298,212 @@
                 <source>layout.logout</source>
                 <target>Logout</target>
             </trans-unit>
+            <trans-unit id="75">
+                <source>mail.ad</source>
+                <target>Add group</target>
+            </trans-unit>
+             <trans-unit id="76">
+                <source>mail.show</source>
+                <target>Show</target>
+            </trans-unit>
+             <trans-unit id="77">
+                <source>mail.activegroup</source>
+                <target>Active Group</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>mail.archivedgroup</source>
+                <target>Archived Group </target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>mail.baseinfo</source>
+                <target>Basic Info</target>
+            </trans-unit>
+             <trans-unit id="80">
+                <source>mail.gname</source>
+                <target>Group name</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>mail.email</source>
+                <target>Email</target>
+            </trans-unit>
+             <trans-unit id="82">
+                <source>mail.addedemail</source>
+                <target>Added email</target>
+            </trans-unit>
+             <trans-unit id="83">
+                <source>mail.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>mail.update</source>
+                <target>Update</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>mail.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+             <trans-unit id="86">
+                <source>mail.archive</source>
+                <target>Archive</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>ranking_report.print</source>
+                <target>Print</target>
+            </trans-unit>
+             <trans-unit id="89">
+                <source>ranking_report.sendreport</source>
+                <target>Send Report</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>ranking_report.back</source>
+                <target>Back</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>ranking_report.viewreport</source>
+                <target>View Report</target>
+            </trans-unit>
+             <trans-unit id="92">
+                <source>ranking_report.cho_year</source>
+                <target>Choose Year</target>
+            </trans-unit>
+            <trans-unit id="93">
+                <source>ranking_report.cho_vessels</source>
+                <target>Choose Vessels</target>
+            </trans-unit>
+             <trans-unit id="94">
+                <source>ranking_report.vessel_reports</source>
+                <target>Vessel Reports</target>
+            </trans-unit>
+             <trans-unit id="95">
+                <source>mail.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="96">
+                <source>mail.update</source>
+                <target>Update</target>
+            </trans-unit>
+            <trans-unit id="97">
+                <source>mail.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+             <trans-unit id="98">
+                <source>mail.archive</source>
+                <target>Archive</target>
+            </trans-unit>
+
+
+            <trans-unit id="vessel-0">
+                <source>vessel.add_vessel</source>
+                <target>Add Vessel</target>
+            </trans-unit>
+            <trans-unit id="vessel-1">
+                <source>vessel.show</source>
+                <target>Show</target>
+            </trans-unit>
+            <trans-unit id="vessel-2">
+                <source>vessel.active_vessel</source>
+                <target>Active Vessels</target>
+            </trans-unit>
+            <trans-unit id="vessel-3">
+                <source>vessel.inactive_vessel</source>
+                <target>Inactive Vessels</target>
+            </trans-unit>
+            <trans-unit id="vessel-4">
+                <source>vessel.ship_count</source>
+                <target>Vessel</target>
+            </trans-unit>
+            <trans-unit id="vessel-5">
+                <source>vessel.vessel_name</source>
+                <target>Vessel Name</target>
+            </trans-unit>
+            <trans-unit id="vessel-6">
+                <source>vessel.vessel_type</source>
+                <target>Vessel Type</target>
+            </trans-unit>
+            <trans-unit id="vessel-7">
+                <source>vessel.imo_number</source>
+                <target>IMO Number</target>
+            </trans-unit>
+            <trans-unit id="vessel-8">
+                <source>vessel.country</source>
+                <target>Country</target>
+            </trans-unit>
+            <trans-unit id="vessel-9">
+                <source>vessel.location</source>
+                <target>Location</target>
+            </trans-unit>
+            <trans-unit id="vessel-10">
+                <source>vessel.ship_yard</source>
+                <target>Ship Yard</target>
+            </trans-unit>
+            <trans-unit id="vessel-11">
+                <source>vessel.size</source>
+                <target>Size</target>
+            </trans-unit>
+            <trans-unit id="vessel-12">
+                <source>vessel.gt</source>
+                <target>GT</target>
+            </trans-unit>
+            <trans-unit id="vessel-13">
+                <source>vessel.mf_year</source>
+                <target>Manufacturing Year</target>
+            </trans-unit>
+            <trans-unit id="vessel-14">
+                <source>vessel.description</source>
+                <target>Description</target>
+            </trans-unit>
+            <trans-unit id="vessel- 15">
+                <source>vessel.list_mf_year</source>
+                <target>M.F Year</target>
+            </trans-unit>
+            <trans-unit id="vessel-16">
+                <source>vessel.status</source>
+                <target>Status</target>
+            </trans-unit>
+            <trans-unit id="vessel-17">
+                <source>vessel.basic_info</source>
+                <target>Basic Info</target>
+            </trans-unit>
+            <trans-unit id="vessel-18">
+                <source>vessel.specification</source>
+                <target>Specification</target>
+            </trans-unit>
+            <trans-unit id="vessel-19">
+                <source>vessel.add</source>
+                <target>Add</target>
+            </trans-unit>
+            <trans-unit id="vessel- 20">
+                <source>vessel.reset</source>
+                <target>Reset</target>
+            </trans-unit>
+            <trans-unit id="vessel- 21">
+                <source>vessel.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+            <trans-unit id="vessel- 22">
+                <source>vessel.archive_active</source>
+                <target>Active</target>
+            </trans-unit>
+            <trans-unit id="vessel- 23">
+                <source>vessel.archive_inactive</source>
+                <target>Inactive</target>
+            </trans-unit>
+            <trans-unit id="vessel- 24">
+                <source>vessel.edit_vessel</source>
+                <target>Vessel Edit</target>
+            </trans-unit>
+            <trans-unit id="vessel- 25">
+                <source>vessel.select</source>
+                <target>Select</target>
+            </trans-unit>
+            <trans-unit id="vessel- 26">
+                <source>vessel.save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="vessel- 27">
+                <source>vessel.cancel</source>
+                <target>Cancel</target>
+            </trans-unit>
 
 
         </body>
