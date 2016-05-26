@@ -505,6 +505,10 @@
                 <target>Cancel</target>
             </trans-unit>
 
+            <trans-unit id="kpi-0">
+                <source>kpi.add</source>
+                <target>Add KPI</target>
+            </trans-unit>
 
         </body>
     </file>
