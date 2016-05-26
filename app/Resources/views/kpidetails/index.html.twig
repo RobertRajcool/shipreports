@@ -712,13 +712,13 @@
         <section>
             <div class="col-sm-3 users_views">
                 <div class="add_user_btn_main">
-                    <span class="user_btn_main"><a href="" class="ss-plus add_btn">Add KPI</a></span>
+                    <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{ 'kpi.add'|trans }}</a></span>
                     <span class="user_btn_main grid_list_main">
                         <span class="active"><a href="" class="grid_list_icon ss-grid box_icon">&nbsp;</a></span>
                         <span><a href="" class="grid_list_icon ss-rows list_icon">&nbsp;</a></span>
                     </span>
                 </div>
-                <div class="users_list_main"><span>KPI ({{ kpi_count }})</span> <span
+                <div class="users_list_main"><span>{{ 'kpi.kpi_count'|trans }} ({{ kpi_count }})</span> <span
                             class="show_dropdown_icon">&nbsp;</span></div>
                 <div class="users_list_grid_main">
                     {% for kpiDetail in kpiDetails %}
@@ -791,7 +791,7 @@
             <div class="users_advanced_list_views_screen">
                 <div class="">
                     <div class="add_user_btn_main">
-                        <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add KPI</a></span>
+                        <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{ 'kpi.add'|trans }}</a></span>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon">&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon">&nbsp;</a></span>
@@ -802,11 +802,11 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>KpiName</th>
-                                <th>Weightage</th>
-                                <th>StartDate</th>
-                                <th>EndDate</th>
-                                <th>Description</th>
+                                <th>{{ 'kpi.kpi_name'|trans }}</th>
+                                <th>{{ 'kpi.weight'|trans }}</th>
+                                <th>{{ 'kpi.start_date'|trans }}</th>
+                                <th>{{ 'kpi.end_date'|trans }}</th>
+                                <th>{{ 'vessel.description'|trans }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -883,14 +883,14 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
-                    <h2>Add KPI</h2>
+                    <h2>{{ 'kpi.add'|trans }}</h2>
                     <form class="form-horizontal no-style create-form" action="{{ path('kpidetails_new1') }}"
                           method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
-                                <legend class="legend_name">Basic details</legend>
+                                <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Select ship</strong></label>
+                                    <label class="control-label col-xs-4"><strong>{{'kpi.ship_select'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.shipDetailsId,{'id':'shipId','label': ''}) }}
                                         <div class="select_all">
@@ -904,26 +904,26 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>KPI name</strong></label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.kpiName,{'id':'kpiid','label': ''}) }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Weightage</strong></label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
                                     <div class="col-xs-8 weight-error-message"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Description</strong></label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.description,{'id':'elementId','label': ''}) }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Valid</strong></label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
                                             <select class="add_rule_basic_date_drop" name="activeMonth"
@@ -952,7 +952,7 @@
                                                 {% endfor %}
                                             </select>
                                         </span>
-                                        <strong>To</strong>
+                                        <strong>{{ 'kpi.to'|trans }}</strong>
                                         <span>
                                             <select class="add_rule_basic_date_drop" name="endMonth"
                                                     class="full-width-select">
@@ -1000,7 +1000,7 @@
                             </fieldset>#}
                             <div class="kpi_rules">
                                 <fieldset class="fieldset_box ">
-                                    <legend class="legend_name">Rules</legend>
+                                    <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                                     <div class="form-group button">
                                         <div class="col-xs-9">
                                             <div id="conditions"></div>
@@ -1032,8 +1032,8 @@
                             </div>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn" id="submit_id">Add</button>
-                            <button type="reset" class="cancel_btn">Reset</button>
+                            <button class="submit_btn" id="submit_id">{{ 'vessel.add'|trans }}</button>
+                            <button type="reset" class="cancel_btn">{{ 'vessel.reset'|trans }}</button>
                         </div>
                     </form>
                 </div>
@@ -1045,32 +1045,32 @@
             <div class="col-sm-11">
                 <div class="view_new_user_screen_2 form_view_screen">
                     <div class="actions_edit_button">
-                        <a href="" class="edit_btn edit_kpi_button">Edit</a>
+                        <a href="" class="edit_btn edit_kpi_button">{{ 'vessel.edit'|trans }}</a>
                     </div>
                     <fieldset class="fieldset_box">
-                        <legend class="legend_name">Basic details</legend>
+                        <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                         <div class="form_view">
-                            <label class="form_labell"><strong>Ship Name :</strong></label>
+                            <label class="form_labell"><strong>{{ 'vessel.vessel_name'|trans }} :</strong></label>
                             <label class="form_input ship_name"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell"><strong>KPI name :</strong></label>
+                            <label class="form_labell"><strong>{{ 'kpi.kpi_name'|trans }}:</strong></label>
                             <label class="form_input kpi_name"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell"><strong>Weightage :</strong></label>
+                            <label class="form_labell"><strong>{{ 'kpi.weight'|trans }} :</strong></label>
                             <label class="form_input kpi_weightage"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell"><strong>Description :</strong></label>
+                            <label class="form_labell"><strong>{{ 'vessel.description'|trans }} :</strong></label>
                             <label class="form_input kpi_description"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell"><strong>Valid :</strong></label>
+                            <label class="form_labell"><strong>{{ 'kpi.valid'|trans }} :</strong></label>
                             <label class="form_input">
                                 <label><span class="kpi_activeDate_month "></span>-
                                     <sapn class=" kpi_activeDate_year"></sapn>
-                                    <strong> To </strong> <span class=" kpi_endDate_month "></span>-<span
+                                    <strong> {{ 'kpi.to'|trans }} </strong> <span class=" kpi_endDate_month "></span>-<span
                                             class="  kpi_endDate_year"></span></label>
                             </label>
                         </div>
@@ -1087,12 +1087,12 @@
                         </div>
                     </fieldset>#}
                     <fieldset class="fieldset_box add_rule_right_edit_form show_rule_div">
-                        <legend class="legend_name">Rules</legend>
+                        <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                         <div class="table-responsive">
                             <table class="table view_rule_conditions">
                                 <tr class="row_id">
-                                    <th class="conditions" align="center">Conditions</th>
-                                    <th class="color" align="center">Color</th>
+                                    <th class="conditions" align="center">{{ 'kpi.conditions'|trans }}</th>
+                                    <th class="color" align="center">{{ 'kpi.color'|trans }}</th>
                                 </tr>
                             </table>
                             <table class="table view_rule_conditions rule_table"></table>
@@ -1107,13 +1107,13 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
-                    <h2>KPI Edit</h2>
+                    <h2>{{ 'kpi.edit'|trans }}</h2>
                     <form class="form-horizontal no-style">
                         <div class="add_new_users_form">
                             <fieldset class="fieldset_box add_rule_form">
-                                <legend class="legend_name">Basic details</legend>
+                                <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Select ship</label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.ship_select'|trans }} :</strong></label>
                                     <div class="col-xs-8 ">
                                         <select multiple class="ship_name_edit" id="editShipId"></select>
                                         <div class="select_all">
@@ -1127,27 +1127,27 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">KPI name</label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}:</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_kpi_name" value="" placeholder="">
                                         <input type="hidden" class="kpi_edit_id" value="" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Weightage</label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="number" class="edit_kpi_weightage" value="" placeholder="">
                                     </div>
                                     <div class="col-xs-8 weight-error-message"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Description</label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_kpi_description" value="" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Valid</label>
+                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }} :</strong></label>
                                     <div class="col-xs-8">
                                 <span>
                                     <select class="month_text add_rule_basic_date_drop active_month ">
@@ -1172,7 +1172,7 @@
                                         {% endfor %}
                                     </select>
                                 </span>
-                                        <strong>To</strong>
+                                <strong> {{ 'kpi.to'|trans }} </strong>
                                 <span>
                                     <select class="month_text add_rule_basic_date_drop end_month">
                                         <option value="0">JAN</option>
@@ -1215,14 +1215,14 @@
                                 </div>
                             </fieldset>#}
                             <fieldset class="fieldset_box add_rule_right_edit_form edit_rule_div">
-                                <legend class="legend_name">Rules</legend>
+                                <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                                 <div class="table-responsive">
                                     <table class="table edit_rule_conditions">
                                         <tr class="row_edit_id">
-                                            <th class="conditions">Conditions</th>
-                                            <th class="color">Color</th>
-                                            <th class="edit">Edit</th>
-                                            <th class="action">Delete</th>
+                                            <th class="conditions">{{ 'kpi.conditions'|trans }}</th>
+                                            <th class="color">{{ 'kpi.color'|trans }}</th>
+                                            <th class="edit">{{ 'vessel.edit'|trans }}</th>
+                                            <th class="action">{{ 'kpi.kpi_delete'|trans }}</th>
                                         </tr>
                                     </table>
                                     <table class="table edit_rule_conditions rule_table_edit"></table>
@@ -1232,7 +1232,7 @@
                         <div id="rule_obj_text"></div>
                         <div class="kpi_rules">
                             <fieldset class="fieldset_box add_rule_right_edit_form rule_edit_place">
-                                <legend class="legend_name">Rules Create</legend>
+                                <legend class="legend_name">{{ 'kpi.rules_create'|trans }}</legend>
                                 <div class="form-group button">
                                     <div class="col-xs-9" style="width: 80%">
                                         <div id="conditions-edit"></div>
@@ -1251,8 +1251,8 @@
                             </fieldset>
                         </div>
                         <div class="actions_submit">
-                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">Save</button>
-                            <button class="cancel_btn edit_cancel_button" value="Submit">Cancel</button>
+                            <button class="submit_btn edit_submit_button" type="submit" value="Submit">{{ 'vessel.save'|trans }}</button>
+                            <button class="cancel_btn edit_cancel_button" value="Submit">{{ 'vessel.cancel'|trans }}</button>
                         </div>
                     </form>
                 </div>
