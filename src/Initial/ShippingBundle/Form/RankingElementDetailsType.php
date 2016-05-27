@@ -30,8 +30,7 @@ class RankingElementDetailsType extends AbstractType
                 'property' => 'KpiName',
                 'query_builder' => function($er)
                 {
-                    if ($this->role == true)
-                    {
+                    if ($this->role == true) {
                         return $er -> createQueryBuilder('a')
                             ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
                             ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
@@ -39,9 +38,7 @@ class RankingElementDetailsType extends AbstractType
                             ->where('c.id = :userId')
                             ->groupby('a.kpiName')
                             ->setParameter('userId',$this->userId);
-                    }
-                    else
-                    {
+                    } else {
                         return $er -> createQueryBuilder('a')
                             ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
                             ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = e.companyDetailsId')
@@ -50,7 +47,7 @@ class RankingElementDetailsType extends AbstractType
                             ->setParameter('userId',$this->userId);
                     }
                 },
-                'empty_value' =>false,
+                'empty_value' =>"--Select KPI--",
             ))
             ->add('elementName')
             ->add('description')

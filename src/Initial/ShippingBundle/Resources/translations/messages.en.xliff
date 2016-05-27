@@ -631,6 +631,27 @@
                 <target>JAN</target>
             </trans-unit>
 
+            <trans-unit id="element-0">
+                <source>element.add</source>
+                <target>Add Element</target>
+            </trans-unit>
+            <trans-unit id="element-1">
+                <source>element.element_count</source>
+                <target>Element</target>
+            </trans-unit>
+            <trans-unit id="element-2">
+                <source>element.element_name</source>
+                <target>Element Name</target>
+            </trans-unit>
+            <trans-unit id="element-3">
+                <source>element.kpi_select</source>
+                <target>Select KPI</target>
+            </trans-unit>
+            <trans-unit id="element-4">
+                <source>element.element_edit</source>
+                <target>Element Edit</target>
+            </trans-unit>
+
 
         </body>
     </file>
