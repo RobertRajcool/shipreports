@@ -504,6 +504,8 @@
                 <source>vessel.cancel</source>
                 <target>Cancel</target>
             </trans-unit>
+
+            
             <trans-unit id="300">
                 <source>user.header</source>
                 <target>Basic Info</target>
@@ -620,16 +622,6 @@
                 <source>user.roles</source>
                 <target>Roles</target>
             </trans-unit>
-
-
-
-
-
-
-
-
-
-
 
             <trans-unit id="kpi-0">
                 <source>kpi.add</source>
