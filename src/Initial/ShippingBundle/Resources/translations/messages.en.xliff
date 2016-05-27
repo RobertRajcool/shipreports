@@ -504,6 +504,132 @@
                 <source>vessel.cancel</source>
                 <target>Cancel</target>
             </trans-unit>
+            <trans-unit id="300">
+                <source>user.header</source>
+                <target>Basic Info</target>
+            </trans-unit>
+            <trans-unit id="301">
+                <source>user.full_name</source>
+                <target>Full name</target>
+            </trans-unit>
+            <trans-unit id="302">
+                <source>user.user_name</source>
+                <target>User name</target>
+            </trans-unit>
+            <trans-unit id="303">
+                <source>user.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="304">
+                <source>user.mobile_no</source>
+                <target>Mobile no</target>
+            </trans-unit>
+            <trans-unit id="305">
+                <source>user.add</source>
+                <target>Add</target>
+            </trans-unit>
+            <trans-unit id="306">
+                <source>user.reset</source>
+                <target>Reset</target>
+            </trans-unit>
+            <trans-unit id="307">
+                <source>user.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+            <trans-unit id="308">
+                <source>user.basic_info</source>
+                <target>Basic Info</target>
+            </trans-unit>
+            <trans-unit id="309">
+                <source>user.edit_fullname</source>
+                <target>Full name</target>
+            </trans-unit>
+            <trans-unit id="310">
+                <source>user.edit_name</source>
+                <target>User name</target>
+            </trans-unit>
+            <trans-unit id="311">
+                <source>user.edit_email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="312">
+                <source>user.edit_mobile</source>
+                <target>Mobile no</target>
+            </trans-unit>
+            <trans-unit id="313">
+                <source>user.edit_privileges</source>
+                <target>Privileges</target>
+            </trans-unit>
+            <trans-unit id="314">
+                <source>user.edit_save</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="315">
+                <source>user.edit_cancel</source>
+                <target>cancel</target>
+            </trans-unit>
+            <trans-unit id="316">
+                <source>user.privileges</source>
+                <target>Privileges</target>
+            </trans-unit>
+            <trans-unit id="317">
+                <source>user.vship</source>
+                <target>Vship</target>
+            </trans-unit>
+            <trans-unit id="318">
+                <source>user.admin</source>
+                <target>Admin</target>
+            </trans-unit>
+            <trans-unit id="319">
+                <source>user.kpimanager</source>
+                <target>KPI MANAGER</target>
+            </trans-unit>
+            <trans-unit id="320">
+                <source>user.edit_admin</source>
+                <target>Admin</target>
+            </trans-unit>
+            <trans-unit id="321">
+                <source>user.edit_vship</source>
+                <target>Vship</target>
+            </trans-unit>
+            <trans-unit id="322">
+                <source>user.edit_kpimanager</source>
+                <target>KPI MANAGER</target>
+            </trans-unit>
+            <trans-unit id="323">
+                <source>user.add_user</source>
+                <target>Add User</target>
+            </trans-unit>
+            <trans-unit id="324">
+                <source>add.user</source>
+                <target>Add User</target>
+            </trans-unit>
+            <trans-unit id="325">
+                <source>user.name</source>
+                <target>Username</target>
+            </trans-unit>
+            <trans-unit id="326">
+                <source>user.email</source>
+                <target>Email</target>
+            </trans-unit>
+            <trans-unit id="327">
+                <source>user.mobile</source>
+                <target>Mobile</target>
+            </trans-unit>
+            <trans-unit id="328">
+                <source>user.roles</source>
+                <target>Roles</target>
+            </trans-unit>
+
+
+
+
+
+
+
+
+
+
 
 
         </body>
