@@ -728,55 +728,55 @@
                                                       id={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</a> </span>
                                 <span class="text">
                                     {% if kpiDetail.activeDate|date('m') == 01 %}
-                                        Jan-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.jan'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 02 %}
-                                        Feb-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.feb'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 03 %}
-                                        Mar-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.mar'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 04 %}
-                                        Apr-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.apr'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 05 %}
-                                        May-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.may'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 06 %}
-                                        Jun-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.jun'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 07 %}
-                                        Jul-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.jul'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 08 %}
-                                        Aug-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.aug'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 09 %}
-                                        Sep-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.sep'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 10 %}
-                                        Oct-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.oct'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 11 %}
-                                        Nov-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.nov'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% elseif kpiDetail.activeDate|date('m') == 12 %}
-                                        Dec-{{ kpiDetail.activeDate|date('Y') }}
+                                        {{ 'month.dec'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                     {% endif %}
-                                    To
+                                    <strong>{{ 'kpi.to'|trans }}</strong>
                                     {% if kpiDetail.endDate|date('m') == 01 %}
-                                        Jan-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.jan'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 02 %}
-                                        Feb-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.feb'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 03 %}
-                                        Mar-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.mar'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 04 %}
-                                        Apr-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.apr'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 05 %}
-                                        May-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.may'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 06 %}
-                                        Jun-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.jun'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 07 %}
-                                        Jul-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.jul'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 08 %}
-                                        Aug-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.aug'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 09 %}
-                                        Sep-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.sep'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 10 %}
-                                        Oct-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.oct'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 11 %}
-                                        Nov-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.nov'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% elseif kpiDetail.endDate|date('m') == 12 %}
-                                        Dec-{{ kpiDetail.endDate|date('Y') }}
+                                        {{ 'month.dec'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                     {% endif %}
                                 </span>
                             </span>
@@ -816,56 +816,56 @@
                                     <td>{{ kpiDetail.weightage }}</td>
                                     <td>
                                         {% if kpiDetail.activeDate|date('m') == 01 %}
-                                            Jan-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.jan'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 02 %}
-                                            Feb-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.feb'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 03 %}
-                                            Mar-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.mar'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 04 %}
-                                            Apr-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.apr'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 05 %}
-                                            May-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.may'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 06 %}
-                                            Jun-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.jun'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 07 %}
-                                            Jul-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.jul'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 08 %}
-                                            Aug-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.aug'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 09 %}
-                                            Sep-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.sep'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 10 %}
-                                            Oct-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.oct'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 11 %}
-                                            Nov-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.nov'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% elseif kpiDetail.activeDate|date('m') == 12 %}
-                                            Dec-{{ kpiDetail.activeDate|date('Y') }}
+                                            {{ 'month.dec'|trans }}-{{ kpiDetail.activeDate|date('Y') }}
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if kpiDetail.endDate|date('m') == 01 %}
-                                            Jan-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.jan'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 02 %}
-                                            Feb-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.feb'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 03 %}
-                                            Mar-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.mar'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 04 %}
-                                            Apr-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.apr'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 05 %}
-                                            May-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.may'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 06 %}
-                                            Jun-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.jun'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 07 %}
-                                            Jul-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.jul'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 08 %}
-                                            Aug-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.aug'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 09 %}
-                                            Sep-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.sep'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 10 %}
-                                            Oct-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.oct'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 11 %}
-                                            Nov-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.nov'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% elseif kpiDetail.endDate|date('m') == 12 %}
-                                            Dec-{{ kpiDetail.endDate|date('Y') }}
+                                            {{ 'month.dec'|trans }}-{{ kpiDetail.endDate|date('Y') }}
                                         {% endif %}
                                     </td>
                                     <td>{{ kpiDetail.description }}</td>
@@ -929,18 +929,18 @@
                                             <select class="add_rule_basic_date_drop" name="activeMonth"
                                                     class="full-width-select">
                                                 <option selected="selected">--</option>
-                                                <option value="1">Jan</option>
-                                                <option value="2">Feb</option>
-                                                <option value="3">Mar</option>
-                                                <option value="4">Apr</option>
-                                                <option value="5">May</option>
-                                                <option value="6">Jun</option>
-                                                <option value="7">Jul</option>
-                                                <option value="8">Aug</option>
-                                                <option value="9">Sep</option>
-                                                <option value="10">Oct</option>
-                                                <option value="11">Nov</option>
-                                                <option value="12">Dec</option>
+                                                <option value="1">{{ 'month.jan'|trans }}</option>
+                                                <option value="2">{{ 'month.feb'|trans }}</option>
+                                                <option value="3">{{ 'month.mar'|trans }}</option>
+                                                <option value="4">{{ 'month.apr'|trans }}</option>
+                                                <option value="5">{{ 'month.may'|trans }}</option>
+                                                <option value="6">{{ 'month.jun'|trans }}</option>
+                                                <option value="7">{{ 'month.jul'|trans }}</option>
+                                                <option value="8">{{ 'month.aug'|trans }}</option>
+                                                <option value="9">{{ 'month.sep'|trans }}</option>
+                                                <option value="10">{{ 'month.oct'|trans }}</option>
+                                                <option value="11">{{ 'month.nov'|trans }}</option>
+                                                <option value="12">{{ 'month.dec'|trans }}</option>
                                             </select>
                                         </span>
                                         <span>
@@ -957,18 +957,18 @@
                                             <select class="add_rule_basic_date_drop" name="endMonth"
                                                     class="full-width-select">
                                                 <option selected="selected">--</option>
-                                                <option value="1">Jan</option>
-                                                <option value="2">Feb</option>
-                                                <option value="3">Mar</option>
-                                                <option value="4">Apr</option>
-                                                <option value="5">May</option>
-                                                <option value="6">Jun</option>
-                                                <option value="7">Jul</option>
-                                                <option value="8">Aug</option>
-                                                <option value="9">Sep</option>
-                                                <option value="10">Oct</option>
-                                                <option value="11">Nov</option>
-                                                <option value="12">Dec</option>
+                                                <option value="1">{{ 'month.jan'|trans }}</option>
+                                                <option value="2">{{ 'month.feb'|trans }}</option>
+                                                <option value="3">{{ 'month.mar'|trans }}</option>
+                                                <option value="4">{{ 'month.apr'|trans }}</option>
+                                                <option value="5">{{ 'month.may'|trans }}</option>
+                                                <option value="6">{{ 'month.jun'|trans }}</option>
+                                                <option value="7">{{ 'month.jul'|trans }}</option>
+                                                <option value="8">{{ 'month.aug'|trans }}</option>
+                                                <option value="9">{{ 'month.sep'|trans }}</option>
+                                                <option value="10">{{ 'month.oct'|trans }}</option>
+                                                <option value="11">{{ 'month.nov'|trans }}</option>
+                                                <option value="12">{{ 'month.dec'|trans }}</option>
                                             </select>
                                         </span>
                                         <span>
@@ -1151,18 +1151,18 @@
                                     <div class="col-xs-8">
                                 <span>
                                     <select class="month_text add_rule_basic_date_drop active_month ">
-                                        <option value="0">JAN</option>
-                                        <option value="1">FEB</option>
-                                        <option value="2">MAR</option>
-                                        <option value="3">APR</option>
-                                        <option value="4">MAY</option>
-                                        <option value="5">JUN</option>
-                                        <option value="6">JUL</option>
-                                        <option value="7">AUG</option>
-                                        <option value="8">SEP</option>
-                                        <option value="9">OCT</option>
-                                        <option value="10">NOV</option>
-                                        <option value="11">DEC</option>
+                                        <option value="0">{{ 'month.jan'|trans }}</option>
+                                        <option value="1">{{ 'month.feb'|trans }}</option>
+                                        <option value="2">{{ 'month.mar'|trans }}</option>
+                                        <option value="3">{{ 'month.apr'|trans }}</option>
+                                        <option value="4">{{ 'month.may'|trans }}</option>
+                                        <option value="5">{{ 'month.jun'|trans }}</option>
+                                        <option value="6">{{ 'month.jul'|trans }}</option>
+                                        <option value="7">{{ 'month.aug'|trans }}</option>
+                                        <option value="8">{{ 'month.sep'|trans }}</option>
+                                        <option value="9">{{ 'month.oct'|trans }}</option>
+                                        <option value="10">{{ 'month.nov'|trans }}</option>
+                                        <option value="11">{{ 'month.dec'|trans }}</option>
                                     </select>
                                 </span>
                                 <span>
@@ -1175,18 +1175,18 @@
                                 <strong> {{ 'kpi.to'|trans }} </strong>
                                 <span>
                                     <select class="month_text add_rule_basic_date_drop end_month">
-                                        <option value="0">JAN</option>
-                                        <option value="1">FEB</option>
-                                        <option value="2">MAR</option>
-                                        <option value="3">APR</option>
-                                        <option value="4">MAY</option>
-                                        <option value="5">JUN</option>
-                                        <option value="6">JUL</option>
-                                        <option value="7">AUG</option>
-                                        <option value="8">SEP</option>
-                                        <option value="9">OCT</option>
-                                        <option value="10">NOV</option>
-                                        <option value="11">DEC</option>
+                                        <option value="0">{{ 'month.jan'|trans }}</option>
+                                        <option value="1">{{ 'month.feb'|trans }}</option>
+                                        <option value="2">{{ 'month.mar'|trans }}</option>
+                                        <option value="3">{{ 'month.apr'|trans }}</option>
+                                        <option value="4">{{ 'month.may'|trans }}</option>
+                                        <option value="5">{{ 'month.jun'|trans }}</option>
+                                        <option value="6">{{ 'month.jul'|trans }}</option>
+                                        <option value="7">{{ 'month.aug'|trans }}</option>
+                                        <option value="8">{{ 'month.sep'|trans }}</option>
+                                        <option value="9">{{ 'month.oct'|trans }}</option>
+                                        <option value="10">{{ 'month.nov'|trans }}</option>
+                                        <option value="11">{{ 'month.dec'|trans }}</option>
                                     </select>
                                 </span>
                                  <span>

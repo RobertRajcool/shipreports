@@ -582,6 +582,56 @@
                 <target>KPI</target>
             </trans-unit>
 
+            <trans-unit id="month-0">
+                <source>month.feb</source>
+                <target>FEB</target>
+            </trans-unit>
+            <trans-unit id="month-1">
+                <source>month.mar</source>
+                <target>MAR</target>
+            </trans-unit>
+            <trans-unit id="month-2">
+                <source>month.apr</source>
+                <target>APR</target>
+            </trans-unit>
+            <trans-unit id="month-3">
+                <source>month.may</source>
+                <target>MAY</target>
+            </trans-unit>
+             <trans-unit id="month-4">
+                <source>month.jun</source>
+                <target>JUN</target>
+            </trans-unit>
+            <trans-unit id="month-5">
+                <source>month.jul</source>
+                <target>JUL</target>
+            </trans-unit>
+            <trans-unit id="month-6">
+                <source>month.aug</source>
+                <target>AUG</target>
+            </trans-unit>
+            <trans-unit id="month-7">
+                <source>month.sep</source>
+                <target>SEP</target>
+            </trans-unit>
+             <trans-unit id="month-8">
+                <source>month.oct</source>
+                <target>OCT</target>
+            </trans-unit>
+            <trans-unit id="month-9">
+                <source>month.nov</source>
+                <target>NOV</target>
+            </trans-unit>
+            <trans-unit id="month-10">
+                <source>month.dec</source>
+                <target>DEC</target>
+            </trans-unit>
+            <trans-unit id="month-11">
+                <source>month.jan</source>
+                <target>JAN</target>
+            </trans-unit>
+
+
         </body>
     </file>
 </xliff>
