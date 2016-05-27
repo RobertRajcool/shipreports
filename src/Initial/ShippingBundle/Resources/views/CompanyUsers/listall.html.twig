@@ -307,6 +307,8 @@
                 $('#fos_user_registration_form_roles').hide();
 
 
+
+
             });
         </script>
 
@@ -318,7 +320,7 @@
         <section>
             <div class="col-sm-3 users_views">
                 <div class="add_user_btn_main">
-                    <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add User</a></span>
+                    <span class="user_btn_main"><a href="" class="ss-plus add_btn"> {{'user.add_user'|trans  }}</a></span>
                     {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
                     <span class="user_btn_main grid_list_main">
               <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
@@ -350,7 +352,7 @@
             <div class=" users_advanced_list_views_screen">
                 <div class="">
                     <div class="add_user_btn_main">
-                        <span class="user_btn_main"><a href="" class="ss-plus add_btn"> Add User</a></span>
+                        <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{'add.user'|trans  }}</a></span>
                         {#<span class="user_btn_main"><a href="" class="show_btn">Show <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>#}
                         <span class="user_btn_main grid_list_main">
                          <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
@@ -365,10 +367,10 @@
                             <thead>
                             <tr>
 
-                                <th>Username</th>
-                                <th>Email id</th>
-                                <th>Mobile</th>
-                                <th> Roles</th>
+                                <th>{{'user.name'|trans  }}</th>
+                                <th>{{'user.email'|trans  }}</th>
+                                <th>{{'user.mobile'|trans  }}</th>
+                                <th>{{'user.roles'|trans  }}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -403,11 +405,11 @@
                     {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register form-horizontal no-style'}}) }}
                     <div class="add_new_users_form">
                         <fieldset class="fieldset_box">
-                            <legend class="legend_name">Basic Info</legend>
+                            <legend class="legend_name">{{ 'user.header'|trans }}</legend>
 
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Full name</label>
+                                <label class="control-label required_field col-xs-4">{{'user.full_name'|trans  }}</label>
                                 <div class="col-xs-8">
                                     {{ form_row(form.fullname,{'label': ' '}) }}
                                     {#<input type="text" name="fullname">#}
@@ -415,21 +417,21 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">User name</label>
+                                <label class="control-label required_field col-xs-4">{{'user.user_name'|trans  }}</label>
                                 <div class="col-xs-8">
                                     {{ form_row(form.username,{'label': ' ' }) }}
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Email</label>
+                                <label class="control-label required_field col-xs-4">{{'user.email'|trans  }}</label>
                                 <div class="col-xs-8">
                                     {{ form_row(form.email,{'label': ' '}) }}
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Mobile no</label>
+                                <label class="control-label required_field col-xs-4">{{'user.mobile_no'|trans  }}</label>
                                 <div class="col-xs-8">
                                     {{ form_row(form.mobile,{'label': ' '}) }}
                                     {#<input type="number" name="mobile">#}
@@ -439,12 +441,12 @@
                         </fieldset>
 
                         <fieldset class="fieldset_box">
-                            <legend class="legend_name">Privileges</legend>
+                            <legend class="legend_name">{{'user.privileges'|trans  }}</legend>
                             {%  if is_granted("ROLE_SUPER_ADMIN") %}
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">&nbsp;</label>
                                     <div class="col-xs-8">
-                                        <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_ADMIN"> Admin</label>
+                                        <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_ADMIN">{{'user.admin'|trans  }}</label>
                                     </div>
                                 </div>
                             {% endif %}
@@ -465,14 +467,14 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_VSHIPS"> Vship</label>
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_VSHIPS"> {{'user.vship'|trans  }}</label>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_MANAGER"> KPI manager</label>
+                                    <label><input type="radio" name="privileges" class="inline-checkbox" placeholder="" value="ROLE_MANAGER">{{'user.kpimanager'|trans  }}</label>
                                 </div>
                             </div>
                         </fieldset>
@@ -492,8 +494,8 @@
                         </fieldset>
                     </div>
                     <div class="actions_submit">
-                        <button class="submit_btn" type="submit" value="Submit">Create</button>
-                        <button class="cancel_btn" type="submit" value="Submit">Reset</button>
+                        <button class="submit_btn" type="submit" value="Submit">{{'user.add'|trans  }}</button>
+                        <button class="cancel_btn" type="submit" value="Submit">{{'user.reset'|trans  }}</button>
 
                     </div>
                     {{ form_end(form) }}
@@ -513,7 +515,7 @@
                 <div class="view_new_user_screen">
                     {#<div class="view_new_user_screen_2 form_view_screen">#}
                     <div class="actions_edit_button">
-                        <a href="" class="edit_btn edit_user_button"> Edit</a>
+                        <a href="" class="edit_btn edit_user_button">{{'user.edit'|trans  }}</a>
                         {#<a href="" class="edit_btn">Archive</a>#}
                     </div>
 
@@ -557,36 +559,36 @@
 
                     <div class="add_new_users_form">
                         <fieldset class="fieldset_box">
-                            <legend class="legend_name">Basic Info</legend>
+                            <legend class="legend_name">{{'user.basic_info'|trans  }}</legend>
 
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Full name</label>
+                                <label class="control-label required_field col-xs-4">{{'user.edit_fullname'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_fullname" value="" placeholder="">
+                                    <input type="text" class="edit_fullname" value="" placeholder="" required>
 
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">User name</label>
+                                <label class="control-label required_field col-xs-4">{{'user.edit_name'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_username" value="" placeholder="">
+                                    <input type="text" class="edit_username" value="" placeholder="" required>
                                     <input type="hidden" class="edit_user_id" value="" placeholder="">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">Email</label>
+                                <label class="control-label required_field col-xs-4">{{'user.edit_email'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_email" value="" placeholder="">
+                                    <input type="text" class="edit_email" value="" placeholder="" required>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="control-label col-xs-4">Mobile no</label>
+                                <label class="control-label col-xs-4">{{'user.edit_mobile'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_mobile" value="" placeholder="">
+                                    <input type="text" class="edit_mobile" value="" placeholder="" required>
 
                                 </div>
                             </div>
@@ -594,12 +596,12 @@
                         </fieldset>
 
                         <fieldset class="fieldset_box">
-                            <legend class="legend_name">Privileges</legend>
+                            <legend class="legend_name">{{'user.edit_privileges'|trans  }}</legend>
                             {%  if is_granted("ROLE_SUPER_ADMIN") %}
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">&nbsp;</label>
                                     <div class="col-xs-8">
-                                        <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ROLE_ADMIN"> Admin</label>
+                                        <label><input type="radio" id="1" name="privileges"   class="inline-checkbox" placeholder="" value="ROLE_ADMIN">{{ 'user.edit_admin'|trans  }}</label>
                                     </div>
                                 </div>
                             {% endif %}
@@ -619,18 +621,18 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_VSHIPS"> Vship</label>
+                                    <label><input type="radio" id="3"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_VSHIPS">{{ 'user.edit_vship'|trans  }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
-                                    <label><input type="radio" id="4"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_MANAGER"> KPI MANAGER</label>
+                                    <label><input type="radio" id="4"  name="privileges" class="inline-checkbox" placeholder="" value=" ROLE_MANAGER">{{ 'user.edit_kpimanager'|trans  }}</label>
                                 </div>
                             </div>
                             <div class="actions_submit">
-                                <button class="submit_btn edit_submit_btn" type="submit" value="Submit">Save</button>
-                                <button class="cancel_btn edit_cancel_btn" type="submit" value="Submit">Cancel</button>
+                                <button class="submit_btn edit_submit_btn" type="submit" value="Submit">{{'user.edit_save'|trans  }}</button>
+                                <button class="cancel_btn edit_cancel_btn" type="submit" value="Submit">{{'user.edit_cancel'|trans  }}</button>
 
                             </div>
                         </fieldset>
