@@ -30,18 +30,14 @@ class KpiDetailsType extends AbstractType
                 'class' => 'Initial\ShippingBundle\Entity\ShipDetails',
                 'property' => 'ShipName',
                 'multiple' => 'multiple',
-                'query_builder' => function($er)
-                {
-                    if ($this->role == true)
-                    {
+                'query_builder' => function($er) {
+                    if ($this->role == true) {
                         return $er -> createQueryBuilder('a')
                             ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = a.companyDetailsId')
                             ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
                             ->where('c.id = :userId')
                             ->setParameter('userId',$this->userId);
-                    }
-                    else
-                    {
+                    } else {
                         return $er -> createQueryBuilder('a')
                             ->leftjoin('InitialShippingBundle:User','b','WITH','b.companyid = a.companyDetailsId')
                             ->where('b.id = :userId')

@@ -20,7 +20,7 @@ class ShipDetailsType extends AbstractType
                 'required' => true,
                 'class' => 'Initial\ShippingBundle\Entity\ShipTypes',
                 'property' => 'ShipType',
-                'empty_value' => '--ShipType--'
+                'empty_value' => '-- Select ShipType--'
             ))
             ->add('imoNumber')
             ->add('country','entity',array(
