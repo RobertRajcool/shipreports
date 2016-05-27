@@ -411,7 +411,7 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{'user.full_name'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.fullname,{'label': ' '}) }}
+                                    {{ form_row(form.fullname,{'label': ' ','required':'true'}) }}
                                     {#<input type="text" name="fullname">#}
                                 </div>
                             </div>
@@ -433,7 +433,7 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{'user.mobile_no'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.mobile,{'label': ' '}) }}
+                                    {{ form_row(form.mobile,{'label': ' ','required':'true'}) }}
                                     {#<input type="number" name="mobile">#}
                                 </div>
                             </div>
@@ -479,9 +479,9 @@
                             </div>
                         </fieldset>
                         <fieldset class="fieldset_box">
-                            <legend class="legend_name">Security</legend>
+                            <legend class="legend_name">{{'user.security'|trans  }}</legend>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4" >Password <span class="change">*</span><label class="pass">.</label> <labe >Confirm password</label></label>
+                                <label class="control-label required_field col-xs-4" >{{'user.password'|trans  }}<span class="change">*</span><label class="pass">.</label> <labe >{{'user.confirm'|trans  }}</label></label>
 
                                 <div class="col-xs-8">
                                     {{ form_row(form.plainPassword) }}

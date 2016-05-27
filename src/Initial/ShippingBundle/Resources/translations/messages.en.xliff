@@ -505,7 +505,7 @@
                 <target>Cancel</target>
             </trans-unit>
 
-            
+
             <trans-unit id="300">
                 <source>user.header</source>
                 <target>Basic Info</target>
@@ -621,6 +621,18 @@
             <trans-unit id="328">
                 <source>user.roles</source>
                 <target>Roles</target>
+            </trans-unit>
+            <trans-unit id="329">
+                <source>user.security</source>
+                <target>Security</target>
+            </trans-unit>
+            <trans-unit id="330">
+                <source>user.password</source>
+                <target>Password</target>
+            </trans-unit>
+            <trans-unit id="331">
+                <source>user.confirm</source>
+                <target>Confirm password</target>
             </trans-unit>
 
             <trans-unit id="kpi-0">
