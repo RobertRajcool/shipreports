@@ -631,6 +631,153 @@
 
 
 
+            <trans-unit id="kpi-0">
+                <source>kpi.add</source>
+                <target>Add KPI</target>
+            </trans-unit>
+            <trans-unit id="kpi-1">
+                <source>kpi.kpi_count</source>
+                <target>KPI</target>
+            </trans-unit>
+            <trans-unit id="kpi-2">
+                <source>kpi.ship_select</source>
+                <target>Select Vessel</target>
+            </trans-unit>
+            <trans-unit id="kpi-3">
+                <source>kpi.kpi_name</source>
+                <target>KPI Name</target>
+            </trans-unit>
+            <trans-unit id="kpi-4">
+                <source>kpi.weight</source>
+                <target>Weightage</target>
+            </trans-unit>
+            <trans-unit id="kpi-5">
+                <source>kpi.start_date</source>
+                <target>Start Date</target>
+            </trans-unit>
+            <trans-unit id="kpi-6">
+                <source>kpi.end_date</source>
+                <target>End Date</target>
+            </trans-unit>
+            <trans-unit id="kpi-7">
+                <source>kpi.valid</source>
+                <target>Valid</target>
+            </trans-unit>
+            <trans-unit id="kpi-8">
+                <source>kpi.conditions</source>
+                <target>Conditions</target>
+            </trans-unit>
+            <trans-unit id="kpi-9">
+                <source>kpi.to</source>
+                <target>To</target>
+            </trans-unit>
+            <trans-unit id="kpi-10">
+                <source>kpi.rules</source>
+                <target>Rules</target>
+            </trans-unit>
+            <trans-unit id="kpi-11">
+                <source>kpi.color</source>
+                <target>Color</target>
+            </trans-unit>
+            <trans-unit id="kpi-12">
+                <source>kpi.edit</source>
+                <target>KPI Edit</target>
+            </trans-unit>
+            <trans-unit id="kpi-13">
+                <source>kpi.kpi_count</source>
+                <target>KPI</target>
+            </trans-unit>
+            <trans-unit id="kpi-14">
+                <source>kpi.add</source>
+                <target>Add KPI</target>
+            </trans-unit>
+            <trans-unit id="kpi-15">
+                <source>kpi.kpi_count</source>
+                <target>KPI</target>
+            </trans-unit>
+            <trans-unit id="kpi-16">
+                <source>kpi.kpi_delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="kpi-17">
+                <source>kpi.rules_create</source>
+                <target>Rules Create</target>
+            </trans-unit>
+            <trans-unit id="kpi-18">
+                <source>kpi.kpi_count</source>
+                <target>KPI</target>
+            </trans-unit>
+
+            <trans-unit id="month-0">
+                <source>month.feb</source>
+                <target>FEB</target>
+            </trans-unit>
+            <trans-unit id="month-1">
+                <source>month.mar</source>
+                <target>MAR</target>
+            </trans-unit>
+            <trans-unit id="month-2">
+                <source>month.apr</source>
+                <target>APR</target>
+            </trans-unit>
+            <trans-unit id="month-3">
+                <source>month.may</source>
+                <target>MAY</target>
+            </trans-unit>
+             <trans-unit id="month-4">
+                <source>month.jun</source>
+                <target>JUN</target>
+            </trans-unit>
+            <trans-unit id="month-5">
+                <source>month.jul</source>
+                <target>JUL</target>
+            </trans-unit>
+            <trans-unit id="month-6">
+                <source>month.aug</source>
+                <target>AUG</target>
+            </trans-unit>
+            <trans-unit id="month-7">
+                <source>month.sep</source>
+                <target>SEP</target>
+            </trans-unit>
+             <trans-unit id="month-8">
+                <source>month.oct</source>
+                <target>OCT</target>
+            </trans-unit>
+            <trans-unit id="month-9">
+                <source>month.nov</source>
+                <target>NOV</target>
+            </trans-unit>
+            <trans-unit id="month-10">
+                <source>month.dec</source>
+                <target>DEC</target>
+            </trans-unit>
+            <trans-unit id="month-11">
+                <source>month.jan</source>
+                <target>JAN</target>
+            </trans-unit>
+
+            <trans-unit id="element-0">
+                <source>element.add</source>
+                <target>Add Element</target>
+            </trans-unit>
+            <trans-unit id="element-1">
+                <source>element.element_count</source>
+                <target>Element</target>
+            </trans-unit>
+            <trans-unit id="element-2">
+                <source>element.element_name</source>
+                <target>Element Name</target>
+            </trans-unit>
+            <trans-unit id="element-3">
+                <source>element.kpi_select</source>
+                <target>Select KPI</target>
+            </trans-unit>
+            <trans-unit id="element-4">
+                <source>element.element_edit</source>
+                <target>Element Edit</target>
+            </trans-unit>
+
 
         </body>
     </file>
