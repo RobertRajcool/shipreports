@@ -770,6 +770,19 @@
                 <target>Element Edit</target>
             </trans-unit>
 
+             <trans-unit id="rules-0">
+                <source>rules.add</source>
+                <target>Add Rules</target>
+            </trans-unit>
+            <trans-unit id="rules-1">
+                <source>rules.rules_count</source>
+                <target>Rules</target>
+            </trans-unit>
+            <trans-unit id="rules-2">
+                <source>rules.element_select</source>
+                <target>Select Element</target>
+            </trans-unit>
+
 
         </body>
     </file>
