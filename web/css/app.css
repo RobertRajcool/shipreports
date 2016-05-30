@@ -620,7 +620,7 @@ body {
   font-size: 14px;
   line-height: 20px;
   color: #505b65;
-  background: #ffffff;
+  background: #f7faff;
 }
 body.add_dropzone_tint {
   background: rgba(0, 0, 0, 0.2);
@@ -1392,15 +1392,19 @@ input[type="checkbox"]:focus {
 }
 input:-moz-placeholder,
 textarea:-moz-placeholder {
-  color: #a2a2a2;
+  color: #dadada;
+}
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: #dadada;
 }
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder {
-  color: #a2a2a2;
+  color: #dadada;
 }
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
-  color: #a2a2a2;
+  color: #dadada;
 }
 .radio,
 .checkbox {
@@ -4485,11 +4489,11 @@ ul.dropdown-menu li span.message {
   top: 50%;
 }
 .modal-header {
-  background: #103a71;
+  background: #6393b5;
   -webkit-border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   border-radius: 4px 4px 0 0;
-  padding: 7px 15px;
+  padding: 9px 15px;
   border-bottom: 1px solid #eee;
 }
 .modal-header .close {
@@ -29193,8 +29197,8 @@ strong.inline {
   margin: 0;
 }
 .modal-body {
-  max-height: 300px;
-  overflow: auto;
+  overflow: hidden;
+  max-height: 100%;
 }
 .modal-body.without-padding {
   padding: 15px 0 0 0;

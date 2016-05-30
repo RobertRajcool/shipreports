@@ -26,7 +26,7 @@ class DefaultController extends Controller
             }
             else
             {
-                return $this->render('InitialShippingBundle:Default:index.html.twig');
+                return $this->redirectToRoute('dashboardhome');
             }
 
         }

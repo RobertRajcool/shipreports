@@ -1236,6 +1236,8 @@ select {
     width: 500px;
 }
 .add_new_kpi_top_title {
+
+
     padding: 9px 24px;
     font-size: 14px;
     font-weight:bold;
@@ -1246,7 +1248,7 @@ select {
     top:0px;
     margin:-1px 0 0 -24px;
     width:100%;
-    z-index: 1;
+	z-index: 1;
 }
 .add_new_kpi_top_title .title_month {
     width:794px;
@@ -1343,6 +1345,9 @@ select {
     width:14%;
     padding-left:30px !important;
     text-align:center;
+}
+.kpi_table_form_section .kpi_lement_inputname input[type=text] {
+    color:#999999;
 }
 .kpi_table_form_section .kpi_value {
     text-align:center;
@@ -1879,15 +1884,6 @@ input[type="color"],
     flex: 0 0 auto;
     width: calc(100% - 0px);
 }
-@media screen and (-webkit-min-device-pixel-ratio:0)
-{
-    .graph_and_colour_coding_dashboard_row thead {
-        /* head takes the height it requires,
-        and it's not scaled when table is resized */
-        flex: 0 0 auto;
-        width: calc(100% - -1px);
-    }
-}
 .graph_and_colour_coding_dashboard_row thead th {
     text-align:center;
     background:#989898;
@@ -1895,7 +1891,7 @@ input[type="color"],
     padding: 3px 10px !important;
 }
 .graph_and_colour_coding_dashboard_row thead th.last {
-    border-right:1px solid #989898;
+    border-right:none;
 }
 .graph_and_colour_coding_dashboard_row .kpi_name_th {
     width: 50%;
@@ -1964,23 +1960,23 @@ input[type="color"],
 }
 /* webkit ->(Safari, NetNewsWire, OmniWeb, Shiira, Google Chrome)*/
 .linux.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
-    width: 6.2%;
+    width: 6.1%;
 }
 /* gecko-> (Mozilla, Firefox (all versions), Camino )*/
 .linux.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
     width: 6.5%;
 }
 .mac.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
-    width: 6.9%;
+    width: 6.6%;
 }
 .mac.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
-    width: 6.9%;
+    width: 6.85%;
 }
 .mac.safari .graph_and_colour_coding_dashboard_row .month_td_3 {
-    width: 8%;
+    width: 6.75%;
 }
 .win.webkit .graph_and_colour_coding_dashboard_row .month_td_3 {
-    width: 6.8%;
+    width: 6.6%;
 }
 .win.gecko .graph_and_colour_coding_dashboard_row .month_td_3 {
     width: 6.7%;
@@ -2337,6 +2333,7 @@ input[type="color"],
 }
 
 .weight-error-message {
+
     float: right;
     margin: 10px 0 -8px 0;
     font-size: 12px;
@@ -2364,14 +2361,18 @@ input[type="color"],
 }
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-    /* Safari and Chrome */
-    .graph_and_colour_coding_dashboard_row .month_td_3 {
-        width: 6.8%;
-    }
-    .graph_and_colour_coding_dashboard_row .average_score_2_td {
-        width: 60.2%;
+/* Safari and Chrome */
+	.graph_and_colour_coding_dashboard_row .average_score_2_td {
+		width: 60.1%;
+	}
+    .graph_and_colour_coding_dashboard_row thead {
+        /* head takes the height it requires,
+        and it's not scaled when table is resized */
+        flex: 0 0 auto;
+        width: calc(100% - -1px);
     }
 }
+
 
 
 
