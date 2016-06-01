@@ -28,6 +28,7 @@
                 var editCancelButton = $('.edit_cancel_button');
                 var editSaveButton = $('.edit_submit_button');
                 var shipNameOptions = $('#shipId option');
+                var editShipOptions = $('#editShipId option');
                 var createWeight = $('#weightageId');
                 var editWeight = $('.edit_kpi_weightage');
                 listView.hide();
@@ -78,6 +79,15 @@
                     }
                     else {
                         shipNameOptions.attr('selected', false);
+                    }
+                });
+                var editCheck = $('#edit-check');
+                editCheck.live("click", function () {
+                    if (editCheck.is(':checked') == true) {
+                        editShipOptions.attr('selected', 'selected');
+                    }
+                    else {
+                        editShipOptions.attr('selected', false);
                     }
                 });
 
@@ -1020,8 +1030,8 @@
                                         <table class="table add_rule_conditions" id="rule-table">
                                             <thead>
                                             <tr id="row_id">
-                                                <th class="conditions">Conditions</th>
-                                                <th class="color">Color</th>
+                                                <th class="conditions">{{ 'kpi.conditions'|trans }}</th>
+                                                <th class="color">{{ 'kpi.color'|trans }}</th>
                                                 <th class="action">&nbsp;</th>
                                             </tr>
                                             </thead>

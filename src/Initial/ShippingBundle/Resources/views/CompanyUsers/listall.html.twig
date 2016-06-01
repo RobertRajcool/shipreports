@@ -109,15 +109,15 @@
 
 
 
-                $('.edit_submit_btn').live("click",function($e){
+               /* $('.edit_submit_btn').live("click",function($e){
                     $e.preventDefault();
                     $('#grid_view').show();
                     $('#list_view').hide();
-                    $('.show_view').show();
-                    $('.edit_view').hide();
+                    //$('.show_view').show();
+                    //$('.edit_view').hide();
 
 
-                });
+                });*/
 
 
                 $('.edit_btn').live("click", function ($e) {
@@ -131,12 +131,12 @@
                 });
 
 
-                $('.edit_user_button').live("click",function($e)
+               /* $('.edit_user_button').live("click",function($e)
                 {
                     $e.preventDefault();
                     $('.show_view').hide();
                     $('.edit_view').show();
-                });
+                });*/
 
                 $('.edit_cancel_btn').live("click",function($e){
                     $e.preventDefault();
@@ -236,11 +236,47 @@
                 $('.edit_submit_btn').live("click",function($e)
                 {
                     $e.preventDefault();
-                    $('.user_name').empty();
+                    var username=$('.edit_username').val();
+                    var email = $('.edit_email').val();
+                    var mobile =$('.edit_mobile').val();
+                    var fullname =$('.edit_fullname').val();
+
+                    if(fullname=="")
+                    {
+                        jAlert('', 'fullname required');
+                        $('.edit_fullname').focus();
+                        return false
+                    }
+
+                    if(username=="")
+                    {
+                        jAlert('', 'User Name Required');
+                        $('.edit_username').focus();
+                        return false
+
+                    }
+                    if(email=="")
+                    {
+                        jAlert('', 'Email Required');
+                        $('.edit_email').focus();
+                        return false
+
+                    }
+
+                    if(mobile=="")
+                    {
+                        jAlert('', 'mobile no Required');
+                        $('.edit_mobile').focus();
+                        return false
+
+                    }
+
+
+                   /* $('.user_name').empty();
                     $('.user_email').empty();
                     $('.user_roles').empty();
                     $('.roles').empty();
-                    $('.user_mobile').empty();
+                    $('.user_mobile').empty();*/
 
 
                     var data = {
@@ -270,6 +306,7 @@
                     $.ajax({
 
                         success: function(data) {
+                           // $('.edit_view').show();
                             $('.user_name').append(data.User_detail[0].username);
                             $('.user_email').append(data.User_detail[0].email);
                             $('.user_roles').append(data.User_detail[0].roles[0])
@@ -284,6 +321,12 @@
                             $('.edit_mobile').append(data.User_detail[0].mobile);
                             $('.inline-checkbox').val(data.User_detail[0].roles[0]);
 
+                           // $('.edit_view').show();
+                            $('#grid_view').show();
+                            $('#list_view').hide();
+                            $('.show_view').hide();
+                            $('.edit_view').hide();
+
 
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -291,8 +334,8 @@
                             alert('Error : ' + errorThrown);
                         }
                     });
-                    // $('.edit_view').hide();
-                    $('.show_view').show();
+                     //$('.edit_view').show();
+                   // $('.show_view').show();
                 });
 
 
@@ -581,7 +624,7 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{'user.edit_email'|trans  }}</label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_email" value="" placeholder="" required>
+                                    <input type="email" class="edit_email" value="" placeholder="" required>
                                 </div>
                             </div>
 

@@ -210,45 +210,58 @@
                 var editSubmitButton = $('.edit_submit_btn');
                 editSubmitButton.live("click",function($e) {
                     $e.preventDefault();
-                    var emptyShipDetails = emptyShipDetailsFunction(data);
-                    var data = {
-                        Id :editShipId.val(),
-                        shipName:editShipName.val(),
-                        imoNumber:editShipImoNumber.val(),
-                        location:editShipLocation.val(),
-                        built:editShipBuilt.val(),
-                        size:editShipSize.val(),
-                        gt:editShipGt.val(),
-                        manufacturingYear:editShipManufacturingYear.val(),
-                        description:editShipDescription.val(),
-                        shipType:editShipType.val(),
-                        country:editShipCountry.val()
-                    };
-                    $.ajaxSetup({
-                        global: false,
-                        type:"POST",
-                        url:Routing.generate('shipdetails_ajax_edit'),/*"ajax_edit",*/
-                        data: data,
-                        beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
-                        },
-                        complete: function () {
-                            var setAjaxComplete = ajax_complete();
-                        }
-                    });
-                    $.ajax({
-                        success: function(data) {
-                            var setShowShipValues = setShowShipValuesFunction(data);
-                            var setEditShipValues = setEditShipValuesFunction(data);
-                            var successDetails = successFunction(data);
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert('Error : ' + errorThrown);
-                        }
-                    });
-                    editShip.hide();
-                    showShipView.show();
+                    var vesselEditValidation = vesselEditValidationFunction();
+                    if(vesselEditValidation!=false) {
+                        var emptyShipDetails = emptyShipDetailsFunction(data);
+                        var data = {
+                            Id :editShipId.val(),
+                            shipName:editShipName.val(),
+                            imoNumber:editShipImoNumber.val(),
+                            location:editShipLocation.val(),
+                            built:editShipBuilt.val(),
+                            size:editShipSize.val(),
+                            gt:editShipGt.val(),
+                            manufacturingYear:editShipManufacturingYear.val(),
+                            description:editShipDescription.val(),
+                            shipType:editShipType.val(),
+                            country:editShipCountry.val()
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:Routing.generate('shipdetails_ajax_edit'),/*"ajax_edit",*/
+                            data: data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = ajax_complete();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                var setShowShipValues = setShowShipValuesFunction(data);
+                                var setEditShipValues = setEditShipValuesFunction(data);
+                                var successDetails = successFunction(data);
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                        editShip.hide();
+                        showShipView.show();
+                    }
                 });
+
+                var editVesselError = $('.vessel-name');
+                function vesselEditValidationFunction() {
+                    if(editShipName.val()=="") {
+                        editVesselError.empty();
+                        editVesselError.text('Vessel name cannot be empty');
+                        editShipName.focus();
+                        return false;
+                    }
+                }
 
                 var archiveButton = $('.archive_btn');
                 archiveButton.live("click",function($e) {
@@ -673,84 +686,92 @@
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
                     <h2>{{ 'vessel.edit_vessel'|trans }}</h2>
-                    <div class="add_new_users_form">
-                        <fieldset class="fieldset_box">
-                            <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_name" required>
-                                    <input type="hidden" class="edit_ship_id" >
+                    <form class="form-horizontal no-style create-form">
+                        <div class="add_new_users_form">
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_name" required>
+                                    </div>
+                                    <div class="col-xs-8 weight-error-message vessel-name"> </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <select class="edit_ship_type" required>
-                                        <option selected>--{{ 'vessel.select'|trans }} {{ 'vessel.vessel_type'|trans }}--</option>
-                                    </select>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <select class="edit_ship_type" required>
+                                            <option selected>--{{ 'vessel.select'|trans }} {{ 'vessel.vessel_type'|trans }}--</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-8 weight-error-message vessel-type"> </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_imoNumber" required>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_imoNumber">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <select class="edit_ship_country" required>
-                                        <option selected>--{{ 'vessel.select'|trans }} {{ 'vessel.country'|trans }}--</option>
-                                    </select>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <select class="edit_ship_country" required>
+                                            <option selected>--{{ 'vessel.select'|trans }} {{ 'vessel.country'|trans }}--</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-8 weight-error-message country"> </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_location" required>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_location" required>
+                                    </div>
+                                    <div class="col-xs-8 weight-error-message location"> </div>
                                 </div>
-                            </div>
-                        </fieldset>
-                        <fieldset class="fieldset_box">
-                            <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.ship_yard'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_built" required>
+                            </fieldset>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.ship_yard'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_built" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_size" required>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_size" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_gt" required>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_gt" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_manufacturingYear" required>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_manufacturingYear" required>
+                                    </div>
+                                    <div class="col-xs-8">&nbsp;</div>
                                 </div>
-                                <div class="col-xs-8">&nbsp;</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_ship_description" >
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_ship_description" >
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <input type="hidden" class="edit_ship_id" >
+                                    </div>
                                 </div>
+                            </fieldset>
+                            <div class="actions_submit">
+                                <button class=" submit_btn edit_submit_btn">{{ 'vessel.save'|trans }}</button>
+                                <button class="cancel_btn edit_cancel_btn">{{ 'vessel.cancel'|trans }}</button>
                             </div>
-                        </fieldset>
-                        <div class="actions_submit">
-                            <button class=" submit_btn edit_submit_btn">{{ 'vessel.save'|trans }}</button>
-                            <button class="cancel_btn edit_cancel_btn">{{ 'vessel.cancel'|trans }}</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </section>
