@@ -411,6 +411,12 @@
                         global: false,
                         type: "post",
                         url: Routing.generate('autocompleteformailing'),
+                        beforeSend: function () {
+                           // var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            //var setAjaxComplete = ajax_complete();
+                        }
                     });
                     $.ajax({
                         data: data,
