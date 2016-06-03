@@ -254,10 +254,21 @@
                     $e.preventDefault();
                     var searchstring=$(this).val();
                     var data = {searchstring :searchstring} ;
+
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url:Routing.generate('autocompleteformailing'),
+                        beforeSend: function ()
+                        {
+                            //var beforsend=ajaxbefore_send();
+                        },
+                        complete: function () {
+                            //var complete=ajax_complete();
+                        }
+                    });
                     $.ajax({
                         data: data,
-                        url:Routing.generate('autocompleteformailing'),
-                        type:"post",
                         success: function (data)
                         {
 
