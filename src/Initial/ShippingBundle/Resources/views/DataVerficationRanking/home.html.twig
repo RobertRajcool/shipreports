@@ -13,6 +13,7 @@
         <script>
             $(document).ready(function()
             {
+                var base_url = window.location.origin;
                 $('#nogroupselected').hide();
                 $('#kpiformforship').show();
                 var shipid='{{ currentshipid }}';
@@ -254,7 +255,7 @@
                             $('#resultLoading .bg').height('100%');
                             $('#resultLoading').fadeOut(300);
                             $('body').css('cursor', 'default');
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
                         }
                     });
 
@@ -469,7 +470,7 @@
                             $('#resultLoading .bg').height('100%');
                             $('#resultLoading').fadeOut(300);
                             $('body').css('cursor', 'default');
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
                         }
                     });
                 }
@@ -594,7 +595,7 @@
                                     },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
+                            window.location.href = base_url+'/login';
                         }
                     });
 
@@ -733,7 +734,7 @@
 
 
                                         });
-                                        alert(data.returnmsg);
+                                        jAlert('',data.returnmsg);
                                     }
                                     else
                                     {
@@ -741,12 +742,12 @@
                                         $('#shipname').text(' ');
                                         $('#nogroupselected').show();
                                         $('#kpiformforship').hide();
-                                        alert(data.returnmsg);
+                                        jAlert('',data.returnmsg);
                                     }
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown)
                                 {
-                                    alert('Error : ' + errorThrown);
+                                    window.location.href = base_url+'/login';
                                 }
                             });
 
