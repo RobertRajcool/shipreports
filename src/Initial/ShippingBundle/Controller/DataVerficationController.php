@@ -554,7 +554,6 @@ class DataVerficationController extends Controller
      * Adding Kpi Values.
      *
      * @Route("/{buttonid}/addkpivalues", name="addkpivaluesname")
-     * @Method("Post")
      */
     public function addkpivaluesAction(Request $request, $buttonid)
     {
@@ -1433,7 +1432,6 @@ class DataVerficationController extends Controller
      * Adding Kpi Values Ranking.
      *
      * @Route("/{buttonid}/addkpivalues_forranking", name="addkpivaluesname_forranking")
-     * @Method("Post")
      */
     public function addkpivaluesforrankingAction(Request $request, $buttonid)
     {
@@ -3182,7 +3180,8 @@ class DataVerficationController extends Controller
                 ->where('b.adminName = :username')
                 ->setParameter('username', $username)
                 ->getQuery();
-        } else {
+        }
+        else {
             $query = $em->createQueryBuilder()
                 ->select('a.shipName', 'a.id')
                 ->from('InitialShippingBundle:ShipDetails', 'a')
@@ -3196,30 +3195,45 @@ class DataVerficationController extends Controller
         $listallshipforcompany = $query->getResult();
         $statusforship = $this->findshipstatusmonth($dataofmonth, $listallshipforcompany, $role[0]);
         $counts = array_count_values($statusforship);
-        if ($role[0] == 'ROLE_ADMIN') {
-            if (array_key_exists(3, $counts)) {
-                $ship_status_done_count = $counts[3];
-            } else {
-                $ship_status_done_count = 0;
+        if($role[0]=='ROLE_ADMIN')
+        {
+            if (array_key_exists(3, $counts))
+            {
+                $ship_status_done_count= $counts[3];
+            }
+            else
+            {
+                $ship_status_done_count=0;
             }
 
 
-        } else if ($role[0] == 'ROLE_MANAGER') {
-            if (array_key_exists(2, $counts)) {
-                $ship_status_done_count = $counts[2];
-            } else {
-                $ship_status_done_count = 0;
+        }
+        else if($role[0]=='ROLE_MANAGER')
+        {
+            if (array_key_exists(2, $counts))
+            {
+                $ship_status_done_count= $counts[2];
             }
-        } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-            if (array_key_exists(1, $counts)) {
-                $ship_status_done_count = $counts[1];
-            } else {
-                $ship_status_done_count = 0;
+            else
+            {
+                $ship_status_done_count=0;
+            }
+        }
+        else if($role[0]=='ROLE_KPI_INFO_PROVIDER')
+        {
+            if (array_key_exists(1, $counts))
+            {
+                $ship_status_done_count= $counts[1];
+            }
+            else
+            {
+                $ship_status_done_count=0;
             }
         }
 
 
-        if ($ship_status_done_count != count($listallshipforcompany)) {
+        if ($ship_status_done_count != count($listallshipforcompany))
+        {
             $finddatawithstatus = array();
             $shipid = 0;
             $shipname = '';
@@ -3258,7 +3272,8 @@ class DataVerficationController extends Controller
                         'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
                     ));
                 return $response;
-            } else {
+            }
+            else {
                 $response->setData(
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
