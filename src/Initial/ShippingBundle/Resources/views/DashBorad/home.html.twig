@@ -22,6 +22,7 @@
             </script>
             <script>
                 $(document).ready(function () {
+                    var base_url = window.location.origin;
                     var newchart;
                     var nowdate = new Date(),
                             locale = "en-us",
@@ -61,9 +62,9 @@
                                 $('body').css('cursor', 'default');
 
                             },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                var setAjaxComplete = setAjaxCompleteFunction();
-                                alert('Error : ' + errorThrown);
+                            error: function (XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                window.location.href = base_url+'/login';
                             }
                         });
                     });
@@ -95,8 +96,9 @@
                                     $('#currentid').text(month + '-' + year)
                                     $('#dataofmonth').val(currentdate)
                                 },
-                                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                    alert('Error : ' + errorThrown);
+                                error: function (XMLHttpRequest, textStatus, errorThrown)
+                                {
+                                    window.location.href = base_url+'/login';
                                 }
                             });
                         }

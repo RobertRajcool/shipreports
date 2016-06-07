@@ -20,6 +20,7 @@
         <script>
             $(document).ready(function()
             {
+                var base_url = window.location.origin;
                 $('#commentform').hide();
                 $('#mailform').hide();
                 $('#addcomment').hide();
@@ -82,7 +83,7 @@
                         ,
                         error: function()
                         {
-                            alert('Error While Generating Image as pdf');
+                            window.location.href = base_url+'/login';
 
                         }
                     });
@@ -160,7 +161,7 @@
                         ,
                         error: function()
                         {
-                            alert('Error While Generating Image as pdf');
+                            window.location.href = base_url+'/login';
 
                         }
                     });
@@ -201,7 +202,7 @@
                         ,
                         error: function()
                         {
-                            alert('Error While Generating Image as pdf');
+                            window.location.href = base_url+'/login';
 
                         }
                     });
@@ -226,7 +227,7 @@
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown)
                         {
-                            alert('Error : ' + errorThrown);
+                            window.location.href = base_url+'/login';
                         }
                     });
                 };

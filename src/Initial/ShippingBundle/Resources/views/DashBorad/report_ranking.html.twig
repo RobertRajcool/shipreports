@@ -13,6 +13,7 @@
         <script>
             $(document).ready(function()
             {
+                var base_url = window.location.origin;
                 $('#resultofreport').hide();
                 $('#emptyresultofreport').hide();
                 $('#reportform').submit(function($e)
@@ -210,7 +211,7 @@
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
 
                         }
                     });
@@ -243,7 +244,7 @@
                         ,
                         error: function()
                         {
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
 
                         }
                     });
@@ -292,7 +293,7 @@
                         ,
                         error: function()
                         {
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
 
                         }
                     });
@@ -328,7 +329,7 @@
                         ,
                         error: function()
                         {
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
 
                         }
                     });
