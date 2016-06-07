@@ -21,6 +21,7 @@
                 $('#'+shipid).addClass('active');
                 $('#shipid').val(shipid);
                 $('#shipname').text(shipname);
+                $('#updatebuttonid').hide();
 
                 var nowdate=new Date(),
                         locale = "en-us",
@@ -417,7 +418,7 @@
                                                 if (data.elementvalues.length > 0) {
 
                                                     $('#updatebuttonid').show();
-                                                    $('#savebuttonid').show();
+                                                    $('#savebuttonid').hide();
                                                     $('#adminbuttonid').show();
 
                                                     if (temp == 1) {
@@ -430,7 +431,7 @@
 
                                                 }
                                                 else {
-                                                    $('#updatebuttonid').show();
+                                                    $('#updatebuttonid').hide();
                                                     $('#savebuttonid').show();
                                                     $('#adminbuttonid').show();
                                                     if (temp == 1) {
@@ -548,7 +549,7 @@
                                                 {
 
                                                     $('#updatebuttonid').show();
-                                                    $('#savebuttonid').show();
+                                                    $('#savebuttonid').hide();
                                                     $('#adminbuttonid').show();
 
 
@@ -565,7 +566,7 @@
                                                 }
                                                 else
                                                 {
-                                                    $('#updatebuttonid').show();
+                                                    $('#updatebuttonid').hide();
                                                     $('#savebuttonid').show();
                                                     $('#adminbuttonid').show();
 
@@ -701,7 +702,7 @@
                                                     {
 
                                                         $('#updatebuttonid').show();
-                                                        $('#savebuttonid').show();
+                                                        $('#savebuttonid').hide();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
                                                             $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" value="'+data.elementvalues[newtemp]+'" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
@@ -712,7 +713,7 @@
                                                     }
                                                     else
                                                     {
-                                                        $('#updatebuttonid').show();
+                                                        $('#updatebuttonid').hide();
                                                         $('#savebuttonid').show();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
@@ -918,6 +919,7 @@
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 
                             <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
