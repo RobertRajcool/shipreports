@@ -32,10 +32,6 @@
         "m4t1t0/fop-pdf-bundle": "dev-master",
         "friendsofsymfony/jsrouting-bundle": "dev-master",
         "luxifer/doctrine-functions": "dev-master"
-
-
-
-
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",
