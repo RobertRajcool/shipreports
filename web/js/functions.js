@@ -1,12 +1,13 @@
 /**
  * Created by lawrance on 21/5/16.
  */
+
 function ajaxbefore_send()
 {
     var text='';
 
     if($('body').find('#resultLoading').attr('id') != 'resultLoading'){
-        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/logo-loading-1.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
+        $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/progress2.gif"><div>'+text+'</div></div><div class="bg"></div></div>');
     }
 
     $('#resultLoading').css({
