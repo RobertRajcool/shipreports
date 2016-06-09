@@ -575,6 +575,7 @@ class DataVerficationController extends Controller
         $k = 0;
         $returnmsg = '';
         $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+        $newlookupstatus ="";
 
         if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid')
         {
@@ -617,36 +618,40 @@ class DataVerficationController extends Controller
                 if(count($lookstatus)!=0)
                 {
                     $newlookupstatus=$lookstatus[0];
-                }
-                $TotalShipsInserted=$em->createQueryBuilder()
-                    ->select('identity(a.shipDetailsId)')
-                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                    ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
-                    ->setParameter('dateOfMonth', $new_date)
-                    ->groupby('a.shipDetailsId')
-                    ->setParameter('statusValue', 3)
-                    ->getQuery()
-                    ->getResult();
-                //print_r($TotalShipsInserted);
+
+                    $TotalShipsInserted=$em->createQueryBuilder()
+                        ->select('identity(a.shipDetailsId)')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->groupby('a.shipDetailsId')
+                        ->setParameter('statusValue', 3)
+                        ->getQuery()
+                        ->getResult();
+                    //print_r($TotalShipsInserted);
 
 
-                if(count($TotalShipsInserted)!=0)
-                {
-                    $shipids=array();
-                    for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                    if(count($TotalShipsInserted)!=0)
                     {
-                        array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        $shipids=array();
+                        for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                        {
+                            array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        }
+                        $shipids=implode(',',$shipids);
                     }
-                    $shipids=implode(',',$shipids);
+                    else
+                    {
+                        $shipids=$shipid;
+                    }
+
+                    $newlookupstatus->setStatus(3);
+                    $newlookupstatus->setShipid($shipids);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
                 }
-                else
-                {
-                    $shipids=$shipid;
-                }
-                $newlookupstatus->setStatus(3);
-                $newlookupstatus->setShipid($shipids);
-                $newlookupstatus->setDatetime(new \DateTime());
-                $em->flush();
+
+
                 $gearman = $this->get('gearman');
                 $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addscorecardlookupdataupdate', json_encode($rankinglookuptable));
             }
@@ -657,7 +662,7 @@ class DataVerficationController extends Controller
                 if(count($lookstatus)!=0)
                 {
                     $newlookupstatus=$lookstatus[0];
-                }
+
                 $TotalShipsInserted=$em->createQueryBuilder()
                     ->select('identity(a.shipDetailsId)')
                     ->from('InitialShippingBundle:ReadingKpiValues', 'a')
@@ -687,6 +692,9 @@ class DataVerficationController extends Controller
                 $newlookupstatus->setShipid($shipids);
                 $newlookupstatus->setDatetime(new \DateTime());
                 $em->flush();
+
+                }
+
             }
             if($buttonid == 'updatebuttonid')
             {
@@ -695,36 +703,38 @@ class DataVerficationController extends Controller
                 if(count($lookstatus)!=0)
                 {
                     $newlookupstatus=$lookstatus[0];
-                }
-                $TotalShipsInserted=$em->createQueryBuilder()
-                    ->select('identity(a.shipDetailsId)')
-                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                    ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
-                    ->setParameter('dateOfMonth', $new_date)
-                    ->groupby('a.shipDetailsId')
-                    ->setParameter('statusValue', 1)
-                    ->getQuery()
-                    ->getResult();
-                //print_r($TotalShipsInserted);
+                    $TotalShipsInserted=$em->createQueryBuilder()
+                        ->select('identity(a.shipDetailsId)')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->groupby('a.shipDetailsId')
+                        ->setParameter('statusValue', 1)
+                        ->getQuery()
+                        ->getResult();
+                    //print_r($TotalShipsInserted);
 
 
-                if(count($TotalShipsInserted)!=0)
-                {
-                    $shipids=array();
-                    for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                    if(count($TotalShipsInserted)!=0)
                     {
-                        array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        $shipids=array();
+                        for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                        {
+                            array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        }
+                        $shipids=implode(',',$shipids);
                     }
-                    $shipids=implode(',',$shipids);
+                    else
+                    {
+                        $shipids=$shipid;
+                    }
+
+                    $newlookupstatus->setStatus(1);
+                    $newlookupstatus->setShipid($shipids);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
                 }
-                else
-                {
-                    $shipids=$shipid;
-                }
-                $newlookupstatus->setStatus(1);
-                $newlookupstatus->setShipid($shipids);
-                $newlookupstatus->setDatetime(new \DateTime());
-                $em->flush();
+
             }
 
         }
@@ -750,44 +760,45 @@ class DataVerficationController extends Controller
                 }
             }
             $returnmsg = ' Data Saved...';
-            $fullurl = "http://shipreports/login";
+            /*$fullurl = "http://shipreports/login";
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
                 ->setFrom('lawrance@commusoft.co.uk')
                 ->setTo("doss.cclawranc226@gmail.com")
                 ->setSubject($newshipid->getShipName() . ' Data Added By V-Ship Team')
                 ->setBody("This Web Url:" . $fullurl);
-            $mailer->send($message);
-            $TotalShipsInserted=$em->createQueryBuilder()
-                ->select('identity(a.shipDetailsId)')
-                ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
-                ->setParameter('dateOfMonth', $new_date)
-                ->groupby('a.shipDetailsId')
-                ->setParameter('statusValue', 1)
-                ->getQuery()
-                ->getResult();
-            //print_r($TotalShipsInserted);
-
-
-            if(count($TotalShipsInserted)!=0)
-            {
-                $shipids=array();
-                for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
-                {
-                    array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
-                }
-                $shipids=implode(',',$shipids);
-            }
-            else
-            {
-                $shipids=$shipid;
-            }
+            $mailer->send($message);*/
 
             $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
             if(count($lookstatus)!=0)
             {
                 $newlookupstatus=$lookstatus[0];
+                $TotalShipsInserted=$em->createQueryBuilder()
+                    ->select('identity(a.shipDetailsId)')
+                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                    ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                    ->setParameter('dateOfMonth', $new_date)
+                    ->groupby('a.shipDetailsId')
+                    ->setParameter('statusValue', 1)
+                    ->getQuery()
+                    ->getResult();
+                //print_r($TotalShipsInserted);
+
+
+                if(count($TotalShipsInserted)!=0)
+                {
+                    $shipids=array();
+                    for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                    {
+                        array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                    }
+                    $shipids=implode(',',$shipids);
+                }
+                else
+                {
+                    $shipids=$shipid;
+                }
+
                 $newlookupstatus->setShipid($shipids);
                 $newlookupstatus->setDatetime(new \DateTime());
                 $em->flush();
@@ -1557,7 +1568,7 @@ class DataVerficationController extends Controller
                      ->where('b.id = :userId')
                      ->setParameter('userId', $userId)
                      ->getQuery();*/
-                $fullurl="http://shipreports/login";
+                /*$fullurl="http://shipreports/login";
                 $mailer = $this->container->get('mailer');
                 $message = \Swift_Message::newInstance()
                     ->setFrom('lawrance@commusoft.co.uk')
@@ -1565,7 +1576,7 @@ class DataVerficationController extends Controller
                     ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
                     ->setBody("This Web Url:".$fullurl);
 
-                $mailer->send($message);
+                $mailer->send($message);*/
                 $lookupstatusobject=new Ranking_LookupStatus();
                 $lookupstatusobject->setShipid($newshipid);
                 $lookupstatusobject->setStatus(1);
