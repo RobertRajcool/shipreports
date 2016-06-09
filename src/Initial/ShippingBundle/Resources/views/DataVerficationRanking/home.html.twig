@@ -34,6 +34,7 @@
                 $('.prevmonth').live('click',function($e)
                 {
                     $e.preventDefault();
+                    $('#allbuttondiv').show();
                     var linkid = $(this).attr('id');
                     if(linkid=='proviousmonth_data')
                     {
@@ -265,6 +266,7 @@
                 });
                 $('.nextmonth').live('click',function($e) {
                     $e.preventDefault();
+                    $('#allbuttondiv').show();
                     var linkid = $(this).attr('id');
                     if (linkid == 'proviousmonth_data') {
 
@@ -749,7 +751,7 @@
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown)
                                 {
-                                    window.location.href = base_url+'/login';
+                                    /*window.location.href = base_url+'/login';*/
                                 }
                             });
 
