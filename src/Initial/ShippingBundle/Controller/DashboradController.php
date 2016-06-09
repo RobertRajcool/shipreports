@@ -211,14 +211,14 @@ class DashboradController extends Controller
                 $datesArray = array();
 
                 if ($modeYear == 0) {
-                    for ($m = 2; $m <= 12; $m++) {
+                    for ($m = 2; $m <= 13; $m++) {
                         $month = date('Y-m-d', mktime(0, 0, 0, $m, 0, date('Y')));
                         array_push($datesArray, $month);
                     }
                     $currentyear = date('Y');
                 }
                 if ($modeYear != 0) {
-                    for ($m = 2; $m <= 12; $m++) {
+                    for ($m = 2; $m <= 13; $m++) {
                         $month = date('Y-m-d', mktime(0, 0, 0, $m, 0, date($modeYear)));
                         array_push($datesArray, $month);
                     }
@@ -267,7 +267,7 @@ class DashboradController extends Controller
                         $monthObject->modify('last day of this month');
                         $statusFieldQuery = $em->createQueryBuilder()
                             ->select('b.status, b.dataofmonth')
-                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                            ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
                             ->where('b.dataofmonth = :monthDetail')
                             ->setParameter('monthDetail', $monthObject)
                             ->getQuery()
@@ -276,10 +276,11 @@ class DashboradController extends Controller
                             for ($statusFieldCount = 0; $statusFieldCount < count($statusFieldQuery); $statusFieldCount++) {
                                 if ($statusFieldQuery[$statusFieldCount]['status'] == 4) {
                                     $dateFromDb = $statusFieldQuery[$statusFieldCount]['dataofmonth'];
-                                    $initial = $dateFromDb->format('n');
-                                    $statusVerified = 12 - $initial;
+                                    $initial = ($dateFromDb->format('n'))-1;
+                                    $statusVerified = (12 - (int)$initial)+10;
                                 }
                             }
+                            break;
                         }
                     }
                 }
@@ -292,7 +293,7 @@ class DashboradController extends Controller
                 $monthLetterArray = array();
                 $monthlyScorecardKpiColorArray = array();
                 $monthlyKpiAverageValueTotal = array();
-                for ($dateCount = $initial; $dateCount < $statusVerified; $dateCount++) {
+                for ($dateCount = (int)$initial; $dateCount < (int)$statusVerified; $dateCount++) {
                     $scorecardKpiColorArray = array();
                     $date = strtotime($datesArray[$dateCount]);
                     $monthLetterFormat = date('M', $date);
@@ -322,16 +323,18 @@ class DashboradController extends Controller
                     array_push($monthlyScorecardKpiColorArray, $scorecardKpiColorArray);
                     array_push($monthlyKpiAverageValueTotal, $monthlyScorecardKpiWeightAverageValueTotal);
                 }
-                $quarterMonthName = array();
-                $quarterMonthColor = array();
-                $quarterMonthKpiWeight = array();
-                if (count($monthLetterArray) != 0) {
-                    for ($num = count($monthLetterArray) - 3; $num < count($monthLetterArray); $num++) {
-                        array_push($quarterMonthName, $monthLetterArray[$num]);
-                        array_push($quarterMonthColor, $monthlyScorecardKpiColorArray[$num]);
-                        array_push($quarterMonthKpiWeight, $monthlyKpiAverageValueTotal[$num]);
-                    }
-                }
+               if ($modeYear ==0) {
+                   $quarterMonthName = array();
+                   $quarterMonthColor = array();
+                   $quarterMonthKpiWeight = array();
+                   if (count($monthLetterArray) != 0) {
+                       for ($num = count($monthLetterArray) - 3; $num < count($monthLetterArray); $num++) {
+                           array_push($quarterMonthName, $monthLetterArray[$num]);
+                           array_push($quarterMonthColor, $monthlyScorecardKpiColorArray[$num]);
+                           array_push($quarterMonthKpiWeight, $monthlyKpiAverageValueTotal[$num]);
+                       }
+                   }
+               }
                 if ($modeYear != 0) {
                     return array(
                         'yearKpiColorArray' => $monthlyScorecardKpiColorArray,

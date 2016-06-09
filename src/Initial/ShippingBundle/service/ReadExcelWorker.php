@@ -876,11 +876,13 @@ class ReadExcelWorker
         }
        // echo "Look up status";
         $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
-        $newlookupstatus=$lookstatus[0];
-        //echo "after look up status";
-        $newlookupstatus->setStatus(4);
-        $newlookupstatus->setDatetime(new \DateTime());
-        $em->flush();
+        if(count($lookstatus)>0) {
+            $newlookupstatus=$lookstatus[0];
+            //echo "after look up status";
+            $newlookupstatus->setStatus(4);
+            $newlookupstatus->setDatetime(new \DateTime());
+            $em->flush();
+        }
        echo "Data inserted";
         return true;
 
@@ -901,6 +903,7 @@ class ReadExcelWorker
      */
     public function rankingLookupDataUpdate(\GearmanJob $job)
     {
+        //echo "Hi";
         $em= $this->doctrine->getManager();
         $parametervalues = json_decode($job->workload());
         $shipid = $parametervalues->{'shipid'};
@@ -911,8 +914,10 @@ class ReadExcelWorker
         $new_date = new \DateTime($newformat);
         $new_date->modify('last day of this month');
         $newlookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupData')->findBy(array('shipDetailsId' => $newshipid,'monthdetail'=>$new_date));
+        //echo count($newlookstatus);
         for($count=0;$count<count($newlookstatus);$count++)
         {
+
             $mylookstatus=$newlookstatus[$count];
             $id=$mylookstatus->getId();
             $qb = $em->createQueryBuilder()
@@ -928,7 +933,7 @@ class ReadExcelWorker
         $currenttime = strtotime($datetime);
         $currentnewformat = date('Y-m-d H:i:s', $currenttime);
         $current_new_date = new \DateTime($currentnewformat);
-        //print_r($parametervalues);
+
         if($status==3)
         {
             $rankingKpiList = $em->createQueryBuilder()
@@ -1127,11 +1132,17 @@ class ReadExcelWorker
             }
 
         }
+
         $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
-        $newlookupstatus=$lookstatus[0];
-        $newlookupstatus->setStatus(4);
-        $newlookupstatus->setDatetime(new \DateTime());
-        $em->flush();
+        
+        if(count($lookstatus)>0)
+        {
+            $newlookupstatus=$lookstatus[0];
+            $newlookupstatus->setStatus(4);
+            $newlookupstatus->setDatetime(new \DateTime());
+            $em->flush();
+        }     
+        
         echo "Data inserted";
         return true;
 
