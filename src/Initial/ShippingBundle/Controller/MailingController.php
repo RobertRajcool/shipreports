@@ -48,7 +48,7 @@ class MailingController extends Controller
         else
         {
             $query = $em->createQueryBuilder()
-                ->select('a.companyid')
+                ->select('identity(a.companyid)')
                 ->from('InitialShippingBundle:User','a')
                 ->where('a.id = :userId')
                 ->setParameter('userId',$userId)
