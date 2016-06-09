@@ -32,6 +32,7 @@ class DashboradController extends Controller
     public function indexAction(Request $request, $mode = '', $dataofmonth = '', $modeYear = 0)
     {
         $em = $this->getDoctrine()->getManager();
+        $userManager = $this->container->get('fos_user.user_manager');
         $user = $this->getUser();
         if ($user != null) {
             $userId = $user->getId();
