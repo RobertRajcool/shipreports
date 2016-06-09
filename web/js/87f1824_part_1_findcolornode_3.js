@@ -6,7 +6,7 @@ var engine=require('./87f1824_part_1_rule-engine_4.js');
 //var user = new engine();
 var rule = process.argv[2];
 var value= process.argv[3];
-var obj=JSON.parse(rule);
+var obj=JSON.   parse(rule);
 
 var conditons=obj.conditions;
 var conditionsAdapter = {
