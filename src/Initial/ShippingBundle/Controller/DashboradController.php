@@ -188,7 +188,7 @@ class DashboradController extends Controller
                     $ob->chart->hieght(250);
                     $ob->title->text('', array('style' => array('color' => 'red')));
                     $ob->xAxis->type('category');
-                    $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
+                    $ob->xAxis->labels(array('style' => array('color' => '#103a71')));
                     $ob->yAxis->title(array('text' => 'Values'));
                     $ob->yAxis->max(100);
                     $ob->legend->enabled(false);
@@ -210,34 +210,13 @@ class DashboradController extends Controller
                 }
 
                 $datesArray = array();
-
-                if ($modeYear == 0) {
-                    for ($m = 2; $m <= 13; $m++) {
-                        $month = date('Y-m-d', mktime(0, 0, 0, $m, 0, date('Y')));
-                        array_push($datesArray, $month);
-                    }
-                    $currentyear = date('Y');
-                }
-                if ($modeYear != 0) {
-                    for ($m = 2; $m <= 13; $m++) {
-                        $month = date('Y-m-d', mktime(0, 0, 0, $m, 0, date($modeYear)));
-                        array_push($datesArray, $month);
-                    }
-                    $currentyear = date($modeYear);
-                }
-                if ($modeYear == 0) {
-                    $subYear = date('Y');
-                } else {
-                    $subYear = $modeYear;
-                }
                 $initial = 0;
                 $statusVerified = 0;
-                $currentRequestYear = date('Y');
-                if ($currentRequestYear == $subYear) {
-                    $currentMonth = date('n');
-                    $currentMonthObject = new \DateTime($datesArray[$currentMonth - 1]);
+
+                if ($modeYear == 0) {
+                    $currentDate = date('Y-m-d');
+                    $currentMonthObject = new \DateTime($currentDate);
                     $currentMonthObject->modify('last day of this month');
-                    $statusVerified = $currentMonth - 1;
                     $monthlyShipDataStatus = $em->createQueryBuilder()
                         ->select('b.status')
                         ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
@@ -245,9 +224,16 @@ class DashboradController extends Controller
                         ->setParameter('monthDetail', $currentMonthObject)
                         ->getQuery()
                         ->getResult();
-
                     if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
-                        $statusVerified = $currentMonth;
+                        for ($m = 0; $m <= 2; $m++) {
+                            if($m ==0) {
+                                $month = $currentDate;
+                                array_push($datesArray, $month);
+                            } else {
+                                $month = date("Y-m-d", strtotime($currentDate."last day of previous month"));
+                                array_push($datesArray, $month);
+                            }
+                        }
                     } else {
                         $statusFieldQuery = $em->createQueryBuilder()
                             ->select('b.dataofmonth,b.status')
@@ -259,31 +245,64 @@ class DashboradController extends Controller
                             ->getResult();
                         if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
                             $dateFromDb = $statusFieldQuery[count($statusFieldQuery) - 1]['dataofmonth'];
-                            $statusVerified = $dateFromDb->format('n');
-                        }
-                    }
-                } else {
-                    for ($yearCount = 0; $yearCount < count($datesArray); $yearCount++) {
-                        $monthObject = new \DateTime($datesArray[$yearCount]);
-                        $monthObject->modify('last day of this month');
-                        $statusFieldQuery = $em->createQueryBuilder()
-                            ->select('b.status, b.dataofmonth')
-                            ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
-                            ->where('b.dataofmonth = :monthDetail')
-                            ->setParameter('monthDetail', $monthObject)
-                            ->getQuery()
-                            ->getResult();
-                        if (count($statusFieldQuery) != 0) {
-                            for ($statusFieldCount = 0; $statusFieldCount < count($statusFieldQuery); $statusFieldCount++) {
-                                if ($statusFieldQuery[$statusFieldCount]['status'] == 4) {
-                                    $dateFromDb = $statusFieldQuery[$statusFieldCount]['dataofmonth'];
-                                    $initial = ($dateFromDb->format('n'))-1;
-                                    $statusVerified = (12 - (int)$initial)+10;
+                            for ($m = 0; $m <= 2; $m++) {
+                                if($m ==0) {
+                                    $month = $dateFromDb->format('Y-m-d');
+                                    array_push($datesArray, $month);
+                                } else {
+                                    $month = date("Y-m-d", strtotime($datesArray[$m-1]."last day of previous month"));
+                                    array_push($datesArray, $month);
                                 }
                             }
-                            break;
                         }
                     }
+                    $currentyear = date('Y');
+                    $initial = 0;
+                    $statusVerified = 3;
+                }
+
+                if ($modeYear != 0) {
+                    for ($m = 2; $m <= 13; $m++) {
+                        $month = date('Y-m-d', mktime(0, 0, 0, $m, 0, date($modeYear)));
+                        array_push($datesArray, $month);
+                    }
+                    if($modeYear == date('Y')) {
+                        $statusFieldQuery = $em->createQueryBuilder()
+                            ->select('b.dataofmonth,b.status')
+                            ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
+                            ->where('b.status = :monthStatus')
+                            ->setParameter('monthStatus', 4)
+                            ->groupby('b.dataofmonth')
+                            ->getQuery()
+                            ->getResult();
+                        if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
+                            $dateFromDb = $statusFieldQuery[count($statusFieldQuery) - 1]['dataofmonth'];
+                            $statusVerified = $dateFromDb->format('n');
+                            $initial = 0;
+                        }
+                    }
+                    if($modeYear != date('Y')) {
+                        for ($yearCount = 0; $yearCount < count($datesArray); $yearCount++) {
+                            $monthObject = new \DateTime($datesArray[$yearCount]);
+                            $monthObject->modify('last day of this month');
+                            $statusFieldQuery = $em->createQueryBuilder()
+                                ->select('b.status, b.dataofmonth')
+                                ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
+                                ->where('b.dataofmonth = :monthDetail')
+                                ->setParameter('monthDetail', $monthObject)
+                                ->getQuery()
+                                ->getResult();
+                            if (count($statusFieldQuery) != 0) {
+                                if ($statusFieldQuery[count($statusFieldQuery)-1]['status'] == 4) {
+                                    $dateFromDb = $statusFieldQuery[count($statusFieldQuery)-1]['dataofmonth'];
+                                    $initial = ($dateFromDb->format('n'))-1;
+                                    $statusVerified = 12;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    $currentyear = date($modeYear);
                 }
                 $scorecardKpiList = $em->createQueryBuilder()
                     ->select('a.kpiName', 'a.id', 'a.weightage')
@@ -324,18 +343,18 @@ class DashboradController extends Controller
                     array_push($monthlyScorecardKpiColorArray, $scorecardKpiColorArray);
                     array_push($monthlyKpiAverageValueTotal, $monthlyScorecardKpiWeightAverageValueTotal);
                 }
-               if ($modeYear ==0) {
-                   $quarterMonthName = array();
-                   $quarterMonthColor = array();
-                   $quarterMonthKpiWeight = array();
-                   if (count($monthLetterArray) != 0) {
-                       for ($num = count($monthLetterArray) - 3; $num < count($monthLetterArray); $num++) {
-                           array_push($quarterMonthName, $monthLetterArray[$num]);
-                           array_push($quarterMonthColor, $monthlyScorecardKpiColorArray[$num]);
-                           array_push($quarterMonthKpiWeight, $monthlyKpiAverageValueTotal[$num]);
-                       }
-                   }
-               }
+                if ($modeYear ==0) {
+                    $quarterMonthName = array();
+                    $quarterMonthColor = array();
+                    $quarterMonthKpiWeight = array();
+                    if (count($monthLetterArray) != 0) {
+                        for ($num = count($monthLetterArray) - 3; $num < count($monthLetterArray); $num++) {
+                            array_push($quarterMonthName, $monthLetterArray[$num]);
+                            array_push($quarterMonthColor, $monthlyScorecardKpiColorArray[$num]);
+                            array_push($quarterMonthKpiWeight, $monthlyKpiAverageValueTotal[$num]);
+                        }
+                    }
+                }
                 if ($modeYear != 0) {
                     return array(
                         'yearKpiColorArray' => $monthlyScorecardKpiColorArray,
@@ -350,14 +369,14 @@ class DashboradController extends Controller
                     array(
                         'ship_count' => count($listAllShipForCompany),
                         'kpi_list' => $scorecardKpiList,
-                        'month_name' => $quarterMonthName,
-                        'kpicolorarray' => $quarterMonthColor,
+                        'month_name' => array_reverse($quarterMonthName),
+                        'kpicolorarray' => array_reverse($quarterMonthColor),
                         'yearKpiColorArray' => $monthlyScorecardKpiColorArray,
                         'yearAvgScore' => $monthlyKpiAverageValueTotal,
                         'yearMonthName' => $monthLetterArray,
                         'currentYear' => $currentyear,
                         'kpiCount' => count($scorecardKpiList),
-                        'kpiAverageScore' => $quarterMonthKpiWeight,
+                        'kpiAverageScore' => array_reverse($quarterMonthKpiWeight),
                         'allships' => $listAllShipForCompany,
                         'chart' => $ob,
                         'rankinKpiCount' => count($rankingKpiList),
@@ -396,20 +415,24 @@ class DashboradController extends Controller
      */
     public function previousYearChangeAction(Request $request)
     {
-        $year = $request->request->get('Year');
-        $intYear = (int)$year - 1;
-        $yearValue = $this->indexAction($request, '', '', $intYear);
+        $user = $this->getUser();
+        if ($user != null) {
+            $year = $request->request->get('Year');
+            $intYear = (int)$year - 1;
+            $yearValue = $this->indexAction($request, '', '', $intYear);
 
-        $response = new JsonResponse();
-        $response->setData(array(
-            'yearKpiColorArray' => $yearValue['yearKpiColorArray'],
-            'yearAvgScore' => $yearValue['yearAvgScore'],
-            'yearMonthName' => $yearValue['yearMonthName'],
-            'currentYear' => $yearValue['currentYear'],
-            'kpiNameList' => $yearValue['kpi_list']
-        ));
-        return $response;
-
+            $response = new JsonResponse();
+            $response->setData(array(
+                'yearKpiColorArray' => $yearValue['yearKpiColorArray'],
+                'yearAvgScore' => $yearValue['yearAvgScore'],
+                'yearMonthName' => $yearValue['yearMonthName'],
+                'currentYear' => $yearValue['currentYear'],
+                'kpiNameList' => $yearValue['kpi_list']
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
 
     /**
@@ -419,20 +442,24 @@ class DashboradController extends Controller
      */
     public function nextYearChangeAction(Request $request)
     {
-        $year = $request->request->get('Year');
-        $intYear = (int)$year + 1;
-        $yearValue = $this->indexAction($request, '', '', $intYear);
+        $user = $this->getUser();
+        if ($user != null) {
+            $year = $request->request->get('Year');
+            $intYear = (int)$year + 1;
+            $yearValue = $this->indexAction($request, '', '', $intYear);
 
-        $response = new JsonResponse();
-        $response->setData(array(
-            'yearKpiColorArray' => $yearValue['yearKpiColorArray'],
-            'yearAvgScore' => $yearValue['yearAvgScore'],
-            'yearMonthName' => $yearValue['yearMonthName'],
-            'currentYear' => $yearValue['currentYear'],
-            'kpiNameList' => $yearValue['kpi_list']
-        ));
-        return $response;
-
+            $response = new JsonResponse();
+            $response->setData(array(
+                'yearKpiColorArray' => $yearValue['yearKpiColorArray'],
+                'yearAvgScore' => $yearValue['yearAvgScore'],
+                'yearMonthName' => $yearValue['yearMonthName'],
+                'currentYear' => $yearValue['currentYear'],
+                'kpiNameList' => $yearValue['kpi_list']
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
 
 
