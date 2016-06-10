@@ -173,8 +173,35 @@
                     yearViewContent.hide();
                     yearView.click(function ($e) {
                         $e.preventDefault();
-                        wholeViewContent.hide();
-                        yearViewContent.show();
+                        var yearNumData = new Date().getFullYear()+1;
+                        var data = {
+                            Year: yearNumData
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            data: data,
+                            type: "POST",
+                            url: " previousYearChange",
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = setAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = setAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function (data) {
+                                var setYearValue = setYearValueFunction(data);
+                                var createScorecardTable = createScorecardTableFunction(data);
+                                var setMonthName = setMonthNameFunction(data);
+                                var setScorecardTableDetails = setScorecardTableDetailsFunction(data);
+                                wholeViewContent.hide();
+                                previousYearView.show();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
                     });
 
                     var previousYearView = $('.previousYearViewContent');
@@ -186,8 +213,8 @@
                         $e.preventDefault();
                         yearViewContent.hide();
                         previousYearView.hide();
-                        scorePreviousCurrentYear.val(2016);
-                        scoreCurrentYear.val(2016);
+                        scorePreviousCurrentYear.val(new Date().getFullYear());
+                        scoreCurrentYear.val(new Date().getFullYear());
                         wholeViewContent.show();
                     });
 
@@ -326,7 +353,7 @@
                         var data = {
                             Year: scoreCurrentYear.val()
                         };
-                        if (scoreCurrentYear.val() == 2016) {
+                        if (scoreCurrentYear.val() == new Date().getFullYear()) {
                             alert('This is the current year');
                         }
                         else {
@@ -372,7 +399,7 @@
                                     Management Performance
                                     <div class="year_view_btn">
                                         <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
-                                        <a href=""><span class="item yearView">2016</span></a>
+                                        <a href=""><span class="item yearView">{{ currentYear }}</span></a>
                                         <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
                                     </div>
                                 </th>
