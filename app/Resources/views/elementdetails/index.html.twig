@@ -80,6 +80,7 @@
                 editCancelButton.live("click", function ($e) {
                     $e.preventDefault();
                     editElementErrorMsg.empty();
+                    validDate.empty();
                     editElement.hide();
                     boxIcon.hide();
                     listIcon.show();
@@ -159,6 +160,7 @@
                     endMonth.empty();
                     endYear.empty();
                     editElementErrorMsg.empty();
+                    validDate.empty();
                 }
 
                 function setShowValueFunction(data, monthNames, active_date, end_date) {
@@ -206,10 +208,20 @@
                     editKpiName.val(data.kpi_name[0].id);
                 }
 
+                var validDate = $('.edit-valid-dates');
                 var editElementErrorMsg = $('.editErrorName');
                 var editSubmitButton = $('.edit_element_submit_button');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
+                    var aM = editActiveMonth.val();
+                    var aY = editActiveYear.val();
+                    var eM = editEndMonth.val();
+                    var eY = editEndYear.val();
+                    if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '--' || aY == '--' || eM == '--' || eY == '--') {
+                        validDate.empty();
+                        validDate.text("Choose the valid date !");
+                        return false;
+                    }
                     if(!$.trim(editElementName.val())) {
                         editElementErrorMsg.empty();
                         editElementErrorMsg.text('Element name cannot be empty !');
@@ -246,6 +258,7 @@
                         success: function (data) {
                             editElement.hide();
                             editElementErrorMsg.empty();
+                            validDate.empty();
                             var monthNames = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
@@ -715,6 +728,7 @@
                                             </select>
                                         </span>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
                             {#<fieldset class="fieldset_box">
