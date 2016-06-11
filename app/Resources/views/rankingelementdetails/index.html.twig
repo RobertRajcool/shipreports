@@ -83,6 +83,7 @@
                 var editCancelButton = $('.edit_cancel_button');
                 editCancelButton.live("click",function($e) {
                     $e.preventDefault();
+                    editElementErrorMsg.empty();
                     editElement.hide();
                     boxIcon.hide();
                     listIcon.show();
@@ -161,6 +162,7 @@
                     activeYear.empty();
                     endMonth.empty();
                     endYear.empty();
+                    editElementErrorMsg.empty();
                 }
 
                 function setShowValueFunction(data,monthNames,active_date,end_date) {
@@ -208,9 +210,15 @@
                     editKpiName.val(data.kpi_name[0].id);
                 }
 
+                var editElementErrorMsg = $('.editErrorName');
                 var editSubmitButton = $('.edit_element_submit_button');
                 editSubmitButton.live("click",function($e) {
                     $e.preventDefault();
+                    if(!$.trim(editElementName.val())) {
+                        editElementErrorMsg.empty();
+                        editElementErrorMsg.text('Element name cannot be empty !');
+                        return false;
+                    }
                     var i=0;
                     var data = {
                         kpiDetailsId : editKpiName.val(),
@@ -241,6 +249,7 @@
                     $.ajax({
                         success: function(data) {
                             editElement.hide();
+                            editElementErrorMsg.empty();
                             var monthNames = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
@@ -694,6 +703,7 @@
                                         <input type="text" class="edit_element_name" value="" placeholder="">
                                         <input type="hidden" class="element_edit_id" value="" placeholder="">
                                     </div>
+                                    <div class="col-xs-8 weight-error-message editErrorName"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
