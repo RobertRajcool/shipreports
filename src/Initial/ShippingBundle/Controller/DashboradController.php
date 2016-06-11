@@ -2131,9 +2131,13 @@ class DashboradController extends Controller
 
             $useremaildid = $params['clientemail'];
             $mailidarray = array();
-            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL)) {
+            if (filter_var($useremaildid, FILTER_VALIDATE_EMAIL))
+            {
+
                 array_push($mailidarray, $useremaildid);
-            } else {
+            }
+            else
+            {
                 $findsemail = $em->createQueryBuilder()
                     ->select('a.useremailid')
                     ->from('InitialShippingBundle:EmailUsers', 'a')
@@ -2622,6 +2626,7 @@ class DashboradController extends Controller
     public function sendreports_rankingAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $currentdateitme=date('Y-m-d H-i-s');
         $user = $this->getUser();
         if ($user != null) {
             $reportObject = $this->view_ranking_reportsAction($request, 'sendReport');
@@ -2657,11 +2662,11 @@ class DashboradController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
             );
             $jsondata = json_encode($graphObject);
-            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'] . '.json';
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-            $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'] . '.png';
-            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'] . '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+            $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
+            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
@@ -2670,7 +2675,7 @@ class DashboradController extends Controller
                 'screenName' => 'Ranking Report',
                 'userName' => '',
                 'date' => date('Y-m-d'),
-                'link' => 'shipimage_' . $reportObject['shipid'] . '.png',
+                'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
                 'listofkpi' => $reportObject['listofkpi'],
                 'kpiweightage' => $reportObject['kpiweightage'],
                 'montharray' => $reportObject['montharray'],
@@ -2706,11 +2711,11 @@ class DashboradController extends Controller
                     'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
                 );
                 $jsondata = json_encode($graphObject);
-                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid . '.json';
+                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
                 $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid . '.png';
-                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid . '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid.'_'.$currentdateitme. '.png';
+                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
                 $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
@@ -2720,7 +2725,7 @@ class DashboradController extends Controller
                     'screenName' => 'Ranking Report',
                     'userName' => '',
                     'date' => date('Y-m-d'),
-                    'link' => 'kpiimage_' . $kpiid . '.png',
+                    'link' => 'kpiimage_' . $kpiid .'_'.$currentdateitme. '.png',
                     'montharray' => $reportObject['montharray'],
                     'kpiname' => $kpiName,
                     'countmonth' => count($reportObject['montharray']),
@@ -2756,6 +2761,7 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $currentdateitme=date('Y-m-d H-i-s');
         if ($user != null) {
             $email = $user->getEmail();
             $reportObject = $this->view_ranking_reportsAction($request, 'sendReport');
@@ -2791,11 +2797,11 @@ class DashboradController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
             );
             $jsondata = json_encode($graphObject);
-            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'] . '.json';
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-            $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'] . '.png';
-            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'] . '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+            $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
+            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
@@ -2804,7 +2810,7 @@ class DashboradController extends Controller
                 'screenName' => 'Ranking Report',
                 'userName' => '',
                 'date' => date('Y-m-d'),
-                'link' => 'shipimage_' . $reportObject['shipid'] . '.png',
+                'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
                 'listofkpi' => $reportObject['listofkpi'],
                 'kpiweightage' => $reportObject['kpiweightage'],
                 'montharray' => $reportObject['montharray'],
@@ -2840,11 +2846,11 @@ class DashboradController extends Controller
                     'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
                 );
                 $jsondata = json_encode($graphObject);
-                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid . '.json';
+                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
                 $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid . '.png';
-                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid . '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid .'_'.$currentdateitme. '.png';
+                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid .'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
                 $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
@@ -2854,7 +2860,7 @@ class DashboradController extends Controller
                     'screenName' => 'Ranking Report',
                     'userName' => '',
                     'date' => date('Y-m-d'),
-                    'link' => 'kpiimage_' . $kpiid . '.png',
+                    'link' => 'kpiimage_' . $kpiid.'_'.$currentdateitme. '.png',
                     'montharray' => $reportObject['montharray'],
                     'kpiname' => $kpiName,
                     'countmonth' => count($reportObject['montharray']),
@@ -2873,8 +2879,8 @@ class DashboradController extends Controller
             }
             $content = $mpdf->Output('', 'S');
             $fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
-            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $fileName;
-            file_put_contents($pdffilenamefullpath, $content);
+            $Finalpdffile = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $fileName;
+            file_put_contents($Finalpdffile, $content);
             $useremaildid = $request->request->get('clientemail');
             $mailbox = $request->request->get('comment');
             $mailidarray = array();
