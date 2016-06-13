@@ -227,7 +227,7 @@ class DashboradController extends Controller
                     if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
                         for ($m = 0; $m <= 2; $m++) {
                             if($m ==0) {
-                                $month = $currentDate;
+                                $month = $currentMonthObject->format('Y-m-d');
                                 array_push($datesArray, $month);
                             } else {
                                 $month = date("Y-m-d", strtotime($datesArray[$m-1]."last day of previous month"));
