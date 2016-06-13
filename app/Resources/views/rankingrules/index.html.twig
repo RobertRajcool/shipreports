@@ -536,8 +536,22 @@
                     }
                 }
 
+                var editElementErrorMsg = $('.edit-error-element');
+                var editKpiErrorMsg = $('.edit-error-kpi');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
+                    if(editKpiName.val()=="0") {
+                        editKpiErrorMsg.empty();
+                        editKpiName.focus();
+                        editKpiErrorMsg.text('KPI name cannot be empty !');
+                        return false;
+                    }
+                    if(editElementName.val()=='0') {
+                        editElementErrorMsg.empty();
+                        editElementName.focus();
+                        editElementErrorMsg.text('Element name cannot be empty !');
+                        return false;
+                    }
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
                     for (var rowCount = 1; rowCount <= count_row; rowCount++) {
@@ -799,18 +813,20 @@
                                     <label class="control-label col-xs-4">{{'element.kpi_select'|trans }}</label>
                                     <div class="col-xs-8 ">
                                         <select class="kpi_name_edit" id="edit_kpi">
-                                            <option>--{{'element.kpi_select'|trans }}--</option>
+                                            <option value="0">--{{'element.kpi_select'|trans }}--</option>
                                         </select>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-error-kpi"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">{{ 'rules.element_select'|trans }}</label>
                                     <div class="col-xs-8">
                                         <select class="element_name_edit" id="edit_element">
-                                            <option>--{{ 'rules.element_select'|trans }}--</option>
+                                            <option value="0">--{{ 'rules.element_select'|trans }}--</option>
                                         </select>
                                         <input type="hidden" class="rule_edit_id" value="" placeholder="">
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-error-element"></div>
                                 </div>
                             </fieldset>
 

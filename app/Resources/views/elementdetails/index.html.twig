@@ -79,6 +79,8 @@
                 var editCancelButton = $('.edit_cancel_button');
                 editCancelButton.live("click", function ($e) {
                     $e.preventDefault();
+                    editElementErrorMsg.empty();
+                    validDate.empty();
                     editElement.hide();
                     boxIcon.hide();
                     listIcon.show();
@@ -157,6 +159,8 @@
                     activeYear.empty();
                     endMonth.empty();
                     endYear.empty();
+                    editElementErrorMsg.empty();
+                    validDate.empty();
                 }
 
                 function setShowValueFunction(data, monthNames, active_date, end_date) {
@@ -204,9 +208,33 @@
                     editKpiName.val(data.kpi_name[0].id);
                 }
 
+                var validDate = $('.edit-valid-dates');
+                var editElementErrorMsg = $('.editErrorName');
                 var editSubmitButton = $('.edit_element_submit_button');
+                var editKpiErrorMsg = $('.edit-error-kpi');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
+                    var aM = editActiveMonth.val();
+                    var aY = editActiveYear.val();
+                    var eM = editEndMonth.val();
+                    var eY = editEndYear.val();
+                    if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '--' || aY == '--' || eM == '--' || eY == '--') {
+                        validDate.empty();
+                        validDate.text("Choose the valid date !");
+                        return false;
+                    }
+                    if(!$.trim(editElementName.val())) {
+                        editElementErrorMsg.empty();
+                        editElementName.focus();
+                        editElementErrorMsg.text('Element name cannot be empty !');
+                        return false;
+                    }
+                    if(editKpiName.val()=="0") {
+                        editKpiErrorMsg.empty();
+                        editKpiName.focus();
+                        editKpiErrorMsg.text('KPI name cannot be empty !');
+                        return false;
+                    }
                     var i = 0;
                     var data = {
                         kpiDetailsId: editKpiName.val(),
@@ -237,6 +265,8 @@
                     $.ajax({
                         success: function (data) {
                             editElement.hide();
+                            editElementErrorMsg.empty();
+                            validDate.empty();
                             var monthNames = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
@@ -630,16 +660,18 @@
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8 kpi_name_edit">
                                         <select class="edit_kpiName" name="kpiName">
-                                            <option>--Select Kpi--</option>
+                                            <option value="0">----{{'element.kpi_select'|trans }}----</option>
                                         </select>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-error-kpi"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        <input type="text" class="edit_element_name" value="" placeholder="">
+                                        <input type="text" class="edit_element_name" value="" placeholder="" >
                                         <input type="hidden" class="element_edit_id" value="" placeholder="">
                                     </div>
+                                    <div class="col-xs-8 weight-error-message editErrorName"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
@@ -705,6 +737,7 @@
                                             </select>
                                         </span>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
                             {#<fieldset class="fieldset_box">

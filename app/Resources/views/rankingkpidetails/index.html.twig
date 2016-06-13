@@ -27,12 +27,16 @@
                 var shipNameOptions = $('#shipId option');
                 var createWeight = $('#weightageId');
                 var editWeight = $('.edit_kpi_weightage');
+                var createWeightError = $('.weight-error-message-create');
+                var editWeightError = $('.weight-error-message-edit');
                 listView.hide();
                 boxIcon.hide();
                 showKpi.hide();
                 editKpi.hide();
                 listIcon.click(function ($e) {
                     $e.preventDefault();
+                    createForm[0].reset();
+                    createWeightError.empty();
                     gridView.hide();
                     listIcon.hide();
                     createKpi.hide();
@@ -53,6 +57,8 @@
                 });
                 addButton.click(function ($e) {
                     $e.preventDefault();
+                    createForm[0].reset();
+                    createWeightError.empty();
                     listView.hide();
                     boxIcon.hide();
                     showKpi.hide();
@@ -68,12 +74,22 @@
                     editKpi.hide();
                     createForm[0].reset();
                 });
-                $('#check').live("click", function () {
-                    if ($('#check').is(':checked') == true) {
+                var check = $('#check');
+                check.live("click", function () {
+                    if (check.is(':checked') == true) {
                         shipNameOptions.attr('selected', 'selected');
                     }
                     else {
                         shipNameOptions.attr('selected', false);
+                    }
+                });
+                var editCheck = $('#edit-check');
+                editCheck.live("click", function () {
+                    if (editCheck.is(':checked') == true) {
+                        editShipOptions.attr('selected', 'selected');
+                    }
+                    else {
+                        editShipOptions.attr('selected', false);
                     }
                 });
 
@@ -85,7 +101,7 @@
                         weightage: weight,
                         status: 1
                     };
-                    var checkElementWeight = checkKpiWeightFunction(data);
+                    var checkElementWeight = checkKpiWeightFunction(data,createWeightError);
                 });
 
                 editWeight.change(function ($e) {
@@ -96,18 +112,17 @@
                         weightage: weight,
                         status: 0
                     };
-                    var checkElementWeight = checkKpiWeightFunction(data);
+                    var checkElementWeight = checkKpiWeightFunction(data,editWeightError);
                 });
 
-                var errorMessage = $('.weight-error-message');
 
-                function checkKpiWeightFunction(data) {
+                function checkKpiWeightFunction(data,errorMessage) {
                     if (createWeight.val() != null) {
                         $.ajaxSetup({
                             global: false,
-                            typtype: "POST",
+                            type: "POST",
                             data: data,
-                            url: Routing.generate('kpidetails_ranking_kpi_ajax_weightage'), /*"ranking_kpi_ajax_weightage",*/
+                            url: Routing.generate('kpidetails_kpi_ajax_weightage'),/*"kpi_ajax_weightage",*/
                             beforeSend: function () {
                                 var setAjaxBeforeSend = ajaxbefore_send();
                             },
@@ -130,7 +145,6 @@
                         })
                     }
                 }
-
                 var ruleObjectText = $('#rule_obj_text');
                 var ruleDiv = $('.show_rule_div');
                 var editRuleTable = $('.rule_table_edit');
@@ -154,6 +168,8 @@
                     $e.preventDefault();
                     createKpi.hide();
                     editKpi.hide();
+                    createForm[0].reset();
+                    createWeightError.empty();
                     count++;
                     if (count > 1) {
                         showKpi.hide();
@@ -199,6 +215,8 @@
                     activeYear.empty();
                     endMonth.empty();
                     endYear.empty();
+                    validDate.empty();
+                    editWeightError.empty();
                 }
 
                 function successFunction(data) {
@@ -359,6 +377,8 @@
                 });
                 editCancelButton.click(function ($e) {
                     $e.preventDefault();
+                    validDate.empty();
+                    editWeightError.empty();
                     editKpi.hide();
                     showKpi.show();
                 });
@@ -374,8 +394,19 @@
                         }
                     });
                 });
+
+                var validDate = $('.edit-valid-dates');
                 editSaveButton.live("click", function ($e) {
                     $e.preventDefault();
+                    var aM = $('.active_month').val();
+                    var aY = $('.active_year').val();
+                    var eM = $('.end_month').val();
+                    var eY = $('.end_year').val();
+                    if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '--' || aY == '--' || eM == '--' || eY == '--') {
+                        validDate.empty();
+                        validDate.text("Choose the valid date !");
+                        return false;
+                    }
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
                     for (var i_i = 1; i_i < count_row; i_i++) {
@@ -388,10 +419,10 @@
                         cellName: $('.edit_kpi_cellName').val(),
                         cellDetails: $('.edit_kpi_cellDetails').val(),
                         Id: $('.kpi_edit_id').val(),
-                        activeMonth: $('.active_month').val(),
-                        activeYear: $('.active_year').val(),
-                        endMonth: $('.end_month').val(),
-                        endYear: $('.end_year').val(),
+                        activeMonth: aM,
+                        activeYear: aY,
+                        endMonth: eM,
+                        endYear: eY,
                         rules: rule_array
                     };
                     var emptyFunction = emptyTheDetailsFunction(data);
@@ -906,7 +937,7 @@
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
-                                    <div class="col-xs-8 weight-error-message"></div>
+                                    <div class="col-xs-8 weight-error-message weight-error-message-create"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
@@ -1076,7 +1107,7 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        <input type="text" class="edit_kpi_name" value="" placeholder="">
+                                        <input type="text" class="edit_kpi_name" value="" placeholder="" readonly>
                                         <input type="hidden" class="kpi_edit_id" value="" placeholder="">
                                     </div>
                                 </div>
@@ -1085,7 +1116,7 @@
                                     <div class="col-xs-8">
                                         <input type="number" class="edit_kpi_weightage" value="" placeholder="">
                                     </div>
-                                    <div class="col-xs-8 weight-error-message"></div>
+                                    <div class="col-xs-8 weight-error-message weight-error-message-edit"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
@@ -1144,6 +1175,7 @@
                                     </select>
                                 </span>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
                             {#<fieldset class="fieldset_box">
