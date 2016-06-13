@@ -2662,9 +2662,16 @@ class DashboradController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
             );
             $jsondata = json_encode($graphObject);
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+            }
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+            }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
             $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
@@ -2797,6 +2804,12 @@ class DashboradController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
             );
             $jsondata = json_encode($graphObject);
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+            }
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+            }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
@@ -2879,6 +2892,9 @@ class DashboradController extends Controller
             }
             $content = $mpdf->Output('', 'S');
             $fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures', 0777, true);
+            }
             $Finalpdffile = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $fileName;
             file_put_contents($Finalpdffile, $content);
             $useremaildid = $request->request->get('clientemail');
