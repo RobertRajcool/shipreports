@@ -2626,7 +2626,7 @@ class DashboradController extends Controller
     public function sendreports_rankingAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $currentdateitme=date('Y-m-d H-i-s');
+        $currentdateitme=date('Y-m-d-H-i-s');
         $user = $this->getUser();
         if ($user != null) {
             $reportObject = $this->view_ranking_reportsAction($request, 'sendReport');
@@ -2662,15 +2662,38 @@ class DashboradController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
             );
             $jsondata = json_encode($graphObject);
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+            }
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+            }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
             $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
-            $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+           return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                'shipid' => $reportObject['shipid'],
+                'screenName' => 'Ranking Report',
+                'userName' => '',
+                'date' => date('Y-m-d'),
+                'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
+                'listofkpi' => $reportObject['listofkpi'],
+                'kpiweightage' => $reportObject['kpiweightage'],
+                'montharray' => $reportObject['montharray'],
+                'shipname' => $reportObject['shipname'],
+                'countmonth' => count($reportObject['montharray']),
+                'avgscore' => $reportObject['avgscore'],
+                'ageofvessel' => $reportObject['ageofvessel'],
+                'kpimonthdata' => $reportObject['kpimonthdata'],
+                'currentyear' => date('Y')
+            ));
+            /*$customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
                 'userName' => '',
@@ -2746,7 +2769,7 @@ class DashboradController extends Controller
             $response = new Response();
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
-            return $response;
+            return $response;*/
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
@@ -2761,7 +2784,7 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $currentdateitme=date('Y-m-d H-i-s');
+        $currentdateitme=date('Y-m-d-H-i-s');
         if ($user != null) {
             $email = $user->getEmail();
             $reportObject = $this->view_ranking_reportsAction($request, 'sendReport');
@@ -2797,6 +2820,12 @@ class DashboradController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
             );
             $jsondata = json_encode($graphObject);
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+            }
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+            }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
@@ -2879,6 +2908,9 @@ class DashboradController extends Controller
             }
             $content = $mpdf->Output('', 'S');
             $fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures', 0777, true);
+            }
             $Finalpdffile = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $fileName;
             file_put_contents($Finalpdffile, $content);
             $useremaildid = $request->request->get('clientemail');
