@@ -227,7 +227,7 @@ class DashboradController extends Controller
                     if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
                         for ($m = 0; $m <= 2; $m++) {
                             if($m ==0) {
-                                $month = $currentMonthObject->format('Y-m-d');
+                                $month = $currentDate;
                                 array_push($datesArray, $month);
                             } else {
                                 $month = date("Y-m-d", strtotime($datesArray[$m-1]."last day of previous month"));
@@ -2677,22 +2677,22 @@ class DashboradController extends Controller
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
-           /*return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
-                'shipid' => $reportObject['shipid'],
-                'screenName' => 'Ranking Report',
-                'userName' => '',
-                'date' => date('Y-m-d'),
-                'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
-                'listofkpi' => $reportObject['listofkpi'],
-                'kpiweightage' => $reportObject['kpiweightage'],
-                'montharray' => $reportObject['montharray'],
-                'shipname' => $reportObject['shipname'],
-                'countmonth' => count($reportObject['montharray']),
-                'avgscore' => $reportObject['avgscore'],
-                'ageofvessel' => $reportObject['ageofvessel'],
-                'kpimonthdata' => $reportObject['kpimonthdata'],
-                'currentyear' => date('Y')
-            ));*/
+            /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                  'shipid' => $reportObject['shipid'],
+                  'screenName' => 'Ranking Report',
+                  'userName' => '',
+                  'date' => date('Y-m-d'),
+                  'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
+                  'listofkpi' => $reportObject['listofkpi'],
+                  'kpiweightage' => $reportObject['kpiweightage'],
+                  'montharray' => $reportObject['montharray'],
+                  'shipname' => $reportObject['shipname'],
+                  'countmonth' => count($reportObject['montharray']),
+                  'avgscore' => $reportObject['avgscore'],
+                  'ageofvessel' => $reportObject['ageofvessel'],
+                  'kpimonthdata' => $reportObject['kpimonthdata'],
+                  'currentyear' => date('Y')
+              ));*/
             $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
@@ -2712,7 +2712,7 @@ class DashboradController extends Controller
             $mpdf->AddPage('', 4, '', 'on');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
-            /*for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
+            for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
                 $kpiName = $rankingKpiList[$KpiPdfcount]['kpiName'];
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
@@ -2764,7 +2764,7 @@ class DashboradController extends Controller
                 $mpdf->AddPage('', 4, '', 'on');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
-            }*/
+            }
             $content = $mpdf->Output('', 'S');
             $response = new Response();
             $response->setContent($content);
