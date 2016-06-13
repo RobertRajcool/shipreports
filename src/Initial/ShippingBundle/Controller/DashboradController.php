@@ -2677,7 +2677,7 @@ class DashboradController extends Controller
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
-           /*return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+           return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
                 'userName' => '',
@@ -2692,8 +2692,8 @@ class DashboradController extends Controller
                 'ageofvessel' => $reportObject['ageofvessel'],
                 'kpimonthdata' => $reportObject['kpimonthdata'],
                 'currentyear' => date('Y')
-            ));*/
-            $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+            ));
+            /*$customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
                 'userName' => '',
@@ -2769,7 +2769,7 @@ class DashboradController extends Controller
             $response = new Response();
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
-            return $response;
+            return $response;*/
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
