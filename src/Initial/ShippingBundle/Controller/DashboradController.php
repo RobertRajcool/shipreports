@@ -230,7 +230,7 @@ class DashboradController extends Controller
                                 $month = $currentDate;
                                 array_push($datesArray, $month);
                             } else {
-                                $month = date("Y-m-d", strtotime($currentDate."last day of previous month"));
+                                $month = date("Y-m-d", strtotime($datesArray[$m-1]."last day of previous month"));
                                 array_push($datesArray, $month);
                             }
                         }
