@@ -2626,7 +2626,7 @@ class DashboradController extends Controller
     public function sendreports_rankingAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $currentdateitme=date('Y-m-d H-i-s');
+        $currentdateitme=date('Y-m-d-H-i-s');
         $user = $this->getUser();
         if ($user != null) {
             $reportObject = $this->view_ranking_reportsAction($request, 'sendReport');
@@ -2677,6 +2677,22 @@ class DashboradController extends Controller
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
+           /*return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                'shipid' => $reportObject['shipid'],
+                'screenName' => 'Ranking Report',
+                'userName' => '',
+                'date' => date('Y-m-d'),
+                'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
+                'listofkpi' => $reportObject['listofkpi'],
+                'kpiweightage' => $reportObject['kpiweightage'],
+                'montharray' => $reportObject['montharray'],
+                'shipname' => $reportObject['shipname'],
+                'countmonth' => count($reportObject['montharray']),
+                'avgscore' => $reportObject['avgscore'],
+                'ageofvessel' => $reportObject['ageofvessel'],
+                'kpimonthdata' => $reportObject['kpimonthdata'],
+                'currentyear' => date('Y')
+            ));*/
             $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
@@ -2768,7 +2784,7 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
-        $currentdateitme=date('Y-m-d H-i-s');
+        $currentdateitme=date('Y-m-d-H-i-s');
         if ($user != null) {
             $email = $user->getEmail();
             $reportObject = $this->view_ranking_reportsAction($request, 'sendReport');
