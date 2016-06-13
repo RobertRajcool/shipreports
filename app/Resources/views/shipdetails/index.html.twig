@@ -253,14 +253,39 @@
                     }
                 });
 
+                var editLocationErrorMsg = $('.edit-error-location');
+                var editCountryErrorMsg = $('.edit-error-country');
+                var editVesselTypeErrorMsg = $('.edit-vessel-type');
                 var editVesselError = $('.vessel-name');
                 function vesselEditValidationFunction() {
-                    if(editShipName.val()=="") {
-                        editVesselError.empty();
-                        editVesselError.text('Vessel name cannot be empty');
+                    var editErrorEmptyValues =editErrorEmptyValuesFunction();
+                    if(!$.trim(editShipName.val())) {
+                        editVesselError.text('Vessel name cannot be empty !');
                         editShipName.focus();
                         return false;
                     }
+                    if(editShipType.val()=="0") {
+                        editVesselTypeErrorMsg.text('Vessel type cannot be empty !');
+                        editShipType.focus();
+                        return false;
+                    }
+                    if(editShipCountry.val()=="0") {
+                        editCountryErrorMsg.text('Country name cannot be empty !');
+                        editShipCountry.focus();
+                        return false;
+                    }
+                    if(!$.trim(editShipLocation.val())) {
+                        editLocationErrorMsg.text('Country name cannot be empty !');
+                        editShipLocation.focus();
+                        return false;
+                    }
+                }
+
+                function editErrorEmptyValuesFunction() {
+                    editVesselError.empty();
+                    editVesselTypeErrorMsg.empty();
+                    editCountryErrorMsg.empty();
+                    editLocationErrorMsg.empty();
                 }
 
                 var archiveButton = $('.archive_btn');
@@ -701,10 +726,10 @@
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <select class="edit_ship_type" required>
-                                            <option selected>--{{ 'vessel.select'|trans }} {{ 'vessel.vessel_type'|trans }}--</option>
+                                            <option value="0">--{{ 'vessel.select'|trans }} {{ 'vessel.vessel_type'|trans }}--</option>
                                         </select>
                                     </div>
-                                    <div class="col-xs-8 weight-error-message vessel-type"> </div>
+                                    <div class="col-xs-8 weight-error-message edit-vessel-type"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
@@ -716,17 +741,17 @@
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <select class="edit_ship_country" required>
-                                            <option selected>--{{ 'vessel.select'|trans }} {{ 'vessel.country'|trans }}--</option>
+                                            <option value="0">--{{ 'vessel.select'|trans }} {{ 'vessel.country'|trans }}--</option>
                                         </select>
                                     </div>
-                                    <div class="col-xs-8 weight-error-message country"> </div>
+                                    <div class="col-xs-8 weight-error-message edit-error-country"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_location" required>
                                     </div>
-                                    <div class="col-xs-8 weight-error-message location"> </div>
+                                    <div class="col-xs-8 weight-error-message edit-error-location"> </div>
                                 </div>
                             </fieldset>
                             <fieldset class="fieldset_box">
