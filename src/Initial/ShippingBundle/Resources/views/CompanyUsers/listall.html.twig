@@ -420,9 +420,32 @@
 
 
                 });
+
+
+                $('#fos_user_registration_form_plainPassword_second').keyup(function($e) {
+                    var CheckPassword= $(this).val();
+                    var pattern =  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+                    if(pattern.test(CheckPassword))
+                    {
+                        $('#errormsg').text('');
+                        return true;
+                    }
+                    else
+                    {
+                        $('#errormsg').text('password must contain 8 characters one uppercase and special symbol');
+                        return false;
+                    }
+
+
+                });
+
+
+
                 $('#userform').submit(function($e)
                 {
                     var CheckPassword= $('#fos_user_registration_form_plainPassword_first').val();
+
+
                     var pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
                     if(pattern.test(CheckPassword))
                     {
