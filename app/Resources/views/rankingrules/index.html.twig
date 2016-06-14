@@ -79,6 +79,8 @@
                 var editCancelButton = $('.edit_cancel_button');
                 editCancelButton.live("click", function ($e) {
                     $e.preventDefault();
+                    editElementErrorMsg.empty();
+                    editKpiErrorMsg.empty();
                     editRules.hide();
                     gridView.show();
                     showRules.show();
@@ -101,6 +103,8 @@
                 var ruleList = $('.rule_class');
                 ruleList.live("click", function ($e) {
                     $e.preventDefault();
+                    editElementErrorMsg.empty();
+                    editKpiErrorMsg.empty();
                     createRules.hide();
                     editRules.hide();
                     count++;
@@ -540,14 +544,14 @@
                 var editKpiErrorMsg = $('.edit-error-kpi');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
+                    editElementErrorMsg.empty();
+                    editKpiErrorMsg.empty();
                     if(editKpiName.val()=="0") {
-                        editKpiErrorMsg.empty();
                         editKpiName.focus();
                         editKpiErrorMsg.text('KPI name cannot be empty !');
                         return false;
                     }
                     if(editElementName.val()=='0') {
-                        editElementErrorMsg.empty();
                         editElementName.focus();
                         editElementErrorMsg.text('Element name cannot be empty !');
                         return false;
