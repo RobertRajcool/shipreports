@@ -24,6 +24,9 @@
         .change{
             color:red;
         }
+        #errormsg{
+            color:red;
+        }
     </style>
 
     {#{%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
@@ -233,6 +236,7 @@
 
 
 
+
                 $('.edit_submit_btn').live("click",function($e)
                 {
                     $e.preventDefault();
@@ -240,6 +244,7 @@
                     var email = $('.edit_email').val();
                     var mobile =$('.edit_mobile').val();
                     var fullname =$('.edit_fullname').val();
+
 
                     if(fullname=="")
                     {
@@ -344,6 +349,50 @@
 
         </script>
 
+
+        <script type="text/javascript">
+            /*function validatePassword() {
+                var newPassword = document.getElementById('fos_user_registration_form_plainPassword_first').value;
+                var minNumberofChars = 8;
+                var maxNumberofChars = 16;
+                var regularExpression  = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
+                //alert(newPassword);
+                if(newPassword.length < minNumberofChars && newPassword.length > maxNumberofChars && newPassword.length!=regularExpression){
+                    //jAlert('',"error");
+
+                    return false;
+                }
+                if(!regularExpression.test(newPassword)) {
+                    jAlert('', "password should contain atleast one number and one special character");
+                    $('.fos_user_registration_form_plainPassword_first').focus();
+                    return false;
+                }
+            }*/
+
+
+           /* function validatePassword()
+            {
+                var inputtxt= document.getElementById('fos_user_registration_form_plainPassword_first').value;
+                var paswd=  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+                if(inputtxt.value=(paswd))
+                {
+                    alert('Correct, try another...')
+                    return true;
+                }
+                else
+                {
+                    alert('Wrong...!')
+                    return false;
+                }
+            }*/
+
+
+        </script>
+
+
+
+
+
         <script type="text/javascript">
             $(document).ready(function(){
                 $('#fos_user_registration_form_roles_0').hide();
@@ -352,6 +401,43 @@
 
 
 
+
+
+
+                $('#fos_user_registration_form_plainPassword_first').keyup(function($e) {
+                    var CheckPassword= $(this).val();
+                    var pattern =  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+                    if(pattern.test(CheckPassword))
+                    {
+                        $('#errormsg').text('');
+                        return true;
+                    }
+                    else
+                    {
+                        $('#errormsg').text('password must contain 8 characters one uppercase and special symbol');
+                        return false;
+                    }
+
+
+                });
+                $('#userform').submit(function($e)
+                {
+                    var CheckPassword= $('#fos_user_registration_form_plainPassword_first').val();
+                    var pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
+                    if(pattern.test(CheckPassword))
+                    {
+                        $('#errormsg').text('');
+                        return true;
+                    }
+                    else
+                    {
+                       //alert('success')
+                        return false;
+                    }
+
+
+
+                });
             });
         </script>
 
@@ -445,7 +531,7 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
-                    {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register form-horizontal no-style'}}) }}
+                    {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register form-horizontal no-style','id':'userform'}}) }}
                     <div class="add_new_users_form">
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">{{ 'user.header'|trans }}</legend>
@@ -527,7 +613,7 @@
                                 <label class="control-label required_field col-xs-4" >{{'user.password'|trans  }}<span class="change">*</span><label class="pass">.</label> <labe >{{'user.confirm'|trans  }}</label></label>
 
                                 <div class="col-xs-8">
-                                    {{ form_row(form.plainPassword) }}
+                                    {{ form_row(form.plainPassword) }}<span class="error" id="errormsg"> </span>
                                 </div>
                                 <div class="col-xs-8">
 
@@ -537,7 +623,7 @@
                         </fieldset>
                     </div>
                     <div class="actions_submit">
-                        <button class="submit_btn" type="submit" value="Submit">{{'user.add'|trans  }}</button>
+                        <button class="submit_btn" type="submit" value="Submit" >{{'user.add'|trans  }}</button>
                         <button class="cancel_btn" type="submit" value="Submit">{{'user.reset'|trans  }}</button>
 
                     </div>
