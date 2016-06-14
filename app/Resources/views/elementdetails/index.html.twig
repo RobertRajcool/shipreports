@@ -79,8 +79,7 @@
                 var editCancelButton = $('.edit_cancel_button');
                 editCancelButton.live("click", function ($e) {
                     $e.preventDefault();
-                    editElementErrorMsg.empty();
-                    validDate.empty();
+                    var editEmptyValues = editEmptyValuesFunction();
                     editElement.hide();
                     boxIcon.hide();
                     listIcon.show();
@@ -94,6 +93,7 @@
                 var elementList = $('.element_class');
                 elementList.live("click", function ($e) {
                     $e.preventDefault();
+                    var editEmptyValues = editEmptyValuesFunction();
                     createView.hide();
                     boxIcon.hide();
                     editElement.hide();
@@ -214,23 +214,21 @@
                 var editKpiErrorMsg = $('.edit-error-kpi');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
+                    var editEmptyValues = editEmptyValuesFunction();
                     var aM = editActiveMonth.val();
                     var aY = editActiveYear.val();
                     var eM = editEndMonth.val();
                     var eY = editEndYear.val();
                     if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '--' || aY == '--' || eM == '--' || eY == '--') {
-                        validDate.empty();
                         validDate.text("Choose the valid date !");
                         return false;
                     }
                     if(!$.trim(editElementName.val())) {
-                        editElementErrorMsg.empty();
                         editElementName.focus();
                         editElementErrorMsg.text('Element name cannot be empty !');
                         return false;
                     }
                     if(editKpiName.val()=="0") {
-                        editKpiErrorMsg.empty();
                         editKpiName.focus();
                         editKpiErrorMsg.text('KPI name cannot be empty !');
                         return false;
@@ -283,6 +281,11 @@
                         }
                     });
                 });
+                function editEmptyValuesFunction() {
+                    editElementErrorMsg.empty();
+                    editKpiErrorMsg.empty();
+                    validDate.empty();
+                }
 
                 var createWeight = $('#weight-id');
                 var kpiId = $('#kpi_id');
