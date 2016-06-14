@@ -3209,6 +3209,7 @@ class DashboradController extends Controller
     public function allshipss_endreports_rankingAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+        $currentdateitme=date('Y-m-d-H-i-s');
         $user = $this->getUser();
         if ($user != null) {
             $reportObject = $this->overall_ships_rankingreportsAction($request, 'overallreports');
@@ -3237,10 +3238,10 @@ class DashboradController extends Controller
             //$fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
             $currentdatetime = date('Y-m-d-H-i-s');
             $jsondata = json_encode($graphObject);
-            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/overall_ship.json';
+            $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/overall_ship_'.$currentdateitme.'.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-            $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship.png';
+            $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship_'.$currentdateitme.'.png';
             $JsonFileDirectroy = $pdffilenamefullpath . ' -outfile ' . $outfile . ' -scale 2.5 -width 1065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
@@ -3249,7 +3250,7 @@ class DashboradController extends Controller
                 'screenName' => 'Ranking Report',
                 'userName' => '',
                 'date' => date('Y-m-d'),
-                'link' => 'overall_ship.png',
+                'link' => 'overall_ship_'.$currentdateitme.'.png',
             ));
             $mpdf->AddPage('', 4, '', 'on');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
@@ -3273,6 +3274,7 @@ class DashboradController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $currentdateitme=date('Y-m-d-H-i-s');
         $email = $user->getEmail();
         $reportObject = $this->overall_ships_rankingreportsAction($request, 'overallreports');
         $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
@@ -3300,10 +3302,10 @@ class DashboradController extends Controller
         //$fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
         $currentdatetime = date('Y-m-d-H-i-s');
         $jsondata = json_encode($graphObject);
-        $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/overall_ship.json';
+        $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/overall_ship_'.$currentdateitme.'.json';
         file_put_contents($pdffilenamefullpath, $jsondata);
         $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
-        $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship.png';
+        $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship_'.$currentdateitme.'.png';
         $JsonFileDirectroy = $pdffilenamefullpath . ' -outfile ' . $outfile . ' -scale 2.5 -width 1065';
         $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
         $handle = popen($ImageGeneration, 'r');
@@ -3312,13 +3314,13 @@ class DashboradController extends Controller
             'screenName' => 'Ranking Report',
             'userName' => '',
             'date' => date('Y-m-d'),
-            'link' => 'overall_ship.png',
+            'link' => 'overall_ship_'.$currentdateitme.'.png',
         ));
         $mpdf->AddPage('', 4, '', 'on');
         $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
         $mpdf->WriteHTML($htmlContentfor_report);
         $content = $mpdf->Output('', 'S');
-        $fileName = 'overallshipreports_' . date('Y-m-d H-i-s') . '.pdf';
+        $fileName = 'overallshipreports_'. date('Y-m-d H-i-s') . '.pdf';
         $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures/' . $fileName;
         file_put_contents($pdffilenamefullpath, $content);
         $useremaildid = $request->request->get('clientemail');
