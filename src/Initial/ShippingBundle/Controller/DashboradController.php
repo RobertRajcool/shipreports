@@ -227,7 +227,7 @@ class DashboradController extends Controller
                     if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
                         for ($m = 0; $m <= 2; $m++) {
                             if($m ==0) {
-                                $month = $currentDate;
+                                $month = $currentMonthObject->format('Y-m-d');
                                 array_push($datesArray, $month);
                             } else {
                                 $month = date("Y-m-d", strtotime($datesArray[$m-1]."last day of previous month"));
@@ -2677,22 +2677,22 @@ class DashboradController extends Controller
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
-          /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
-                'shipid' => $reportObject['shipid'],
-                'screenName' => 'Ranking Report',
-                'userName' => '',
-                'date' => date('Y-m-d'),
-                'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
-                'listofkpi' => $reportObject['listofkpi'],
-                'kpiweightage' => $reportObject['kpiweightage'],
-                'montharray' => $reportObject['montharray'],
-                'shipname' => $reportObject['shipname'],
-                'countmonth' => count($reportObject['montharray']),
-                'avgscore' => $reportObject['avgscore'],
-                'ageofvessel' => $reportObject['ageofvessel'],
-                'kpimonthdata' => $reportObject['kpimonthdata'],
-                'currentyear' => date('Y')
-            ));*/
+            /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                  'shipid' => $reportObject['shipid'],
+                  'screenName' => 'Ranking Report',
+                  'userName' => '',
+                  'date' => date('Y-m-d'),
+                  'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
+                  'listofkpi' => $reportObject['listofkpi'],
+                  'kpiweightage' => $reportObject['kpiweightage'],
+                  'montharray' => $reportObject['montharray'],
+                  'shipname' => $reportObject['shipname'],
+                  'countmonth' => count($reportObject['montharray']),
+                  'avgscore' => $reportObject['avgscore'],
+                  'ageofvessel' => $reportObject['ageofvessel'],
+                  'kpimonthdata' => $reportObject['kpimonthdata'],
+                  'currentyear' => date('Y')
+              ));*/
             $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',

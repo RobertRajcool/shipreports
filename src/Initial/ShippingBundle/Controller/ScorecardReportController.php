@@ -283,11 +283,11 @@ class ScorecardReportController extends Controller
                 'yAxis' => array('max' => 3, 'min' => 0)
             );
             $jsonFileData = json_encode($graphObject);
-            $jsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/graphData' . $todayDate . $todayTime . '.json';
+            $jsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json';
             file_put_contents($jsonFilePath, $jsonFileData);
             $HighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
-            $inFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/graphData' . $todayDate . $todayTime . '.json ';
-            $outFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/graphImage' . $todayDate . $todayTime . '.png ';
+            $inFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json ';
+            $outFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/graphImage' . $todayDate . $todayTime . '.png ';
             $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 2.5 -width 1024';
             $fileHandle = popen($imageGeneration, 'r');
             $result = fread($fileHandle, 2096);
@@ -337,11 +337,11 @@ class ScorecardReportController extends Controller
                 );
 
                 $kpiJsonFileData = json_encode($kpiGraphObject);
-                $kpiJsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json';
+                $kpiJsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json';
                 file_put_contents($kpiJsonFilePath, $kpiJsonFileData);
                 $kpiHighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
-                $kpiInFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json ';
-                $kpiOutFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.png ';
+                $kpiInFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json ';
+                $kpiOutFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.png ';
                 $kpiImageGeneration = 'phantomjs ' . $kpiHighChartLocation . '-infile ' . $kpiInFile . '-outfile ' . $kpiOutFile . ' -scale 2.5 -width 1024';
                 $kpiFileHandle = popen($kpiImageGeneration, 'r');
                 $kpiResult = fread($kpiFileHandle, 2096);
@@ -415,11 +415,11 @@ class ScorecardReportController extends Controller
                 'yAxis' => array('max' => 3, 'min' => 0)
             );
             $jsonFileData = json_encode($graphObject);
-            $jsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/graphData' . $todayDate . $todayTime . '.json';
+            $jsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json';
             file_put_contents($jsonFilePath, $jsonFileData);
             $HighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
-            $inFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/graphData' . $todayDate . $todayTime . '.json ';
-            $outFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/graphImage' . $todayDate . $todayTime . '.png ';
+            $inFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json ';
+            $outFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/graphImage' . $todayDate . $todayTime . '.png ';
             $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 2.5 -width 1024';
             $fileHandle = popen($imageGeneration, 'r');
             $result = fread($fileHandle, 2096);
@@ -469,11 +469,11 @@ class ScorecardReportController extends Controller
                 );
 
                 $kpiJsonFileData = json_encode($kpiGraphObject);
-                $kpiJsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json';
+                $kpiJsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json';
                 file_put_contents($kpiJsonFilePath, $kpiJsonFileData);
                 $kpiHighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
-                $kpiInFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphJsonFile/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json ';
-                $kpiOutFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/scorecard/graphImageFile/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.png ';
+                $kpiInFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.json ';
+                $kpiOutFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/KPI-' . $returnObject['kpiNameList'][$kpiCount]['id'] . $todayDate . $todayTime . '.png ';
                 $kpiImageGeneration = 'phantomjs ' . $kpiHighChartLocation . '-infile ' . $kpiInFile . '-outfile ' . $kpiOutFile . ' -scale 2.5 -width 1024';
                 $kpiFileHandle = popen($kpiImageGeneration, 'r');
                 $kpiResult = fread($kpiFileHandle, 2096);
