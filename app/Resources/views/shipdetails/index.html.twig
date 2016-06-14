@@ -78,6 +78,7 @@
                 var editCancelButton = $('.edit_cancel_btn');
                 editCancelButton.live("click",function($e) {
                     $e.preventDefault();
+                    var editErrorEmptyValues =editErrorEmptyValuesFunction();
                     editShip.hide();
                     showShipView.show();
                 });
@@ -86,6 +87,7 @@
                 var shipList = $('.ship_class');
                 shipList.live("click",function($e) {
                     $e.preventDefault();
+                    var editErrorEmptyValues =editErrorEmptyValuesFunction();
                     createView.hide();
                     count++;
                     var currentId = $(this).attr('id');
@@ -257,6 +259,10 @@
                 var editCountryErrorMsg = $('.edit-error-country');
                 var editVesselTypeErrorMsg = $('.edit-vessel-type');
                 var editVesselError = $('.vessel-name');
+                var editShipYardErrorMsg = $('.ship-yard');
+                var editSizeErrorMsg = $('.size');
+                var editGtErrorMsg = $('.gt');
+                var editMfErrorMsg = $('.mf');
                 function vesselEditValidationFunction() {
                     var editErrorEmptyValues =editErrorEmptyValuesFunction();
                     if(!$.trim(editShipName.val())) {
@@ -279,6 +285,26 @@
                         editShipLocation.focus();
                         return false;
                     }
+                    if(!$.trim(editShipBuilt.val())) {
+                        editShipYardErrorMsg.text('Ship yard cannot be empty !');
+                        editShipBuilt.focus();
+                        return false;
+                    }
+                    if(!$.trim(editShipSize.val())) {
+                        editSizeErrorMsg.text('Size cannot be empty !');
+                        editShipSize.focus();
+                        return false;
+                    }
+                    if(!$.trim(editShipGt.val())) {
+                        editGtErrorMsg.text('GT cannot be empty !');
+                        editShipGt.focus();
+                        return false;
+                    }
+                    if(!$.trim(editShipManufacturingYear.val())) {
+                        editMfErrorMsg.text('Manufacturing year cannot be empty !');
+                        editShipManufacturingYear.focus();
+                        return false;
+                    }
                 }
 
                 function editErrorEmptyValuesFunction() {
@@ -286,6 +312,10 @@
                     editVesselTypeErrorMsg.empty();
                     editCountryErrorMsg.empty();
                     editLocationErrorMsg.empty();
+                    editShipYardErrorMsg.empty();
+                    editSizeErrorMsg.empty();
+                    editGtErrorMsg.empty();
+                    editMfErrorMsg.empty();
                 }
 
                 var archiveButton = $('.archive_btn');
@@ -761,25 +791,29 @@
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_built" required>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message ship-yard"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_size" required>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message size"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_gt" required>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message gt"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_manufacturingYear" required>
                                     </div>
-                                    <div class="col-xs-8">&nbsp;</div>
+                                    {#<div class="col-xs-8">&nbsp;</div>#}
+                                    <div class="col-xs-8 weight-error-message mf"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
