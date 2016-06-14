@@ -214,6 +214,7 @@
 
                 var validDate = $('.edit-valid-dates');
                 var editElementErrorMsg = $('.editErrorName');
+                var editKpiErrorMsg = $('.edit-error-kpi');
                 var editSubmitButton = $('.edit_element_submit_button');
                 editSubmitButton.live("click",function($e) {
                     $e.preventDefault();
@@ -228,7 +229,14 @@
                     }
                     if(!$.trim(editElementName.val())) {
                         editElementErrorMsg.empty();
+                        editElementName.focus();
                         editElementErrorMsg.text('Element name cannot be empty !');
+                        return false;
+                    }
+                    if(editKpiName.val()=="0") {
+                        editKpiErrorMsg.empty();
+                        editKpiName.focus();
+                        editKpiErrorMsg.text('KPI name cannot be empty !');
                         return false;
                     }
                     var i=0;
@@ -706,9 +714,10 @@
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8 kpi_name_edit">
                                         <select class="edit_kpiName" name="kpiName">
-                                            <option>--Select Kpi--</option>
+                                            <option value="0">----{{'element.kpi_select'|trans }}----</option>
                                         </select>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message edit-error-kpi"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
