@@ -150,6 +150,23 @@
                     }
                 }
 
+               /* var submitButton = $('#form_id');
+                submitButton.submit(function($e) {
+                    var aM = $('.active-month').val();
+                    alert(aM);
+                    var aY = $('.active-year').val();
+                    var eM = $('.end-month').val();
+                    var eY = $('.end-year').val();
+                    $e.preventDefault();
+                    if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '0' || aY == '0' || eM == '0' || eY == '0') {
+                        jAlert('choose valid date');
+                        return false;
+                    } else {
+                        return true;
+                    }
+                    return true;
+                });*/
+
                 var ruleObjectText = $('#rule_obj_text');
                 var ruleDiv = $('.show_rule_div');
                 var editRuleTable = $('.rule_table_edit');
@@ -915,7 +932,7 @@
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
                     <h2>{{ 'kpi.add'|trans }}</h2>
-                    <form class="form-horizontal no-style create-form" action="{{ path('kpidetails_new1') }}"
+                    <form class="form-horizontal no-style create-form" id="form_id" action="{{ path('kpidetails_new1') }}"
                           method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
@@ -957,9 +974,9 @@
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="activeMonth"
+                                            <select class="add_rule_basic_date_drop active-month" name="activeMonth"
                                                     class="full-width-select">
-                                                <option selected="selected">--</option>
+                                                <option value="0">--</option>
                                                 <option value="1">{{ 'month.jan'|trans }}</option>
                                                 <option value="2">{{ 'month.feb'|trans }}</option>
                                                 <option value="3">{{ 'month.mar'|trans }}</option>
@@ -975,8 +992,8 @@
                                             </select>
                                         </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="activeyear"
-                                                    class="full-width-select">
+                                            <select class="add_rule_basic_year_drop active-year" name="activeyear"
+                                                    class="full-width-select ">
                                                 <option selected="selected">--</option>
                                                 {% for i in 2000..2020 %}
                                                     <option value={{ i }}>{{ i }}</option>
@@ -985,9 +1002,9 @@
                                         </span>
                                         <strong>{{ 'kpi.to'|trans }}</strong>
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="endMonth"
+                                            <select class="add_rule_basic_date_drop end-month" name="endMonth"
                                                     class="full-width-select">
-                                                <option selected="selected">--</option>
+                                                <option value="0">--</option>
                                                 <option value="1">{{ 'month.jan'|trans }}</option>
                                                 <option value="2">{{ 'month.feb'|trans }}</option>
                                                 <option value="3">{{ 'month.mar'|trans }}</option>
@@ -1003,9 +1020,9 @@
                                             </select>
                                         </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="endYear"
+                                            <select class="add_rule_basic_year_drop end-year" name="endYear"
                                                     class="full-width-select">
-                                                <option selected="selected">--</option>
+                                                <option value="0">--</option>
                                                 {% for i in 2000..2020 %}
                                                     <option value={{ i }}>{{ i }}</option>
                                                 {% endfor %}
