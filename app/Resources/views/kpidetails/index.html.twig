@@ -665,8 +665,7 @@
                                     $('#rule_obj_text-' + id_value).val(sample);
                                     var newRuleObject = engine.conditions.all;
                                     $.each(newRuleObject, function (conditionCount) {
-                                        newRuleOb $('.edit_submit_btn').live("click",function($e)
-                {ject[conditionCount].operator = rule_operator(newRuleObject[conditionCount].operator);
+                                        newRuleObject[conditionCount].operator = rule_operator(newRuleObject[conditionCount].operator);
                                         var edit_condition_text_one = newRuleObject[conditionCount].operator + newRuleObject[conditionCount].value;
 
                                         if (conditionCount == 0) {
@@ -682,7 +681,7 @@
                         }
                     }
                     else {
-                        alert("Save the selected rule");
+                        jAlert("Save the selected rule");
                     }
 
                 });
