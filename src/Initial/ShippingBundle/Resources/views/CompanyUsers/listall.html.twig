@@ -414,7 +414,7 @@
                     }
                     else
                     {
-                        $('#errormsg').text('password must contain 8 characters one uppercase and special symbol');
+                        $('#errormsg').text('password must contain 8 characters one uppercase and special characters');
                         return false;
                     }
 
@@ -432,12 +432,27 @@
                     }
                     else
                     {
-                        $('#errormsg').text('password must contain 8 characters one uppercase and special symbol');
+                        $('#errormsg').text('password must contain 8 characters one uppercase and special characters');
                         return false;
                     }
 
 
                 });
+
+
+
+                $('#userform').submit(function($e) {
+                    if ($('#fos_user_registration_form_plainPassword_first').val() == $('#fos_user_registration_form_plainPassword_second').val())
+                    {
+                        $('#errormsg').text('');
+                        return true;
+                    } else
+                        $('#errormsg').text('password Does not match');
+                        return false;
+                })
+
+
+
 
 
 
@@ -454,7 +469,8 @@
                     }
                     else
                     {
-                       //alert('success')
+                        $('#errormsg').text('');
+
                         return false;
                     }
 
