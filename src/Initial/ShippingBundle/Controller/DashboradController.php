@@ -1000,7 +1000,7 @@ class DashboradController extends Controller
                     ->getQuery();
             } else {
                 $query = $em->createQueryBuilder()
-                    ->select('a.companyid')
+                    ->select('identity(a.companyid)')
                     ->from('InitialShippingBundle:User', 'a')
                     ->where('a.id = :userId')
                     ->setParameter('userId', $userId)
@@ -1786,7 +1786,9 @@ class DashboradController extends Controller
                 ->where('a.adminName = :userId')
                 ->setParameter('userId', $username)
                 ->getQuery();
-            $clientemailid = $userquery->getSingleScalarResult();
+           $restult = $userquery->getResult();
+            $clientemailid='starshipping123@gmail.com';
+
 
             //get Informaton From User
 
@@ -1928,7 +1930,7 @@ class DashboradController extends Controller
                 ->where('a.adminName = :userId')
                 ->setParameter('userId', $username)
                 ->getQuery();
-            $clientemailid = $userquery->getSingleScalarResult();
+            $clientemailid = 'starshipping123@gmail.com';
 
             //get Informaton From User
 
@@ -2069,7 +2071,7 @@ class DashboradController extends Controller
                 ->where('a.adminName = :userId')
                 ->setParameter('userId', $username)
                 ->getQuery();
-            $clientemailid = $userquery->getSingleScalarResult();
+            $clientemailid = 'starshipping123@gmail.com';
             $params = $request->request->get('send_command');
             $kpiid = $params['kpiid'];
             $returnvaluefrommonth = $this->listallkpiforship_rankingAction($kpiid, $year = ' ', $request, 'pdftemplate_shiplevel');
