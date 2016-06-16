@@ -20,9 +20,23 @@
                 $('#kpiformforship').show();
                 var shipid='{{ currentshipid }}';
                 var shipname='{{ currentshipname }}';
-                $('#'+shipid).addClass('active');
-                $('#shipid').val(shipid);
-                $('#shipname').text(shipname);
+                var statusofship='{{ statuscount }}';
+                var shipcount='{{ shipcount }}'
+                if(statusofship==shipcount)
+                {
+                    $('#allbuttondiv').hide();
+                   // $('#'+shipid).addClass('active');
+                    $('#shipid').val('');
+                    $('#shipname').text('');
+                }
+                else
+                {
+                    $('#'+shipid).addClass('active');
+                    $('#shipid').val(shipid);
+                    $('#shipname').text(shipname);
+                    $('#allbuttondiv').show();
+                }
+
 
                 var nowdate=new Date(),
                         locale = "en-us",
@@ -854,6 +868,9 @@
                         {% endif %}
                         {% if elementkpiarray|length > 0 %}
                             <div id="addkpiformid" class="table-responsive">
+                                {% if j==shipcount %}
+                                <span>All Ship Data Upload!</span>
+                                {% else %}
 
                                 {% set i=0 %}
                                 {% for key, value in elementkpiarray %}
@@ -894,13 +911,14 @@
                                         </tbody>
                                     </table>
                                 {% endfor %}
+                                {% endif %}
                             </div>
                         {% endif %}
 
 
                     </div>
                     <input type="hidden" name="shipid" id="shipid">
-                    <div class="actions_submit">
+                    <div id="allbuttondiv" class="actions_submit">
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 

@@ -18,9 +18,23 @@
                 $('#kpiformforship').show();
                 var shipid='{{ currentshipid }}';
                 var shipname='{{ currentshipname }}';
-                $('#'+shipid).addClass('active');
-                $('#shipid').val(shipid);
-                $('#shipname').text(shipname);
+                var statusofship='{{ statuscount }}';
+                var shipcount='{{ shipcount }}'
+                if(statusofship==shipcount)
+                {
+                    $('#allbuttondiv').hide();
+                    //$('#'+shipid).addClass('active');
+                    $('#shipid').val();
+                    $('#shipname').text();
+                }
+                else
+                {
+                    $('#allbuttondiv').show();
+                    $('#'+shipid).addClass('active');
+                    $('#shipid').val(shipid);
+                    $('#shipname').text(shipname);
+                }
+
                 $('#updatebuttonid').hide();
 
                 var nowdate=new Date(),
@@ -136,6 +150,9 @@
                             }
                         else
                         {
+                            $('#elementformid1').hide();
+                            $('#elementformid').show();
+                            $('#allbuttondiv').show();
                             $('#overallshids').html('');
                             $('#overallshids').text('');
                             $('#previousmonthdata').hide();
@@ -266,7 +283,6 @@
                 });
                 $('.nextmonth').live('click',function($e) {
                     $e.preventDefault();
-                    $('#allbuttondiv').show();
                     var linkid = $(this).attr('id');
                     if (linkid == 'proviousmonth_data') {
 
@@ -284,6 +300,7 @@
                     var nowdate=new Date();
                     if(currentdate<=nowdate)
                     {
+                    $('#allbuttondiv').show();
                     var current = month + '-' + year;
                     var data = {
                         dataofmonth: current
@@ -478,7 +495,7 @@
                         }
                     });
                 }
-                    else
+                   else
                     {
                         $('#spantext').text('Date Exceed...');
                         $('#spantext').show();
@@ -796,7 +813,6 @@
 
     {% endblock %}
 
-
     <section id="currentmonhthdetails">
         <div class="col-sm-3 views_kpi_form_list" id="overallshids">
             <div class="views_kpi_name_total"><span>{{ 'dashboard.shipname'|trans }}  ({{ shipcount }})</span></div>
@@ -840,6 +856,7 @@
 
         </div>
     </section>
+
     <section id="nogroupselected">
         <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
             <div class="text_image">
@@ -864,13 +881,15 @@
                             </label>
                         </div>
                     </div>
-
                     <div id="elementformid" class="add_new_kpi_form_section">
                         {% if elementkpiarray|length <= 0 %}
                             No Kpi Found
                         {% endif %}
                         {% if elementkpiarray|length > 0 %}
                             <div id="addkpiformid" class="table-responsive">
+                                {% if j==shipcount %}
+                                    <span>All Ship Data Upload!</span>
+                                {% else %}
 
                                 {% set i=0 %}
                                 {% for key, value in elementkpiarray %}
@@ -911,6 +930,7 @@
                                         </tbody>
                                     </table>
                                 {% endfor %}
+                                {% endif %}
                             </div>
                         {% endif %}
 
@@ -939,6 +959,8 @@
             </div>
         </div>
     </section>
+
+
     <section id="previousmonthdata">
         <div class="col-sm-12">
             <div class="verfication_ranking_form_screen">
@@ -954,115 +976,14 @@
                             </label>
                         </div>
                     </div>
-
                     <div class="verfication_ranking_form_section">
                         <div id="prvieoustablecontent" class="">
-
-                            <table class="table verfication_ranking_table_form_section">
-                                <thead>
-                                <tr>
-                                    <th class="kpi_lement_name">Vessel performance</th>
-                                    <th class="kpi_weightage">Weightage</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                    <th class="kpi_ship">Lorem</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td class="kpi_lement_name">Cargo hold & log readiness</td>
-                                    <td class="kpi_lement_number">100</td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                </tr>
-                                <tr>
-                                    <td class="kpi_lement_name">Hatch cover water tightness</td>
-                                    <td class="kpi_lement_number">100</td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                </tr>
-                                <tr>
-                                    <td class="kpi_lement_name">Cargo crane operation</td>
-                                    <td class="kpi_lement_number">100</td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <table class="table verfication_ranking_table_form_section">
-                                <thead>
-                                <tr>
-                                    <th class="kpi_lement_name">Vessel performance</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td class="kpi_lement_name">Cargo hold & log readiness</td>
-                                    <td class="kpi_lement_number">100</td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                </tr>
-                                <tr>
-                                    <td class="kpi_lement_name">Hatch cover water tightness</td>
-                                    <td class="kpi_lement_number">100</td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                </tr>
-                                <tr>
-                                    <td class="kpi_lement_name">Cargo crane operation</td>
-                                    <td class="kpi_lement_number">100</td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                    <td class="kpi_lement_inputname"><input type="text" placeholder="123"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
+                 </div>
                     </div>
                 </form>
             </div>
         </div>
     </section>
+
 
 {% endblock %}
