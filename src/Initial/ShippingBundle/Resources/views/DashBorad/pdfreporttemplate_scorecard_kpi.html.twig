@@ -19,7 +19,7 @@
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
-    
+
 </head>
 <body>
 
@@ -51,12 +51,12 @@
                 <thead>
                 {% set i1=0 %}
                 <tr>
-                    <th class="kpi_name kpi_name_thtd">Element Name</th>
-                    <th class="weightage">Weightage</th>
+                    <th class="kpi_name branding-colours">Element Name</th>
+                    <th class="weightage branding-colours">Weightage</th>
                     {% for monthname in montharray %}
                         <th class="month">{{ monthname }}</th>
                         {% if i1 != 2 %}
-                            <th class="month_difference">&nbsp;</th>
+                            <th class="month_difference branding-colours">&nbsp;</th>
                         {% endif %}
                         {% set i1 = i1+1 %}
                     {% endfor %}
@@ -71,24 +71,24 @@
                 {% for element in listofelement %}
                     {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
                     <tr>
-                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                        <td class=""><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
                         <td>{{ element.weightage }}</td>
                         {% for j in 0..countmonth1 %}
-                            <td>
+                            <td class="month">
                                 {% if j <1 %}
                                     {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                                     {% if elementcolorarray[j][i]=="Green" %}
-                                        <img src="/images/01.png" alt="Loader Image"/>
+                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
                                     {% elseif elementcolorarray[j][i]=="Red" %}
-                                        <img src="/images/03.png" alt="Loader Image"/>
+                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
                                     {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                        <img src="/images/02.png" alt="Loader Image"/>
+                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
                                     {% endif %}
                                 {% endif %}
                             </td>
                             {% if j != 2 %}
                                 {% set j1=j+1 %}
-                                <td>
+                                <td class="month_difference">
                                     {% if j <0 %}
                                         {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
                                             <img src="/images/straight_arrow.png">
@@ -131,23 +131,23 @@
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
-                    <td class="weightage">100</td>
+                    <td class=" ">{{ kpiname }}</td>
+                    <td class="">100</td>
                     {% for kpi_colors_first in kpi_color %}
                         {% for kpi_colors in kpi_colors_first %}
-                            <td class="month">
+                            <td class="">
                                 {% if kpi_colors_first[0] =="Green" %}
-                                    <img src="/images/01.png" alt="Loader Image"/>
+                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Red" %}
-                                    <img src="/images/03.png" alt="Loader Image"/>
+                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Yellow" %}
-                                    <img src="/images/02.png" alt="Loader Image"/>
+                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if k != 2 %}
                                 {% set k1=0 %}
                                 {#<td>{{ kpi_color[2][0] }}</td>#}
-                                <td class="month_difference">
+                                <td class="">
                                     {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/straight_arrow.png">
                                     {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Red" %}
@@ -176,9 +176,9 @@
                 </tbody>
             </table>
             </section>
-        <section class="data-row-section top-margin-space">
+        {#<section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table element_ranking_12_month_pdf_row">
-                {#{% set k=0 %}
+                #}{#{% set k=0 %}
                 <tr>
                     <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
                     <td class="weightage">100</td>
@@ -195,7 +195,7 @@
                             </td>
                             {% if k != 2 %}
                                 {% set k1=0 %}
-                                #}{#<td>{{ kpi_color[2][0] }}</td>#}{#
+                                #}{##}{#<td>{{ kpi_color[2][0] }}</td>#}{##}{#
                                 <td class="month_difference">
                                     {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/straight_arrow.png">
@@ -221,9 +221,9 @@
                             {% set k=k+1 %}
                         {% endfor %}
                     {% endfor %}
-                </tr>#}
+                </tr>#}{#
             </table>
-        </section>{#
+        </section>#}{#
 
 
         <section class="data-row-section top-margin-space">
@@ -242,7 +242,7 @@
                 </tbody>
             </table>
         </section>#}
-        <div>
+        {#<div>
             {% set newcommandarray = {} %}
             {% set jk=0 %}
             {% set ik=0 %}
@@ -262,7 +262,7 @@
                 {% set ik=ik+1 %}
                 {% set newcommandarray = {} %}
             {% endfor %}
-        </div>
+        </div>#}
 
         <section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table">
