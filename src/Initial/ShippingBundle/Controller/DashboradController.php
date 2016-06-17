@@ -1000,7 +1000,7 @@ class DashboradController extends Controller
                     ->getQuery();
             } else {
                 $query = $em->createQueryBuilder()
-                    ->select('a.companyid')
+                    ->select('identity(a.companyid)')
                     ->from('InitialShippingBundle:User', 'a')
                     ->where('a.id = :userId')
                     ->setParameter('userId', $userId)
@@ -1786,7 +1786,9 @@ class DashboradController extends Controller
                 ->where('a.adminName = :userId')
                 ->setParameter('userId', $username)
                 ->getQuery();
-            $clientemailid = $userquery->getSingleScalarResult();
+           $restult = $userquery->getResult();
+            $clientemailid='starshipping123@gmail.com';
+
 
             //get Informaton From User
 
@@ -1943,7 +1945,7 @@ class DashboradController extends Controller
                 ->where('a.adminName = :userId')
                 ->setParameter('userId', $username)
                 ->getQuery();
-            $clientemailid = $userquery->getSingleScalarResult();
+            $clientemailid = 'starshipping123@gmail.com';
 
             //get Informaton From User
 
@@ -2084,7 +2086,7 @@ class DashboradController extends Controller
                 ->where('a.adminName = :userId')
                 ->setParameter('userId', $username)
                 ->getQuery();
-            $clientemailid = $userquery->getSingleScalarResult();
+            $clientemailid = 'starshipping123@gmail.com';
             $params = $request->request->get('send_command');
             $kpiid = $params['kpiid'];
             $returnvaluefrommonth = $this->listallkpiforship_rankingAction($kpiid, $year = ' ', $request, 'pdftemplate_shiplevel');
@@ -2196,7 +2198,7 @@ class DashboradController extends Controller
             }
 
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been Send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
@@ -2964,7 +2966,7 @@ class DashboradController extends Controller
             $gearman = $this->get('gearman');
             $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
@@ -3374,7 +3376,7 @@ class DashboradController extends Controller
         $gearman = $this->get('gearman');
         $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
         $response = new JsonResponse();
-        $response->setData(array('updatemsg' => "Report Has Been Send"));
+        $response->setData(array('updatemsg' => "Report has been send"));
         return $response;
 
     }
