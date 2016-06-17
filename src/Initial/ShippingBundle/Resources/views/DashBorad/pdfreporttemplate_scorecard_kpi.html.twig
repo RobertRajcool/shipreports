@@ -19,6 +19,7 @@
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+
 </head>
 <body>
 
@@ -32,7 +33,7 @@
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
 
-        {#<section class="data-row-section top-margin-space">
+        <section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table kpi_name_weightage_row">
                 <thead>
                 <tr>
@@ -50,12 +51,12 @@
                 <thead>
                 {% set i1=0 %}
                 <tr>
-                    <th class="kpi_name kpi_name_thtd">Element Name</th>
-                    <th class="weightage">Weightage</th>
+                    <th class="kpi_name branding-colours">Element Name</th>
+                    <th class="weightage branding-colours">Weightage</th>
                     {% for monthname in montharray %}
                         <th class="month">{{ monthname }}</th>
                         {% if i1 != 2 %}
-                            <th class="month_difference">&nbsp;</th>
+                            <th class="month_difference branding-colours">&nbsp;</th>
                         {% endif %}
                         {% set i1 = i1+1 %}
                     {% endfor %}
@@ -70,24 +71,24 @@
                 {% for element in listofelement %}
                     {% set newelementarray = newelementarray|merge({('_'~i):(element.elementName)}) %}
                     <tr>
-                        <td class="kpi_name_thtd"><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
+                        <td class=""><a  style="color: #2b542c"  href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true" class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a></td>
                         <td>{{ element.weightage }}</td>
                         {% for j in 0..countmonth1 %}
-                            <td>
+                            <td class="month">
                                 {% if j <1 %}
                                     {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                                     {% if elementcolorarray[j][i]=="Green" %}
-                                        <img src="/images/01.png" alt="Loader Image"/>
+                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
                                     {% elseif elementcolorarray[j][i]=="Red" %}
-                                        <img src="/images/03.png" alt="Loader Image"/>
+                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
                                     {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                        <img src="/images/02.png" alt="Loader Image"/>
+                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
                                     {% endif %}
                                 {% endif %}
                             </td>
                             {% if j != 2 %}
                                 {% set j1=j+1 %}
-                                <td>
+                                <td class="month_difference">
                                     {% if j <0 %}
                                         {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
                                             <img src="/images/straight_arrow.png">
@@ -130,23 +131,23 @@
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td class="kpi_name kpi_name_thtd">{{ kpiname }}</td>
-                    <td class="weightage">100</td>
+                    <td class=" ">{{ kpiname }}</td>
+                    <td class="">100</td>
                     {% for kpi_colors_first in kpi_color %}
                         {% for kpi_colors in kpi_colors_first %}
-                            <td class="month">
+                            <td class="">
                                 {% if kpi_colors_first[0] =="Green" %}
-                                    <img src="/images/01.png" alt="Loader Image"/>
+                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Red" %}
-                                    <img src="/images/03.png" alt="Loader Image"/>
+                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Yellow" %}
-                                    <img src="/images/02.png" alt="Loader Image"/>
+                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if k != 2 %}
                                 {% set k1=0 %}
-                                #}{#<td>{{ kpi_color[2][0] }}</td>#}{#
-                                <td class="month_difference">
+                                {#<td>{{ kpi_color[2][0] }}</td>#}
+                                <td class="">
                                     {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
                                         <img src="/images/straight_arrow.png">
                                     {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Red" %}
@@ -175,7 +176,7 @@
                 </tbody>
             </table>
             </section>
-        <section class="data-row-section top-margin-space">
+        {#<section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table element_ranking_12_month_pdf_row">
                 #}{#{% set k=0 %}
                 <tr>
@@ -240,8 +241,8 @@
                 </tr>
                 </tbody>
             </table>
-        </section>#}{#
-        #}{#<div>
+        </section>#}
+        {#<div>
             {% set newcommandarray = {} %}
             {% set jk=0 %}
             {% set ik=0 %}
@@ -261,7 +262,8 @@
                 {% set ik=ik+1 %}
                 {% set newcommandarray = {} %}
             {% endfor %}
-        </div>#}{#
+        </div>#}
+
         <section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table">
                 <thead>
@@ -275,234 +277,8 @@
                 </tr>
                 </tbody>
             </table>
-        </section>#}
-        <section class="data-row-section top-margin-space">
-            <table class="responsive-table certificates-table kpi_name_weightage_row">
-                <thead>
-                {% set i1=0 %}
-                <tr>
-                    <th class="branding-colours kpi_name">KPI</th>
-                    <th class="branding-colours weightage">Weightage</th>
-                    {% for monthname in monthName %}
-                        {% if i1 < monthName|length %}
-                            <th colspan="2" class="branding-colours month">{{ monthname }}</th>
-                        {% else %}
-                            <th class="branding-colours month no-td-right-border">{{ monthname }}</th>
-                        {% endif %}
-                        {% set i1 = i1+1 %}
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                {% set i=0 %}
-                {% for kpi in kpiNameList %}
-                    <tr>
-                        <td class="">{{ kpi.kpiName }}</td>
-                        <td class="">{{ kpi.weightage }}</td>
-                        {% set j=0 %}
-                        {% for monthname in monthName %}
-                            <td class="month">
-                                {% if yearKpiColorArray[j][i]=="Green" %}
-                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                {% elseif yearKpiColorArray[j][i]=="Red" %}
-                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                {% elseif yearKpiColorArray[j][i]=="Yellow" %}
-                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                {% endif %}
-                            </td>
-                            {% if j < monthName|length-1 %}
-                                {% set j1=j+1 %}
-                                <td class="month_difference">
-                                    {% if yearKpiColorArray[j][i]|length != 0 and  yearKpiColorArray[j1][i]|length != 0 %}
-                                        {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                            {% set j=j+1 %}
-                        {% endfor %}
-                        {% set i=i+1 %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </section>
-        <section class="data-row-section top-margin-space">
-            <table class="responsive-table certificates-table">
-                <thead>
-                <tr>
-                    <th class="branding-colours thead-title-two-row no-td-right-border">Pioneer Scorecard Report</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td id="area"></td>
-                </tr>
-                </tbody>
-            </table>
         </section>
 
-
-        {% set one=0 %}
-        {% for kpi in kpiNameList %}
-            <section class="data-row-section top-margin-space">
-                <table class="responsive-table certificates-table kpi_name_weightage_row">
-                    <thead>
-                    {% set i1=0 %}
-                    <tr>
-                        <th class="branding-colours kpi_name">Element</th>
-                        <th class="branding-colours weightage">Weightage</th>
-                        {% for monthname in monthName %}
-                            {% if i1 < monthName|length %}
-                                <th colspan="2" class="branding-colours">{{ monthname }}</th>
-                            {% else %}
-                                <th class="branding-colours no-td-right-border">{{ monthname }}</th>
-                            {% endif %}
-                            {% set i1 = i1+1 %}
-                        {% endfor %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% set elementCountList=0 %}
-                    {% for element in elementNameList[one] %}
-                        <tr>
-                            <td class="">{{ element.elementName }}</td>
-                            <td class="">{{ element.weightage }}</td>
-                            {% set monthCountList=0 %}
-                            {% for monthname in monthName %}
-                                <td class="month">
-                                    {% if elementColorArray[monthCountList][one]|length != 0 %}
-                                        {% if elementColorArray[monthCountList][one][elementCountList]=="Green" %}
-                                            <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                        {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" %}
-                                            <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                        {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" %}
-                                            <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                                {% if monthCountList < monthName|length-1 %}
-                                    {% set nextMonthCountList=monthCountList+1 %}
-                                    <td class="month_differen">
-                                        {% if elementColorArray[monthCountList][one]|length != 0 and elementColorArray[nextMonthCountList][one]|length != 0 %}
-                                            {% if elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Yellow" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" and elementColorArray[nextMonthCountList][one][elementCountList]=="Red" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" and elementColorArray[nextMonthCountList][one][elementCountList]=="Yellow" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][one][elementCountList]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][one][elementCountList]=="Yellow" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% endif %}
-                                        {% endif %}
-                                    </td>
-                                {% endif %}
-                                {% set monthCountList=monthCountList+1 %}
-                            {% endfor %}
-                        </tr>
-                        {% set elementCountList=elementCountList+1 %}
-                    {% endfor %}
-                    <tr>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        {% set secondMonthCountList=0 %}
-                        {% for monthname in monthName %}
-                            <td>&nbsp;</td>
-                            {% if secondMonthCountList < monthName|length-1 %}
-                                <td>&nbsp;</td>
-                            {% endif %}
-                            {% set secondMonthCountList=secondMonthCountList+1 %}
-                        {% endfor %}
-                    </tr>
-                    <tr>
-                        <td><strong>{{ kpi.kpiName }}</strong></td>
-                        <td><strong>100</strong></td>
-                        {% set nextSecondMonthCountList=0 %}
-                        {% for monthname in monthName %}
-                            <td>
-                                {% if yearKpiColorArray[nextSecondMonthCountList][one]=="Green" %}
-                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" %}
-                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" %}
-                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                {% endif %}
-                            </td>
-                            {% if nextSecondMonthCountList < monthName|length-1 %}
-                                {% set nextMonthCountList=nextSecondMonthCountList+1 %}
-                                <td>
-                                    {% if yearKpiColorArray[nextSecondMonthCountList][one]|length != 0 and  yearKpiColorArray[nextMonthCountList][one]|length != 0 %}
-                                        {% if yearKpiColorArray[nextSecondMonthCountList][one]=="Green" and yearKpiColorArray[nextMonthCountList][one]=="Green" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Green" and yearKpiColorArray[nextMonthCountList][one]=="Red" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Green" and yearKpiColorArray[nextMonthCountList][one]=="Yellow" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" and yearKpiColorArray[nextMonthCountList][one]=="Green" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" and yearKpiColorArray[nextMonthCountList][one]=="Red" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" and yearKpiColorArray[nextMonthCountList][one]=="Yellow" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" and yearKpiColorArray[nextMonthCountList][one]=="Green" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" and yearKpiColorArray[nextMonthCountList][one]=="Red" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" and yearKpiColorArray[nextMonthCountList][one]=="Yellow" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                            {% set nextSecondMonthCountList=nextSecondMonthCountList+1 %}
-                        {% endfor %}
-                    </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="data-row-section top-margin-space">
-                <table class="responsive-table certificates-table">
-                    <thead>
-                    <tr>
-                        <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpi.kpiName }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td id="{{ kpi.id }}"></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </section>
-            {% set one=one+1 %}
-        {% endfor %}
         <section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table">
                 <thead>
