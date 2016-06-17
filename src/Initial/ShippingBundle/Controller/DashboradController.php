@@ -1834,6 +1834,21 @@ class DashboradController extends Controller
 
 
             $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate_scorecard_kpi.html.twig', array(
+                'imageSource' => $filename,
+                'screenName' => $screenName,
+                'userName' => '',
+                'date' => $date,
+                'elementNameList' => $returnvaluefrommonth['listofelement'],
+                'headerTitle' => $kpiname,
+                'monthName' => $returnvaluefrommonth['montharray'],
+                'elementColorArray' => $returnvaluefrommonth['elementcolorarray'],
+                'countmonth' => count($returnvaluefrommonth['elementcolorarray']),
+                'commentarray' => $listofcommentarray,
+                'datetime' => $today,
+                'yearKpiColorArray' => $returnvaluefrommonth['kpi_color'],
+                'elementRule' => $returnvaluefrommonth['elementRule']
+            ));
+            /*$customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:pdfreporttemplate_scorecard_kpi.html.twig', array(
                 'link' => $filename,
                 'screenName' => $screenName,
                 'userName' => '',
@@ -1847,7 +1862,7 @@ class DashboradController extends Controller
                 'datetime' => $today,
                 'kpi_color' => $returnvaluefrommonth['kpi_color'],
                 'elementRule' => $returnvaluefrommonth['elementRule']
-            ));
+            ));*/
             $client = new HighchartController();
             $client->setContainer($this->container);
             $printPdf = $client->createPdf($customerListDesign, $screenName);

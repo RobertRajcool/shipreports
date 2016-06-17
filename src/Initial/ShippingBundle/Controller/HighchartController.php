@@ -242,7 +242,6 @@ class HighchartController extends Controller
         {
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
-                ->setFrom($clientemailid)
                 ->setTo($findsemail[$ma]['useremailid'])
                 ->setSubject($kpiname)
                 ->setBody($comment);
