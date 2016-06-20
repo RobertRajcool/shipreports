@@ -212,8 +212,9 @@ class DashboradController extends Controller
                 $datesArray = array();
                 $initial = 0;
                 $statusVerified = 0;
+                $currentyear = date('Y');
 
-                if ($modeYear == 0) {
+                if ($modeYear == 0 && count($listAllShipForCompany) != 0) {
                     $currentDate = date('Y-m-d');
                     $currentMonthObject = new \DateTime($currentDate);
                     $currentMonthObject->modify('last day of this month');
@@ -261,7 +262,7 @@ class DashboradController extends Controller
                     $statusVerified = 3;
                 }
 
-                if ($modeYear != 0) {
+                if ($modeYear != 0 && count($listAllShipForCompany) != 0) {
                     for ($m = 2; $m <= 13; $m++) {
                         $month = date('Y-m-d', mktime(0, 0, 0, $m, 0, date($modeYear)));
                         array_push($datesArray, $month);
@@ -364,6 +365,13 @@ class DashboradController extends Controller
                         'yearAvgScore' => $monthlyKpiAverageValueTotal
                     );
                 }
+                if(count($listAllShipForCompany) == 0) {
+                    $rKPICount = 0;
+                    $yChange = date('Y');
+                } else {
+                    $rKPICount = count($rankingKpiList);
+                    $yChange = $yearChange;
+                }
                 return $this->render(
                     'InitialShippingBundle:DashBorad:home.html.twig',
                     array(
@@ -379,9 +387,9 @@ class DashboradController extends Controller
                         'kpiAverageScore' => array_reverse($quarterMonthKpiWeight),
                         'allships' => $listAllShipForCompany,
                         'chart' => $ob,
-                        'rankinKpiCount' => count($rankingKpiList),
+                        'rankinKpiCount' => $rKPICount,
                         'currentmonth' => $monthInLetter,
-                        'currentyear' => $yearChange,
+                        'currentyear' => $yChange,
                     )
                 );
             } else {
