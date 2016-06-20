@@ -868,6 +868,7 @@
     <section id="kpiformforship">
         <div class="col-sm-12">
             <div  class="add_new_kpi_form_screen">
+                {% if elementkpiarray|length > 0 %}
                 <form id="kpiform" class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
@@ -881,6 +882,7 @@
                             </label>
                         </div>
                     </div>
+                    {% endif %}
                     <div id="elementformid" class="add_new_kpi_form_section">
                         {% if elementkpiarray|length <= 0 %}
                             No Kpi Found
@@ -932,7 +934,7 @@
                                 {% endfor %}
                                 {% endif %}
                             </div>
-                        {% endif %}
+
 
 
                     </div>
@@ -955,6 +957,7 @@
 
                         {% endif %}
                     </div>
+                    {% endif %}
                 </form>
             </div>
         </div>

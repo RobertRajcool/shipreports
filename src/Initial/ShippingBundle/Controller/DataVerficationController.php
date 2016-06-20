@@ -48,7 +48,9 @@ class DataVerficationController extends Controller
         if ($user == null)
         {
             return $this->redirectToRoute('fos_user_security_login');
-        } else {
+        }
+        else
+        {
             $userId = $user->getId();
             $username = $user->getUsername();
             $role = $user->getRoles();
@@ -60,7 +62,9 @@ class DataVerficationController extends Controller
                     ->where('b.adminName = :username')
                     ->setParameter('username', $username)
                     ->getQuery();
-            } else {
+            }
+            else
+            {
                 $query = $em->createQueryBuilder()
                     ->select('a.shipName', 'a.id')
                     ->from('InitialShippingBundle:ShipDetails', 'a')
@@ -69,91 +73,104 @@ class DataVerficationController extends Controller
                     ->setParameter('userId', $userId)
                     ->getQuery();
             }
-
-
-            $listallshipforcompany = $query->getResult();
-            if($mode=='nextshipajaxcall')
-            {
-                return $listallshipforcompany;
-            }
-            $statusforship = $this->findshipstatusmonth($dataofmonth = '', $listallshipforcompany, $role[0]);
-            $finddatawithstatus=array();
-            $shipid=0;
-            $shipname='';
             $templatechoosen='base.html.twig';
-            $counts = array_count_values($statusforship);
-
-
-            if ($role[0] == 'ROLE_ADMIN')
+            $listallshipforcompany = $query->getResult();
+            if(count($listallshipforcompany)>0)
             {
-                $status=2;
-                $index = array_search(0, $statusforship);
-                $shipid=$listallshipforcompany[$index]['id'];
-                $shipname=$listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
-                if (array_key_exists(3, $counts))
+                if($mode=='nextshipajaxcall')
                 {
-                    $ship_status_done_count= $counts[3];
+                    return $listallshipforcompany;
+                }
+                $statusforship = $this->findshipstatusmonth($dataofmonth = '', $listallshipforcompany, $role[0]);
+                $finddatawithstatus=array();
+                $shipid=0;
+                $shipname='';
+                $counts = array_count_values($statusforship);
+
+
+                if ($role[0] == 'ROLE_ADMIN')
+                {
+                    $status=2;
+                    $index = array_search(0, $statusforship);
+                    $shipid=$listallshipforcompany[$index]['id'];
+                    $shipname=$listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
+                    if (array_key_exists(3, $counts))
+                    {
+                        $ship_status_done_count= $counts[3];
+                    }
+                    else
+                    {
+                        $ship_status_done_count=0;
+                    }
+                }
+                if ($role[0] == 'ROLE_MANAGER')
+                {
+                    $status=1;
+                    $index = array_search(0, $statusforship);
+                    $shipid=$listallshipforcompany[$index]['id'];
+                    $shipname=$listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
+                    if (array_key_exists(2, $counts))
+                    {
+                        $ship_status_done_count= $counts[2];
+                    }
+                    else
+                    {
+                        $ship_status_done_count=0;
+                    }
+                }
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
+                {
+                    $templatechoosen='v-ships_layout.html.twig';
+                    $status=0;
+                    $index = array_search(0, $statusforship);
+                    $shipid=$listallshipforcompany[$index]['id'];
+                    $shipname=$listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
+                    if (array_key_exists(1, $counts))
+                    {
+                        $ship_status_done_count= $counts[1];
+                    }
+                    else
+                    {
+                        $ship_status_done_count=0;
+                    }
+
+                }
+                if(count($finddatawithstatus)==4)
+                {
+                    return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
+                        array('listofships' => $listallshipforcompany,
+                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,'statuscount'=>$ship_status_done_count,
+                            'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
+                            'elementvalues'=>$finddatawithstatus['elementvalues'],
+                            'elementweightage'=>$finddatawithstatus['elementweightage'],
+                            'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
+                        ));
                 }
                 else
                 {
-                    $ship_status_done_count=0;
-                }
-            }
-            if ($role[0] == 'ROLE_MANAGER')
-            {
-                $status=1;
-                $index = array_search(0, $statusforship);
-                $shipid=$listallshipforcompany[$index]['id'];
-                $shipname=$listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
-                if (array_key_exists(2, $counts))
-                {
-                    $ship_status_done_count= $counts[2];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
-                }
-            }
-            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
-            {
-                $templatechoosen='v-ships_layout.html.twig';
-                $status=0;
-                $index = array_search(0, $statusforship);
-                $shipid=$listallshipforcompany[$index]['id'];
-                $shipname=$listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus=$this->finddatawithstatus($status,$shipid);
-                if (array_key_exists(1, $counts))
-                {
-                    $ship_status_done_count= $counts[1];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
+                    return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
+                        array('listofships' => $listallshipforcompany,
+                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                            'elementkpiarray'=>array(),'elementcount'=>0,
+                            'elementvalues'=>array(),
+                            'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
+                        ));
                 }
 
-            }
-            if(count($finddatawithstatus)==4)
-            {
-                return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
-                    array('listofships' => $listallshipforcompany,
-                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,'statuscount'=>$ship_status_done_count,
-                        'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
-                        'elementvalues'=>$finddatawithstatus['elementvalues'],
-                        'elementweightage'=>$finddatawithstatus['elementweightage'],
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
-                    ));
             }
             else
             {
                 return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
                     array('listofships' => $listallshipforcompany,
-                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                        'shipcount' => count($listallshipforcompany), 'status_ship' => 0,
                         'elementkpiarray'=>array(),'elementcount'=>0,
                         'elementvalues'=>array(),
-                        'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
+                        'currentshipid'=>'','currentshipname'=>'','templatechoosen'=>$templatechoosen,'statuscount'=>''
                     ));
+
             }
 
         }
@@ -1083,121 +1100,99 @@ class DataVerficationController extends Controller
                     ->setParameter('userId', $userId)
                     ->getQuery();
             }
-
-
             $listallshipforcompany = $query->getResult();
-            if ($mode == 'nextshipajaxcall') {
-                return $listallshipforcompany;
-            }
-            $statusforship = $this->findshipstatus_ranking($dataofmonth = '', $listallshipforcompany, $role[0]);
-            $counts = array_count_values($statusforship);
-          /*  if($role[0]=='ROLE_ADMIN')
-            {
-                if (array_key_exists(3, $counts))
-                {
-                    $ship_status_done_count= $counts[3];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
-                }
-
-
-            }
-            else if($role[0]=='ROLE_MANAGER')
-            {
-                if (array_key_exists(2, $counts))
-                {
-                    $ship_status_done_count= $counts[2];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
-                }
-            }
-            else if($role[0]=='ROLE_KPI_INFO_PROVIDER')
-            {
-                if (array_key_exists(1, $counts))
-                {
-                    $ship_status_done_count= $counts[1];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
-                }
-            }*/
-            $finddatawithstatus = array();
-            $shipid = 0;
-            $shipname = '';
             $templatechoosen = 'base.html.twig';
-
-            if ($role[0] == 'ROLE_ADMIN') {
-                $status = 2;
-                $index = array_search(0, $statusforship);
-                $shipid = $listallshipforcompany[$index]['id'];
-                $shipname = $listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid);
-                if (array_key_exists(3, $counts))
-                {
-                    $ship_status_done_count= $counts[3];
+            if(count($listallshipforcompany)>0)
+            {
+                if ($mode == 'nextshipajaxcall') {
+                    return $listallshipforcompany;
                 }
-                else
-                {
-                    $ship_status_done_count=0;
+                $statusforship = $this->findshipstatus_ranking($dataofmonth = '', $listallshipforcompany, $role[0]);
+                $counts = array_count_values($statusforship);
+                $finddatawithstatus = array();
+                $shipid = 0;
+                $shipname = '';
+
+                if ($role[0] == 'ROLE_ADMIN') {
+                    $status = 2;
+                    $index = array_search(0, $statusforship);
+                    $shipid = $listallshipforcompany[$index]['id'];
+                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid);
+                    if (array_key_exists(3, $counts))
+                    {
+                        $ship_status_done_count= $counts[3];
+                    }
+                    else
+                    {
+                        $ship_status_done_count=0;
+                    }
+                }
+                if ($role[0] == 'ROLE_MANAGER') {
+                    $status = 1;
+                    $index = array_search(0, $statusforship);
+                    $shipid = $listallshipforcompany[$index]['id'];
+                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid);
+                    if (array_key_exists(2, $counts))
+                    {
+                        $ship_status_done_count= $counts[2];
+                    }
+                    else
+                    {
+                        $ship_status_done_count=0;
+                    }
+                }
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $status = 0;
+                    $templatechoosen = 'v-ships_layout.html.twig';
+                    $index = array_search(0, $statusforship);
+                    $shipid = $listallshipforcompany[$index]['id'];
+                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid);
+                    if (array_key_exists(1, $counts))
+                    {
+                        $ship_status_done_count= $counts[1];
+                    }
+                    else
+                    {
+                        $ship_status_done_count=0;
+                    }
+
+                }
+                if (count($finddatawithstatus) == 4) {
+
+                    return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
+                        array('listofships' => $listallshipforcompany,
+                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,'statuscount'=>$ship_status_done_count,
+                            'elementkpiarray' => $finddatawithstatus['elementnamekpiname'], 'elementcount' => $finddatawithstatus['maxelementcount'],
+                            'elementvalues' => $finddatawithstatus['elementvalues'],
+                            'elementweightage' => $finddatawithstatus['elementweightage'],
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen
+                        ));
+                }
+                else {
+
+                    return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
+                        array('listofships' => $listallshipforcompany,
+                            'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                            'elementkpiarray' => array(), 'elementcount' => 0,
+                            'elementvalues' => array(),
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen
+                        ));
                 }
             }
-            if ($role[0] == 'ROLE_MANAGER') {
-                $status = 1;
-                $index = array_search(0, $statusforship);
-                $shipid = $listallshipforcompany[$index]['id'];
-                $shipname = $listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid);
-                if (array_key_exists(2, $counts))
-                {
-                    $ship_status_done_count= $counts[2];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
-                }
-            }
-            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                $status = 0;
-                $templatechoosen = 'v-ships_layout.html.twig';
-                $index = array_search(0, $statusforship);
-                $shipid = $listallshipforcompany[$index]['id'];
-                $shipname = $listallshipforcompany[$index]['shipName'];
-                $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid);
-                if (array_key_exists(1, $counts))
-                {
-                    $ship_status_done_count= $counts[1];
-                }
-                else
-                {
-                    $ship_status_done_count=0;
-                }
-
-            }
-            if (count($finddatawithstatus) == 4) {
-
+            else
+            {
                 return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
                     array('listofships' => $listallshipforcompany,
-                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,'statuscount'=>$ship_status_done_count,
-                        'elementkpiarray' => $finddatawithstatus['elementnamekpiname'], 'elementcount' => $finddatawithstatus['maxelementcount'],
-                        'elementvalues' => $finddatawithstatus['elementvalues'],
-                        'elementweightage' => $finddatawithstatus['elementweightage'],
-                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen
-                    ));
-            } else {
-
-                return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
-                    array('listofships' => $listallshipforcompany,
-                        'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
+                        'shipcount' => count($listallshipforcompany), 'status_ship' => '','statuscount'=>0,
                         'elementkpiarray' => array(), 'elementcount' => 0,
                         'elementvalues' => array(),
-                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen
+                        'currentshipid' => '', 'currentshipname' => '', 'templatechoosen' => $templatechoosen
                     ));
             }
+
         }
 
     }
