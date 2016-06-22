@@ -587,11 +587,12 @@
                         return true;
                     }
                 }
-
+                var field_class = $('.field');
                 var editClassIcon = $('.edit_class');
                 var status = 0;
                 editClassIcon.live("click", function ($e) {
                     $e.preventDefault();
+                    field_class.hide();
                     if (status == 0) {
                         status = 1;
                         var conditions = $('#conditions-edit');
