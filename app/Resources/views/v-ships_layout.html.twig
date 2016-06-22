@@ -103,7 +103,7 @@
                 }
                 else
                 {
-                    $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href={{ path('fos_user_change_password') }}>{{ 'layout.changepass'|trans }}</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans }}</a></li><li><a href="{{ path('fos_user_edit_profile') }}" id=""> Edit Profile</a></li></ul></div>');
+                    $('#user_settings').before('<div class="profile_list box_new" id="user_login_content"><ul><li><a href="{{ path('fos_user_edit_profile') }}" id=""> Edit Profile</a></li><li><a href={{ path('fos_user_change_password') }}>{{ 'layout.changepass'|trans }}</a></li><li class="last"><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans }}</a></li></ul></div>');
                     $('.box_new').hide();
                     $(".box_new").slideToggle();
                 }

@@ -85,6 +85,8 @@
                     var f = _this.fields[0];
                     var newField = {name: f.value, operator: f.operators[0], value: null};
                     div.append(_this.buildRule(newField));
+                    var field_class = $('.field');
+                    field_class.hide();
                     addConditionLink.show();
                     addRuleStatus=1;
                 }
@@ -123,6 +125,8 @@
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
                 div.append(_this.buildRule(newField));
+                var field_class = $('.field');
+                field_class.hide();
             });
             var rules = ruleData[kind];
             for(var i=0; i<rules.length; i++) {
@@ -137,7 +141,7 @@
             var operatorSelect = getOperatorSelect();
 
             fieldSelect.change(onFieldSelectChanged.call(this, operatorSelect, ruleData));
-
+            ruleDiv.append(fieldSelect);
             ruleDiv.append(operatorSelect);
             ruleDiv.append(removeLink());
 
