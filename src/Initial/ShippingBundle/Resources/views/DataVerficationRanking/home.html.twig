@@ -846,24 +846,27 @@
 
                                 {% if status_ship[j]==1 %}
                                     <img src="/images/tick_icon.png">
+                                    {% set j=j+1 %}
                                 {% endif %}
                             {% endif %}
                             {%  if  is_granted("ROLE_ADMIN") %}
 
                                 {% if status_ship[j]==3 %}
                                     <img src="/images/tick_icon.png">
+                                    {% set j=j+1 %}
                                 {% endif %}
                             {% endif %}
 
                             {%  if is_granted("ROLE_MANAGER") %}
                                 {% if status_ship[j]==2 %}
                                     <img src="/images/tick_icon.png">
+                                    {% set j=j+1 %}
                                 {% endif %}
 
                             {% endif %}
 
                         </li>
-                        {% set j=j+1 %}
+
 
                     {% endfor %}
 

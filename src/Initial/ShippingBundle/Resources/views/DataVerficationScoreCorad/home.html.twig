@@ -823,28 +823,28 @@
                             <a class="linkclass" title="{{ shipobject.shipName }}" id="{{ shipobject.id }}" >{{ shipobject.shipName }}</a>
 
                             {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-
-
                                 {% if status_ship[j]==1 %}
                                     <img src="/images/tick_icon.png">
+                                    {% set j=j+1 %}
                                 {% endif %}
                             {% endif %}
                             {%  if  is_granted("ROLE_ADMIN") %}
-
                                 {% if status_ship[j]==3 %}
                                     <img src="/images/tick_icon.png">
+                                    {% set j=j+1 %}
                                 {% endif %}
                             {% endif %}
 
                             {%  if is_granted("ROLE_MANAGER") %}
                                 {% if status_ship[j]==2 %}
                                     <img src="/images/tick_icon.png">
+                                    {% set j=j+1 %}
                                 {% endif %}
 
                             {% endif %}
 
                         </li>
-                        {% set j=j+1 %}
+
 
                     {% endfor %}
 
@@ -889,6 +889,7 @@
                         {% if elementkpiarray|length > 0 %}
                             <div id="addkpiformid" class="table-responsive">
                                 {% if j==shipcount %}
+
                                 <span>All Ship Data Upload!</span>
                                 {% else %}
 
