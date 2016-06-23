@@ -225,7 +225,8 @@ class DashboradController extends Controller
                         ->setParameter('monthDetail', $currentMonthObject)
                         ->getQuery()
                         ->getResult();
-                    if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
+                    if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
+                    {
                         for ($m = 0; $m <= 2; $m++) {
                             if($m ==0) {
                                 $month = $currentMonthObject->format('Y-m-d');
@@ -235,7 +236,9 @@ class DashboradController extends Controller
                                 array_push($datesArray, $month);
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         $statusFieldQuery = $em->createQueryBuilder()
                             ->select('b.dataofmonth,b.status')
                             ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
@@ -796,7 +799,7 @@ class DashboradController extends Controller
                 ->getResult();
 
             if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
-                $statusVerified = $currentMonth;
+                $statusVerified = (int)$currentMonth;
             } else {
                 $statusFieldQuery = $em->createQueryBuilder()
                     ->select('b.dataofmonth,b.status')
@@ -814,14 +817,19 @@ class DashboradController extends Controller
 
             $quarterDatesArray = array();
             if ($statusVerified <= 2) {
-                $date = $datesArray[$statusVerified];
+                $date = $datesArray[(int)$statusVerified-1];
                 for ($d = 0; $d <= 2; $d++) {
-                    $previousMonthDate = date('Y-m-d', strtotime('last month', strtotime($date)));
-                    $lastMonthDetail = new \DateTime($previousMonthDate);
-                    $previousMonth = $lastMonthDetail->modify('last day of this month');
-                    array_push($quarterDatesArray, $previousMonth->format('Y-m-d'));
-                    $date = $quarterDatesArray[$d];
+                    if($d==0) {
+                        array_push($quarterDatesArray, $date);
+                    } else {
+                        $previousMonthDate = date('Y-m-d', strtotime('last month', strtotime($quarterDatesArray[$d-1])));
+                        $lastMonthDetail = new \DateTime($previousMonthDate);
+                        $previousMonth = $lastMonthDetail->modify('last day of this month');
+                        array_push($quarterDatesArray, $previousMonth->format('Y-m-d'));
+                        $date = $quarterDatesArray[$d];
+                    }
                 }
+                $quarterDatesArray = array_reverse($quarterDatesArray);
             } else {
                 for ($d = $statusVerified - 3; $d <= $statusVerified - 1; $d++) {
                     array_push($quarterDatesArray, $datesArray[$d]);
@@ -920,9 +928,27 @@ class DashboradController extends Controller
                 array_push($monthlyElementValueArray, $scorecardElementValueArray);
             }
 
+            $graphMonthLetterArray = array();
+            $graphMonthlyElementValueArray = array();
+            for($num=0;$num<count($quarterDatesArray);$num++) {
+                $statusFieldQuery = $em->createQueryBuilder()
+                    ->select('b.dataofmonth,b.status')
+                    ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
+                    ->where('b.status = :monthStatus')
+                    ->andwhere ('b.dataofmonth = :pre_date')
+                    ->setParameter('monthStatus', 4)
+                    ->setParameter('pre_date', $quarterDatesArray[$num])
+                    ->groupby('b.dataofmonth')
+                    ->getQuery()
+                    ->getResult();
+                if(count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
+                    array_push($graphMonthLetterArray,$monthLetterArray[$num]);
+                    array_push($graphMonthlyElementValueArray,$monthlyElementValueArray[$num]);
+                }
+            }
             $series = array
             (
-                array("name" => "$scorecardKpiName", 'showInLegend' => false, 'color' => '#103a71', "data" => $monthlyElementValueArray),
+                array("name" => "$scorecardKpiName", 'showInLegend' => false, 'color' => '#103a71', "data" => $graphMonthlyElementValueArray),
 
             );
 
@@ -930,7 +956,7 @@ class DashboradController extends Controller
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
             $ob->title->text($scorecardKpiName, array('style' => array('color' => 'red')));
-            $ob->xAxis->categories($monthLetterArray);
+            $ob->xAxis->categories($graphMonthLetterArray);
             $ob->xAxis->labels(array('style' => array('color' => '#0000F0')));
             $ob->yAxis->min(0);
             $ob->yAxis->max(3);
@@ -1907,7 +1933,7 @@ class DashboradController extends Controller
             }
 
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
