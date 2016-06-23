@@ -239,7 +239,7 @@
 
 
                 });
-                $('#chatform').submit(function (e) {
+                $('#chatform1').submit(function (e) {
                     e.preventDefault();
                     var self = this;
                     var obj = {}, chart;
@@ -257,8 +257,7 @@
                     $.ajax({
                         data: data,
                         success: function (data) {
-
-                            $('#imagefilename').val(data);
+                            $('#imagefilename').val(filename);
                             submitchatform();
 
                         }
@@ -728,6 +727,7 @@
                     </div>
                 </form>
             </fieldset>
+            {# <a href="{{ path('scorecard_report_pdfReport_mail',{ 'activeMonth': appsCountry.id }) }}">link-check</a>#}
             <!--Form for Send Reports Ends Here  -->
         </div>
     </div>
