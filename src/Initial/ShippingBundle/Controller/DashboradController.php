@@ -1625,7 +1625,7 @@ class DashboradController extends Controller
                         }
 
                         array_push($scorecardElementRules, $rankingElementRulesArray);
-                        array_push($scorecardElementValueArray, $rankingElementResult[0]['elementdata']);
+                        array_push($scorecardElementValueArray,(($rankingElementResult[0]['elementdata'])*$kpiWeight)/100);
                         array_push($kpiElementColorArray, $rankingElementResultColor);
                         $elementValueWithWeight = $elementColorValue;
                         $kpiSumValue += $elementValueWithWeight;
