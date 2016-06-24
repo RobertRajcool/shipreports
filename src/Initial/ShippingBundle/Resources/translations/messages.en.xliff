@@ -426,7 +426,7 @@
             </trans-unit>
             <trans-unit id="vessel-8">
                 <source>vessel.country</source>
-                <target>Country</target>
+                <target>Flag</target>
             </trans-unit>
             <trans-unit id="vessel-9">
                 <source>vessel.location</source>
@@ -438,7 +438,7 @@
             </trans-unit>
             <trans-unit id="vessel-11">
                 <source>vessel.size</source>
-                <target>Size</target>
+                <target>Length overall</target>
             </trans-unit>
             <trans-unit id="vessel-12">
                 <source>vessel.gt</source>
@@ -446,7 +446,7 @@
             </trans-unit>
             <trans-unit id="vessel-13">
                 <source>vessel.mf_year</source>
-                <target>Manufacturing Year</target>
+                <target>Year of Manufacturing</target>
             </trans-unit>
             <trans-unit id="vessel-14">
                 <source>vessel.description</source>
@@ -454,7 +454,7 @@
             </trans-unit>
             <trans-unit id="vessel- 15">
                 <source>vessel.list_mf_year</source>
-                <target>M.F Year</target>
+                <target>Year of M.F</target>
             </trans-unit>
             <trans-unit id="vessel-16">
                 <source>vessel.status</source>

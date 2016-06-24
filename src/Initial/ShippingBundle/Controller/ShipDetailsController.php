@@ -12,6 +12,7 @@ use Initial\ShippingBundle\Form\ShipDetailsType;
 use Initial\ShippingBundle\Form\ShipStatusDetailsType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * ShipDetails controller.
@@ -36,6 +37,84 @@ class ShipDetailsController extends Controller
             'shipDetails' => $shipDetails,
         ));
     }
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/check_vesselName", name="shipdetails_check_vessel")
+     */
+    public function checkVesselNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $shipName = $request->request->get('shipName');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.shipName')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->where('a.shipName = :Ship_name')
+                ->setParameter('Ship_name', $shipName)
+                ->getQuery();
+            $ShipDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if(count($ShipDetail)!=0) {
+                $response->setData(array(
+                    'vessel' => 1
+                ));
+            } else {
+                $response->setData(array(
+                    'vessel' => 0
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+
+    /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/check_imoNumber", name="shipdetails_check_imo")
+     */
+    public function checkImoNumberAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $imoNumber = $request->request->get('imoNumber');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id','a.imoNumber')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->where('a.imoNumber = :imoNumber')
+                ->setParameter('imoNumber', $imoNumber)
+                ->getQuery();
+            $ShipDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if(count($ShipDetail)!=0) {
+                $response->setData(array(
+                    'imoNumber' => 1,
+                    'imo_length' => 7
+                ));
+            } else {
+                $response->setData(array(
+                    'imoNumber' => 0,
+                    'imo_length' => 7
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
 
 
     /**
@@ -132,6 +211,67 @@ class ShipDetailsController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         }
         
+    }
+
+    /**
+     * Lists all ShipDetails entities.
+     *
+     * @Route("/vessel_pdf", name="shipdetails_vessel_pdf")
+     * @Method("POST")
+     */
+    public function vesselPdfAction(Request $request, $status = '')
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+        if ($user != null) {
+            $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
+            $em = $this->getDoctrine()->getManager();
+
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                    ->where('c.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+            $shipDetails = $query->getResult();
+
+            $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
+            $pdfObject->defaultheaderline = 0;
+            $pdfObject->defaultheaderfontstyle = 'B';
+            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo.png';
+            $pdfObject->SetWatermarkImage($waterMarkImage);
+            $pdfObject->showWatermarkImage = true;
+
+            $customerListDesign =  $this->renderView('shipdetails/show.html.twig', array(
+                'shipDetails' => $shipDetails,
+                'headerTitle' => 'Vessel Details'
+            ));
+
+            $pdfObject->AddPage('', 4, '', 'on');
+            $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $pdfObject->WriteHTML($customerListDesign);
+
+            $response = new Response();
+            $content = $pdfObject->Output('', 'S');
+            $response->setContent($content);
+            $response->headers->set('Content-Type', 'application/pdf');
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
     }
 
 
