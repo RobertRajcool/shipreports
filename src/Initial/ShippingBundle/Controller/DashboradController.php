@@ -106,7 +106,7 @@ class DashboradController extends Controller
                                         $yearcount = 0;
                                     } else {
 
-                                        $man_datestring = $manufacturingYear . '-01-' . '01';
+                                        $man_datestring = $manufacturingYear. '-01';
                                         $temp_man_year = new \DateTime($man_datestring);
                                         $temp_man_year->modify('last day of this month');
                                         $Vessage_count = $temp_man_year->diff($lastMonthDetail)->y;
@@ -2351,6 +2351,9 @@ class DashboradController extends Controller
             $userId = $user->getId();
             $userName = $user->getUsername();
             $shipid = $request->request->get('shipid');
+            $Newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            $shipname = $Newshipid->getShipName();
+            $man_year = $Newshipid->getManufacturingYear();
             $year = $request->request->get('year');
             $today = date("Y-m-d H:i:s");
             $pageName = $request->query->get('page');
@@ -2465,6 +2468,19 @@ class DashboradController extends Controller
                     $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
                     $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
                     array_push($rankingKpiWeightarray, $rankingKpiWeight);
+                    if ($rankingKpiName == 'Vessel age') {
+                        if ($man_year == "") {
+                            $yearcount = 0;
+                        } else {
+
+                            $man_datestring = $man_year. '-01';
+                            $temp_man_year = new \DateTime($man_datestring);
+                            $temp_man_year->modify('last day of this month');
+                            $Vessage_count = $temp_man_year->diff($new_monthdetail_date)->y;
+                        }
+                        $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
+                        array_push($rankingKpiValueCountArray, $vesselage);
+                    }
                     $elementForKpiList = $em->createQueryBuilder()
                         ->select('a.elementName', 'a.id', 'a.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'a')
