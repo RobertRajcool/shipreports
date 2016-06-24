@@ -101,7 +101,21 @@ class DashboradController extends Controller
                                 $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
                                 $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
                                 $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
+                                if ($rankingKpiName == 'Vessel age') {
+                                    if ($manufacturingYear == "") {
+                                        $yearcount = 0;
+                                    } else {
 
+                                        $man_datestring = $manufacturingYear . '-01-' . '01';
+                                        $temp_man_year = new \DateTime($man_datestring);
+                                        $temp_man_year->modify('last day of this month');
+                                        $Vessage_count = $temp_man_year->diff($lastMonthDetail)->y;
+                                    }
+                                    $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
+                                    array_push($rankingKpiValueCountArray, $vesselage);
+                                }
+                                else
+                                {
                                 $rankingElementList = $em->createQueryBuilder()
                                     ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
                                     ->from('InitialShippingBundle:RankingElementDetails', 'c')
@@ -153,6 +167,7 @@ class DashboradController extends Controller
                                     }
                                 }
                                 array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
+                            }
                             }
                             if ($manufacturingYear == "") {
                                 $yearcount = 0;
