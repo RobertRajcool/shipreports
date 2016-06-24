@@ -782,6 +782,26 @@ select {
     font-weight:bold;
     margin:0 0 15px 0;
 }
+.add_new_user_photo_edit_screen {
+    left: 800px;
+    width:150px;
+    margin:30px 0 0 0;
+    padding: 0;
+    width: auto;
+    position:fixed;
+    text-align:center;
+}
+.view_new_user_photo {
+    width:116px;
+    width: 116px;
+}
+.view_new_user_photo img {
+    width:116px;
+    width: 116px;
+	border-radius:58px;
+	border:2px solid #CCCCCC;
+}
+
 .fieldset_box {
     width: 460px;
     background:#FFFFFF;
@@ -2339,6 +2359,7 @@ input[type="color"],
     font-size: 12px;
     color: red;
 }
+
 .notification_msg {
     margin: -20px 0 0 450px;
     color: #062d60;
@@ -2373,6 +2394,135 @@ input[type="color"],
 }
 
 
+.table_container_verfication {
+    height:625px;
+}
+.verfication_ranking_table_form_section-scroll thead, .verfication_ranking_table_form_section-scroll tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+.verfication_ranking_table_form_section-scroll {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+    padding:0px;
+    margin:0px;
+    border:1px solid #dddddd;
+}
+.verfication_ranking_table_form_section-scroll thead {
+    /* head takes the height it requires,
+    and it's not scaled when table is resized */
+    flex: 0 0 auto;
+    width: calc(100% - 0px);
+}
+.verfication_ranking_table_form_section-scroll tbody {
+    /* body takes all the remaining available space */
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+.verfication_ranking_table_form_section-scroll tr {
+    width: 100%;
+}
+
+.verfication_ranking_table_form_section-scroll input[type="text"]{
+    height:18px !important;
+    width:50px;
+}
+.verfication_ranking_table_form_section-scroll thead tr {
+    background:#d2d2d2 !important;
+}
+.verfication_ranking_table_form_section-scroll thead tr.v_r_min_height {
+    height:104px;
+}
+.verfication_ranking_table_form_section-scroll thead tr th {
+    background:#d2d2d2;
+    padding:3px 2px 3px 4px !important;
+    color:#505b65;
+    font-weight:bold !important;
+    font-size:13px;
+}
+.verfication_ranking_table_form_section-scroll tbody tr td {
+    padding:3px 2px 3px 4px !important;
+    border-top: 1px solid #eaeaea;
+    text-align:center;
+    vertical-align: middle !important;
+}
+.verfication_ranking_table_form_section-scroll tbody tr {
+    border-bottom: none;
+}
+.verfication_ranking_table_form_section-scroll tr:nth-child(odd) {
+    background: none;
+}
+.verfication_ranking_table_form_section-scroll tbody tr:hover {
+    background: none;
+}
+.verfication_ranking_table_form_section-scroll .kpi_lement_name {
+    width:auto;
+    text-align:left;
+    vertical-align: middle;
+}
+.verfication_ranking_table_form_section-scroll .kpi_weightage {
+    width:50px;
+    text-align:center;
+    vertical-align: bottom;
+}
+.verfication_ranking_table_form_section-scroll .kpi_ship {
+    width:60px;
+    text-align:center;
+    vertical-align: bottom;
+}
+.verfication_ranking_table_form_section-scroll .verfication_ranking_text_rotation_2 {
+    -webkit-transform:rotate(270deg);
+    -moz-transform:rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform:rotate(270deg);
+    transform: rotate(270deg);
+    white-space:nowrap;
+    display:block;
+    bottom:0;
+    width:20px;
+    height:20px;
+}
+.verfication_ranking_table_form_section-scroll .weightage_th {
+    margin-left:0px;
+}
+.verfication_ranking_table_form_section-scroll .kpi_ship_th {
+    margin-left:6px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.verfication_ranking_table_form_section-scroll .sub_title {
+    background:#d2d2d2;
+    text-align:left;
+    color: #505b65;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 2px 3px 4px;
+}
 
 
 
