@@ -22,6 +22,20 @@
                 var showShipView = $('.show_ship_view');
                 var editShip = $('.Edit_ship');
                 var statusText = $('#status-text');
+                var editShipName = $('.edit_ship_name');
+                var editShipId = $('.edit_ship_id');
+                var editShipImoNumber = $('.edit_ship_imoNumber');
+                var editShipLocation = $('.edit_ship_location');
+                var editShipBuilt = $('.edit_ship_built');
+                var editShipSize = $('.edit_ship_size');
+                var editShipGt = $('.edit_ship_gt');
+                var editShipManufacturingYear = $('.edit_ship_manufacturingYear');
+                var editShipDescription = $('.edit_ship_description');
+                var editShipType = $('.edit_ship_type');
+                var editShipCountry = $('.edit_ship_country');
+                var shipReferenceName;
+                var imoReferenceName;
+                var vesselPrintId = $('#vessel-print-id');
 
                 boxIcon.hide();
                 createView.show();
@@ -71,6 +85,8 @@
                 var editShipButton = $('.edit_ship_button');
                 editShipButton.live("click",function($e) {
                     $e.preventDefault();
+                    shipReferenceName = editShipName.val();
+                    imoReferenceName = editShipImoNumber.val();
                     showShipView.hide();
                     editShip.show();
                 });
@@ -81,6 +97,161 @@
                     var editErrorEmptyValues =editErrorEmptyValuesFunction();
                     editShip.hide();
                     showShipView.show();
+                });
+
+                var vesselCreateTextId = $('#vessel-id');
+                var createVesselErrorMsg = $('#create-vessel-error');
+                vesselCreateTextId.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'shipName':vesselCreateTextId.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_vesselName",/*Routing.generate('shipdetails_check_vessel'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createVesselErrorMsg.empty();
+                            if(data.vessel==1) {
+                                createVesselErrorMsg.text("Vessel name is already registered !");
+                                vesselCreateTextId.focus();
+                                return false;
+                            }
+                            if(!$.trim(vesselCreateTextId.val())) {
+                                createVesselErrorMsg.text('Vessel name cannot be empty !');
+                                vesselCreateTextId.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                editShipName.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'shipName':editShipName.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_vesselName",/*Routing.generate('shipdetails_check_vessel'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            editVesselError.empty();
+                            if(data.vessel==1 && shipReferenceName!=editShipName.val()) {
+                                editVesselError.text("Vessel name is already registered !");
+                                editShipName.focus();
+                                return false;
+                            }
+                            if(!$.trim(editShipName.val())) {
+                                editVesselError.text('Vessel name cannot be empty !');
+                                editShipName.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var createImoId = $('#imo-id');
+                var createImoErrorMsg = $('#create-imo-error');
+                createImoId.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'imoNumber':createImoId.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_imoNumber",/*Routing.generate('shipdetails_check_imo'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createImoErrorMsg.empty();
+                            if(data.imoNumber==1) {
+                                createImoErrorMsg.text("Imo number is already registered !");
+                                createImoId.focus();
+                                return false;
+                            }
+                            if(!$.trim(createImoId.val())) {
+                                createImoErrorMsg.text('Imo number cannot be empty !');
+                                createImoId.focus();
+                                return false;
+                            }
+                            if(createImoId.val().length != data.imo_length) {
+                                createImoErrorMsg.text("Imo number is not correct !");
+                                createImoId.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var editImoErrorMsg = $('#edit-imo-error');
+                editShipImoNumber.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'imoNumber':editShipImoNumber.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_imoNumber",/*Routing.generate('shipdetails_check_vessel'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            editImoErrorMsg.empty();
+                            if(data.imoNumber==1 && imoReferenceName!=editShipImoNumber.val()) {
+                                editImoErrorMsg.text("Imo number is already registered !");
+                                editShipImoNumber.focus();
+                                return false;
+                            }
+                            if(!$.trim(editShipImoNumber.val())) {
+                                editImoErrorMsg.text('Imo number cannot be empty !');
+                                editShipImoNumber.focus();
+                                return false;
+                            }
+                            if(editShipImoNumber.val().length != data.imo_length) {
+                                editImoErrorMsg.text("Imo number is not correct !");
+                                editShipImoNumber.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
                 });
 
                 var count =0;
@@ -172,18 +343,6 @@
                     }
                 }
 
-                var editShipName = $('.edit_ship_name');
-                var editShipId = $('.edit_ship_id');
-                var editShipImoNumber = $('.edit_ship_imoNumber');
-                var editShipLocation = $('.edit_ship_location');
-                var editShipBuilt = $('.edit_ship_built');
-                var editShipSize = $('.edit_ship_size');
-                var editShipGt = $('.edit_ship_gt');
-                var editShipManufacturingYear = $('.edit_ship_manufacturingYear');
-                var editShipDescription = $('.edit_ship_description');
-                var editShipType = $('.edit_ship_type');
-                var editShipCountry = $('.edit_ship_country');
-
                 function setEditShipValuesFunction(data) {
                     editShipName.val(data.Ship_detail[0].shipName);
                     editShipId.val(data.Ship_detail[0].id);
@@ -265,11 +424,6 @@
                 var editMfErrorMsg = $('.mf');
                 function vesselEditValidationFunction() {
                     var editErrorEmptyValues =editErrorEmptyValuesFunction();
-                    if(!$.trim(editShipName.val())) {
-                        editVesselError.text('Vessel name cannot be empty !');
-                        editShipName.focus();
-                        return false;
-                    }
                     if(editShipType.val()=="0") {
                         editVesselTypeErrorMsg.text('Vessel type cannot be empty !');
                         editShipType.focus();
@@ -316,6 +470,7 @@
                     editSizeErrorMsg.empty();
                     editGtErrorMsg.empty();
                     editMfErrorMsg.empty();
+                    imoReferenceName=0;
                 }
 
                 var archiveButton = $('.archive_btn');
@@ -494,7 +649,7 @@
             <div class="col-sm-3 users_views">
                 <div class="add_user_btn_main">
                     <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{ 'vessel.add_vessel'|trans }}</a></span>
-                    <span class="user_btn_main"><a href="" id="showCheckbox" class="show_btn" >{{ 'vessel.show'|trans }} <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
+                    <span class="user_btn_main"><a href="" id="showCheckbox" class="show_btn grid-show-btn" >{{ 'vessel.show'|trans }} <span class="show_dropdown_icon"><span class="ss-dropdown">&nbsp;</span></span></a></span>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
@@ -535,7 +690,16 @@
             <div class="users_advanced_list_views_screen">
                 <div class="">
                     <div class="add_user_btn_main">
-                        <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{ 'vessel.add_vessel'|trans }}</a></span>
+                        <span class="user_btn_main" style="float: left;"><a href="" class="ss-plus add_btn">{{ 'vessel.add_vessel'|trans }}</a></span>
+                        {#<span class="user_btn_main"><button class="submit_btn" >Print</button></span>#}
+                        <form id="" class="form-horizontal no-style" action="{{ path('shipdetails_vessel_pdf') }}"
+                              target="_blank" method="post" style="float: left;">
+                            <input type="hidden" class="activeMonthText" name="activeMonth" value="">
+                            <input type="hidden" class="activeYearText" name="activeYear" value="">
+                            <input type="hidden" class="endMonthText" name="endMonth" value="">
+                            <input type="hidden" class="endYearText" name="endYear" value="">
+                            <span class="user_btn_main"><button type="submit" class="print_btn">Print</button></span>
+                        </form>
                         <span class="user_btn_main grid_list_main">
                             <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
                             <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
@@ -598,8 +762,9 @@
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        {{ form_row(form.shipName,{'label': ' '}) }}
+                                        {{ form_row(form.shipName,{'id':'vessel-id','label': ' '}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="create-vessel-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
@@ -608,10 +773,11 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        {{ form_row(form.imoNumber,{'label': ' '}) }}
+                                        {{ form_row(form.imoNumber,{'id':'imo-id','label': ' '}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="create-imo-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
@@ -762,10 +928,11 @@
                                     <div class="col-xs-8 weight-error-message edit-vessel-type"> </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_ship_imoNumber">
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="edit-imo-error"> </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
