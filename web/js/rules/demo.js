@@ -50,7 +50,6 @@ var conditions, actions, ageField, submit;
             var sample = JSON.stringify(engine);
             $('#rules-id_'+id_value).val(sample);
             $('#result').val(id_value);
-            console.log(engine)
         });
 
         function splitFun(data){
