@@ -358,7 +358,7 @@ class ScorecardReportController extends Controller
                     ));
 
                 $pdfObject->AddPage('', 4, '', 'on');
-                $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+                $pdfObject->SetFooter('|{DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $pdfObject->WriteHTML($customerListDesign);
             }
 
@@ -435,7 +435,7 @@ class ScorecardReportController extends Controller
                 ));
 
             $pdfObject->AddPage('', 4, '', 'on');
-            $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $pdfObject->SetFooter('|{DATE l jS F Y h:i}| Page No: {PAGENO}');
             $pdfObject->WriteHTML($customerListDesign);
 
 
@@ -490,7 +490,7 @@ class ScorecardReportController extends Controller
                     ));
 
                 $pdfObject->AddPage('', 4, '', 'on');
-                $pdfObject->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+                $pdfObject->SetFooter('|{DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $pdfObject->WriteHTML($customerListDesign);
             }
 
