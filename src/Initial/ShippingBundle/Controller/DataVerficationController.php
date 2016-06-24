@@ -870,6 +870,7 @@ class DataVerficationController extends Controller
         $role = $user->getRoles();
         $kpielementarray = $this->findnumofshipsAction($request, 'nextshipajaxcall');
         $statusforship = $this->findshipstatusmonth($newtemp_date, $kpielementarray, $role[0]);
+        $counts = array_count_values($statusforship);
         $finddatawithstatus = array();
 
 
@@ -879,6 +880,7 @@ class DataVerficationController extends Controller
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
             $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
+
         }
         if ($role[0] == 'ROLE_MANAGER') {
             $status = 1;
@@ -886,6 +888,14 @@ class DataVerficationController extends Controller
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
             $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
+            if (array_key_exists(2, $counts))
+            {
+                $ship_status_done_count= $counts[2];
+            }
+            else
+            {
+                $ship_status_done_count=0;
+            }
         }
         if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
             $status = 0;
@@ -893,20 +903,28 @@ class DataVerficationController extends Controller
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
             $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
+            if (array_key_exists(1, $counts))
+            {
+                $ship_status_done_count= $counts[1];
+            }
+            else
+            {
+                $ship_status_done_count=0;
+            }
 
         }
 
         $response = new JsonResponse();
         if (count($finddatawithstatus) == 4) {
-
-
             $response->setData(array('returnmsg' => $shipname . $returnmsg,
                 'shipname' => $nextshipname,
                 'shipid' => $nextshipid,
                 'kpiNameArray' => $finddatawithstatus['elementnamekpiname'],
                 'elementcount' => $finddatawithstatus['maxelementcount'],
                 'elementweightage' => $finddatawithstatus['elementweightage'],
-                'elementvalues' => $finddatawithstatus['elementvalues']));
+                'elementvalues' => $finddatawithstatus['elementvalues'],
+                'shipcount'=>count($statusforship),
+                'ship_status_done_count'=>$ship_status_done_count));
             return $response;
         }
         else {
@@ -1679,6 +1697,7 @@ class DataVerficationController extends Controller
             $role = $user->getRoles();
             $kpielementarray = $this->findnumofshipsforrankingAction($request,'nextshipajaxcall');
             $statusforship = $this->findshipstatus_ranking($newtemp_date, $kpielementarray, $role[0]);
+            $counts = array_count_values($statusforship);
             $finddatawithstatus=array();
 
 
@@ -1689,6 +1708,14 @@ class DataVerficationController extends Controller
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
                 $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$newtemp_date);
+                if (array_key_exists(3, $counts))
+                {
+                    $ship_status_done_count= $counts[3];
+                }
+                else
+                {
+                    $ship_status_done_count=0;
+                }
             }
             if ($role[0] == 'ROLE_MANAGER')
             {
@@ -1697,6 +1724,14 @@ class DataVerficationController extends Controller
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
                 $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$newtemp_date);
+                if (array_key_exists(2, $counts))
+                {
+                    $ship_status_done_count= $counts[2];
+                }
+                else
+                {
+                    $ship_status_done_count=0;
+                }
             }
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
             {
@@ -1705,6 +1740,14 @@ class DataVerficationController extends Controller
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
                 $finddatawithstatus=$this->finddatawithstatus_ranking($status,$nextshipid,$newtemp_date);
+                if (array_key_exists(1, $counts))
+                {
+                    $ship_status_done_count= $counts[1];
+                }
+                else
+                {
+                    $ship_status_done_count=0;
+                }
 
             }
             $response = new JsonResponse();
@@ -1718,6 +1761,8 @@ class DataVerficationController extends Controller
                     'kpiNameArray' =>$finddatawithstatus['elementnamekpiname'],
                     'elementcount' => $finddatawithstatus['maxelementcount'],
                     'elementweightage'=>$finddatawithstatus['elementweightage'],
+                    'shipcount'=>count($statusforship),
+                    'ship_status_done_count'=>$ship_status_done_count,
                     'elementvalues' => $finddatawithstatus['elementvalues']));
                 return $response;
             }
