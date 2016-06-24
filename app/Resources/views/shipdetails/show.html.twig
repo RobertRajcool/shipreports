@@ -1,57 +1,64 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/pdf.css" rel="stylesheet">
 
-{% block body %}
-
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="page-header">
-            <h2>ShipDetails</h2>
-            <a href="{{ path('shipdetails_select1') }}">Back</a>
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">{{ headerTitle }}</div>
+            </div>
+            <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
         </div>
-        <table>
-            <tbody>
-                <tr>
-                    <th>Shipname</th>
-                    <td>{{ shipDetail.shipName }}</td>
-                </tr>
-                <tr>
-                    <th>ShipType</th>
-                    <td>{{ shipDetail.shipType }}</td>
-                </tr>
-                <tr>
-                    <th>Year of Manufacturing</th>
-                    <td>{{ shipDetail.manufacturingYear }}</td>
-                </tr>
-                <tr>
-                    <th>IMO</th>
-                    <td>{{ shipDetail.imoNumber }}</td>
-                </tr>
-                <tr>
-                    <th>Country</th>
-                    <td>{{ shipDetail.country }}</td>
-                </tr>
-                <tr>
-                    <th>Location</th>
-                    <td>{{ shipDetail.location }}</td>
-                </tr>
-                <tr>
-                    <th>Built</th>
-                    <td>{{ shipDetail.built }}</td>
-                </tr>
-                <tr>
-                    <th>Size</th>
-                    <td>{{ shipDetail.size }}</td>
-                </tr>
-                <tr>
-                    <th>GT</th>
-                    <td>{{ shipDetail.gt }}</td>
-                </tr>
-                <tr>
-                    <th>Description</th>
-                    <td>{{ shipDetail.description }}</td>
-                </tr>
-
-            </tbody>
-        </table>
-
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table kpi_name_weightage_row">
+                <thead>
+                    <tr>
+                        <th class="branding-colours">{{ 'vessel.vessel_name'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.vessel_type'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.imo_number'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.country'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.ship_yard'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.size'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.gt'|trans }}</th>
+                        <th class="branding-colours">{{ 'vessel.list_mf_year'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vessel in shipDetails %}
+                        <tr>
+                            <td><strong>{{ vessel.shipName }}</strong></td>
+                            <td>{{ vessel.shipType }}</td>
+                            <td>{{ vessel.imoNumber }}</td>
+                            <td>{{ vessel.country }}</td>
+                            <td>{{ vessel.built }}</td>
+                            <td>{{ vessel.size }}</td>
+                            <td>{{ vessel.gt }}</td>
+                            <td>{{ vessel.manufacturingYear }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
     </div>
-{% endblock %}
+</div>
+</body>
+</html>
