@@ -101,7 +101,21 @@ class DashboradController extends Controller
                                 $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
                                 $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
                                 $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
+                                if ($rankingKpiName == 'Vessel age') {
+                                    if ($manufacturingYear == "") {
+                                        $yearcount = 0;
+                                    } else {
 
+                                        $man_datestring = $manufacturingYear . '-01-' . '01';
+                                        $temp_man_year = new \DateTime($man_datestring);
+                                        $temp_man_year->modify('last day of this month');
+                                        $Vessage_count = $temp_man_year->diff($lastMonthDetail)->y;
+                                    }
+                                    $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
+                                    array_push($rankingKpiValueCountArray, $vesselage);
+                                }
+                                else
+                                {
                                 $rankingElementList = $em->createQueryBuilder()
                                     ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
                                     ->from('InitialShippingBundle:RankingElementDetails', 'c')
@@ -153,6 +167,7 @@ class DashboradController extends Controller
                                     }
                                 }
                                 array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
+                            }
                             }
                             if ($manufacturingYear == "") {
                                 $yearcount = 0;
@@ -1172,29 +1187,25 @@ class DashboradController extends Controller
         $user = $this->getUser();
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
-        } else {
+        }
+        else
+        {
             $userId = $user->getId();
             $username = $user->getUsername();
             $loginuseremail = $user->getEmail();
             $oneyear_montharray = array();
-            if ($year == ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
-                    array_push($oneyear_montharray, $month);
-                }
-                $currentyear = date('Y');
+            if ($year == ' ')
+            {
+                $currentMonth=date('Y-m-d');
             }
-            if ($year != ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
-                    array_push($oneyear_montharray, $month);
-                }
-                $currentyear = date($year);
+            if ($year != ' ')
+            {
+                $dateformat=$year.'-m-d';
+                $currentMonth=date($dateformat);
             }
-            $currentMonth = date('n');
-            $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth - 1]);
+            $new_monthdetail_date = new \DateTime($currentMonth);
             $new_monthdetail_date->modify('last day of this month');
-            $statusVerified = $currentMonth - 1;
+            $currentyear=date_format($new_monthdetail_date, 'Y');
             $monthlyShipDataStatus = $em->createQueryBuilder()
                 ->select('b.status')
                 ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
@@ -1204,21 +1215,43 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
-            if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
-                $statusVerified = $currentMonth;
-            } else {
+            if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
+            {
+                $currentMonthinter = date('n');
+                $limit=(int)$currentMonthinter;
+               // $statusVerified = $currentMonth;
+                for ($m = 1; $m <= $limit; $m++) {
+                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($currentyear)));
+                    array_push($oneyear_montharray, $month);
+                }
+            }
+            else
+            {/*
+                $currentMonthinter = date('n');
+                $limit=(int)$currentMonthinter;
+                for ($m = 1; $m <=$limit; $m++) {
+                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($currentyear)));
+                    array_push($oneyear_montharray, $month);
+                }*/
                 $statusFieldQuery = $em->createQueryBuilder()
-                    ->select('b.status, b.dataofmonth')
+                    ->select('b.dataofmonth,b.status')
                     ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                    ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                    ->where('b.shipid = :shipId and b.status = :monthStatus')
+                    ->setParameter('monthStatus', 4)
                     ->setParameter('shipId', $shipid)
-                    ->setParameter('monthDetail', $new_monthdetail_date)
+                    ->groupby('b.dataofmonth')
                     ->getQuery()
                     ->getResult();
                 if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
-                    $dateFromDb = $statusFieldQuery[count($statusFieldQuery) - 1]['dataofmonth'];
-                    $statusVerified = $dateFromDb->format('n');
+                    for ($m =0; $m < count($statusFieldQuery); $m++)
+                    {
+                        $month = date_format($statusFieldQuery[$m]['dataofmonth'], 'Y-m-d');
+                        array_push($oneyear_montharray, $month);
+
+                    }
                 }
+
+
             }
 
             $rankingKpiList = $em->createQueryBuilder()
@@ -1231,7 +1264,10 @@ class DashboradController extends Controller
             $monthlyKpiValue = array();
             $newcategories = array();
             $monthlyKpiAverageScore = array();
-            for ($d = 0; $d < $statusVerified; $d++) {
+            $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            $shipname = $shipid->getShipName();
+            $man_year = $shipid->getManufacturingYear();
+            for ($d = 0; $d < count($oneyear_montharray); $d++) {
                 $time2 = strtotime($oneyear_montharray[$d]);
                 $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
@@ -1246,6 +1282,26 @@ class DashboradController extends Controller
                     $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
                     $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
                     array_push($rankingKpiWeightarray, $rankingKpiWeight);
+                    if ($rankingKpiName=='Vessel age')
+                    {
+                        if ($man_year == "")
+                        {
+                            $yearcount = 0;
+                        }
+                        else
+                        {
+
+                            $man_datestring = $man_year . '-01-' . '01';
+                            $temp_man_year = new \DateTime($man_datestring);
+                            $temp_man_year->modify('last day of this month');
+                            $Vessage_count= $temp_man_year->diff($new_monthdetail_date)->y;
+                        }
+                        $vesselage=($Vessage_count*$rankingKpiWeight)/20;
+                        array_push($rankingKpiValueCountArray,$vesselage);
+
+                    }
+                    else
+                    {
 
                     $rankingElementList = $em->createQueryBuilder()
                         ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
@@ -1354,21 +1410,24 @@ class DashboradController extends Controller
 
                     array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
                 }
+                }
                 array_push($monthlyKpiValue, $rankingKpiValueCountArray);
                 array_push($monthlyKpiAverageScore, array_sum($rankingKpiValueCountArray));
             }
-            $shipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-            $shipname = $shipid->getShipName();
-            $man_year = $shipid->getManufacturingYear();
             if ($man_year == "") {
                 $yearcount = 0;
             } else {
-                $currentdatestring = date('Y-01-01');
-                $d1 = new \DateTime($currentdatestring);
+                $currentdatestring = date('Y-m-d');
+                $currentdatetime = new \DateTime($currentdatestring);
+               // $man_datestring = $man_year . '-01-' . '01';
+               // $d2 = new \DateTime($man_datestring);
+                //$diff = $d2->diff($d1);
+                //$yearcount = $diff->y;
                 $man_datestring = $man_year . '-01-' . '01';
-                $d2 = new \DateTime($man_datestring);
-                $diff = $d2->diff($d1);
-                $yearcount = $diff->y + 1;
+                $temp_man_year = new \DateTime($man_datestring);
+                $temp_man_year->modify('last day of this month');
+                $currentdatetime->modify('last day of this month');
+                $yearcount= $temp_man_year->diff($currentdatetime)->y;
             }
 
             $series = array(
@@ -1488,15 +1547,17 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
-            if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
+            if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
+            {
                 $statusVerified = $currentMonth;
-            } else {
+            }
+            else
+            {
                 $statusFieldQuery = $em->createQueryBuilder()
                     ->select('b.status, b.dataofmonth')
                     ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                    ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                    ->where('b.shipid = :shipId ')
                     ->setParameter('shipId', $shipId)
-                    ->setParameter('monthDetail', $new_monthdetail_date)
                     ->getQuery()
                     ->getResult();
                 if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
@@ -1504,6 +1565,7 @@ class DashboradController extends Controller
                     $statusVerified = $dateFromDb->format('n');
                 }
             }
+
             $elementForKpiList = $em->createQueryBuilder()
                 ->select('a.elementName', 'a.id', 'a.weightage')
                 ->from('InitialShippingBundle:RankingElementDetails', 'a')
@@ -1578,7 +1640,7 @@ class DashboradController extends Controller
                         }
 
                         array_push($scorecardElementRules, $rankingElementRulesArray);
-                        array_push($scorecardElementValueArray, $rankingElementResult[0]['elementdata']);
+                        array_push($scorecardElementValueArray,(($rankingElementResult[0]['elementdata'])*$kpiWeight)/100);
                         array_push($kpiElementColorArray, $rankingElementResultColor);
                         $elementValueWithWeight = $elementColorValue;
                         $kpiSumValue += $elementValueWithWeight;
@@ -2072,7 +2134,7 @@ class DashboradController extends Controller
             }
 
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
@@ -2213,7 +2275,7 @@ class DashboradController extends Controller
             }
 
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
@@ -2981,7 +3043,7 @@ class DashboradController extends Controller
             $gearman = $this->get('gearman');
             $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
@@ -3391,7 +3453,7 @@ class DashboradController extends Controller
         $gearman = $this->get('gearman');
         $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
         $response = new JsonResponse();
-        $response->setData(array('updatemsg' => "Report Has Been Send"));
+        $response->setData(array('updatemsg' => "Report has been send"));
         return $response;
 
     }

@@ -239,7 +239,7 @@
 
 
                 });
-                $('#chatform1').submit(function (e) {
+                $('#chatform').submit(function (e) {
                     e.preventDefault();
                     var self = this;
                     var obj = {}, chart;
@@ -257,7 +257,7 @@
                     $.ajax({
                         data: data,
                         success: function (data) {
-                            $('#imagefilename').val(filename);
+                            $('#imagefilename').val(data);
                             submitchatform();
 
                         }
