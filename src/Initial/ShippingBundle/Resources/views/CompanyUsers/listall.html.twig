@@ -163,6 +163,138 @@
                     $('.show_kpi').show()
                 });
 
+
+                var  editEmailError = ('#edit-mail')
+
+                function editErrorEmptyValuesFunction() {
+                    editEmailError.empty();
+                }
+
+                var createEmail = $('#val_email');
+                var createVesselErrorMsg = $('#create-val-email');
+                createEmail.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'email':createEmail.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_email",
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createVesselErrorMsg.empty();
+                            if(data.email==1) {
+                                createVesselErrorMsg.text("Email is already registered !");
+                                createEmail.focus();
+                                return false;
+                            }
+                            if(!$.trim(createEmail.val())) {
+                                createVesselErrorMsg.text('Email name cannot be empty !');
+                               createEmail.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var editEmail = $('#mail')
+                var  editEmailError = ('#edit-mail')
+                editEmail.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'email': editEmail.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type: "POST",
+                        url: "check_email",
+                        data: data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function (data) {
+                            //editEmailError.empty();
+                            if (data.email == 1) {
+                                jAlert()
+                                jAlert("Email is already registered !");
+                                editEmail.focus();
+                                return false;
+                            }
+                            if (!$.trim(editEmail.val())) {
+                               jAlert('Email cannot be empty !');
+                                editEmail.focus();
+                                return false;
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+
+                });
+
+                var createMobile = $('#user_mobile');
+                var createmobileErrorMsg = $('#create-val-mobile');
+                createMobile.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'mobile':createMobile.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_mobile",
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createmobileErrorMsg.empty();
+                            if(data.mobile==1) {
+                               // jAlert('mobile number already registered')
+                                createmobileErrorMsg.text("mobile  number is already registered !");
+                                createMobile.focus();
+                                return false;
+                            }
+                            if(!$.trim(createMobile.val())) {
+                                createmobileErrorMsg.text('mobile number cannot be empty !');
+                                createMobile.focus();
+                                return false;
+                            }
+                            if (createMobile.val().length < 10 || createMobile.val().length > 10) {
+                                createmobileErrorMsg.text("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
+                                createMobile.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+
+
+
+
+
+
                 $('.edit_submit_btn').live("click", function ($e) {
                     $e.preventDefault();
                     var username = $('.edit_username').val();
@@ -451,8 +583,9 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.email'|trans }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.email,{'label': ' '}) }}
+                                    {{ form_row(form.email,{'label': ' ','id':'val_email'}) }}
                                 </div>
+                                <div class="col-xs-8 weight-error-message" id="create-val-email"></div>
                             </div>
 
                             <div class="form-group">
@@ -460,6 +593,7 @@
                                 <div class="col-xs-8">
                                     {{ form_row(form.mobile,{'label': ' ','type':'number','required':'true','id':'user_mobile'}) }}
                                 </div>
+                                <div class="col-xs-8 weight-error-message" id="create-val-mobile"></div>
                             </div>
 
 
@@ -561,8 +695,9 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.edit_email'|trans }}</label>
                                 <div class="col-xs-8">
-                                    <input type="email" class="edit_email" value="" placeholder="" required>
+                                    <input type="email" class="edit_email" id="mail" value="" placeholder="" required>
                                 </div>
+                                <div class="col-xs-8 weight-error-message" id="edit-mail"> </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4">{{ 'user.edit_mobile'|trans }}</label>
