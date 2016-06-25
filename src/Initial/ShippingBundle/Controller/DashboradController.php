@@ -2849,11 +2849,11 @@ class DashboradController extends Controller
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
             $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
-            $mpdf->SetWatermarkImage($WateMarkImagePath);
+           // $mpdf->SetWatermarkImage($WateMarkImagePath);
             $mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $mpdf->showWatermarkImage = true;
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'plotBackgroundImage'=>$WateMarkImagePath),
                 'exporting' => array('enabled' => false),
                 'plotOptions' => array('series' => array(
                     "allowPointSelect" => true,
@@ -2925,7 +2925,7 @@ class DashboradController extends Controller
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 $graphObject = array(
-                    'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                    'chart' => array('renderTo' => 'areaId', 'type' => "line",'plotBackgroundImage'=>$WateMarkImagePath),
                     'exporting' => array('enabled' => false),
                     'plotOptions' => array('series' => array(
                         "allowPointSelect" => true,
