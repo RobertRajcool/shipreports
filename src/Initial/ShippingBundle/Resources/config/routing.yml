@@ -74,3 +74,16 @@ runtimecommentforkpi:
 pdf:
    path: /pdf
    defaults: { _controller:"InitialShippingBundle:Highchart:createPdf"}
+
+mail:
+   path: /register/check_email
+   defaults: { _controller: "InitialShippingBundle:CompanyUsers:emailName"}
+
+
+mobile:
+   path: /register/check_mobile
+   defaults: { _controller: "InitialShippingBundle:CompanyUsers:mobileNumber"}
+
+
+
+

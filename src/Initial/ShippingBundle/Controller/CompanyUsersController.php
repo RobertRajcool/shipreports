@@ -8,6 +8,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\CompanyUsers;
 use Initial\ShippingBundle\Form\CompanyUsersType;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Initial\ShippingBundle\Entity\User;
+use FOS\UserBundle\Model\UserInterface;
 
 /**
  * CompanyUsers controller.
@@ -34,7 +37,6 @@ class CompanyUsersController extends Controller
     }
 
 
-
     /**
      * Lists all CompanyUsers entities.
      *
@@ -49,19 +51,18 @@ class CompanyUsersController extends Controller
 
         $query = $em->createQueryBuilder()
             ->select('a')
-            ->from('InitialShippingBundle:CompanyUsers','a')
-            ->leftjoin('InitialShippingBundle:CompanyDetails','b', 'WITH', 'b.id = a.companyName')
-            ->leftjoin('InitialShippingBundle:User','c','WITH','c.username = b.adminName')
+            ->from('InitialShippingBundle:CompanyUsers', 'a')
+            ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyName')
+            ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
             ->where('c.id = :userId')
-            ->setParameter('userId',$userId)
+            ->setParameter('userId', $userId)
             ->getQuery();
-        $companyUsers=$query->getResult();
+        $companyUsers = $query->getResult();
 
         return $this->render('companyusers/index.html.twig', array(
             'companyUsers' => $companyUsers,
         ));
     }
-
 
 
     /**
@@ -110,20 +111,20 @@ class CompanyUsersController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQueryBuilder()
-                ->select('a.id')
-                ->from('InitialShippingBundle:CompanyDetails','a')
-                ->leftjoin('InitialShippingBundle:User','b','WITH','a.adminName = b.username')
-                ->where('b.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery()
-                ->getResult();
+            ->select('a.id')
+            ->from('InitialShippingBundle:CompanyDetails', 'a')
+            ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'a.adminName = b.username')
+            ->where('b.id = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
 
         //$companyName = 3;
 
-        $companyName=$query[0]['id'];
-        $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyName));
+        $companyName = $query[0]['id'];
+        $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id' => $companyName));
 
-        $course1 = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:UserRole')->findOneBy(array('id'=>$role));
+        $course1 = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:UserRole')->findOneBy(array('id' => $role));
 
         //print_r($course);die;
 
@@ -133,13 +134,12 @@ class CompanyUsersController extends Controller
         $companyUser->setRole($course1);
         $companyUser->setEmailId($emailId);
 
-            $em->persist($companyUser);
-            $em->flush();
+        $em->persist($companyUser);
+        $em->flush();
 
 
         return $this->redirectToRoute('companyusers_show', array('id' => $companyUser->getId()));
     }
-
 
 
     /**
@@ -217,7 +217,74 @@ class CompanyUsersController extends Controller
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('companyusers_delete', array('id' => $companyUser->getId())))
             ->setMethod('DELETE')
-            ->getForm()
-        ;
+            ->getForm();
     }
+
+
+
+    public function emailNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $email_value = $request->request->get('email');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.email')
+                ->from('InitialShippingBundle:User', 'a')
+                ->where('a.email = :email_name')
+                ->setParameter('email_name', $email_value)
+                ->getQuery();
+            $UserDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if (count($UserDetail) != 0) {
+                $response->setData(array(
+                    'email' => 1
+                ));
+            } else {
+                $response->setData(array(
+                    'email' => 0
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+
+    public function mobileNumberAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $mobile_number = $request->request->get('mobile');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.mobile')
+                ->from('InitialShippingBundle:User', 'a')
+                ->where('a.mobile = :mobile_no')
+                ->setParameter('mobile_no', $mobile_number)
+                ->getQuery();
+            $UserDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if (count($UserDetail) != 0) {
+                $response->setData(array(
+                    'mobile' => 1
+                ));
+            } else {
+                $response->setData(array(
+                    'mobile' => 0
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
 }
