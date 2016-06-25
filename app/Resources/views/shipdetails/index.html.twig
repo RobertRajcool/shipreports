@@ -119,7 +119,7 @@
                     $.ajax({
                         success: function(data) {
                             createVesselErrorMsg.empty();
-                            if(data.vessel==1) {
+                            if(data.vessel==data.status) {
                                 createVesselErrorMsg.text("Vessel name is already registered !");
                                 vesselCreateTextId.focus();
                                 return false;
@@ -154,7 +154,7 @@
                     $.ajax({
                         success: function(data) {
                             editVesselError.empty();
-                            if(data.vessel==1 && shipReferenceName!=editShipName.val()) {
+                            if(data.vessel==data.status && shipReferenceName!=editShipName.val()) {
                                 editVesselError.text("Vessel name is already registered !");
                                 editShipName.focus();
                                 return false;
@@ -191,7 +191,7 @@
                     $.ajax({
                         success: function(data) {
                             createImoErrorMsg.empty();
-                            if(data.imoNumber==1) {
+                            if(data.imoNumber==data.status) {
                                 createImoErrorMsg.text("Imo number is already registered !");
                                 createImoId.focus();
                                 return false;
@@ -232,7 +232,7 @@
                     $.ajax({
                         success: function(data) {
                             editImoErrorMsg.empty();
-                            if(data.imoNumber==1 && imoReferenceName!=editShipImoNumber.val()) {
+                            if(data.imoNumber==data.status && imoReferenceName!=editShipImoNumber.val()) {
                                 editImoErrorMsg.text("Imo number is already registered !");
                                 editShipImoNumber.focus();
                                 return false;

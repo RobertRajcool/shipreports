@@ -59,18 +59,20 @@
                                     $('<th class="month">' + data.montharray[shipdatamonthcount] + '</th>').appendTo('#headertable');
                                 }
                                 $.each(data.listofkpi, function (i) {
+
                                     $('<div id="score_color_' + data.listofkpi[i]['id'] + '"></div> <table id="table_' + data.listofkpi[i]['id'] + '" class="table table-striped normal_table"><thead><tr ><th>' + data.listofkpi[i]['kpiName'] + '</th></tr></thead><tbody><tr><td id="graphtd_' + data.listofkpi[i]['id'] + '"></td></tr></tbody></table>').appendTo('#kpigraphlist')
                                     $('<tr id="secondtabletr' + i + '"></tr>').appendTo('#tablebodyid');
                                     $('<td id="' + i + '" class="kpi_name_thtd"><a href="#score_color_' + data.listofkpi[i]['id'] + '"> ' + data.listofkpi[i]['kpiName'] + '</a></td><td>' + data.kpiweightage[i] + '</td>').appendTo('#secondtabletr' + i);
                                     var k = 0;
                                     for (k = 0; k < data.countmonth; k++) {
 
-                                        if (data.kpimonthdata[k][i] != null) {
+                                        /*if (data.kpimonthdata[k][i] != null) {
                                             $('<td>' + data.kpimonthdata[k][i] + '</td>').appendTo('#secondtabletr' + i);
                                         }
                                         else {
                                             $('<td></td>').appendTo('#secondtabletr' + i);
-                                        }
+                                        }*/
+                                        $('<td>' + data.kpimonthdata[k][i] + '</td>').appendTo('#secondtabletr' + i);
 
                                     }
 
@@ -93,11 +95,10 @@
                                 var elementtrdynamic = 0;
 
                                 $.each(data.kpigraph, function (key, listofelementvalues) {
-                                  /*  if (data.listofkpi[tempcount]['kpiName'] == 'Vessel age') {
+                                    if (data.listofkpi[tempcount]['kpiName'] == 'Vessel age') {
 
                                     }
                                     else {
-*/
                                         $('<table class="table table-striped graph_and_colour_coding_main_title_row"><thead><tr><th>' + data.listofkpi[tempcount]['kpiName'] + '</th></tr></thead><tbody><tr><td></td></tr></tbody></table>').appendTo('#score_color_' + key);
                                         $('<table class="table table-striped-3 element_ranking_new_row"><thead><tr id="tableheader_' + key + '"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_' + key + '"></tbody></table>').appendTo('#score_color_' + key)
                                         var datamonthcount
@@ -122,12 +123,13 @@
                                                     ranking_value = data.monthlydata[key][monthcount][b];
                                                     ranking_color = data.elementcolorarray[key][monthcount][b];
                                                 }
-                                                if (ranking_value != 'false' && ranking_value != '' && ranking_value != null && ranking_value != 'undefined') {
+                                                /*if (ranking_value != 'false' && ranking_value != ''  && ranking_value != 'undefined') {
                                                     $('<td>' + ranking_value + '</td>').appendTo('#elementid_' + elementtrdynamic);
                                                 }
                                                 else {
                                                     $('<td></td>').appendTo('#elementid_' + elementtrdynamic);
-                                                }
+                                                }*/
+                                                $('<td>' + ranking_value + '</td>').appendTo('#elementid_' + elementtrdynamic);
 
                                                 /* /!* $('<td>green</td>').appendTo('#elementcolor_'+elementtrdynamic);*!/
                                                  var ranking_color = '';
@@ -195,6 +197,7 @@
                                             }]
                                         });
                                         tempcount++;
+                                    }
 
 
                                 });
@@ -212,7 +215,7 @@
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            window.location.href = base_url+'/login';
+                          //  window.location.href = base_url+'/login';
 
                         }
                     });

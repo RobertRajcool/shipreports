@@ -78,7 +78,7 @@
                             {#{% for k in 0..elementcountvalue %}#}
                             {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
 
-                                {% if monthlydata[j][0]!= NULL %}
+                              {#  {% if monthlydata[j][0]!= NULL %}
 
                                     <td>
 
@@ -88,7 +88,11 @@
 
                                 {% else %}
                                     <td></td>
-                                {% endif %}
+                                {% endif %}#}
+                            <td>
+
+                                {{ monthlydata[j][i]  }}
+                            </td>
 
                             {# {% set akj=akj+1 %}#}
                             {#{% endfor %}#}
@@ -124,12 +128,13 @@
                     <td colspan="" class="kpi_name_thtd"><strong>{{ 'elementranking.score'|trans }}</strong></td>
                     {% for avg in kpigraph %}
 
-                    {% if avg != NULL %}
+                    {#{% if avg != NULL %}
                         <td><strong>{{ avg }}</strong></td>
 
                     {% else  %}
                         <td><strong></strong></td>
-                    {% endif %}
+                    {% endif %}#}
+                        <td><strong>{{ avg }}</strong></td>
 
 
                     {% endfor %}
