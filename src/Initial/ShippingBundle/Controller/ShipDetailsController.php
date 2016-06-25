@@ -254,7 +254,7 @@ class ShipDetailsController extends Controller
             $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
             $pdfObject->defaultheaderline = 0;
             $pdfObject->defaultheaderfontstyle = 'B';
-            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo.png';
+            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
             $pdfObject->SetWatermarkImage($waterMarkImage);
             $pdfObject->showWatermarkImage = true;
 
