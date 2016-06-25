@@ -880,6 +880,14 @@ class DataVerficationController extends Controller
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
             $finddatawithstatus = $this->finddatawithstatus($status, $nextshipid, $newtemp_date);
+            if (array_key_exists(3, $counts))
+            {
+                $ship_status_done_count= $counts[3];
+            }
+            else
+            {
+                $ship_status_done_count=0;
+            }
 
         }
         if ($role[0] == 'ROLE_MANAGER') {

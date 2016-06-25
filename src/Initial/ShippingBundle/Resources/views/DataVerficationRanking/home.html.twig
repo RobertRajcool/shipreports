@@ -101,7 +101,11 @@
                                 });
 
                                 $.each(data.rankingKpiList, function (i) {
+                                    if (data.rankingKpiList[i]['kpiName'] == 'Vessel age')
+                                    {
 
+                                    }
+                                    else {
                                     var colspan = data.shipcount + 2;
                                     $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
                                     $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
@@ -127,6 +131,7 @@
                                         });
                                         valuecount++;
                                     }
+                                }
 
                                 });
 
@@ -354,7 +359,12 @@
                                     });
 
                                     $.each(data.rankingKpiList, function (i) {
+                                        if (data.rankingKpiList[i]['kpiName'] == 'Vessel age')
+                                        {
 
+                                        }
+                                        else
+                                        {
                                         var colspan = data.shipcount + 2;
                                         $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
                                         $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
@@ -380,6 +390,7 @@
                                             });
                                             valuecount++;
                                         }
+                                    }
 
                                     });
 
@@ -780,7 +791,7 @@
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown)
                                 {
-                                    /*window.location.href = base_url+'/login';*/
+                                    window.location.href = base_url+'/login';
                                 }
                             });
 

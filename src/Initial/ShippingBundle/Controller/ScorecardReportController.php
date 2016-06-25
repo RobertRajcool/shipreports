@@ -278,7 +278,7 @@ class ScorecardReportController extends Controller
                     array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $returnObject['changeChartData'])
                 ),
                 'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
-                'title' => array('text' => 'Graph Title'),
+                'title' => array('text' => ''),
                 'xAxis' => array('categories' => $returnObject['monthName'], 'labels' => array('style' => array('color' => '#0000F0'))),
                 'yAxis' => array('max' => 3, 'min' => 0)
             );
