@@ -37,6 +37,45 @@ class KpiDetailsController extends Controller
     }
 
     /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/check_kpiName", name="kpidetails_check_kpiName")
+     */
+    public function checkKpiNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $kpiName = $request->request->get('kpiName');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.kpiName')
+                ->from('InitialShippingBundle:KpiDetails', 'a')
+                ->where('a.kpiName = :kpiName')
+                ->setParameter('kpiName', $kpiName)
+                ->getQuery();
+            $kpiDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if(count($kpiDetail)!=0) {
+                $response->setData(array(
+                    'kpiName_status' => 1,
+                    'status' => 1
+                ));
+            } else {
+                $response->setData(array(
+                    'kpiName_status' => 0,
+                    'status' => 1
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
      * Lists all KpiDetails entities.
      *
      * @Route("/ajax_edit", name="kpidetails_ajax_edit")
