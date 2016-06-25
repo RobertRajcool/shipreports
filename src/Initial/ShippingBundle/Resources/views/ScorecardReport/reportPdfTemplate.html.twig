@@ -115,11 +115,11 @@
                             {% for monthname in monthName %}
                                 <td class="month">
                                     {% if yearKpiColorArray[j][i]=="Green" %}
-                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                        <img src="/images/01_score_card_new.png" alt="Loader Image"/>
                                     {% elseif yearKpiColorArray[j][i]=="Red" %}
-                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                        <img src="/images/03_score_card_new.png" alt="Loader Image"/>
                                     {% elseif yearKpiColorArray[j][i]=="Yellow" %}
-                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                        <img src="/images/02_score_card_new.png" alt="Loader Image"/>
                                     {% endif %}
                                 </td>
                                 {% if j < monthName|length-1 %}
@@ -129,19 +129,19 @@
                                             {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
                                                 <img src="/images/straight_arrow.png">
                                             {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
-                                                <img src="/images/down_arrow.png">
+                                                <img src="/images/down_arrow_new.png">
                                             {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                                <img src="/images/down_arrow.png">
+                                                <img src="/images/down_arrow_new.png">
                                             {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
-                                                <img src="/images/up_arrow.png">
+                                                <img src="/images/up_arrow_new.png">
                                             {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
                                                 <img src="/images/straight_arrow.png">
                                             {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                                <img src="/images/up_arrow.png">
+                                                <img src="/images/up_arrow_new.png">
                                             {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
-                                                <img src="/images/up_arrow.png">
+                                                <img src="/images/up_arrow_new.png">
                                             {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
-                                                <img src="/images/down_arrow.png">
+                                                <img src="/images/down_arrow_new.png">
                                             {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
                                                 <img src="/images/straight_arrow.png">
                                             {% endif %}
@@ -202,11 +202,11 @@
                                         <td class="month">
                                             {% if elementColorArray[monthCountList][one]|length != 0 %}
                                                 {% if elementColorArray[monthCountList][one][elementCountList]=="Green" %}
-                                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                    <img src="/images/01_score_card_new.png" alt="Loader Image"/>
                                                 {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" %}
-                                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                    <img src="/images/03_score_card_new.png" alt="Loader Image"/>
                                                 {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" %}
-                                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                    <img src="/images/02_score_card_new.png" alt="Loader Image"/>
                                                 {% endif %}
                                             {% endif %}
                                         </td>
@@ -217,19 +217,19 @@
                                                     {% if elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Red" %}
-                                                        <img src="/images/down_arrow.png">
+                                                        <img src="/images/down_arrow_new.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Green" and elementColorArray[nextMonthCountList][one][elementCountList]=="Yellow" %}
-                                                        <img src="/images/down_arrow.png">
+                                                        <img src="/images/down_arrow_new.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
-                                                        <img src="/images/up_arrow.png">
+                                                        <img src="/images/up_arrow_new.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" and elementColorArray[nextMonthCountList][one][elementCountList]=="Red" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Red" and elementColorArray[nextMonthCountList][one][elementCountList]=="Yellow" %}
-                                                        <img src="/images/up_arrow.png">
+                                                        <img src="/images/up_arrow_new.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][one][elementCountList]=="Green" %}
-                                                        <img src="/images/up_arrow.png">
+                                                        <img src="/images/up_arrow_new.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][one][elementCountList]=="Red" %}
-                                                        <img src="/images/down_arrow.png">
+                                                        <img src="/images/down_arrow_new.png">
                                                     {% elseif elementColorArray[monthCountList][one][elementCountList]=="Yellow" and elementColorArray[nextMonthCountList][one][elementCountList]=="Yellow" %}
                                                         <img src="/images/straight_arrow.png">
                                                     {% endif %}
@@ -260,11 +260,11 @@
                                 {% for monthname in monthName %}
                                     <td>
                                         {% if yearKpiColorArray[nextSecondMonthCountList][one]=="Green" %}
-                                            <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                            <img src="/images/01_score_card_new.png" alt="Loader Image"/>
                                         {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" %}
-                                            <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                            <img src="/images/03_score_card_new.png" alt="Loader Image"/>
                                         {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" %}
-                                            <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                            <img src="/images/02_score_card_new.png" alt="Loader Image"/>
                                         {% endif %}
                                     </td>
                                     {% if nextSecondMonthCountList < monthName|length-1 %}
@@ -274,19 +274,19 @@
                                                 {% if yearKpiColorArray[nextSecondMonthCountList][one]=="Green" and yearKpiColorArray[nextMonthCountList][one]=="Green" %}
                                                     <img src="/images/straight_arrow.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Green" and yearKpiColorArray[nextMonthCountList][one]=="Red" %}
-                                                    <img src="/images/down_arrow.png">
+                                                    <img src="/images/down_arrow_new.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Green" and yearKpiColorArray[nextMonthCountList][one]=="Yellow" %}
-                                                    <img src="/images/down_arrow.png">
+                                                    <img src="/images/down_arrow_new.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" and yearKpiColorArray[nextMonthCountList][one]=="Green" %}
-                                                    <img src="/images/up_arrow.png">
+                                                    <img src="/images/up_arrow_new.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" and yearKpiColorArray[nextMonthCountList][one]=="Red" %}
                                                     <img src="/images/straight_arrow.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Red" and yearKpiColorArray[nextMonthCountList][one]=="Yellow" %}
-                                                    <img src="/images/up_arrow.png">
+                                                    <img src="/images/up_arrow_new.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" and yearKpiColorArray[nextMonthCountList][one]=="Green" %}
-                                                    <img src="/images/up_arrow.png">
+                                                    <img src="/images/up_arrow_new.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" and yearKpiColorArray[nextMonthCountList][one]=="Red" %}
-                                                    <img src="/images/down_arrow.png">
+                                                    <img src="/images/down_arrow_new.png">
                                                 {% elseif yearKpiColorArray[nextSecondMonthCountList][one]=="Yellow" and yearKpiColorArray[nextMonthCountList][one]=="Yellow" %}
                                                     <img src="/images/straight_arrow.png">
                                                 {% endif %}
