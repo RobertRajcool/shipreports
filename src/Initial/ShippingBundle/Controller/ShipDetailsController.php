@@ -61,11 +61,13 @@ class ShipDetailsController extends Controller
             $response = new JsonResponse();
             if(count($ShipDetail)!=0) {
                 $response->setData(array(
-                    'vessel' => 1
+                    'vessel' => 1,
+                    'status' => 1
                 ));
             } else {
                 $response->setData(array(
-                    'vessel' => 0
+                    'vessel' => 0,
+                    'status' => 1
                 ));
             }
             return $response;
@@ -100,12 +102,14 @@ class ShipDetailsController extends Controller
             if(count($ShipDetail)!=0) {
                 $response->setData(array(
                     'imoNumber' => 1,
-                    'imo_length' => 7
+                    'imo_length' => 7,
+                    'status' => 1
                 ));
             } else {
                 $response->setData(array(
                     'imoNumber' => 0,
-                    'imo_length' => 7
+                    'imo_length' => 7,
+                    'status' => 1
                 ));
             }
             return $response;

@@ -261,7 +261,7 @@ class ScorecardReportController extends Controller
             $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
             $pdfObject->defaultheaderline = 0;
             $pdfObject->defaultheaderfontstyle = 'B';
-            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo.png';
+            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
             $pdfObject->SetWatermarkImage($waterMarkImage);
             $pdfObject->showWatermarkImage = true;
 
@@ -393,7 +393,7 @@ class ScorecardReportController extends Controller
             $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
             $pdfObject->defaultheaderline = 0;
             $pdfObject->defaultheaderfontstyle = 'B';
-            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo.png';
+            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
             $pdfObject->SetWatermarkImage($waterMarkImage);
             $pdfObject->showWatermarkImage = true;
 
@@ -525,7 +525,7 @@ class ScorecardReportController extends Controller
             $gearman = $this->get('gearman');
             $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
             $response = new JsonResponse();
-            $response->setData(array('updatemsg' => "Report Has Been Send"));
+            $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
