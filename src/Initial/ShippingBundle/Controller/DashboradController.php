@@ -59,7 +59,7 @@ class DashboradController extends Controller
                 $listAllShipForCompany = $query->getResult();
                 if ($modeYear == 0) {
                     if ($dataofmonth == '') {
-                        $monthInString = date('Y-m-d');
+                        $monthInString = '01-May-2016';
                         $lastMonthDetail = new \DateTime($monthInString);
                         $lastMonthDetail->modify('last day of this month');
                     }
@@ -207,7 +207,7 @@ class DashboradController extends Controller
                     $ob->yAxis->title(array('text' => 'Values'));
                     $ob->yAxis->max(100);
                     $ob->legend->enabled(false);
-                    $ob->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => false),
+                    $ob->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => true),
                         'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
                     $ob->series(array(array('showInLegend' => false, 'colorByPoint' => true, 'name' => $monthInLetter, 'color' => 'rgb(124, 181, 236)', "data" => $overallShipDetailArray)));
                     $ob->exporting->enabled(false);

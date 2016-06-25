@@ -28,8 +28,12 @@
                             locale = "en-us",
                             month = nowdate.toLocaleString(locale, {month: "long"}),
                             year = nowdate.getFullYear();
-                    $('#currentid').text(month + '-' + year);
-                    $('#dataofmonth').val(nowdate);
+                    /*$('#currentid').text(month + '-' + year);
+                    $('#dataofmonth').val(nowdate);*/
+                    var tempdate='May-2016';
+                    $('#currentid').text(tempdate);
+                    $('#dataofmonth').val(tempdate);
+
 
                     var areaId = $('#area');
                     $('#proviousmonth').click(function ($e) {
