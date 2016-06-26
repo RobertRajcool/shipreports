@@ -36,6 +36,48 @@ class RankingElementDetailsController extends Controller
     }
 
     /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/check_elementName", name="rankingelementdetails_check_elementName")
+     */
+    public function checkElementNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $elementName = $request->request->get('elementName');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                ->where('a.elementName = :elementName')
+                ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('elementName', $elementName)
+                ->setParameter('kpiDetailsId', $kpiDetailsId)
+                ->getQuery();
+            $elementDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if(count($elementDetail)!=0) {
+                $response->setData(array(
+                    'elementName_status' => 1,
+                    'status' => 1
+                ));
+            } else {
+                $response->setData(array(
+                    'elementName_status' => 0,
+                    'status' => 1
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
      * Lists all ElementDetails entities.
      *
      * @Route("/select", name="rankingelementdetails_select1")
