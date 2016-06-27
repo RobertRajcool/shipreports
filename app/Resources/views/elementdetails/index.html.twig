@@ -19,6 +19,7 @@
                 var createView = $('.element_create_view');
                 var showElement = $('.show_element');
                 var editElement = $('.grid_edit_element');
+                var createElementId = $('#element-id');
 
                 boxIcon.hide();
                 showElement.hide();
@@ -85,6 +86,45 @@
                     listIcon.show();
                     gridView.show();
                     showElement.show();
+                });
+
+                var createElementErrorMsg = $('#create-element-error');
+                createElementId.change(function($e) {
+                    $e.preventDefault();
+                    var data = {
+                        'elementName':createElementId.val(),
+                        'kpiDetailsId' :kpiId.val()
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_elementName",/*Routing.generate('elementdetails_check_elementName'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createElementErrorMsg.empty();
+                            if(data.elementName_status==data.status) {
+                                createElementErrorMsg.text("Element name is already registered !");
+                                createElementId.focus();
+                                return false;
+                            }
+                            if(!$.trim(createElementId.val())) {
+                                createElementErrorMsg.text('Element name cannot be empty !');
+                                createElementId.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
                 });
 
                 var count = 0;
@@ -492,8 +532,9 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.elementName,{'label': ''}) }}
+                                        {{ form_widget(form.elementName,{'id':'element-id','label': ''}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="create-element-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
@@ -569,21 +610,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel details</legend>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell name</label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell detail</label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-                            </fieldset>#}
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="get_value" type="submit">{{ 'vessel.add'|trans }}</button>

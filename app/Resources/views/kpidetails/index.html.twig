@@ -33,6 +33,8 @@
                 var editWeight = $('.edit_kpi_weightage');
                 var createWeightError = $('.weight-error-message-create');
                 var editWeightError = $('.weight-error-message-edit');
+                var createKpiId = $('#kpi-id');
+
                 listView.hide();
                 boxIcon.hide();
                 showKpi.hide();
@@ -97,6 +99,42 @@
                     }
                 });
 
+                var createKpiErrorMsg = $('#create-kpi-error');
+                createKpiId.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'kpiName':createKpiId.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_kpiName",/*Routing.generate('kpidetails_check_kpiName'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createKpiErrorMsg.empty();
+                            if(data.kpiName_status==data.status) {
+                                createKpiErrorMsg.text("Kpi name is already registered !");
+                                createKpiId.focus();
+                                return false;
+                            }
+                            if(!$.trim(createKpiId.val())) {
+                                createKpiErrorMsg.text('Kpi name cannot be empty !');
+                                createKpiId.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
                 createWeight.change(function ($e) {
                     $e.preventDefault();
                     var weight = $(this).val();
@@ -149,23 +187,6 @@
                         })
                     }
                 }
-
-               /* var submitButton = $('#form_id');
-                submitButton.submit(function($e) {
-                    var aM = $('.active-month').val();
-                    alert(aM);
-                    var aY = $('.active-year').val();
-                    var eM = $('.end-month').val();
-                    var eY = $('.end-year').val();
-                    $e.preventDefault();
-                    if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '0' || aY == '0' || eM == '0' || eY == '0') {
-                        jAlert('choose valid date');
-                        return false;
-                    } else {
-                        return true;
-                    }
-                    return true;
-                });*/
 
                 var ruleObjectText = $('#rule_obj_text');
                 var ruleDiv = $('.show_rule_div');
@@ -240,6 +261,7 @@
                     endYear.empty();
                     validDate.empty();
                     editWeightError.empty();
+                    createKpiErrorMsg.empty();
                 }
 
                 function successFunction(data) {
@@ -955,8 +977,9 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.kpiName,{'id':'kpiid','label': ''}) }}
+                                        {{ form_widget(form.kpiName,{'id':'kpi-id','label': ''}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="create-kpi-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
@@ -1032,21 +1055,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel details</legend>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Cell name</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Cell detail</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-                            </fieldset>#}
                             <div class="kpi_rules">
                                 <fieldset class="fieldset_box ">
                                     <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
@@ -1124,17 +1132,6 @@
                             </label>
                         </div>
                     </fieldset>
-                    {#<fieldset class="fieldset_box">
-                        <legend class="legend_name">Excel details</legend>
-                        <div class="form_view">
-                            <label class="form_labell"><strong>Cell name :</strong></label>
-                            <label class="form_input kpi_cellName"> </label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell"><strong>Cell detail :</strong></label>
-                            <label class="form_input kpi_cellDetail"> </label>
-                        </div>
-                    </fieldset>#}
                     <fieldset class="fieldset_box add_rule_right_edit_form show_rule_div">
                         <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                         <div class="table-responsive">
@@ -1249,21 +1246,6 @@
                                     <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel details</legend>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell name</label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_kpi_cellName" value="" placeholder="">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell detail</label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_kpi_cellDetails" value="" placeholder="">
-                                    </div>
-                                </div>
-                            </fieldset>#}
                             <fieldset class="fieldset_box add_rule_right_edit_form edit_rule_div">
                                 <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                                 <div class="table-responsive">

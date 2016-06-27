@@ -37,6 +37,48 @@ class ElementDetailsController extends Controller
     }
 
     /**
+     * Finds and displays a KpiDetails entity.
+     *
+     * @Route("/check_elementName", name="elementdetails_check_elementName")
+     */
+    public function checkElementNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $elementName = $request->request->get('elementName');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.elementName = :elementName')
+                ->andwhere('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('elementName', $elementName)
+                ->setParameter('kpiDetailsId', $kpiDetailsId)
+                ->getQuery();
+            $elementDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            if(count($elementDetail)!=0) {
+                $response->setData(array(
+                    'elementName_status' => 1,
+                    'status' => 1
+                ));
+            } else {
+                $response->setData(array(
+                    'elementName_status' => 0,
+                    'status' => 1
+                ));
+            }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
      * Lists all ElementDetails entities.
      *
      * @Route("/{id}/select", name="elementdetails_select")
@@ -181,24 +223,11 @@ class ElementDetailsController extends Controller
             $elementDetail->setactivatedDate($new_date);
             $elementDetail->setendDate($new_date1);
             $elementDetail->setweightage($weightage);
-            //$elementDetail->setrules($rules);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
             $em->flush();
 
-            /*$id = $elementDetail->getId();
-                    for ($i=1;$i<=$rules;$i++) {
-                        $variable = "rules-$i";
-                        $engine_rules = $request->request->get($variable);
-                        if($engine_rules!="") {
-                            $elementRules = new ElementRules();
-                            $elementRules->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id'=>$id)));
-                            $elementRules->setRules($engine_rules);
-                            $em->persist($elementRules);
-                            $em->flush();
-                        }
-                    }*/
             return $this->redirectToRoute('elementdetails_select1');
         } else {
             return $this->redirectToRoute('fos_user_security_login');

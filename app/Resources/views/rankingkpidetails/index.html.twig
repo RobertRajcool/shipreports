@@ -29,6 +29,8 @@
                 var editWeight = $('.edit_kpi_weightage');
                 var createWeightError = $('.weight-error-message-create');
                 var editWeightError = $('.weight-error-message-edit');
+                var createKpiId = $('#kpi-id');
+
                 listView.hide();
                 boxIcon.hide();
                 showKpi.hide();
@@ -91,6 +93,42 @@
                     else {
                         editShipOptions.attr('selected', false);
                     }
+                });
+
+                var createKpiErrorMsg = $('#create-kpi-error');
+                createKpiId.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'kpiName':createKpiId.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"check_kpiName",/*Routing.generate('kpidetails_check_kpiName'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            createKpiErrorMsg.empty();
+                            if(data.kpiName_status==data.status) {
+                                createKpiErrorMsg.text("Kpi name is already registered !");
+                                createKpiId.focus();
+                                return false;
+                            }
+                            if(!$.trim(createKpiId.val())) {
+                                createKpiErrorMsg.text('Kpi name cannot be empty !');
+                                createKpiId.focus();
+                                return false;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
                 });
 
                 createWeight.change(function ($e) {
@@ -929,8 +967,9 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.kpiName,{'id':'kpiid','label': ''}) }}
+                                        {{ form_widget(form.kpiName,{'id':'kpi-id','label': ''}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="create-kpi-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
@@ -1006,21 +1045,6 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel details</legend>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Cell name</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Cell detail</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-                            </fieldset>#}
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="submit_id">{{ 'vessel.add'|trans }}</button>
@@ -1066,17 +1090,6 @@
                             </label>
                         </div>
                     </fieldset>
-                    {#<fieldset class="fieldset_box">
-                        <legend class="legend_name">Excel details</legend>
-                        <div class="form_view">
-                            <label class="form_labell"><strong>Cell name :</strong></label>
-                            <label class="form_input kpi_cellName"> </label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell"><strong>Cell detail :</strong></label>
-                            <label class="form_input kpi_cellDetail"> </label>
-                        </div>
-                    </fieldset>#}
                 </div>
             </div>
         </section>
@@ -1178,21 +1191,6 @@
                                     <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel details</legend>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell name</label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_kpi_cellName" value="" placeholder="">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell detail</label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_kpi_cellDetails" value="" placeholder="">
-                                    </div>
-                                </div>
-                            </fieldset>#}
                         <div class="actions_submit">
                             <button class="submit_btn edit_submit_button" type="submit" value="Submit">{{ 'vessel.save'|trans }}</button>
                             <button class="cancel_btn edit_cancel_button" value="Submit">{{ 'vessel.cancel'|trans }}</button>
