@@ -38,7 +38,7 @@
             </div>
             <div class="brand-logo-2"><img src="images/pioneer_logo.png"></div>
         </div>
-
+        {% if kpiname !='Vessel age'%}
         <section class="data-row-section top-margin-space">
             <table class="responsive-table certificates-table kpi_ranking_12_month_pdf_main_title_row">
                 <thead>
@@ -158,6 +158,22 @@
                 </tbody>
             </table>
         </section>
+        {% else %}
+            <section class="data-row-section top-margin-space">
+                <table class="responsive-table certificates-table">
+                    <thead>
+                    <tr>
+                        <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpiname }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><img src="/phantomjs/listofgraph/{{ link }}" alt="Loader Image"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        {% endif %}
 
 
 
