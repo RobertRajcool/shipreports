@@ -1,44 +1,63 @@
-{% extends 'base.html.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shipping</title>
+    <!-- Bootstrap -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/app.css" rel="stylesheet">
+    <link href="/css/pdf.css" rel="stylesheet">
 
-{% block body %}
-    <h1>CompanyUsers</h1>
+    <link href="/css/ss-standard.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">{{ headerTitle }}</div>
+            </div>
+            <div class="brand-logo-2"><img src="/images/pioneer_logo_02.png"></div>
+        </div>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table kpi_name_weightage_row">
+                <thead>
+                <tr>
+                    <th class="branding-colours">Username</th>
+                    <th class="branding-colours">Email</th>
+                    <th class="branding-colours">Mobile</th>
+                    <th class="branding-colours">Roles</th>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ companyUser.id }}</td>
-            </tr>
-            <tr>
-                <th>Companyname</th>
-                <td>{{ companyUser.companyName }}</td>
-            </tr>
-            <tr>
-                <th>Username</th>
-                <td>{{ companyUser.userName }}</td>
-            </tr>
-            <tr>
-                <th>Role</th>
-                <td>{{ companyUser.role }}</td>
-            </tr>
-            <tr>
-                <th>Emailid</th>
-                <td>{{ companyUser.emailId }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('companyusers_select') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('companyusers_edit', { 'id': companyUser.id }) }}">Edit</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
-{% endblock %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for listofuser in userDetails %}
+                    <tr>
+                        <td>{{listofuser.username }}</td>
+                        <td>{{listofuser.email }}</td>
+                        <td>{{listofuser.mobile }}</td>
+                        {% if listofuser.roles[0] == "ROLE_MANAGER" %}
+                            <td>KPI Manager</td>
+                        {% elseif listofuser.roles[0] == "ROLE_KPI_INFO_PROVIDER" %}
+                            <td>V-Ships Manager</td>
+                        {% elseif listofuser.roles[0] == "ROLE_ADMIN" %}
+                            <td>Admin</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+</body>
+</html>

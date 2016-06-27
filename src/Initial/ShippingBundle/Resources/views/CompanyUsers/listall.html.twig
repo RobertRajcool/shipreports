@@ -567,7 +567,15 @@
             <div class=" users_advanced_list_views_screen">
                 <div class="">
                     <div class="add_user_btn_main">
-                        <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{ 'add.user'|trans }}</a></span>
+                        <span class="user_btn_main"  style="float: left;"><a href="" class="ss-plus add_btn">{{ 'add.user'|trans }}</a></span>
+                        <form id="" class="form-horizontal no-style" action="{{ path('userdetails_pdf') }}"
+                              target="_blank" method="post" style="float: left;">
+                            {#<input type="hidden" class="activeMonthText" name="activeMonth" value="">
+                            <input type="hidden" class="activeYearText" name="activeYear" value="">
+                            <input type="hidden" class="endMonthText" name="endMonth" value="">
+                            <input type="hidden" class="endYearText" name="endYear" value="">#}
+                            <span class="user_btn_main"><button type="submit" class="print_btn">Print</button></span>
+                        </form>
                         <span class="user_btn_main grid_list_main">
                          <span class="active"><a href="" class="grid_list_icon ss-grid box_icon">&nbsp;</a></span>
                          <span><a href="" class="grid_list_icon ss-rows list_icon">&nbsp;</a></span>
