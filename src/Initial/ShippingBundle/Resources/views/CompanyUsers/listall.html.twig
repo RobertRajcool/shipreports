@@ -27,7 +27,6 @@
         '@AppBundle/Resources/public/js/demo.js'
         '@AppBundle/Resources/public/js/actions-builder.js'
         '@AppBundle/Resources/public/js/Element_conditions-builder.js'
-        '@AppBundle/Resources/public/js/rules.js'
         '@AppBundle/Resources/public/js/sample.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -40,6 +39,8 @@
                 $('.show_view').hide();
                 $('.edit_view').hide();
                 $('.box_icon').hide();
+                var editEmailName;
+                var editMobileName;
 
 
                 $('.box_icon').click(function ($e) {
@@ -82,8 +83,11 @@
                     $('.fos_user_registration_register')[0].reset();
 
                 });
-                $('.edit_btn').live("click", function ($e) {
+                var  editButton= $('.edit_btn')
+                     editButton.live("click", function ($e) {
                     $e.preventDefault();
+                   editEmailName = editEmail.val();
+                   editMobileName = editMobile.val();
                     $('#grid_view').show();
                     $('#list_view').hide();
                     $('.show_view').hide();
@@ -164,11 +168,11 @@
                 });
 
 
-                var  editEmailError = ('#edit-mail')
+                /*var  editEmailError = ('#edit-mail')
 
                 function editErrorEmptyValuesFunction() {
                     editEmailError.empty();
-                }
+                }*/
 
                 var createEmail = $('#val_email');
                 var createVesselErrorMsg = $('#create-val-email');
@@ -207,8 +211,8 @@
                     });
                 });
 
-                var editEmail = $('#mail')
-                var  editEmailError = ('#edit-mail')
+                var editEmail = $('#mail');
+                var  editEmailError = ('#edit-mail');
                 editEmail.change(function($e) {
                     $e.preventDefault();
                     var data = {'email': editEmail.val()};
@@ -227,8 +231,7 @@
                     $.ajax({
                         success: function (data) {
                             //editEmailError.empty();
-                            if (data.email == 1) {
-                                jAlert()
+                            if(data.email==data.status && editEmailName!=editEmail.val()) {
                                 jAlert("Email is already registered !");
                                 editEmail.focus();
                                 return false;
@@ -289,6 +292,48 @@
                     });
                 });
 
+                var editMobile = $('#mobile');
+                var  editEmailError = ('#edit-phone');
+                editMobile.change(function($e) {
+                    $e.preventDefault();
+                    var data = {'mobile': editMobile.val()};
+                    $.ajaxSetup({
+                        global: false,
+                        type: "POST",
+                        url: "check_mobile",
+                        data: data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function (data) {
+                            //editEmailError.empty();
+                            if(data.mobile==data.status && editMobileName!=editMobile.val()) {
+                                jAlert("Mobile number is already registered !");
+                                editMobile.focus();
+                                return false;
+                            }
+                            if (!$.trim(editMobile.val())) {
+                                jAlert('mobile cannot be empty !');
+                                editMobile.focus();
+                                return false;
+                            }
+                            if (editMobile.val().length < 10 || editMobile.val().length > 10) {
+                               jAlert("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
+                                editMobile.focus();
+                                return false;
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+
+                });
 
 
 
@@ -386,18 +431,24 @@
 
             function validate(txtMobId) {
                 //alert('hi');
-                var phoneNo = document.getElementById('user_mobile');
+                //var phoneNo = document.getElementById('user_mobile');
                 //var fullname = document.getElementById('full_name');
                 var name = document.getElementById('val_name');
                 var char = /^[A-Za-z]+$/;
 
-                if (phoneNo.value.length < 10 || phoneNo.value.length > 10) {
+                /*if (phoneNo.value.length < 10 || phoneNo.value.length > 10) {
                     jAlert("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
                     document.getElementById('user_mobile').focus();
                     return false;
-                }
+                }*/
                 if (!name.value.match(char)) {
                     jAlert("please enter characters only");
+                    document.getElementById('val_name').focus();
+                    return false;
+                }
+
+                if(!$.trim(name.val())) {
+                    jAlert('mobile number cannot be empty !');
                     document.getElementById('val_name').focus();
                     return false;
                 }
@@ -702,8 +753,9 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-4">{{ 'user.edit_mobile'|trans }}</label>
                                 <div class="col-xs-8">
-                                    <input type="text" class="edit_mobile" value="" placeholder="" required>
+                                    <input type="text" class="edit_mobile" id="mobile" value="" placeholder="" required>
                                 </div>
+                                <div class="col-xs-8 weight-error-message" id="edit-phone"> </div>
                             </div>
                         </fieldset>
                         <fieldset class="fieldset_box">
