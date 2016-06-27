@@ -399,10 +399,16 @@ select {
 .dashboard .widget.time {
     border-top: 2px solid #40bad9;
 }
+.dashboard .widget.time.time-new {
+    border-top: none;
+}
 .dashboard .widget .x-header {
     padding: 5px 10px;
     height: 30px;
     border-bottom: 1px solid #e9e9e8;
+}
+.dashboard .widget .x-header.x-header-new {
+    background:#103a71;
 }
 .dashboard .widget .x-header .x-panel-header-text {
     color: #383838;
@@ -411,8 +417,15 @@ select {
     float:left;
     padding:1px 0px;
 }
+.dashboard .widget .x-header .x-panel-header-text-new {
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    float:left;
+    padding:1px 0px;
+}
 .dashboard .widget .x-header .vessels_number {
-    color: #383838;
+    color: #FFFFFF;
     font-size: 14px;
     font-weight: bold;
     float:right;
@@ -798,8 +811,8 @@ select {
 .view_new_user_photo img {
     width:116px;
     width: 116px;
-	border-radius:58px;
-	border:2px solid #CCCCCC;
+    border-radius:58px;
+    border:2px solid #CCCCCC;
 }
 
 .fieldset_box {
@@ -1268,7 +1281,7 @@ select {
     top:0px;
     margin:-1px 0 0 -24px;
     width:100%;
-	z-index: 1;
+    z-index: 1;
 }
 .add_new_kpi_top_title .title_month {
     width:794px;
@@ -2381,10 +2394,10 @@ input[type="color"],
 }
 
 @media screen and (-webkit-min-device-pixel-ratio:0) {
-/* Safari and Chrome */
-	.graph_and_colour_coding_dashboard_row .average_score_2_td {
-		width: 60.1%;
-	}
+    /* Safari and Chrome */
+    .graph_and_colour_coding_dashboard_row .average_score_2_td {
+        width: 60.1%;
+    }
     .graph_and_colour_coding_dashboard_row thead {
         /* head takes the height it requires,
         and it's not scaled when table is resized */
@@ -2395,7 +2408,7 @@ input[type="color"],
 
 
 .table_container_verfication {
-    height:625px;
+    height:240px;
 }
 .verfication_ranking_table_form_section-scroll thead, .verfication_ranking_table_form_section-scroll tbody tr {
     display: table;
@@ -2409,6 +2422,14 @@ input[type="color"],
     padding:0px;
     margin:0px;
     border:1px solid #dddddd;
+}
+.verfication_ranking_table_form_section-scroll .sub_title {
+    background:#d2d2d2;
+    text-align:left;
+    color: #505b65;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 3px 2px 3px 4px;
 }
 .verfication_ranking_table_form_section-scroll thead {
     /* head takes the height it requires,
@@ -2447,7 +2468,6 @@ input[type="color"],
     padding:3px 2px 3px 4px !important;
     border-top: 1px solid #eaeaea;
     text-align:center;
-    vertical-align: middle !important;
 }
 .verfication_ranking_table_form_section-scroll tbody tr {
     border-bottom: none;
@@ -2491,45 +2511,6 @@ input[type="color"],
 .verfication_ranking_table_form_section-scroll .kpi_ship_th {
     margin-left:6px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.verfication_ranking_table_form_section-scroll .sub_title {
-    background:#d2d2d2;
-    text-align:left;
-    color: #505b65;
-    font-size: 13px;
-    font-weight: bold;
-    padding: 3px 2px 3px 4px;
-}
-
-
-
-
-
-
-
 .print_btn {
     background-color: #f4f4f4;
     border-radius: 3px;
@@ -2543,4 +2524,36 @@ input[type="color"],
     font-weight:bold;
     margin-top: -3px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -2402,12 +2402,14 @@ class DashboradController extends Controller
                     ->setParameter('userId', $userId)
                     ->getQuery();
             }
+            $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
             $series = array(
                 array("name" => "", 'showInLegend' => false, 'color' => '#103a71', "data" => array())
             );
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
+            $ob->chart->plotBackgroundImage($WateMarkImagePath);
             $ob->title->text('', array('style' => array('color' => 'red')));
             $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
             $ob->xAxis->categories(array());
@@ -2853,7 +2855,7 @@ class DashboradController extends Controller
             $mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $mpdf->showWatermarkImage = true;
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
                 'exporting' => array('enabled' => false),
                 'plotOptions' => array('series' => array(
                     "allowPointSelect" => true,
@@ -2925,7 +2927,7 @@ class DashboradController extends Controller
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 $graphObject = array(
-                    'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                    'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
                     'exporting' => array('enabled' => false),
                     'plotOptions' => array('series' => array(
                         "allowPointSelect" => true,
