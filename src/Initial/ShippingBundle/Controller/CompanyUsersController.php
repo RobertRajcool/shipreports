@@ -240,11 +240,13 @@ class CompanyUsersController extends Controller
             $response = new JsonResponse();
             if (count($UserDetail) != 0) {
                 $response->setData(array(
-                    'email' => 1
+                    'email' => 1,
+                    'status' => 1
                 ));
             } else {
                 $response->setData(array(
-                    'email' => 0
+                    'email' => 0,
+                    'status' => 1
                 ));
             }
             return $response;
@@ -273,11 +275,13 @@ class CompanyUsersController extends Controller
             $response = new JsonResponse();
             if (count($UserDetail) != 0) {
                 $response->setData(array(
-                    'mobile' => 1
+                    'mobile' => 1,
+                    'status' => 1
                 ));
             } else {
                 $response->setData(array(
-                    'mobile' => 0
+                    'mobile' => 0,
+                    'status' =>1
                 ));
             }
             return $response;
