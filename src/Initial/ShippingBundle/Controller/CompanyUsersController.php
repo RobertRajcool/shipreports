@@ -11,6 +11,7 @@ use Initial\ShippingBundle\Form\CompanyUsersType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Initial\ShippingBundle\Entity\User;
 use FOS\UserBundle\Model\UserInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * CompanyUsers controller.
@@ -290,5 +291,68 @@ class CompanyUsersController extends Controller
         }
 
     }
+
+
+
+    /**
+     * Lists all ShipDetails entities.
+     *
+     * @Route("/user_pdf", name="userdetails_pdf")
+     * @Method("POST")
+     */
+    public function userPdfAction(Request $request, $status = '')
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+        if ($user != null) {
+            $role = $this->container->get('security.context')->isGranted('ROLE_ADMIN');
+            $em = $this->getDoctrine()->getManager();
+
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:User', 'a')
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:User', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+            $userDetails = $query->getResult();
+
+            $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
+            $pdfObject->defaultheaderline = 0;
+            //$pdfObject->defaultheaderfontstyle = 'B';
+            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+            $pdfObject->SetWatermarkImage($waterMarkImage);
+            $pdfObject->showWatermarkImage = true;
+
+            $userDesign =  $this->renderView('companyusers/show.html.twig', array(
+                'userDetails' => $userDetails,
+                'headerTitle' => 'User Details'
+            ));
+
+            $pdfObject->AddPage('', 4, '', 'on');
+            $pdfObject->SetFooter('|{DATE l jS F Y h:i}| Page No: {PAGENO}');
+            $pdfObject->WriteHTML($userDesign);
+
+            $response = new Response();
+            $content = $pdfObject->Output('', 'S');
+            $response->setContent($content);
+            $response->headers->set('Content-Type', 'application/pdf');
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+
+
+
 
 }
