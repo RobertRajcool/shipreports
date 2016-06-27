@@ -2402,14 +2402,14 @@ class DashboradController extends Controller
                     ->setParameter('userId', $userId)
                     ->getQuery();
             }
-            $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+            $WateMarkImagePath = '/images/pioneer_logo_01.png';
             $series = array(
                 array("name" => "", 'showInLegend' => false, 'color' => '#103a71', "data" => array())
             );
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
-            $ob->chart->plotBackgroundImage($WateMarkImagePath);
+            //$ob->chart->plotBackgroundImage($WateMarkImagePath);
             $ob->title->text('', array('style' => array('color' => 'red')));
             $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
             $ob->xAxis->categories(array());
