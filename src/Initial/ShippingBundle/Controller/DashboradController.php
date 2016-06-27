@@ -2542,6 +2542,7 @@ class DashboradController extends Controller
             $dataforgraphforship = array();
             $NewMonthlyKPIValue = array();
             $NewMonthlyAvgTotal = array();
+            $vesseldata=array();
             $NewMonthColor = array();
             for ($d = $initial; $d < $statusVerified; $d++) {
                 $time2 = strtotime($oneyear_montharray[$d]);
@@ -2574,6 +2575,7 @@ class DashboradController extends Controller
                         }
                         $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
                         array_push($rankingKpiValueCountArray, $vesselage);
+                        array_push($vesseldata,$vesselage);
                     }
                     else
                     {
@@ -2790,12 +2792,14 @@ class DashboradController extends Controller
                     'shipid' => $shipid->getId(),
                     'chartdata' => $dataforgraphforship,
                     'kpimonthdata' => $monthlyKpiValue,
+                    'vesseldatas'=>$vesseldata,
                     'currentyear' => $currentyear,
                     'ageofvessel' => $yearcount,
                     'kpigraph' => $New_overallfindingelementgraph,
                     'elementcolorarray' => $New_overallfindingelementcolor,
                     'monthlydata' => $New_overallfindingelementvalue,
                     'elementRule' => $scorecardElementRules,
+                    'vesseldatas'=>$vesseldata,
                     'listofelement' => $ElementName_Weightage,
                 );
             }
@@ -2814,6 +2818,7 @@ class DashboradController extends Controller
                     'kpimonthdata' => $monthlyKpiValue,
                     'currentyear' => $currentyear,
                     'ageofvessel' => $yearcount,
+                    'vesseldatas'=>$vesseldata,
                     'kpigraph' => $New_overallfindingelementgraph,
                     'elementcolorarray' => $New_overallfindingelementcolor,
                     'monthlydata' => $New_overallfindingelementvalue,
@@ -2852,6 +2857,7 @@ class DashboradController extends Controller
             $mpdf->defaultheaderfontstyle = 'B';
             $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
             $mpdf->SetWatermarkImage($WateMarkImagePath);
+            //$mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $mpdf->showWatermarkImage = true;
             $graphObject = array(
                 'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
@@ -2925,23 +2931,45 @@ class DashboradController extends Controller
                 $kpiName = $rankingKpiList[$KpiPdfcount]['kpiName'];
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
-                $graphObject = array(
-                    'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
-                    'exporting' => array('enabled' => false),
-                    'plotOptions' => array('series' => array(
-                        "allowPointSelect" => true,
-                        "dataLabels" => array(
-                            "enabled" => true
-                        )
-                    )),
-                    'series' => array(
-                        array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['kpigraph'][$kpiid])
-                    ),
-                    'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
-                    'title' => array('text' => $kpiName),
-                    'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
-                    'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
-                );
+                if ($kpiName != 'Vessel age') {
+                    $graphObject = array(
+                        'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                        'exporting' => array('enabled' => false),
+                        'plotOptions' => array('series' => array(
+                            "allowPointSelect" => true,
+                            "dataLabels" => array(
+                                "enabled" => true
+                            )
+                        )),
+                        'series' => array(
+                            array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['kpigraph'][$kpiid])
+                        ),
+                        'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                        'title' => array('text' => $kpiName),
+                        'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
+                        'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                    );
+                }
+                else
+                {
+                    $graphObject = array(
+                        'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                        'exporting' => array('enabled' => false),
+                        'plotOptions' => array('series' => array(
+                            "allowPointSelect" => true,
+                            "dataLabels" => array(
+                                "enabled" => true
+                            )
+                        )),
+                        'series' => array(
+                            array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['vesseldatas'])
+                        ),
+                        'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                        'title' => array('text' => $kpiName),
+                        'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
+                        'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                    );
+                }
                 $jsondata = json_encode($graphObject);
                 $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
@@ -3065,23 +3093,45 @@ class DashboradController extends Controller
                 $kpiName = $rankingKpiList[$KpiPdfcount]['kpiName'];
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
-                $graphObject = array(
-                    'chart' => array('renderTo' => 'areaId', 'type' => "line"),
-                    'exporting' => array('enabled' => false),
-                    'plotOptions' => array('series' => array(
-                        "allowPointSelect" => true,
-                        "dataLabels" => array(
-                            "enabled" => true
-                        )
-                    )),
-                    'series' => array(
-                        array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['kpigraph'][$kpiid])
-                    ),
-                    'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
-                    'title' => array('text' => $kpiName),
-                    'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
-                    'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
-                );
+                if ($kpiName != 'Vessel age') {
+                    $graphObject = array(
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'exporting' => array('enabled' => false),
+                        'plotOptions' => array('series' => array(
+                            "allowPointSelect" => true,
+                            "dataLabels" => array(
+                                "enabled" => true
+                            )
+                        )),
+                        'series' => array(
+                            array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['kpigraph'][$kpiid])
+                        ),
+                        'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                        'title' => array('text' => $kpiName),
+                        'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
+                        'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                    );
+                }
+                else
+                {
+                    $graphObject = array(
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'exporting' => array('enabled' => false),
+                        'plotOptions' => array('series' => array(
+                            "allowPointSelect" => true,
+                            "dataLabels" => array(
+                                "enabled" => true
+                            )
+                        )),
+                        'series' => array(
+                            array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $reportObject['vesseldatas'])
+                        ),
+                        'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                        'title' => array('text' => $kpiName),
+                        'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
+                        'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                    );
+                }
                 $jsondata = json_encode($graphObject);
                 $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
