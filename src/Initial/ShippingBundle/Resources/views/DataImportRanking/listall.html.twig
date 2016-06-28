@@ -1,36 +1,37 @@
-{% extends 'base.html.twig' %}
-{% block title %}Star Shipping Application{% endblock %}
-
-{% block content %}
-    <h1 align="center">Shipping Application</h1>
-
-{% endblock %}
+{% extends template %}
 {% block body %}
-    {% block javascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-    {% endblock %}
-
-
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="page-header">
-            <h2>List of files upload</h2>
-            <a href="{{ path('fileadd') }}">Import File</a>
-        </div>
-        {% if userdetails|length <= 0 %}
-            <h4 align="center">No Record Found </h4>
-        {% endif %}
-        {% if userdetails|length > 0 %}
-        <div class="table-responsive">
-        <table id="readingkpitable" class="table table-striped">
+<div class="col-md-12 users_advanced_list_views_screen">
+    {# <div class="page-header">
+         <h2>{{ shipname.shipName }}</h2>
+         <a href="{{ path('dashboradhome') }}">Back</a>
+     </div>#}
+    <div class="table-responsive">
+        <table class="table table-striped graph_and_colour_coding_main_title_row">
             <thead>
             <tr>
-                {#<th>Username</th>#}
+                <th>List files</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <a class="linkclass"  style="float: right"  >{{ 'elementranking.backlink'|trans }}</a></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-striped-2 kpi_ranking_row">
+            <thead>
+            <tr>
+
                 <th>Data of Month</th>
                 <th>Upload DateTime</th>
                 <th>Filename</th>
+                {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                    <th>Username</th>
                 <th>Options</th>
+                {% endif %}
+
 
             </tr>
             </thead>
@@ -39,24 +40,27 @@
                 <tr>
 
                     {#<td>{{ listofuser.userid }}</td>#}
-                    <td>{{ listofuser.dataOfMonth|date('F-Y') }}</td>
-                    <td>{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
-                    <td>{{ listofuser.filename }}</td>
-                    <td>
+                    <td class="kpi_name_thtd">{{ listofuser.dataOfMonth|date('F-Y') }}</td>
+                    <td class="kpi_name_thtd">{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
+                    <td class="kpi_name_thtd">{{ listofuser.filename }}</td>
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                        <td class="kpi_name_thtd">
+                            {{ listofuser.userid }}
+                        </td>
+                    <td class="kpi_name_thtd">
 
-                        <a href="{{ path('downloadexcel', { 'filename': listofuser.filename }) }}">
+                        <a href="{{ path('downfile_ranking', { 'filename': listofuser.filename }) }}">
                             <img src="/images/123c155_Xcel-icon_1.jpg" height="30" alt="Loader Image"/>
                         </a>
                     </td>
+                    {% endif %}
 
                 </tr>
             {% endfor %}
             </tbody>
+            </tbody>
         </table>
-</div>
-        {% endif %}
-
-
+        </div>
     </div>
 
 {% endblock %}

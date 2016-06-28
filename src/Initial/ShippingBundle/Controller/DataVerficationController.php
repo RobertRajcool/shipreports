@@ -1963,14 +1963,28 @@ class DataVerficationController extends Controller
      */
     public function upAction(Request $request)
     {
-        $excelobj = new Excel_file_details();
+        $user = $this->getUser();
+        if ($user == null)
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        else {
+            $userId = $user->getId();
+            $username = $user->getUsername();
+            $role = $user->getRoles();
+            $excelobj = new Excel_file_details();
 
-        $form = $this->createCreateForm($excelobj);
+            $form = $this->createCreateForm($excelobj);
+            $templatechoosen = 'base.html.twig';
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                $templatechoosen = 'v-ships_layout.html.twig';
+            }
 
 
-        return $this->render('InitialShippingBundle:DataImportRanking:excelfile.html.twig', array(
-            'form' => $form->createView(),
-        ));
+            return $this->render('InitialShippingBundle:DataImportRanking:excelfile.html.twig', array(
+                'form' => $form->createView(),'template'=>$templatechoosen
+            ));
+        }
     }
 
     /**
@@ -1985,6 +1999,7 @@ class DataVerficationController extends Controller
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         } else {
+            $userid=$user->getId();
             $excelobj = new Excel_file_details();
             //$uploadsucess=false;
             $form = $this->createCreateForm($excelobj);
@@ -2012,10 +2027,10 @@ class DataVerficationController extends Controller
 
                     $username = $user->getUsername();
                     $userquery = $em->createQueryBuilder()
-                        ->select('a.emailId')
-                        ->from('InitialShippingBundle:CompanyDetails', 'a')
-                        ->where('a.adminName = :userId')
-                        ->setParameter('userId', $username)
+                        ->select('IDENTITY(a.companyid)')
+                        ->from('InitialShippingBundle:User', 'a')
+                        ->where('a.id = :userId')
+                        ->setParameter('userId', $userid)
                         ->getQuery();
                     $useremailid = $userquery->getSingleScalarResult();
                     $excelobj->setFilename($fileName);
@@ -2023,81 +2038,90 @@ class DataVerficationController extends Controller
                     $input = $uploaddir . '/' . $excelobj->getFilename();
 
                     $mydatevalue = $excelobj->getDataofmonth();
+                    $exceldataofmonth = $excelobj->getDataOfMonth();
+                    $myexcelnewdatevalue = $exceldataofmonth->modify('last day of this month');
+                    $excelobj->setUserid($username);
+                    $excelobj->setCompanyId($useremailid);
+                    $nowdate1 = date("Y-m-d H:i:s");
+                    $nowdatetime = new \DateTime($nowdate1);
+                    $excelobj->setDatetime($nowdatetime);
+                    $excelobj->setDataOfMonth($myexcelnewdatevalue);
 
-
-                    $inputFileType = "";
-
-                    switch ($ext) {
-                        case "xls":
-                            $inputFileType = 'Excel5';
-                            break;
-                        case "xlsx":
-                            $inputFileType = 'Excel2007';
-                            break;
-
-                    }
-
-
-                    // Creating Excel Sheet Objects....//
-
-                    $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-                    $objReader->setLoadAllSheets();
-                    $objPHPExcel = $objReader->load($input);
-
-                    $objWorksheet = $objPHPExcel->getActiveSheet();
-                    $sheetCount = $objPHPExcel->getSheetCount();
-                    $cre = "";
-
-
-                    if ($sheetCount == 1) {
-                        $user = $this->getUser();
-                        $userId = $user->getId();
-                        $dataofmonthstring = $mydatevalue->format('Y-m-d');
-                        $gearmandataarray = array('filename' => $fileName, 'dataofmonth' => $dataofmonthstring, 'userid' => $userId, 'filetype' => $inputFileType);
-                        $gearman = $this->get('gearman');       //$datafromuser=array();
-                        $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($gearmandataarray));
-                        $msg = "Your Document Has Been verfication.After Verfication Your File Data Has been Reading.";
-
-
-                        return $this->render(
-                            'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                            array('creator' => $cre, 'msg' => $msg)
-                        );
-
-                    }
-                    if ($sheetCount > 1) {
-
-                        $message = \Swift_Message::newInstance()
-                            ->setFrom('lawrance@commusoft.co.uk')
-                            ->setTo($useremailid)
-                            ->setSubject("Your Document having more than One Sheets!!!!")
-                            ->setBody("Your Document having more than One Sheets!!!!");
-                        $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
-                        $mailer->send($message);
-                        $loadedSheetNames = $objPHPExcel->getSheetNames();
-                        $excelobj->removeUpload($input);
-
-                        $this->addFlash(
-                            'notice',
-                            'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
-                        );
-
-                        return $this->render(
-                            'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                            array('creator' => $cre, 'msg' => 'Number of Sheets: ' . $sheetCount)
-                        );
-                    }
-
+                    $em->persist($excelobj);
+                    $em->flush();
                 }
+
+
+                    /*   $inputFileType = "";
+
+                     switch ($ext) {
+                         case "xls":
+                             $inputFileType = 'Excel5';
+                             break;
+                         case "xlsx":
+                             $inputFileType = 'Excel2007';
+                             break;
+
+                     }
+
+
+                   // Creating Excel Sheet Objects....//
+
+                     $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                     $objReader->setLoadAllSheets();
+                     $objPHPExcel = $objReader->load($input);
+
+                     $objWorksheet = $objPHPExcel->getActiveSheet();
+                     $sheetCount = $objPHPExcel->getSheetCount();
+                     $cre = "";
+
+
+                     if ($sheetCount == 1) {
+                         $user = $this->getUser();
+                         $userId = $user->getId();
+                         $dataofmonthstring = $mydatevalue->format('Y-m-d');
+                         $gearmandataarray = array('filename' => $fileName, 'dataofmonth' => $dataofmonthstring, 'userid' => $userId, 'filetype' => $inputFileType);
+                         $gearman = $this->get('gearman');       //$datafromuser=array();
+                         $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($gearmandataarray));
+                         $msg = "Your Document Has Been verfication.After Verfication Your File Data Has been Reading.";
+
+
+                         return $this->render(
+                             'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
+                             array('creator' => $cre, 'msg' => $msg)
+                         );
+
+                     }
+                     if ($sheetCount > 1) {
+
+                         $message = \Swift_Message::newInstance()
+                             ->setFrom('lawrance@commusoft.co.uk')
+                             ->setTo($useremailid)
+                             ->setSubject("Your Document having more than One Sheets!!!!")
+                             ->setBody("Your Document having more than One Sheets!!!!");
+                         $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
+                         $mailer->send($message);
+                         $loadedSheetNames = $objPHPExcel->getSheetNames();
+                         $excelobj->removeUpload($input);
+
+                         $this->addFlash(
+                             'notice',
+                             'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
+                         );
+
+                         return $this->render(
+                             'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
+                             array('creator' => $cre, 'msg' => 'Number of Sheets: ' . $sheetCount)
+                         );
+                     }
+
+                 }*/
 
 
             }
 
-            $cre = "Not Valid Document";
-            return $this->render(
-                'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                array('creator' => $cre, 'msg' => '')
-            );
+            $cre = "File upload!!!!!!!!!";
+            return $this->redirect('showfile_ranking');
         }
     }
 
@@ -2727,12 +2751,28 @@ class DataVerficationController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         } else {
             $username = $user->getUsername();
+            $role=$user->getRoles();
+            $companyid=$user->getCompanyid();
+            if($companyid==null)
+            {
+                $userquery = $em->createQueryBuilder()
+                    ->select('a.id')
+                    ->from('InitialShippingBundle:CompanyDetails', 'a')
+                    ->where('a.adminName = :adminName')
+                    ->setParameter('adminName', $username)
+                    ->getQuery();
+                $companyid = $userquery->getSingleScalarResult();
+            }
+            $templatechoosen = 'base.html.twig';
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                $templatechoosen = 'v-ships_layout.html.twig';
+            }
 
 
-            $userdetails = $em->getRepository('InitialShippingBundle:Excel_file_details')->findBy(array('userid' => $username));
+            $userdetails = $em->getRepository('InitialShippingBundle:Excel_file_details')->findBy(array('company_id' => $companyid));
 
             return $this->render('InitialShippingBundle:DataImportRanking:listall.html.twig', array(
-                'userdetails' => $userdetails,
+                'userdetails' => $userdetails,'template'=>$templatechoosen
             ));
         }
 
@@ -2741,7 +2781,7 @@ class DataVerficationController extends Controller
     /**
      * Download File For Ranking.
      *
-     * @Route("/downfile_ranking", name="downfile_ranking")
+     * @Route("/{filename}/downfile_ranking", name="downfile_ranking")
      */
     public function downloadexcelAction($filename, Request $request)
     {
@@ -2761,7 +2801,7 @@ class DataVerficationController extends Controller
     private function createCreateForm(Excel_file_details $excelobj)
     {
         $form = $this->createForm(new AddExcelFileType(), $excelobj, array(
-            'action' => $this->generateUrl('upload'),
+            'action' => $this->generateUrl('readfile_gearman_ranking'),
             'method' => 'POST',
         ));
 
