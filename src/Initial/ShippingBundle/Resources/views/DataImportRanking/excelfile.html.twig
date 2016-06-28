@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends template %}
 
 {% block body %}
      {% block javascripts %}
@@ -13,45 +13,11 @@
 
 
       {% endblock %}
-   {# <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <div class="page-header">
-            <h2>Upload File Here</h2>
-        </div>
 
-        <div class="modal" style="display: none">
-            <div class="center">
-                {% image '@InitialShippingBundle/Resources/public/img/loader5.gif' %}
-                <img src="{{ asset_url }}" alt="Loader Image"/>
-                {% endimage %}
-            </div>
-        </div>
-
-        <div class="bs-example">
-            {{ form_start(form, {'attr': {'id': 'form_excel','class':'form-horizontal no-style'}}) }}
-            <div class="form-group">
-                <label class="control-label col-xs-2">Choose File</label>
-                <div class="col-xs-10">
-                    {{ form_widget(form.filename,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="control-label col-xs-2">    Choose Month</label>
-                <div class="col-xs-10">
-                    {{ form_widget(form.dataofmonth) }}
-                </div>
-            </div>
-
-            <div class="actions">
-
-
-            </div>
-            {{ form_end(form) }}
-       </div>
-        <div>#}
             <section>
                 <div class="col-sm-12">
                     <div class="add_kpi_views_screen">
-                       {# <form class="form-horizontal no-style">#}
+
                             {{ form_start(form, {'attr': {'id': 'form_excel','class':'form-horizontal no-style'}}) }}
                             <div class="kpi_basic_details">
                                 <fieldset class="fieldset_box add_rule_form">
@@ -66,20 +32,12 @@
                                         <label class="control-label col-xs-4">Date of month</label>
                                         <div class="col-xs-8">
                                             {{ form_widget(form.dataofmonth) }}
-                                           {# <select class="add_rule_basic_drop" name="type">
-                                                {{ form_widget(form.dataofmonth) }}
-                                            </select>
-                                            <select class="add_rule_basic_drop" name="type">
-                                                <option selected="selected">-- Choose--</option>
-                                                <option>2016</option>
-                                            </select>#}
                                         </div>
                                     </div>
                                 </fieldset>
                             </div>
 
                             <div class="actions_submit">
-                               {# <button class="submit_btn" type="submit" value="Submit">Save user</button>#}
                                 <input type="submit" class="submit_btn" id="addsubmitid" value="Upload" />
                                 <button class="cancel_btn" type="submit" value="Submit">Cancel</button>
                             </div>
