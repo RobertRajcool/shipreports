@@ -2027,7 +2027,7 @@ class DataVerficationController extends Controller
 
                     $username = $user->getUsername();
                     $userquery = $em->createQueryBuilder()
-                        ->select('a.email')
+                        ->select('IDENTITY(a.companyid)')
                         ->from('InitialShippingBundle:User', 'a')
                         ->where('a.id = :userId')
                         ->setParameter('userId', $userid)
@@ -2752,13 +2752,24 @@ class DataVerficationController extends Controller
         } else {
             $username = $user->getUsername();
             $role=$user->getRoles();
+            $companyid=$user->getCompanyid();
+            if($companyid==null)
+            {
+                $userquery = $em->createQueryBuilder()
+                    ->select('a.id')
+                    ->from('InitialShippingBundle:CompanyDetails', 'a')
+                    ->where('a.adminName = :adminName')
+                    ->setParameter('adminName', $username)
+                    ->getQuery();
+                $companyid = $userquery->getSingleScalarResult();
+            }
             $templatechoosen = 'base.html.twig';
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                 $templatechoosen = 'v-ships_layout.html.twig';
             }
 
 
-            $userdetails = $em->getRepository('InitialShippingBundle:Excel_file_details')->findBy(array('userid' => $username));
+            $userdetails = $em->getRepository('InitialShippingBundle:Excel_file_details')->findBy(array('company_id' => $companyid));
 
             return $this->render('InitialShippingBundle:DataImportRanking:listall.html.twig', array(
                 'userdetails' => $userdetails,'template'=>$templatechoosen
