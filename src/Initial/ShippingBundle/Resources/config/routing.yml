@@ -84,6 +84,13 @@ mobile:
    path: /register/check_mobile
    defaults: { _controller: "InitialShippingBundle:CompanyUsers:mobileNumber"}
 
+profile:
+   path: /register/user_edit
+   defaults: { _controller: "InitialShippingBundle:CompanyUsers:userShow"}
+
+
+
+
 
 
 

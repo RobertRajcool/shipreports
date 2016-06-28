@@ -294,6 +294,41 @@ class CompanyUsersController extends Controller
 
 
 
+    public function userShowAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $id = $request->request->get('Id');
+            $em = $this->getDoctrine()->getManager();
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.username', 'a.email', 'a.roles', 'a.mobile', 'a.fullname','a.imagepath')
+                ->from('InitialShippingBundle:User', 'a')
+                ->where('a.id = :user_Id')
+                ->setParameter('user_Id', $id)
+                ->getQuery();
+            $Userdetail = $query->getResult();
+
+            $user1 = $this->getUser();
+            $userId = $user1->getId();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'User_detail' => $Userdetail,
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+
+
+
+
+
+
+
     /**
      * Lists all ShipDetails entities.
      *
