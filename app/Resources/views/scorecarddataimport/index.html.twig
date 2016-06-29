@@ -9,6 +9,19 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+               $('#initial_shipping_scorecard_data_import_monthDetail_day').hide();
+            });
+        </script>
+        <style type="text/css">
+            #initial_shipping_scorecard_data_import_monthDetail_month {
+                width: 120px;
+            }
+            #initial_shipping_scorecard_data_import_monthDetail_year {
+                width: 120px;
+            }
+        </style>
     {% endblock %}
 
     <section>
@@ -21,7 +34,7 @@
                         <div class="form-group">
                             <label class="control-label col-xs-4">Select file</label>
                             <div class="col-xs-8">
-                                {{ form_widget(form.fileName,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}
+                                {{ form_widget(form.fileName) }}
                             </div>
                         </div>
                         <div class="form-group">

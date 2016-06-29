@@ -50,16 +50,20 @@ class ScorecardDataImportController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         } else {
             $role = $user->getRoles();
-            $dataImportObj = new ScorecardDataImport();
-            $form = $this->createCreateForm($dataImportObj);
-            $template = 'base.html.twig';
-            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                $template = 'v-ships_layout.html.twig';
-            }
+            if ($role[0] != 'ROLE_KPI_INFO_PROVIDER') {
+                return $this->redirectToRoute('scorecarddataimport_files_show');
+            } else {
+                $dataImportObj = new ScorecardDataImport();
+                $form = $this->createCreateForm($dataImportObj);
+                $template = 'base.html.twig';
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $template = 'v-ships_layout.html.twig';
+                }
 
-            return $this->render('scorecarddataimport/index.html.twig', array(
-                'form' => $form->createView(),'template'=>$template
-            ));
+                return $this->render('scorecarddataimport/index.html.twig', array(
+                    'form' => $form->createView(),'template'=>$template
+                ));
+            }
         }
     }
 
@@ -134,7 +138,7 @@ class ScorecardDataImportController extends Controller
             $role=$user->getRoles();
             $em = $this->getDoctrine()->getManager();
             $fileDetails = $em->createQueryBuilder()
-                ->select('a.fileName, a.monthDetail,a.dateTime,identity(a.userId)')
+                ->select('a.id,a.fileName,a.monthDetail,a.dateTime,identity(a.userId)')
                 ->from('InitialShippingBundle:ScorecardDataImport', 'a')
                 ->getQuery()
                 ->getResult();
@@ -167,6 +171,35 @@ class ScorecardDataImportController extends Controller
                     'fileName' => $originalFileNameArray,
                     'template' => $template
             ));
+        }
+    }
+
+    /**
+     * Lists all ScorecardDataImport entities.
+     *
+     * @Route("/scorecarddataimport_file_download/{id}", name="scorecarddataimport_file_download")
+     * @Method("GET")
+     */
+    public function fileDownloadAction(Request $request,ScorecardDataImport $scorecardDataImport)
+    {
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        } else {
+            $fileName_fromDb = $scorecardDataImport->getFileName();
+            $directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles';
+            $filePath = $directoryLocation . '/' . $fileName_fromDb;
+            $content = file_get_contents($filePath);
+            $fileType = pathinfo($fileName_fromDb, PATHINFO_EXTENSION);
+            $fileName_withoutExtension = substr($fileName_fromDb, 0, -(strlen($fileType) + 1));
+            $fileName_withoutDateTime = explode('(',$fileName_withoutExtension);
+            $originalFileName = $fileName_withoutDateTime[0] . '.' . $fileType;
+            $response = new Response();
+            $response->setContent($content);
+            header('Content-Type: application/octet-stream');
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"" . $originalFileName . "\"");
+            return $response;
         }
     }
 

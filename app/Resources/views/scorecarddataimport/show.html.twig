@@ -1,4 +1,41 @@
 {% extends template %}
 {% block body %}
 
+    <div class="col-md-12 users_advanced_list_views_screen">
+        <div class="table-responsive">
+            <table class="table table-striped table_dividere data_import_list_table">
+                <thead>
+                    <tr>
+                        <th class="filename">Filename</th>
+                        <th class="month">Month</th>
+                        <th class="time">Date Time</th>
+                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                            <th class="option">User Name</th>
+                            <th class="option">Options</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set count = 0 %}
+                    {% for fileNames in fileName %}
+                        <tr>
+                            <td class="kpi_name_thtd">{{ fileNames }}</td>
+                            <td class="kpi_name_thtd">{{ fileDetails[count].monthDetail|date('F-Y') }}</td>
+                            <td class="kpi_name_thtd">{{ fileDetails[count].dateTime|date('Y-F-d H:i:s') }}</td>
+                            {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                <td class="kpi_name_thtd">{{ userDetails[count][0].fullname }}</td>
+                                <td class="kpi_name_thtd">
+                                    <a href="{{ path('scorecarddataimport_file_download', { 'id': fileDetails[count].id}) }}">
+                                        <img src="/images/123c155_Xcel-icon_1.jpg"  alt="Loader Image"/>
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% set count = count+1 %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 {% endblock %}
