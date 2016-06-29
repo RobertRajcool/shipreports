@@ -324,6 +324,39 @@ class CompanyUsersController extends Controller
 
 
 
+    public function sample_editAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $id = $request->request->get('Id');
+
+            $em = $this->getDoctrine()->getManager();
+            $userManager = $this->get('fos_user.user_manager');
+
+            $user = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:User')->findOneBy(array('id' => $id));
+            $userName = $request->request->get('name');
+            $Email = $request->request->get('email');
+            $mobile = $request->request->get('mobile');
+            $fullname = $request->request->get('fullname');
+            $roles = $request->request->get('privileges');
+
+            $uservalue = new User();
+            $user->setRoles(array($roles));
+            $user->setemail($Email);
+            $user->setusername($userName);
+            $user->setmobile($mobile);
+            $user->setfullname($fullname);
+            $em->flush();
+            $userManager->updateUser($user);
+            $show_response = $this->userShowAction($request);
+
+            return $show_response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
 
 
 

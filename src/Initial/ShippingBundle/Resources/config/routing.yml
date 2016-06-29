@@ -88,6 +88,11 @@ profile:
    path: /register/user_edit
    defaults: { _controller: "InitialShippingBundle:CompanyUsers:userShow"}
 
+user:
+   path: /register/sample_edit
+   defaults: { _controller: "InitialShippingBundle:CompanyUsers:sample_edit"}
+
+
 
 
 
