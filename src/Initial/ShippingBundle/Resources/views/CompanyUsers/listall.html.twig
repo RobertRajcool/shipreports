@@ -34,77 +34,90 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
-                $('.create_view').show();
-                $('#list_view').hide();
-                $('.show_view').hide();
-                $('.edit_view').hide();
-                $('.box_icon').hide();
+                var createView= $('.create_view');
+                var listView= $('#list_view');
+                var showView=$('.show_view');
+                var editView=$('.edit_view');
+                var boxIcon= $('.box_icon');
+                var listIcon= $('.list_icon');
+                var gridView= $('#grid_view');
                 var editEmailName;
                 var editMobileName;
 
 
-                $('.box_icon').click(function ($e) {
+
+                createView.show();
+                listView.hide();
+                showView.hide();
+                editView.hide();
+                boxIcon.hide();
+
+
+                boxIcon.click(function ($e) {
                     $e.preventDefault();
-                    $('#list_view').hide();
-                    $('#grid_view').show();
-                    $('.edit_view').hide();
-                    $('.show_view').hide();
-                    $('.box_icon').hide();
-                    $('.list_icon').show();
-                    $('.create_view').show();
+                    listView.hide();
+                    gridView.show();
+                    editView.hide();
+                    showView.hide();
+                    boxIcon.hide();
+                    listIcon.show();
+                    createView.show();
                     $('.fos_user_registration_register')[0].reset();
                 });
-                $('.list_icon').click(function ($e) {
+                listIcon .click(function ($e) {
                     $e.preventDefault();
-                    $('#grid_view').hide();
-                    $('#list_view').show();
-                    $('.create_view').hide();
-                    $('.edit_view').hide();
-                    $('.show_view').hide();
-                    $('.box_icon').show();
-                    $('.list_icon').hide();
+                    gridView.hide();
+                    listView.show();
+                    createView.hide();
+                    editView.hide();
+                    showView.hide();
+                    boxIcon.show();
+                    listIcon.hide();
                     $('.fos_user_registration_register')[0].reset();
                 });
-                $('.add_btn').live("click", function ($e) {
+                var addButton= $('.add_btn');
+                addButton.live("click", function ($e) {
                     $e.preventDefault();
-                    $('#grid_view').show();
-                    $('#list_view').hide();
-                    $('.create_view').show();
-                    $('.edit_view').hide();
-                    $('.show_view').hide();
+                    gridView.show();
+                    listView.hide();
+                    createView.show();
+                    editView.hide();
+                    showView.hide();
                     $('.fos_user_registration_register')[0].reset();
                 });
-                $('.cancel_btn').live("click", function ($e) {
+                var cancelButton=  $('.cancel_btn');
+                cancelButton.live("click", function ($e) {
                     $e.preventDefault();
-                    $('.create_view').show();
-                    $('#grid_view').show();
-                    $('.edit_view').hide();
-                    $('.show_view').hide();
+                    createView.show();
+                    gridView.show();
+                    editView.hide();
+                    showView.hide();
                     $('.fos_user_registration_register')[0].reset();
 
                 });
-                var  editButton= $('.edit_btn')
-                     editButton.live("click", function ($e) {
+                var  editButton= $('.edit_btn');
+                editButton.live("click", function ($e) {
                     $e.preventDefault();
-                   editEmailName = editEmail.val();
-                   editMobileName = editMobile.val();
-                    $('#grid_view').show();
-                    $('#list_view').hide();
-                    $('.show_view').hide();
-                    $('.create_view').hide();
-                    $('.edit_view').show();
+                    editEmailName = editEmail.val();
+                    editMobileName = editMobile.val();
+                    gridView.show();
+                    listView.hide();
+                    showView.hide();
+                    createView.hide();
+                    editView.show();
                     $('.fos_user_registration_register')[0].reset();
                 });
-
-                $('.edit_cancel_btn').live("click", function ($e) {
+                var editCancelButton= $('.edit_cancel_btn');
+                editCancelButton.live("click", function ($e) {
                     $e.preventDefault();
-                    $('.edit_view').hide();
-                    $('.show_view').show();
-                    $(".create_view").hide();
+                    editView.hide();
+                    showView.show();
+                    createView.hide();
                 });
 
                 var count = 0;
-                $('.user_class').live("click", function ($e) {
+                var userShow= $('.user_class');
+                userShow.live("click", function ($e) {
                     $e.preventDefault();
                     count++;
                     var currentId = $(this).attr('id');
@@ -112,10 +125,19 @@
                     /*if (count > 1) {
 
                      }*/
-                    $('.user_name').empty();
-                    $('.user_email').empty();
-                    $('.user_roles').empty();
-                    $('.user_mobile').empty();
+
+
+
+                    var userName= $('.user_name');
+                    var userEmail=$('.user_email');
+                    var userMobile=$('.user_mobile');
+                    var userRoles= $('.user_roles');
+
+                    userName.empty();
+                    userEmail.empty();
+                    userMobile.empty();
+                    userRoles.empty();
+
                     $.ajaxSetup({
                         global: false,
                         type: "POST",
@@ -132,14 +154,25 @@
                     $.ajax({
 
                         success: function (data) {
-                            $('.edit_view').hide();
-                            $('.create_view').hide();
-                            $('.show_view').show();
-                            $('.user_name').append(data.User_detail[0].username);
-                            $('.user_email').append(data.User_detail[0].email);
-                            $('.user_mobile').append(data.User_detail[0].mobile);
-                            $('.user_roles').append(data.User_detail[0].roles[0]);
-                            $("#tempimageid").attr('src', '/uploads/userimages/'+data.User_detail[0].imagepath);
+                            editView.hide();
+                            createView.hide();
+                            showView.show();
+
+
+
+                            userName.append(data.User_detail[0].username);
+                            userEmail.append(data.User_detail[0].email);
+                            userMobile.append(data.User_detail[0].mobile);
+                            userRoles.append(data.User_detail[0].roles[0]);
+                            if(data.User_detail[0].imagepath!=null)
+                            {
+                                $("#tempimageid").attr('src', '/uploads/userimages/'+data.User_detail[0].imagepath);
+                            }
+                            else
+                            {
+                                $("#tempimageid").attr('src', '/images/nouser.png');
+                            }
+
 
 
 
@@ -175,9 +208,9 @@
 
                 /*var  editEmailError = ('#edit-mail')
 
-                function editErrorEmptyValuesFunction() {
-                    editEmailError.empty();
-                }*/
+                 function editErrorEmptyValuesFunction() {
+                 editEmailError.empty();
+                 }*/
 
                 var createEmail = $('#val_email');
                 var createVesselErrorMsg = $('#create-val-email');
@@ -206,7 +239,7 @@
                             }
                             if(!$.trim(createEmail.val())) {
                                 createVesselErrorMsg.text('Email name cannot be empty !');
-                               createEmail.focus();
+                                createEmail.focus();
                                 return false;
                             }
                         },
@@ -242,7 +275,7 @@
                                 return false;
                             }
                             if (!$.trim(editEmail.val())) {
-                               jAlert('Email cannot be empty !');
+                                jAlert('Email cannot be empty !');
                                 editEmail.focus();
                                 return false;
                             }
@@ -275,7 +308,7 @@
                         success: function(data) {
                             createmobileErrorMsg.empty();
                             if(data.mobile==1) {
-                               // jAlert('mobile number already registered')
+                                // jAlert('mobile number already registered')
                                 createmobileErrorMsg.text("mobile  number is already registered !");
                                 createMobile.focus();
                                 return false;
@@ -328,7 +361,7 @@
                                 return false;
                             }
                             if (editMobile.val().length < 10 || editMobile.val().length > 10) {
-                               jAlert("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
+                                jAlert("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
                                 editMobile.focus();
                                 return false;
                             }
@@ -343,9 +376,8 @@
 
 
 
-
-
-                $('.edit_submit_btn').live("click", function ($e) {
+                var editSubmitButton= $('.edit_submit_btn');
+                editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
                     var username = $('.edit_username').val();
                     var email = $('.edit_email').val();
@@ -406,20 +438,26 @@
                     $.ajax({
 
                         success: function (data) {
+
                             var editUserName = $('#edit_username');
+                            var editUserEmail = $('#user_email');
+                            var editUserRoles = $('#user_roles');
+                            var editUserMobile = $('#user_mobile');
+
+
                             editUserName.text('');
                             editUserName.text(data.User_detail[0].username);
-                            $('#user_email').text('');
-                            $('#user_email').text(data.User_detail[0].email);
-                            $('#user_roles').text('');
-                            $('#user_roles').text(data.User_detail[0].roles[0]);
-                            $('#user_mobile').text('');
-                            $('#user_mobile').text(data.User_detail[0].mobile);
+                            editUserEmail.text('');
+                            editUserEmail.text(data.User_detail[0].email);
+                            editUserRoles.text('');
+                            editUserRoles.text(data.User_detail[0].roles[0]);
+                            editUserMobile.text('');
+                            editUserMobile.text(data.User_detail[0].mobile);
 
-                            $('#grid_view').show();
-                            $('#list_view').hide();
-                            $('.edit_view').hide();
-                            $('.show_view').show();
+                            gridView.show();
+                            listView.hide();
+                            editView.hide();
+                            showView.show();
                         },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             alert('Error : ' + errorThrown);
@@ -442,10 +480,10 @@
                 var char = /^[A-Za-z]+$/;
 
                 /*if (phoneNo.value.length < 10 || phoneNo.value.length > 10) {
-                    jAlert("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
-                    document.getElementById('user_mobile').focus();
-                    return false;
-                }*/
+                 jAlert("Mobile No. is not valid, Please Enter 10 Digit Mobile No.");
+                 document.getElementById('user_mobile').focus();
+                 return false;
+                 }*/
                 if (!name.value.match(char)) {
                     jAlert("please enter characters only");
                     document.getElementById('val_name').focus();
@@ -718,10 +756,9 @@
                     </div>
                     <div class="user_view_photo">
                         <div class="view_new_user_photo">
-
-                                <img id="tempimageid" src="/uploads/userimages/">
+                            <img id="tempimageid" src="/uploads/userimages/">
                         </div>
-                        </div>
+                    </div>
 
 
                     <div class="user_view_section">
