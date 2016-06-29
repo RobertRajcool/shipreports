@@ -119,7 +119,7 @@
                     $.ajaxSetup({
                         global: false,
                         type: "POST",
-                        url: "sample",
+                        url: "user_edit",
                         data: data,
                         beforeSend: function () {
                             var setAjaxBeforeSend = ajaxbefore_send();
@@ -139,6 +139,11 @@
                             $('.user_email').append(data.User_detail[0].email);
                             $('.user_mobile').append(data.User_detail[0].mobile);
                             $('.user_roles').append(data.User_detail[0].roles[0]);
+                            $("#tempimageid").attr('src', '/uploads/userimages/'+data.User_detail[0].imagepath);
+
+
+
+
 
                             $('.edit_user_id').val(data.User_detail[0].id);
                             $('.edit_username').val(data.User_detail[0].username);
@@ -570,10 +575,7 @@
                         <span class="user_btn_main"  style="float: left;"><a href="" class="ss-plus add_btn">{{ 'add.user'|trans }}</a></span>
                         <form id="" class="form-horizontal no-style" action="{{ path('userdetails_pdf') }}"
                               target="_blank" method="post" style="float: left;">
-                            {#<input type="hidden" class="activeMonthText" name="activeMonth" value="">
-                            <input type="hidden" class="activeYearText" name="activeYear" value="">
-                            <input type="hidden" class="endMonthText" name="endMonth" value="">
-                            <input type="hidden" class="endYearText" name="endYear" value="">#}
+
                             <span class="user_btn_main"><button type="submit" class="print_btn">Print</button></span>
                         </form>
                         <span class="user_btn_main grid_list_main">
@@ -714,7 +716,14 @@
                     <div class="actions_edit_button">
                         <a href="" class="edit_btn edit_user_button">{{ 'user.edit'|trans }}</a>
                     </div>
-                    <div class="user_view_photo"><img src=""></div>
+                    <div class="user_view_photo">
+                        <div class="view_new_user_photo">
+
+                                <img id="tempimageid" src="/uploads/userimages/">
+                        </div>
+                        </div>
+
+
                     <div class="user_view_section">
                         <div class="user_text">
                             <p class="user_name"><label id="edit_username" class="form_input user_name"></label></p>

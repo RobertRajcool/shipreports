@@ -2525,8 +2525,19 @@ input[type="color"],
     margin-top: -3px;
 }
 
-
-
+/* data import list screen */
+.data_import_list_table .month {
+    width:14%;
+}
+.data_import_list_table .time {
+    width:18%;
+}
+.data_import_list_table .filename {
+    width:58%;
+}
+.data_import_list_table .option {
+    width:10%;
+}
 
 
 
