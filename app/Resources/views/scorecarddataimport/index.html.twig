@@ -1,0 +1,56 @@
+{% extends template %}
+
+{% block body %}
+
+    {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+               $('#initial_shipping_scorecard_data_import_monthDetail_day').hide();
+            });
+        </script>
+        <style type="text/css">
+            #initial_shipping_scorecard_data_import_monthDetail_month {
+                width: 120px;
+            }
+            #initial_shipping_scorecard_data_import_monthDetail_year {
+                width: 120px;
+            }
+        </style>
+    {% endblock %}
+
+    <section>
+        <div class="col-sm-12">
+            <div class="add_kpi_views_screen">
+                {{ form_start(form, {'attr': {'id': 'form_excel','class':'form-horizontal no-style'}}) }}
+                <div class="kpi_basic_details">
+                    <fieldset class="fieldset_box add_rule_form">
+                        <legend class="legend_name">Data import</legend>
+                        <div class="form-group">
+                            <label class="control-label col-xs-4">Select file</label>
+                            <div class="col-xs-8">
+                                {{ form_widget(form.fileName) }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-xs-4">Select Month</label>
+                            <div class="col-xs-8">
+                                {{ form_widget(form.monthDetail) }}
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="actions_submit">
+                    <input type="submit" class="submit_btn" value="Upload" />
+                    <button class="cancel_btn" type="reset">Reset</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}

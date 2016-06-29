@@ -1,35 +1,24 @@
 {% extends template %}
 {% block body %}
 <div class="col-md-12 users_advanced_list_views_screen">
+    <div>
     {# <div class="page-header">
          <h2>{{ shipname.shipName }}</h2>
          <a href="{{ path('dashboradhome') }}">Back</a>
      </div>#}
     <div class="table-responsive">
-        <table class="table table-striped graph_and_colour_coding_main_title_row">
-            <thead>
-            <tr>
-                <th>List files</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <a class="linkclass"  style="float: right"  >{{ 'elementranking.backlink'|trans }}</a></td>
-            </tr>
-            </tbody>
-        </table>
 
-        <table class="table table-striped-2 kpi_ranking_row">
+        <table class="table table-striped table_dividere data_import_list_table">
             <thead>
+
             <tr>
 
-                <th>Data of Month</th>
-                <th>Upload DateTime</th>
-                <th>Filename</th>
+                <th class="month">Data of Month</th>
+                <th  class="time">Upload DateTime</th>
+                <th class="filename">Filename</th>
                 {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                    <th>Username</th>
-                <th>Options</th>
+                    <th class="option">Username</th>
+                    <th class="option">Options</th>
                 {% endif %}
 
 
@@ -47,20 +36,21 @@
                         <td class="kpi_name_thtd">
                             {{ listofuser.userid }}
                         </td>
-                    <td class="kpi_name_thtd">
+                        <td class="kpi_name_thtd">
 
-                        <a href="{{ path('downfile_ranking', { 'filename': listofuser.filename }) }}">
-                            <img src="/images/123c155_Xcel-icon_1.jpg" height="30" alt="Loader Image"/>
-                        </a>
-                    </td>
+                            <a href="{{ path('downfile_ranking', { 'filename': listofuser.filename }) }}">
+                                <img src="/images/excel-xls-icon.png"  alt="Loader Image"/>
+                            </a>
+                        </td>
                     {% endif %}
 
                 </tr>
             {% endfor %}
-            </tbody>
+
             </tbody>
         </table>
         </div>
     </div>
+</div>
 
 {% endblock %}
