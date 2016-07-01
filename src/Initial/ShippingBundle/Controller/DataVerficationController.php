@@ -2777,6 +2777,82 @@ class DataVerficationController extends Controller
         }
 
     }
+    /**
+     * Show File For Ranking.
+     *
+     * @Route("/{dataofmonth}/showfileslist_filter", name="showfileslist_filter")
+     */
+    public function showfiles_withfilterAction(Request $request,$dataofmonth)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        } else {
+            $username = $user->getUsername();
+            $role=$user->getRoles();
+            $companyid=$user->getCompanyid();
+            if($dataofmonth!=1)
+            {
+                $datofmonth='01-'.$dataofmonth;
+                $convertedformat=new \DateTime($datofmonth);
+                $convertedformat->modify('last day of this month');
+                if($companyid==null)
+                {
+                    $userquery = $em->createQueryBuilder()
+                        ->select('a.id')
+                        ->from('InitialShippingBundle:CompanyDetails', 'a')
+                        ->where('a.adminName = :adminName')
+                        ->setParameter('adminName', $username)
+                        ->getQuery();
+                    $companyid = $userquery->getSingleScalarResult();
+                }
+                $templatechoosen = 'base.html.twig';
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $templatechoosen = 'v-ships_layout.html.twig';
+                }
+                $listoffiles = $em->createQueryBuilder()
+                    ->select('a.id','a.dataOfMonth','a.datetime','a.filename','a.userid')
+                    ->from('InitialShippingBundle:Excel_file_details', 'a')
+                    ->where('a.company_id = :company_id')
+                    ->andwhere('a.dataOfMonth = :dataOfMonth')
+                    ->setParameter('company_id', $companyid)
+                    ->setParameter('dataOfMonth', $convertedformat)
+                    ->getQuery()
+                    ->getResult();
+            }
+            else
+            {
+
+                if($companyid==null)
+                {
+                    $userquery = $em->createQueryBuilder()
+                        ->select('a.id')
+                        ->from('InitialShippingBundle:CompanyDetails', 'a')
+                        ->where('a.adminName = :adminName')
+                        ->setParameter('adminName', $username)
+                        ->getQuery();
+                    $companyid = $userquery->getSingleScalarResult();
+                }
+                $templatechoosen = 'base.html.twig';
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $templatechoosen = 'v-ships_layout.html.twig';
+                }
+                $listoffiles = $em->createQueryBuilder()
+                    ->select('a.id','a.dataOfMonth','a.datetime','a.filename','a.userid')
+                    ->from('InitialShippingBundle:Excel_file_details', 'a')
+                    ->where('a.company_id = :company_id')
+                    ->setParameter('company_id', $companyid)
+                    ->getQuery()
+                    ->getResult();
+            }
+
+            $response = new JsonResponse();
+            $response->setData(array('listoffiles'=>$listoffiles));
+            return $response;
+        }
+
+    }
 
     /**
      * Download File For Ranking.

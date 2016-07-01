@@ -428,9 +428,26 @@
 
 
                                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
-                                        if (status == 3) {
-                                            $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                            shipstatus++;
+                                        if(role=='ROLE_ADMIN')
+                                        {
+                                            if (status == 3) {
+                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                                shipstatus++;
+                                            }
+                                        }
+                                        else if(role=='ROLE_MANAGER')
+                                        {
+                                            if (status == 2) {
+                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                                shipstatus++;
+                                            }
+                                        }
+                                        else if(role=='ROLE_KPI_INFO_PROVIDER')
+                                        {
+                                            if (status == 1) {
+                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                                shipstatus++;
+                                            }
                                         }
                                     });
                                     $('#elementformid').html('');

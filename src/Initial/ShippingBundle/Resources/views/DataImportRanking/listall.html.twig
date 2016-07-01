@@ -1,56 +1,171 @@
 {% extends template %}
 {% block body %}
-<div class="col-md-12 users_advanced_list_views_screen">
-    <div>
-    {# <div class="page-header">
-         <h2>{{ shipname.shipName }}</h2>
-         <a href="{{ path('dashboradhome') }}">Back</a>
-     </div>#}
-    <div class="table-responsive">
+    {% block javascripts %}
+        <script>
+            $(document).ready(function() {
+                var role='{{ app.user.roles[0] }}';
+                var base_url = window.location.origin;
+                $(function () {
+                    $('#datetimepicker10').datetimepicker({
+                        viewMode: 'years',
+                        format: 'MM-YYYY'
+                    });
+                });
+                $('.submit_btn').live('click',function ($e) {
+                    $e.preventDefault();
+                    console.log(this.id)
+                    var idattribute=this.id;
+                    var dataofmonth=$('#datepickervalue').val();
+                    if(idattribute=='removefilter')
+                    {
+                        dataofmonth=1;
+                    }
+                    if(dataofmonth!='')
+                    {
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            'url': Routing.generate('showfileslist_filter', {'dataofmonth': dataofmonth}),
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function (data) {
+                                $('#listtable').html('');
+                                $('#datepickervalue').val('');
+                                console.log(data.listoffiles.length);
+                                if(!$("#removefilter").length)
+                                {
+                                    $('#applyfilter').after( '<input type="submit" class="submit_btn" id="removefilter"  value="Cancel filter">');
+                                    if(idattribute=='removefilter')
+                                    {
+                                        $('#removefilter').remove();
+                                        $('#removefilter').html('');
+                                    }
+                                }
+                                if(data.listoffiles.length!=0)
+                                {
+                                    $('<table id="tableid" class="table table-striped table_dividere data_import_list_table"></table>').appendTo('#listtable');
+                                    $('<thead><tr id="tableheader_tr"></tr></thead>').appendTo('#tableid');
+                                    $('<tbody id="tablebody"></tbody>').appendTo('#tableid');
+                                    $('<th class="month">Data of Month</th>').appendTo('#tableheader_tr');
+                                    $('<th  class="time">Upload DateTime</th>').appendTo('#tableheader_tr');
+                                    $('<th class="filename">Filename</th>').appendTo('#tableheader_tr');
+                                    if(role=='ROLE_ADMIN') {
+                                        $('<th class="option">Username</th>').appendTo('#tableheader_tr');
+                                        $(' <th class="option">Options</th>').appendTo('#tableheader_tr');
+                                    }
 
-        <table class="table table-striped table_dividere data_import_list_table">
-            <thead>
+                                    $.each(data.listoffiles, function (i)
+                                    {
+                                        $('<tr id="tablebodytr_'+i+'"></tr>').appendTo('#tablebody');
+                                        var nowdate=new Date(data.listoffiles[i]['dataOfMonth']['date']),
+                                                locale = "en-us",
+                                                month = nowdate.toLocaleString(locale, { month: "long" }),
+                                                year=nowdate.getFullYear();
+                                        $('<td class="">'+month+'-'+year+'</td>').appendTo('#tablebodytr_'+i);
+                                        $('<td class="">'+data.listoffiles[i]['datetime']['date']+'</td>').appendTo('#tablebodytr_'+i);
+                                        $('<td class="">'+data.listoffiles[i]['filename']+'</td>').appendTo('#tablebodytr_'+i);
 
-            <tr>
+                                        if(role=='ROLE_ADMIN')
+                                        {
+                                            $('<td class="">'+data.listoffiles[i]['userid']+'</td>').appendTo('#tablebodytr_'+i);
+                                            var filename=data.listoffiles[i]['filename'];
+                                            var path=base_url+'/dataverfication/'+filename+'/downfile_ranking';
+                                            $('<td class=""><a href="'+path+'"><img src="/images/download.png"  alt="Loader Image"/></a></td>').appendTo('#tablebodytr_'+i);
+                                        }
 
-                <th class="month">Data of Month</th>
-                <th  class="time">Upload DateTime</th>
-                <th class="filename">Filename</th>
-                {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                    <th class="option">Username</th>
-                    <th class="option">Options</th>
-                {% endif %}
+                                    });
+                                }
+                                else
+                                {
+                                    $('<span>No Record Found</span>').appendTo('#listtable');
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                window.location.href = base_url+'/login';
+                            }
+                        });
+                    }
+                    else
+                    {
+                        alert("Choose Date");
+                    }
+
+                });
+            });
+        </script>
+
+    {% endblock %}
+    <div class="col-md-12 users_advanced_list_views_screen">
+
+        <div>
+            <div class="container">
+                <div class="col-sm-6" style="height:50px;">
+                    <div class="form-group">
+                        <div class='input-group date' id='datetimepicker10'>
+                            <input type='text' id="datepickervalue" class="form-control"  name="filterdate" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar">
+                    </span>
+                </span>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit" class="submit_btn" id="applyfilter"  value="Apply filter">
+
+            </div>
+
+            <div class="table-responsive" id="listtable">
+
+                <table class="table table-striped table_dividere data_import_list_table">
+                    <thead>
+
+                    <tr>
+
+                        <th class="month">Data of Month</th>
+                        <th  class="time">Upload DateTime</th>
+                        <th class="filename">Filename</th>
+                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                            <th class="option">Username</th>
+                            <th class="option">Options</th>
+                        {% endif %}
 
 
-            </tr>
-            </thead>
-            <tbody>
-            {% for listofuser in userdetails %}
-                <tr>
+                    </tr>
+                    </thead>
+                    <tbody id="tablebody">
+                    {% for listofuser in userdetails %}
+                        <tr>
 
-                    {#<td>{{ listofuser.userid }}</td>#}
-                    <td class="kpi_name_thtd">{{ listofuser.dataOfMonth|date('F-Y') }}</td>
-                    <td class="kpi_name_thtd">{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
-                    <td class="kpi_name_thtd">{{ listofuser.filename }}</td>
-                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                        <td class="kpi_name_thtd">
-                            {{ listofuser.userid }}
-                        </td>
-                        <td class="kpi_name_thtd">
+                            {#<td>{{ listofuser.userid }}</td>#}
+                            <td class="kpi_name_thtd">{{ listofuser.dataOfMonth|date('F-Y') }}</td>
+                            <td class="kpi_name_thtd">{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
+                            <td class="kpi_name_thtd">{{ listofuser.filename }}</td>
+                            {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                <td class="kpi_name_thtd">
+                                    {{ listofuser.userid }}
+                                </td>
+                                <td class="kpi_name_thtd">
 
-                            <a href="{{ path('downfile_ranking', { 'filename': listofuser.filename }) }}">
-                                <img src="/images/excel-xls-icon.png"  alt="Loader Image"/>
-                            </a>
-                        </td>
-                    {% endif %}
+                                    <a href="{{ path('downfile_ranking', { 'filename': listofuser.filename }) }}">
+                                        <img src="/images/download.png"  alt="Loader Image"/>
+                                    </a>
+                                </td>
+                            {% endif %}
 
-                </tr>
-            {% endfor %}
+                        </tr>
+                    {% endfor %}
 
-            </tbody>
-        </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
 
 {% endblock %}
