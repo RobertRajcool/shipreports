@@ -580,20 +580,20 @@
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{'element.kpi_select'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{'element.kpi_select'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.kpiDetailsId,{'id':'kpi_id','label': ''}) }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.elementName,{'id':'element-id','label': ''}) }}
                                     </div>
                                     <div class="col-xs-8 weight-error-message" id="create-element-error"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weight-id','label': ''}) }}
                                     </div>
@@ -607,7 +607,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
                                             <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
@@ -663,24 +663,24 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel details</legend>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Excel Details</legend>
 
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell name</label>
+                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell detail</label>
+                                    <label class="control-label col-xs-4"><strong>Cell Detail</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
                                     </div>
                                 </div>
 
-                            </fieldset>#}
+                            </fieldset>
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn create_btn" id="get_value"  type="submit">{{ 'vessel.add'|trans }}</button>
@@ -727,17 +727,17 @@
                             </label>
                         </div>
                     </fieldset>
-                    {#<fieldset class="fieldset_box">
-                        <legend class="legend_name">Excel details</legend>
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Excel Details</legend>
                         <div class="form_view">
-                            <label class="form_labell">Cell name :</label>
+                            <label class="form_labell"><strong>Cell Name :</strong></label>
                             <label class="form_input element_cellName"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell">Cell detail :</label>
+                            <label class="form_labell"><strong>Cell Detail :</strong></label>
                             <label class="form_input element_cellDetail"> </label>
                         </div>
-                    </fieldset>#}
+                    </fieldset>
                 </div>
             </div>
         </section>
@@ -755,7 +755,7 @@
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8 kpi_name_edit">
                                         <select class="edit_kpiName" name="kpiName">
                                             <option value="0">----{{'element.kpi_select'|trans }}----</option>
@@ -764,7 +764,7 @@
                                     <div class="col-xs-8 weight-error-message edit-error-kpi"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_element_name" value="" placeholder="">
                                         <input type="hidden" class="element_edit_id" value="" placeholder="">
@@ -772,7 +772,7 @@
                                     <div class="col-xs-8 weight-error-message editErrorName"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="number" class="edit_element_weightage" id="edit-weight-id" value="" placeholder="">
                                     </div>
@@ -785,7 +785,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
                                             <select class="month_text add_rule_basic_date_drop active_month ">
@@ -838,21 +838,21 @@
                                     <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
+                            <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel details</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell name</label>
+                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_element_cellName" value="" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4">Cell detail</label>
+                                    <label class="control-label col-xs-4"><strong>Cell Detail</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_element_cellDetails" value="" placeholder="">
                                     </div>
                                 </div>
-                            </fieldset>#}
+                            </fieldset>
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn edit_element_submit_button">{{ 'vessel.save'|trans }}</button>

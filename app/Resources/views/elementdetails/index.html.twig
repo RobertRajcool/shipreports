@@ -611,6 +611,24 @@
                                     </div>
                                 </div>
                             </fieldset>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Excel details</legend>
+
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">Cell name</label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">Cell detail</label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
+                                    </div>
+                                </div>
+
+                            </fieldset>
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="get_value" type="submit">{{ 'vessel.add'|trans }}</button>
@@ -657,6 +675,17 @@
                                     <strong> {{ 'kpi.to'|trans }} </strong> <span class=" element_endDate_month "></span>-<span
                                             class="  element_endDate_year"></span></label>
                             </label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Excel details</legend>
+                        <div class="form_view">
+                            <label class="form_labell">Cell name :</label>
+                            <label class="form_input element_cellName"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell">Cell detail :</label>
+                            <label class="form_input element_cellDetail"> </label>
                         </div>
                     </fieldset>
                 </div>
@@ -759,7 +788,7 @@
                                     <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
                                 </div>
                             </fieldset>
-                            {#<fieldset class="fieldset_box">
+                            <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel details</legend>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4">Cell name</label>
@@ -773,7 +802,7 @@
                                         <input type="text" class="edit_element_cellDetails" value="" placeholder="">
                                     </div>
                                 </div>
-                            </fieldset>#}
+                            </fieldset>
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn edit_element_submit_button">{{ 'vessel.save'|trans }}</button>
