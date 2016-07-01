@@ -277,6 +277,7 @@
                     activeYear.append(active_date.getFullYear());
                     endMonth.append(monthNames[end_date.getMonth()]);
                     endYear.append(end_date.getFullYear());
+                    console.log(data.kpi_detail[0].cellName);
 
                     $('.edit_kpi_name').val(data.kpi_detail[0].kpiName);
                     $('.edit_kpi_description').val(data.kpi_detail[0].description);
@@ -961,7 +962,7 @@
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{'kpi.ship_select'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{'kpi.ship_select'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.shipDetailsId,{'id':'shipId','label': ''}) }}
                                         <div class="select_all">
@@ -975,14 +976,14 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.kpiName,{'id':'kpi-id','label': ''}) }}
                                     </div>
                                     <div class="col-xs-8 weight-error-message" id="create-kpi-error"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.weightage,{'id':'weightageId','label': ''}) }}
                                     </div>
@@ -995,7 +996,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
                                             <select class="add_rule_basic_date_drop active-month" name="activeMonth"
@@ -1052,6 +1053,21 @@
                                                 {% endfor %}
                                             </select>
                                         </span>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Excel Details</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>Cell Detail</strong></label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
                                     </div>
                                 </div>
                             </fieldset>
@@ -1132,6 +1148,17 @@
                             </label>
                         </div>
                     </fieldset>
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Excel Details</legend>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Cell Name :</strong></label>
+                            <label class="form_input kpi_cellName"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Cell Details :</strong></label>
+                            <label class="form_input kpi_cellDetail"> </label>
+                        </div>
+                    </fieldset>
                     <fieldset class="fieldset_box add_rule_right_edit_form show_rule_div">
                         <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                         <div class="table-responsive">
@@ -1159,7 +1186,7 @@
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.ship_select'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.ship_select'|trans }}</strong></label>
                                     <div class="col-xs-8 ">
                                         <select multiple class="ship_name_edit" id="editShipId"></select>
                                         <div class="select_all">
@@ -1173,14 +1200,14 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_kpi_name" value="" placeholder="" readonly>
                                         <input type="hidden" class="kpi_edit_id" value="" placeholder="">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <input type="number" class="edit_kpi_weightage" value="" placeholder="">
                                     </div>
@@ -1193,7 +1220,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
+                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                 <span>
                                     <select class="month_text add_rule_basic_date_drop active_month ">
@@ -1244,6 +1271,21 @@
                                 </span>
                                     </div>
                                     <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Excel Details</legend>
+                                <div class="form-group">
+                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_kpi_cellName" value="" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>Cell Detail</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit_kpi_cellDetails" value="" placeholder="">
+                                    </div>
                                 </div>
                             </fieldset>
                             <fieldset class="fieldset_box add_rule_right_edit_form edit_rule_div">

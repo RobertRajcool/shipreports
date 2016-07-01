@@ -188,8 +188,8 @@ class RankingKpiDetailsController extends Controller
             $activeYear = $request->request->get('activeYear');;
             $endMonth = $request->request->get('endMonth');;
             $endYear = $request->request->get('endYear');;
-            $cellName = " ";
-            $cellDetails = " ";
+            $cellName = $params['cellName'];
+            $cellDetails = $params['cellDetails'];
             $weightage = $params['weightage'];
             $day = 1;
 

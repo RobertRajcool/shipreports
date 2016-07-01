@@ -198,8 +198,8 @@ class ElementDetailsController extends Controller
             $kpiDetailsId = $params['kpiDetailsId'];
             $elementName = $params['elementName'];
             $description = $params['description'];
-            $cellName = " ";
-            $cellDetails = " ";
+            $cellName = $params['cellName'];
+            $cellDetails = $params['cellDetails'];
             $activeMonth = $request->request->get('activeMonth');
             $activeYear = $request->request->get('activeYear');;
             $endMonth = $request->request->get('endMonth');;
