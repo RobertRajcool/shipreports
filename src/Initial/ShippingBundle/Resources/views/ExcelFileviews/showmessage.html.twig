@@ -1,6 +1,6 @@
+{#
 
-
-{% extends 'base.html.twig' %}
+{% extends template %}
 
 {% block body %}
     {% block javascripts %}
@@ -32,4 +32,38 @@
 </div>
 </div>
 
+{% endblock %}#}
+{% extends template %}
+
+{% block body %}
+    {% block javascripts %}
+
+        {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script>
+            $(document).ready(function(){
+                $('#fileid').val('');
+                $('#uploadBtn').change(function(){
+                    var abc=$(this).val();
+                    $('#fileid').val(abc);
+                });
+            });
+        </script>
+
+
+
+    {% endblock %}
+
+    <section>
+        <div class="col-sm-12">
+            <div class="add_kpi_views_screen">
+                {{ erromsg }}
+
+            </div>
+        </div>
+    </section>
 {% endblock %}
