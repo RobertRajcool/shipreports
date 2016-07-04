@@ -58,11 +58,22 @@
 
     {% endblock %}
 
-    <section>
+    {#<section>
         <div class="col-sm-12">
             <div class="add_kpi_views_screen">
                 {{ erromsg }}
 
+            </div>
+        </div>
+    </section>#}
+    <section >
+        <div class="col-sm-12">
+            <div class="verfication_ranking_form_screen no_user_selected_views">
+                <div  class="text_image">
+                   <div> <a href="{{ path('scorecarddataimport_data_import') }}">Upload file</a></div>
+                    {{ erromsg }}
+
+                </div>
             </div>
         </div>
     </section>
