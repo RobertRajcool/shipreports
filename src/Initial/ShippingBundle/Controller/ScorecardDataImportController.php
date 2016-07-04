@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ScorecardDataImport;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Initial\ShippingBundle\Form\ScorecardDataImportType;
 use Symfony\Component\Form\Form;
@@ -171,6 +172,58 @@ class ScorecardDataImportController extends Controller
                     'fileName' => $originalFileNameArray,
                     'template' => $template
             ));
+        }
+    }
+
+    /**
+     * Lists all ScorecardDataImport entities.
+     *
+     * @Route("/scorecarddataimport_file_filter", name="scorecarddataimport_file_filter")
+     */
+    public function fileFilterAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        } else {
+            $em = $this->getDoctrine()->getManager();
+            $monthYear = $request->request->get('month-year');
+            $date = '01-'.$monthYear;
+            $dateObj=new \DateTime($date);
+            $dateObj->modify('last day of this month');
+
+            $fileDetails = $em->createQueryBuilder()
+                ->select('a.id,a.fileName,a.monthDetail,a.dateTime,identity(a.userId)')
+                ->from('InitialShippingBundle:ScorecardDataImport', 'a')
+                ->where('a.monthDetail = :monthDetail')
+                ->setParameter('monthDetail',$dateObj)
+                ->getQuery()
+                ->getResult();
+            $userDetailsArray = array();
+            $originalFileNameArray = array();
+            for($fileCount=0;$fileCount<count($fileDetails);$fileCount++) {
+                $userDetails = $em->createQueryBuilder()
+                    ->select('a.username, a.email, a.fullname, a.imagepath')
+                    ->from('InitialShippingBundle:User', 'a')
+                    ->where('a.id = :userId')
+                    ->setParameter('userId', $fileDetails[$fileCount]['1'])
+                    ->getQuery()
+                    ->getResult();
+                array_push($userDetailsArray, $userDetails);
+                $fileName_fromDb = $fileDetails[$fileCount]['fileName'];
+                $fileType = pathinfo($fileName_fromDb, PATHINFO_EXTENSION);
+                $fileName_withoutExtension = substr($fileName_fromDb, 0, -(strlen($fileType) + 1));
+                $fileName_withoutDateTime = explode('(', $fileName_withoutExtension);
+                $originalFileName = $fileName_withoutDateTime[0] . '.' . $fileType;
+                array_push($originalFileNameArray, $originalFileName);
+            }
+            $response = new JsonResponse();
+            $response->setData(array(
+                'userDetails' => $userDetailsArray,
+                'fileDetails' => $fileDetails,
+                'fileName' => $originalFileNameArray,
+            ));
+            return $response;
         }
     }
 

@@ -1,8 +1,98 @@
 {% extends template %}
 {% block body %}
 
+    {% block javascripts %}
+        <script src="../js/numericInput.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var dateIconId = $('#date-icon-id');
+                var applyButtonId = $('#apply-btn-id');
+                var cancelButtonId = $('#cancel-btn-id');
+                var dateValueId = $('#date-picker-value');
+                var originalDataId = $('#original-data-id');
+                var filteredDataId = $('#filtered-data-id');
+                var filterTableBodyId = $('#filter-table-body-id');
+                filteredDataId.hide();
+                cancelButtonId.hide();
+                dateIconId.datetimepicker({
+                    viewMode: 'years',
+                    format: 'MM-YYYY'
+                });
+                dateValueId.numericInput();
+                applyButtonId.click(function($e) {
+                   $e.preventDefault();
+                    var data = {
+                        'month-year': dateValueId.val()
+                    };
+                    if(dateValueId.val()) {
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            'url': "scorecarddataimport_file_filter",/*Routing.generate('scorecarddataimport_file_filter'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                filterTableBodyId.empty();
+                                originalDataId.hide();
+                                if(data.length != 0) {
+                                    $.each(data.fileName, function(i) {
+                                        var monthDetail = new Date(data.fileDetails[i].monthDetail.date);
+                                        var monthString = monthDetail.getMonthName()+'-'+monthDetail.getFullYear();
+                                        var pathInTwigFormat = "{{ path('scorecarddataimport_file_download', { 'id': 'value'}) }}";
+                                        var fullPath = pathInTwigFormat.replace("value",data.fileDetails[i].id);
+                                        filterTableBodyId.append('<tr id="table-row-id'+i+'"></tr>');
+                                        var tableRowId = $('#table-row-id'+i+'');
+                                        tableRowId.append('<td>'+data.fileName[i]+'</td><td>'+monthString+'</td><td>'+data.fileDetails[i].dateTime.date+'</td>');
+                                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                            tableRowId.append('<td>'+data.userDetails[i][0].username+'</td><td><a href="'+fullPath+'"><img src="/images/download.png"  alt="Loader Image"/></a></td>');
+                                        {% endif %}
+                                    });
+                                }
+                                dateValueId.val("");
+                                filteredDataId.show();
+                                cancelButtonId.show();
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    }
+                });
+                cancelButtonId.click(function($e) {
+                    $e.preventDefault();
+                    cancelButtonId.hide();
+                    filteredDataId.hide();
+                    originalDataId.show();
+
+                });
+            });
+        </script>
+    {% endblock %}
+
     <div class="col-md-12 users_advanced_list_views_screen">
-        <div class="table-responsive">
+        <div class="container">
+            <div class="col-sm-6" style="height:50px;">
+                <div class="form-group">
+                    <div class='input-group date' id='date-icon-id'>
+                        <input type='text' id="date-picker-value" class="form-control"  name="dateText" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar">
+                        </span>
+                    </span>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" class="submit_btn" id="apply-btn-id"  value="Filter">
+            <input type="submit" class="submit_btn" id="cancel-btn-id" value="Cancel">
+        </div>
+        <div class="table-responsive" id="original-data-id">
             <table class="table table-striped table_dividere data_import_list_table">
                 <thead>
                     <tr>
@@ -33,6 +123,24 @@
                         </tr>
                         {% set count = count+1 %}
                     {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="table-responsive" id="filtered-data-id">
+            <table class="table table-striped table_dividere data_import_list_table">
+                <thead>
+                <tr>
+                    <th class="filename">Filename</th>
+                    <th class="month">Month</th>
+                    <th class="time">Date Time</th>
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                        <th class="option">User Name</th>
+                        <th class="option">Options</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody id="filter-table-body-id">
+
                 </tbody>
             </table>
         </div>
