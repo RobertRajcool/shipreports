@@ -358,6 +358,68 @@ class CompanyUsersController extends Controller
     }
 
 
+    public function editallAction(Request $request)
+    {
+        $user = $this->getUser();
+        $user1 = $this->getUser();
+        $userId = $user1->getId();
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQueryBuilder()
+            ->select('a.id', 'a.username', 'a.email', 'a.roles', 'a.mobile', 'a.fullname', 'a.imagepath')
+            ->from('InitialShippingBundle:User', 'a')
+            ->where('a.id = :user_Id')
+            ->setParameter('user_Id', $userId)
+            ->getQuery();
+        $Userdetail = $query->getResult();
+        $path =$Userdetail[0];
+        $id = $request->request->get('edit_user_id');
+
+        $em = $this->getDoctrine()->getManager();
+        $userManager = $this->get('fos_user.user_manager');
+
+        $user = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:User')->findOneBy(array('id' => $id));
+        $userName = $request->request->get('edit_username');
+        $Email = $request->request->get('edit_email');
+        $mobile = $request->request->get('edit_mobile');
+        $fullname = $request->request->get('edit_fullname');
+        $roles = $request->request->get('privileges');
+        $userfileName = $request->request->get('userimage');
+        $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/userimages/';
+        $fileName =   '_' . basename($_FILES['userimage']['name']);
+        if (!file_exists($uploaddir)) {
+            mkdir($uploaddir, 0777, true);
+        }
+        $uploadfile = $uploaddir . '_' . basename($_FILES['userimage']['name']);
+        if (move_uploaded_file($_FILES['userimage']['tmp_name'], $uploadfile)) {
+            echo "File is valid, and was successfully uploaded.\n";
+        }
+
+        $value ='_';
+
+        $uservalue = new User();
+
+        $user->setRoles(array($roles));
+        $user->setemail($Email);
+        $user->setusername($userName);
+        $user->setmobile($mobile);
+        $user->setfullname($fullname);
+        if ($fileName == $value) {
+
+
+            $user->setImagepath($path['imagepath']);
+        }
+        else{
+            $user->setImagepath($fileName);
+        }
+
+        $em->flush();
+
+        $userManager->updateUser($user);
+
+
+        return $this->redirectToRoute('dashboardhome');
+    }
+
 
 
 

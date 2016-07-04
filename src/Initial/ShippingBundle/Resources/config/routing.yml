@@ -92,6 +92,10 @@ user:
    path: /register/sample_edit
    defaults: { _controller: "InitialShippingBundle:CompanyUsers:sample_edit"}
 
+fos_user_registration_profile:
+               path: /register/profile_change
+               defaults: { _controller: "InitialShippingBundle:CompanyUsers:editall"}
+
 
 
 
