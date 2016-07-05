@@ -32,7 +32,7 @@
                     $('#dataofmonth').val(nowdate);*/
                     var tempdate='May-2016';
                     $('#currentid').text(tempdate);
-                    $('#dataofmonth').val(tempdate);
+                    $('#dataofmonth').val(new Date('2016/05/01'));
 
 
                     var areaId = $('#area');
@@ -68,7 +68,7 @@
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown)
                             {
-                                window.location.href = base_url+'/login';
+                               // window.location.href = base_url+'/login';
                             }
                         });
                     });

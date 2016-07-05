@@ -112,7 +112,7 @@
             </trans-unit>
             <trans-unit id="28">
                 <source>elementranking.nocommands</source>
-                <target> No Commands Added</target>
+                <target> No Comments Added</target>
             </trans-unit>
             <trans-unit id="29">
                  <source>elementranking.avgscore</source>
