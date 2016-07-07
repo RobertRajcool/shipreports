@@ -44,7 +44,7 @@
                 $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
                 $('#scorecard_submenu').html('');
                 $('#scorecard_submenu').text('');
-                $('<li class="active" id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('<li class="active" id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
                 $('.scorecard').show();
 
             }
@@ -54,16 +54,16 @@
                 $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
                 $('#scorecard_submenu').html('');
                 $('#scorecard_submenu').text('');
-                $('<li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('<li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
                 $('.scorecard').show();
             }
-            else if(pathname=='/upload')
+            else if(pathname=='/scorecarddataimport/scorecarddataimport_new')
             {
                 $('li').removeClass('active');
                 $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
                 $('#scorecard_submenu').html('');
                 $('#scorecard_submenu').text('');
-                $('<li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                $('<li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
                 $('.scorecard').show();
             }
             else if(pathname=='/dataverfication/add_data_forranking')
@@ -76,7 +76,7 @@
                 $('#ranking_submenu').text('');
                 //$('#dashboradhome1').removeClass("active");
                 $('li').removeClass('active');
-                $('<li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $('<li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#ranking_submenu');
                 $(".ranking_submenu").show();
             }
             else if(pathname=='/dataverfication/uploadfile_ranking')
@@ -89,7 +89,7 @@
                 $('#ranking_submenu').text('');
                 //$('#dashboradhome1').removeClass("active");
                 $('li').removeClass('active');
-                $('<li  id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $('<li  id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#ranking_submenu');
                 $(".ranking_submenu").show();
             }
             else if(pathname=='/dataverfication/showfile_ranking')
@@ -102,7 +102,7 @@
                 $('#ranking_submenu').text('');
                 //$('#dashboradhome1').removeClass("active");
                 $('li').removeClass('active');
-                $('<li  id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                $('<li  id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#ranking_submenu');
                 $(".ranking_submenu").show();
             }
             $(".topmenu_score").click(function()
@@ -118,7 +118,7 @@
                     $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
                     $('#scorecard_submenu').html('');
                     $('#scorecard_submenu').text('');
-                    $('<li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
+                    $('<li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
                     $('.scorecard').show();
                 }
             });
@@ -135,7 +135,7 @@
                     $('.rankinglink').after('<ul class="submenu ranking_submenu" id="ranking_submenu"></ul>');
                     $('#ranking_submenu').html('');
                     $('#ranking_submenu').text('');
-                    $('<li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.di'|trans }}</span></a></li>').appendTo('#ranking_submenu');
+                    $('<li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('adddata_scorecard_forranking') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li id="ranking_data_verification1"><a class="layout_name" id="ranking_data_verification1" href="{{ path('uploadfile_ranking') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#ranking_submenu');
                     $(".ranking_submenu").show();
                 }
 
