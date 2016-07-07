@@ -1039,7 +1039,6 @@ class DashboradController extends Controller
         } else {
             $userId = $user->getId();
             $username = $user->getUsername();
-
             if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
                 $query = $em->createQueryBuilder()
                     ->select('a.id')
@@ -1050,7 +1049,7 @@ class DashboradController extends Controller
                     ->getQuery();
             } else {
                 $query = $em->createQueryBuilder()
-                    ->select('a.companyid')
+                    ->select('identity(a.companyid)')
                     ->from('InitialShippingBundle:User', 'a')
                     ->where('a.id = :userId')
                     ->setParameter('userId', $userId)
