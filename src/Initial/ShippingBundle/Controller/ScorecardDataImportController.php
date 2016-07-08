@@ -635,6 +635,10 @@ class ScorecardDataImportController extends Controller
             }
             catch(\Exception $e){
                 $info = $e->getMessage();
+                $role = $user->getRoles();
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $templatechoosen = 'v-ships_layout.html.twig';
+                }
                 return $this->render(
                     'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
                     array('erromsg' => $info, 'msg' => '', 'template' => $templatechoosen)
