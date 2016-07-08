@@ -2009,6 +2009,9 @@ class DataVerficationController extends Controller
 
             if ($form->isValid()) {
                 $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles';
+                if(!file_exists($uploaddir)) {
+                    mkdir($uploaddir);
+                }
                 $file = $excelobj->getFilename();
 
                 $fileName = $excelobj->getFilename()->getClientOriginalName();
