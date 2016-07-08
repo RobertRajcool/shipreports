@@ -44,7 +44,9 @@
                                 if(data.length != 0) {
                                     $.each(data.fileName, function(i) {
                                         var monthDetail = new Date(data.fileDetails[i].monthDetail.date);
-                                        var monthString = monthDetail.getMonthName()+'-'+monthDetail.getFullYear();
+                                        console.log(monthDetail);
+                                        console.log(monthDetail.getFullYear());
+                                        var monthString = monthDetail.getMonth()+'-'+monthDetail.getFullYear();
                                         var pathInTwigFormat = "{{ path('scorecarddataimport_file_download', { 'id': 'value'}) }}";
                                         var fullPath = pathInTwigFormat.replace("value",data.fileDetails[i].id);
                                         filterTableBodyId.append('<tr id="table-row-id'+i+'"></tr>');

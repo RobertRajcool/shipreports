@@ -99,6 +99,7 @@ class ScorecardDataImportController extends Controller
             $excelobj = new Excel_file_details();
             $form = $this->createCreateForm($dataImportObj);
             $form->handleRequest($request);
+            $templatechoosen = "base.html.twig";
             try
             {
                 $maileruserid=$this->container->getParameter('mailer_user');
@@ -131,6 +132,8 @@ class ScorecardDataImportController extends Controller
                         if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                             $templatechoosen = 'v-ships_layout.html.twig';
                         }
+                        $em->persist($dataImportObj);
+                        $em->flush();
                         /*$userquery = $em->createQueryBuilder()
                             ->select('a.emailId','a.id')
                             ->from('InitialShippingBundle:CompanyDetails','a')
@@ -138,7 +141,7 @@ class ScorecardDataImportController extends Controller
                             ->setParameter('userId',$username)
                             ->getQuery();
                         $useremailid=$userquery->getResult();*/
-                        $useremailid = $em->createQueryBuilder()
+                        /*$useremailid = $em->createQueryBuilder()
                             ->select('IDENTITY(a.companyid)', 'a.email')
                             ->from('InitialShippingBundle:User', 'a')
                             ->where('a.username = :username')
@@ -426,16 +429,7 @@ class ScorecardDataImportController extends Controller
 
 
                             if ($j == $mycount) {
-
-
-                                /* $highestRow = $objWorksheet->getHighestRow();
-                                 $highestColumn = $objWorksheet->getHighestColumn();*/
-
                                 $excelsheet_data_array = array();
-                                /*
-                                                            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-                                                            $nrColumns = ord($highestColumn) - 64;
-                                                            $worksheetTitle = $objWorksheet->getTitle();*/
                                 $kpielementvaluearray = array();
                                 $newkpielementvaluearray = array();
 
@@ -450,8 +444,6 @@ class ScorecardDataImportController extends Controller
                                     $cellvalue = $newkpidetailsarray[$d]['kpiName'];
                                     $cellenddate = $newkpidetailsarray[$d]['endDate'];
                                     $databasedate = date_format($cellenddate, "m-Y");
-
-                                    /* if ($usergivendata <= $databasedate) { */
 
                                     $columnvalue1 = $objPHPExcel->getActiveSheet()->getCell($cellname)->getValue();
                                     if ($cellvalue == $columnvalue1) {
@@ -637,7 +629,7 @@ class ScorecardDataImportController extends Controller
                                 'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
                                 array('erromsg' => $erromsg, 'msg' => 'Number of Sheets: ' . $sheetCount, 'template' => $templatechoosen)
                             );
-                        }
+                        }*/
                     }
                 }
             }

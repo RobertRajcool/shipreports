@@ -203,8 +203,8 @@
                 <target>Data Verfication</target>
             </trans-unit>
             <trans-unit id="51">
-                <source>layout.menu.di</source>
-                <target>Data Import</target>
+                <source>layout.menu.v-ships</source>
+                <target>Attach Files</target>
             </trans-unit>
             <trans-unit id="52">
                 <source>layout.menu.report</source>
@@ -793,6 +793,10 @@
             <trans-unit id="rules-2">
                 <source>rules.element_select</source>
                 <target>Select Element</target>
+            </trans-unit>
+            <trans-unit id="data-import">
+                <source>data_import_admin</source>
+                <target>Attached Files</target>
             </trans-unit>
 
 
