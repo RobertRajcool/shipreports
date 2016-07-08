@@ -2007,12 +2007,12 @@ class DataVerficationController extends Controller
 
             $form->handleRequest($request);
 
-            if ($form->isValid()) {
+            if ($form->isSubmitted()) {
                 $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles';
                 if(!file_exists($uploaddir)) {
                     mkdir($uploaddir);
                 }
-                $file = $excelobj->getFilename();
+               /* $file = $excelobj->getFilename();
 
                 $fileName = $excelobj->getFilename()->getClientOriginalName();
 
@@ -2020,14 +2020,12 @@ class DataVerficationController extends Controller
 
                 $name = substr($fileName, 0, -(strlen($ext) + 1));
                 //  echo $name.'<br>';
-                $i = 1;
+                $i = 1;*/
 
-                $fileName = $name . date('Y-m-d H-i-s') . '.' . $ext;
-
-
-                if ($file->move($uploaddir, $fileName)) {
-
-
+                $currentdatetime = date('Y-m-d H-i-s');
+                $fileName=$currentdatetime.'_'. basename($_FILES['filename']['name']);
+                $uploadfile = $uploaddir .'/'.$currentdatetime.'_'. basename($_FILES['filename']['name']);
+                if (move_uploaded_file($_FILES['filename']['tmp_name'], $uploadfile)) {
                     $username = $user->getUsername();
                     $userquery = $em->createQueryBuilder()
                         ->select('IDENTITY(a.companyid)')
