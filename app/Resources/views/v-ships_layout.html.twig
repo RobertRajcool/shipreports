@@ -63,6 +63,7 @@
                 $('#Scorecard').after('<ul class="submenu scorecard" id="scorecard_submenu"></ul>');
                 $('#scorecard_submenu').html('');
                 $('#scorecard_submenu').text('');
+                $('<li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecarddataimport_data_import') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
                 $('<li  id="data_verification1"><a class="layout_name" id="data_verification" href="{{ path('adddata_scorecard') }}"><span class="menu-item-icon ss-check">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.dv'|trans }}</span></a></li><li class="active" id="ranking_data_verification1"><a class="layout_name" id="scorecard_import" href="{{ path('scorecard_import') }}"><span class="menu-item-icon fa fa-upload">&nbsp;</span><span class="menu-item-text">{{ 'layout.menu.v-ships'|trans }}</span></a></li>').appendTo('#scorecard_submenu');
                 $('.scorecard').show();
             }
