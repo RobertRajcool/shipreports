@@ -199,6 +199,7 @@ class DashboradController extends Controller
                     }
                     $ob = new Highchart();
                     $ob->chart->renderTo('area');
+                    $ob->credits->enabled(false);
                     $ob->chart->type('column');
                     $ob->chart->hieght(250);
                     $ob->title->text('', array('style' => array('color' => 'red')));
@@ -731,6 +732,7 @@ class DashboradController extends Controller
 
             $ob = new Highchart();
             $ob->chart->renderTo('area');
+            $ob->credits->enabled(false);
             $ob->chart->type('line');
             $ob->title->text('Star Systems Reporting Tool ', array('style' => array('color' => 'red')));
             $ob->subtitle->text($shipname);
@@ -1434,6 +1436,7 @@ class DashboradController extends Controller
             );
             $ob = new Highchart();
             $ob->chart->renderTo('area');
+            $ob->credits->enabled(false);
             $ob->chart->type('line');
             $ob->title->text($shipname, array('style' => array('color' => 'red')));
             $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
@@ -1601,6 +1604,7 @@ class DashboradController extends Controller
                 );
                 $ob = new Highchart();
                 $ob->chart->renderTo('area');
+                $ob->credits->enabled(false);
                 $ob->chart->type('line');
                 $ob->title->text($kpiName, array('style' => array('color' => 'red')));
                 $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
@@ -1749,6 +1753,7 @@ class DashboradController extends Controller
 
                 $ob = new Highchart();
                 $ob->chart->renderTo('area');
+                $ob->credits->enabled(false);
                 $ob->chart->type('line');
                 $ob->title->text($kpiName, array('style' => array('color' => 'red')));
                 $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
@@ -1894,6 +1899,7 @@ class DashboradController extends Controller
                 $ob = new Highchart();
                 $ob->chart->renderTo('area');
                 $ob->chart->type('line');
+                $ob->credits->enabled(false);
                 $ob->title->text($kpiName, array('style' => array('color' => 'red')));
                 $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
                 $ob->xAxis->categories($monthNameLetter);
@@ -2408,6 +2414,7 @@ class DashboradController extends Controller
             $ob = new Highchart();
             $ob->chart->renderTo('area');
             $ob->chart->type('line');
+            $ob->credits->enabled(false);
             //$ob->chart->plotBackgroundImage($WateMarkImagePath);
             $ob->title->text('', array('style' => array('color' => 'red')));
             $ob->subtitle->style(array('color' => '#0000f0', 'fontWeight' => 'bold'));
@@ -2861,6 +2868,7 @@ class DashboradController extends Controller
             $graphObject = array(
                 'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
                 'exporting' => array('enabled' => false),
+                'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
                     "allowPointSelect" => true,
                     "dataLabels" => array(
@@ -2934,6 +2942,7 @@ class DashboradController extends Controller
                     $graphObject = array(
                         'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
                         'exporting' => array('enabled' => false),
+                        'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
                             "allowPointSelect" => true,
                             "dataLabels" => array(
@@ -2954,6 +2963,7 @@ class DashboradController extends Controller
                     $graphObject = array(
                         'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
                         'exporting' => array('enabled' => false),
+                        'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
                             "allowPointSelect" => true,
                             "dataLabels" => array(
@@ -3040,6 +3050,7 @@ class DashboradController extends Controller
             $graphObject = array(
                 'chart' => array('renderTo' => 'areaId', 'type' => "line"),
                 'exporting' => array('enabled' => false),
+                'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
                     "allowPointSelect" => true,
                     "dataLabels" => array(
@@ -3096,6 +3107,7 @@ class DashboradController extends Controller
                     $graphObject = array(
                         'chart' => array('renderTo' => 'areaId', 'type' => "line"),
                         'exporting' => array('enabled' => false),
+                        'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
                             "allowPointSelect" => true,
                             "dataLabels" => array(
@@ -3116,6 +3128,7 @@ class DashboradController extends Controller
                     $graphObject = array(
                         'chart' => array('renderTo' => 'areaId', 'type' => "line"),
                         'exporting' => array('enabled' => false),
+                        'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
                             "allowPointSelect" => true,
                             "dataLabels" => array(
@@ -3479,6 +3492,7 @@ class DashboradController extends Controller
             $graphObject = array(
                 'chart' => array('renderTo' => 'areaId', 'type' => "line"),
                 'exporting' => array('enabled' => false),
+                'credits'=>array('enabled' => false),
                 'legend' => array('layout' => 'vertical', 'align' => 'right', 'verticalAlign' => 'middle', 'borderWidth' => 0),
                 'plotOptions' => array('series' => array(
                     "allowPointSelect" => true,
@@ -3543,6 +3557,7 @@ class DashboradController extends Controller
         $graphObject = array(
             'chart' => array('renderTo' => 'areaId', 'type' => "line"),
             'exporting' => array('enabled' => false),
+            'credits'=>array('enabled' => false),
             'legend' => array('layout' => 'vertical', 'align' => 'right', 'verticalAlign' => 'middle', 'borderWidth' => 0),
             'plotOptions' => array('series' => array(
                 "allowPointSelect" => true,
