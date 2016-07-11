@@ -203,7 +203,11 @@
                         <div class="user_setting_main slide-toggle">
 
     <span class="x-btn-icon-el" id="user_settings">
-    <img src="/images/nouser.png">
+        {% if app.user.imagepath=='' %}
+            <img id="baseimageid" src="/images/nouser.png">
+                            {% else %}
+            <img id="baseimageid" src="/uploads/userimages/{{ app.user.imagepath }}">
+        {% endif %}
     </span>
     <span class="x-btn-inner">
     <div class="user-name">{{app.user.username }}</div>
