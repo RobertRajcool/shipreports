@@ -201,15 +201,16 @@ class ElementDetailsController extends Controller
             $cellName = $params['cellName'];
             $cellDetails = $params['cellDetails'];
             $activeMonth = $request->request->get('activeMonth');
-            $activeYear = $request->request->get('activeYear');;
-            $endMonth = $request->request->get('endMonth');;
-            $endYear = $request->request->get('endYear');;
+            $activeYear = $request->request->get('activeYear');
+            $endMonth = $request->request->get('endMonth');
+            $endYear = $request->request->get('endYear');
             $day = 1;
             $monthtostring = $activeYear . '-' . $activeMonth . '-' . $day;
             $new_date = new \DateTime($monthtostring);
             $monthtostring1 = $endYear . '-' . $endMonth . '-' . $day;
             $new_date1 = new \DateTime($monthtostring1);
             $weightage = $params['weightage'];
+            $vesselWiseTotal = $params['vesselWiseTotal'];
             //$rules         = $request->request->get('value');
 
             $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiDetailsId));
@@ -223,6 +224,7 @@ class ElementDetailsController extends Controller
             $elementDetail->setactivatedDate($new_date);
             $elementDetail->setendDate($new_date1);
             $elementDetail->setweightage($weightage);
+            $elementDetail->setVesselWiseTotal($vesselWiseTotal);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
@@ -365,7 +367,7 @@ class ElementDetailsController extends Controller
                 ->getResult();
 
             $query1 = $em->createQueryBuilder()
-                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description')
+                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal')
                 ->from('InitialShippingBundle:ElementDetails', 'a')
                 ->where('a.id = :element_id')
                 ->setParameter('element_id', $id)
@@ -414,6 +416,7 @@ class ElementDetailsController extends Controller
             $activeYear = $request->request->get('activeYear');
             $endMonth = $request->request->get('endMonth');
             $endYear = $request->request->get('endYear');
+            $vesselWiseTotal = $request->request->get('vesselWiseTotal');
             $integerEndMonth = (int)$endMonth + 1;
             $activeMonthDate = $activeYear . '-' . $integerActiveMonth . '-' . '01';
             $activeMonthDateObject = new \DateTime($activeMonthDate);
@@ -436,6 +439,7 @@ class ElementDetailsController extends Controller
             $entity->setCellDetails($cellDetails);
             $entity->setActivatedDate($activeMonthDateObject);
             $entity->setEndDate($endMonthDateObject);
+            $entity->setVesselWiseTotal($vesselWiseTotal);
             $em->flush();
 
             $show_response = $this->ajax_showAction($request, 'hi');

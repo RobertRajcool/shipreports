@@ -85,6 +85,12 @@ class ElementDetails
      * @ORM\Column(name="Rules", type="string", length=255, nullable=true)
      */
     private $rules;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="VesselWiseTotal", type="string", length=35)
+     */
+    private $vesselWiseTotal;
 
 
     /**
@@ -309,6 +315,22 @@ class ElementDetails
         $this->rules = $rules;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVesselWiseTotal()
+    {
+        return $this->vesselWiseTotal;
+    }
+
+    /**
+     * @param string $vesselWiseTotal
+     */
+    public function setVesselWiseTotal($vesselWiseTotal)
+    {
+        $this->vesselWiseTotal = $vesselWiseTotal;
     }
 
 }

@@ -47,6 +47,8 @@ var conditions, actions, ageField, submit;
                 conditions: conditions.conditionsBuilder("data"),
                 actions: actions.actionsBuilder("data")
             });
+            console.log(engine);
+            console.log(actions.actionsBuilder("data"));
             var sample = JSON.stringify(engine);
             $('#rules-id_'+id_value).val(sample);
             $('#result').val(id_value);

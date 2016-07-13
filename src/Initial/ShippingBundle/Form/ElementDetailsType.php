@@ -58,6 +58,17 @@ class ElementDetailsType extends AbstractType
             ->add('endDate', 'date')
             ->add('weightage')
             ->add('rules','hidden')
+            ->add('vesselWiseTotal', 'choice', array(
+                'choices' => array(
+                    'Average' => 'Average',
+                    'Sum' => 'Sum'
+                ),
+                'multiple' => false,
+                'expanded' => true,
+                'required' => true,
+                'label' => false,
+                'data' => 'Average'
+            ))
         ;
     }
 

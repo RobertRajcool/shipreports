@@ -128,7 +128,7 @@ class ScorecardDataImportController extends Controller
                     mkdir($importDirectory);
                 }
 
-                if ($file->move($importDirectory, $importFileName)) {
+                if ($file->upload_dir($importDirectory, $importFileName)) {
                     $monthDetail = $dataImportObj->getMonthDetail();
                     $lastDayOfMonth = $monthDetail->modify('last day of this month');
                     $dateTime = date("Y-m-d H:i:s");
