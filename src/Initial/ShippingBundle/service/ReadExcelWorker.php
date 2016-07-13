@@ -793,6 +793,8 @@ class ReadExcelWorker
                             $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
                         } else if($vesselWiseTotalStatus == "Sum") {
                             $averageElementValue = $scorecardElementSumValue;
+                        } else {
+                            $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
                         }
 
                         $scorecardElementRulesArray = $em->createQueryBuilder()
