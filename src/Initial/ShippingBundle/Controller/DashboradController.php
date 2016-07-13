@@ -401,7 +401,7 @@ class DashboradController extends Controller
                         }*/
                         $overallShipDetailArray[$shipCount]['name'] = $rankingShipName;
                         if(count($oneyear_montharray) > 0 ) {
-                            $overallShipDetailArray[$shipCount]['y'] = (array_sum($rankingKpiValueCountArray)/(count($oneyear_montharray)));
+                            $overallShipDetailArray[$shipCount]['y'] = (array_sum($monthlyKpiAverageScore)/(count($oneyear_montharray)));
                         }
                         //$yearChange = $lastMonthDetail->format('Y');
                         $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
