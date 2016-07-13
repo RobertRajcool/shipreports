@@ -148,148 +148,150 @@ class DashboradController extends Controller
                             ->setParameter('shipid', $rankingShipId)
                             ->getQuery()
                             ->getResult();
-                        for ($d = 0; $d < count($oneyear_montharray); $d++) {
-                            $time2 = strtotime($oneyear_montharray[$d]);
-                            $monthinletter = date('M', $time2);
-                            array_push($newcategories, $monthinletter);
-                            $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
-                            $new_monthdetail_date->modify('last day of this month');
-                            $rankingKpiValueCountArray = array();
-                            $rankingKpiWeightarray = array();
+                        if(count($oneyear_montharray) > 0 ) {
+                            for ($d = 0; $d < count($oneyear_montharray); $d++) {
+                                $time2 = strtotime($oneyear_montharray[$d]);
+                                $monthinletter = date('M', $time2);
+                                array_push($newcategories, $monthinletter);
+                                $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
+                                $new_monthdetail_date->modify('last day of this month');
+                                $rankingKpiValueCountArray = array();
+                                $rankingKpiWeightarray = array();
 
-                            for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++) {
-                                $rankingElementValueTotal = 0;
-                                $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
-                                $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
-                                $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
-                                array_push($rankingKpiWeightarray, $rankingKpiWeight);
-                                if ($rankingKpiName == 'Vessel age') {
-                                    if ($manufacturingYear == "") {
-                                        $yearcount = 0;
-                                    } else {
+                                for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++) {
+                                    $rankingElementValueTotal = 0;
+                                    $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
+                                    $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
+                                    $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
+                                    array_push($rankingKpiWeightarray, $rankingKpiWeight);
+                                    if ($rankingKpiName == 'Vessel age') {
+                                        if ($manufacturingYear == "") {
+                                            $yearcount = 0;
+                                        } else {
 
-                                        $man_datestring = $manufacturingYear. '-01';
-                                        $temp_man_year = new \DateTime($man_datestring);
-                                        $temp_man_year->modify('last day of this month');
-                                        $Vessage_count = $temp_man_year->diff($lastMonthDetail)->y;
-                                    }
-                                    $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
-                                    array_push($rankingKpiValueCountArray, $vesselage);
-                                }
-                                else
-                                {
-
-                                    $rankingElementList = $em->createQueryBuilder()
-                                        ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
-                                        ->from('InitialShippingBundle:RankingElementDetails', 'c')
-                                        ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
-                                        ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
-                                        ->setParameter('kpiid', $rankingKpiId)
-                                        ->setParameter('datamonth', $new_monthdetail_date)
-                                        ->setParameter('rankingStatusValue', 3)
-                                        ->setParameter('shipId', $rankingShipId)
-                                        ->getQuery()
-                                        ->getResult();
-
-                                    if (count($rankingElementList) > 0) {
-                                        for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++) {
-                                            $rankingElementName = $rankingElementList[$rankingElementCount]['elementName'];
-                                            $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
-                                            $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
-                                            $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
-                                            $rankingElementResultColor = "";
-                                            $rankingElementColorValue = 0;
-                                            $rankingElementResult = $em->createQueryBuilder()
-                                                ->select('b.elementdata, b.elementcolor')
-                                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
-                                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
-                                                ->setParameter('kpiId', $rankingKpiId)
-                                                ->setParameter('shipId', $rankingShipId)
-                                                ->setParameter('elementId', $rankingElementId)
-                                                ->setParameter('monthDetail', $new_monthdetail_date)
-                                                ->getQuery()
-                                                ->getResult();
-                                            if (count($rankingElementResult) != 0) {
-                                                $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
-                                            }
-
-                                            if ($rankingElementResultColor == "false") {
-                                                $rankingElementResultColor = "";
-                                            }
-
-                                            if ($rankingElementResultColor == 'Green') {
-                                                $rankingElementColorValue = $rankingElementWeight;
-                                            } else if ($rankingElementResultColor == 'Yellow') {
-                                                $rankingElementColorValue = $rankingElementWeight / 2;
-                                            } else if ($rankingElementResultColor == 'Red') {
-                                                $rankingElementColorValue = 0;
-                                            }
-                                            $rankingElementValueTotal += $rankingElementColorValue;
+                                            $man_datestring = $manufacturingYear. '-01';
+                                            $temp_man_year = new \DateTime($man_datestring);
+                                            $temp_man_year->modify('last day of this month');
+                                            $Vessage_count = $temp_man_year->diff($lastMonthDetail)->y;
                                         }
+                                        $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
+                                        array_push($rankingKpiValueCountArray, $vesselage);
                                     }
-                                    if (count($rankingElementList) == 0) {
-                                        $newkpiid = $em->createQueryBuilder()
-                                            ->select('b.id')
-                                            ->from('InitialShippingBundle:RankingKpiDetails', 'b')
-                                            ->where('b.kpiName = :kpiName')
-                                            ->setParameter('kpiName', $rankingKpiName)
-                                            ->groupby('b.kpiName')
-                                            ->getQuery()
-                                            ->getResult();
+                                    else
+                                    {
+
                                         $rankingElementList = $em->createQueryBuilder()
                                             ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
                                             ->from('InitialShippingBundle:RankingElementDetails', 'c')
                                             ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
                                             ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
-                                            ->setParameter('kpiid', $newkpiid[0]['id'])
+                                            ->setParameter('kpiid', $rankingKpiId)
                                             ->setParameter('datamonth', $new_monthdetail_date)
                                             ->setParameter('rankingStatusValue', 3)
                                             ->setParameter('shipId', $rankingShipId)
                                             ->getQuery()
                                             ->getResult();
 
-                                        for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++) {
-                                            $rankingElementName = $rankingElementList[$rankingElementCount]['elementName'];
-                                            $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
-                                            $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
-                                            $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
-                                            $rankingElementResultColor = "";
-                                            $rankingElementColorValue = 0;
-                                            $rankingElementResult = $em->createQueryBuilder()
-                                                ->select('b.elementdata, b.elementcolor')
-                                                ->from('InitialShippingBundle:Ranking_LookupData', 'b')
-                                                ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
-                                                ->setParameter('kpiId', $newkpiid[0]['id'])
-                                                ->setParameter('shipId', $rankingShipId)
-                                                ->setParameter('elementId', $rankingElementId)
-                                                ->setParameter('monthDetail', $new_monthdetail_date)
+                                        if (count($rankingElementList) > 0) {
+                                            for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++) {
+                                                $rankingElementName = $rankingElementList[$rankingElementCount]['elementName'];
+                                                $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
+                                                $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
+                                                $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
+                                                $rankingElementResultColor = "";
+                                                $rankingElementColorValue = 0;
+                                                $rankingElementResult = $em->createQueryBuilder()
+                                                    ->select('b.elementdata, b.elementcolor')
+                                                    ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                                    ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                                    ->setParameter('kpiId', $rankingKpiId)
+                                                    ->setParameter('shipId', $rankingShipId)
+                                                    ->setParameter('elementId', $rankingElementId)
+                                                    ->setParameter('monthDetail', $new_monthdetail_date)
+                                                    ->getQuery()
+                                                    ->getResult();
+                                                if (count($rankingElementResult) != 0) {
+                                                    $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
+                                                }
+
+                                                if ($rankingElementResultColor == "false") {
+                                                    $rankingElementResultColor = "";
+                                                }
+
+                                                if ($rankingElementResultColor == 'Green') {
+                                                    $rankingElementColorValue = $rankingElementWeight;
+                                                } else if ($rankingElementResultColor == 'Yellow') {
+                                                    $rankingElementColorValue = $rankingElementWeight / 2;
+                                                } else if ($rankingElementResultColor == 'Red') {
+                                                    $rankingElementColorValue = 0;
+                                                }
+                                                $rankingElementValueTotal += $rankingElementColorValue;
+                                            }
+                                        }
+                                        if (count($rankingElementList) == 0) {
+                                            $newkpiid = $em->createQueryBuilder()
+                                                ->select('b.id')
+                                                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                                                ->where('b.kpiName = :kpiName')
+                                                ->setParameter('kpiName', $rankingKpiName)
+                                                ->groupby('b.kpiName')
                                                 ->getQuery()
                                                 ->getResult();
-                                            if (count($rankingElementResult) != 0) {
-                                                $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
-                                            }
+                                            $rankingElementList = $em->createQueryBuilder()
+                                                ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
+                                                ->from('InitialShippingBundle:RankingElementDetails', 'c')
+                                                ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
+                                                ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
+                                                ->setParameter('kpiid', $newkpiid[0]['id'])
+                                                ->setParameter('datamonth', $new_monthdetail_date)
+                                                ->setParameter('rankingStatusValue', 3)
+                                                ->setParameter('shipId', $rankingShipId)
+                                                ->getQuery()
+                                                ->getResult();
 
-                                            if ($rankingElementResultColor == "false") {
+                                            for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++) {
+                                                $rankingElementName = $rankingElementList[$rankingElementCount]['elementName'];
+                                                $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
+                                                $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
+                                                $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
                                                 $rankingElementResultColor = "";
-                                            }
-
-                                            if ($rankingElementResultColor == 'Green') {
-                                                $rankingElementColorValue = $rankingElementWeight;
-                                            } else if ($rankingElementResultColor == 'Yellow') {
-                                                $rankingElementColorValue = $rankingElementWeight / 2;
-                                            } else if ($rankingElementResultColor == 'Red') {
                                                 $rankingElementColorValue = 0;
+                                                $rankingElementResult = $em->createQueryBuilder()
+                                                    ->select('b.elementdata, b.elementcolor')
+                                                    ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                                    ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                                    ->setParameter('kpiId', $newkpiid[0]['id'])
+                                                    ->setParameter('shipId', $rankingShipId)
+                                                    ->setParameter('elementId', $rankingElementId)
+                                                    ->setParameter('monthDetail', $new_monthdetail_date)
+                                                    ->getQuery()
+                                                    ->getResult();
+                                                if (count($rankingElementResult) != 0) {
+                                                    $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
+                                                }
+
+                                                if ($rankingElementResultColor == "false") {
+                                                    $rankingElementResultColor = "";
+                                                }
+
+                                                if ($rankingElementResultColor == 'Green') {
+                                                    $rankingElementColorValue = $rankingElementWeight;
+                                                } else if ($rankingElementResultColor == 'Yellow') {
+                                                    $rankingElementColorValue = $rankingElementWeight / 2;
+                                                } else if ($rankingElementResultColor == 'Red') {
+                                                    $rankingElementColorValue = 0;
+                                                }
+                                                $rankingElementValueTotal += $rankingElementColorValue;
                                             }
-                                            $rankingElementValueTotal += $rankingElementColorValue;
                                         }
+
+                                        array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
                                     }
-
-                                    array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
                                 }
-                            }
-                            array_push($monthlyKpiValue, $rankingKpiValueCountArray);
-                            array_push($monthlyKpiAverageScore, array_sum($rankingKpiValueCountArray));
+                                array_push($monthlyKpiValue, $rankingKpiValueCountArray);
+                                array_push($monthlyKpiAverageScore, array_sum($rankingKpiValueCountArray));
 
+                            }
                         }
                    /*     $rankingKpiList = $em->createQueryBuilder()
                             ->select('b.kpiName', 'b.id', 'b.weightage')
@@ -398,7 +400,9 @@ class DashboradController extends Controller
                             $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
                         }*/
                         $overallShipDetailArray[$shipCount]['name'] = $rankingShipName;
-                        $overallShipDetailArray[$shipCount]['y'] = (array_sum($rankingKpiValueCountArray)/(count($oneyear_montharray)));
+                        if(count($oneyear_montharray) > 0 ) {
+                            $overallShipDetailArray[$shipCount]['y'] = (array_sum($rankingKpiValueCountArray)/(count($oneyear_montharray)));
+                        }
                         //$yearChange = $lastMonthDetail->format('Y');
                         $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
 
