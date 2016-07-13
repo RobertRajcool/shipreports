@@ -31,12 +31,12 @@
                     /*$('#currentid').text(month + '-' + year);
                     $('#dataofmonth').val(nowdate);*/
                     var tempdate='May-2016';
-                    $('#currentid').text(tempdate);
+                    //$('#currentid').text(tempdate);
                     $('#dataofmonth').val(new Date('2016/05/01'));
 
 
                     var areaId = $('#area');
-                    $('#proviousmonth').click(function ($e) {
+                    $('#proviousmonth1').click(function ($e) {
                         $e.preventDefault();
                         var currentdate = new Date($('#dataofmonth').val());
                         currentdate.setMonth(currentdate.getMonth() - 1);
@@ -73,7 +73,7 @@
                         });
                     });
 
-                    $('#nextmonth').click(function ($e) {
+                    $('#nextmonth1').click(function ($e) {
                         $e.preventDefault();
                         var currentdate = new Date($('#dataofmonth').val());
                         var nowdate = new Date();
@@ -524,7 +524,7 @@
                             <span id="spantext" class="errormsg">March-2016</span>
                             <div class="toolbar-title">
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
-                                <span id="currentid" class="item">March-2016</span>
+                                <span id="currentid" class="item">{{ currentYear }}</span>
                                 <input type="hidden" id="dataofmonth" name="dataofmonth">
                                 <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
                             </div>
