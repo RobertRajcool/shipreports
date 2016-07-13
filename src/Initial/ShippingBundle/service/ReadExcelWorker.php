@@ -764,7 +764,7 @@ class ReadExcelWorker
                 $ElementIds=array();
 
                 $scorecardElementArray = $em->createQueryBuilder()
-                    ->select('c.id, c.weightage, sum(a.value) as value')
+                    ->select('c.id, c.weightage, sum(a.value) as value','c.vesselWiseTotal')
                     ->from('InitialShippingBundle:ElementDetails', 'c')
                     ->leftjoin('InitialShippingBundle:ReadingKpiValues', 'a', 'WITH', 'c.id = a.elementDetailsId and a.monthdetail = :dateOfMonth')
                     ->where('c.kpiDetailsId = :kpiId and a.status=:statusValue' )
@@ -787,8 +787,13 @@ class ReadExcelWorker
                         array_push($ElementIds,$scorecardElementId);
                         $scorecardElementWeight = $scorecardElementArray[$elementCount]['weightage'];
                         $scorecardElementSumValue = $scorecardElementArray[$elementCount]['value'];
+                        $vesselWiseTotalStatus = $scorecardElementArray[$elementCount]['vesselWiseTotal'];
                         //echo  "after for loop";
-                        $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
+                        if($vesselWiseTotalStatus == "Average") {
+                            $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
+                        } else if($vesselWiseTotalStatus == "Sum") {
+                            $averageElementValue = $scorecardElementSumValue;
+                        }
 
                         $scorecardElementRulesArray = $em->createQueryBuilder()
                             ->select('a.rules')
