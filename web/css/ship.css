@@ -2538,7 +2538,13 @@ input[type="color"],
 .data_import_list_table .option {
     width:12%;
 }
-
+.required {
+    display: inline;
+    padding: 5px;
+}
+#element_details_vesselWiseTotal_1 {
+    margin-left: 25px;
+}
 
 
 
