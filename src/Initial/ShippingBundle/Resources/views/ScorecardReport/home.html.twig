@@ -119,13 +119,13 @@
                 function setOverallKpiColorFunction(color, inn) {
                     if (color != 'false' && color != '') {
                         if (color == 'Green') {
-                            $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month"><img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Red') {
-                            $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month"><img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Yellow') {
-                            $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month"><img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                     }
                     else {
@@ -135,31 +135,31 @@
 
                 function setOverallKpiStatusFunction(color, status, inn) {
                     if (color == 'Green' && status == 'Green') {
-                        $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Green' && status == 'Yellow') {
-                        $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Green' && status == 'Red') {
-                        $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Yellow' && status == 'Green') {
-                        $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Yellow' && status == 'Yellow') {
-                        $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Yellow' && status == 'Red') {
-                        $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Red' && status == 'Green') {
-                        $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Red' && status == 'Yellow') {
-                        $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else if (color == 'Red' && status == 'Red') {
-                        $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                        $('<td class="month_difference"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                     }
                     else {
                         $('<td class="month_difference"></td>').appendTo('#praviousRowId' + inn);
@@ -264,43 +264,43 @@
 
                 function setElementColorFunction(color, i, j) {
                     if (color == 'Green') {
-                        $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Red') {
-                        $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Yellow') {
-                        $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                 }
 
                 function setElementStatusFunction(color, status, i, j) {
                     if (color == 'Green' && status == 'Green') {
-                        $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Green' && status == 'Yellow') {
-                        $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Green' && status == 'Red') {
-                        $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Yellow' && status == 'Green') {
-                        $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Yellow' && status == 'Yellow') {
-                        $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Yellow' && status == 'Red') {
-                        $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Red' && status == 'Green') {
-                        $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Red' && status == 'Yellow') {
-                        $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else if (color == 'Red' && status == 'Red') {
-                        $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
+                        $('<td class="month"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#elementRowId' + i + j);
                     }
                     else {
                         $('<td class="month"></td>').appendTo('#elementRowId' + i + j);
@@ -309,43 +309,43 @@
 
                 function setKpiColorFunction(kpiColor, i) {
                     if (kpiColor == 'Green') {
-                        $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Red') {
-                        $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Yellow') {
-                        $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                 }
 
                 function setKpiStatusFunction(kpiColor, status, i) {
                     if (kpiColor == 'Green' && status == 'Green') {
-                        $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Green' && status == 'Yellow') {
-                        $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Green' && status == 'Red') {
-                        $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Yellow' && status == 'Green') {
-                        $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Yellow' && status == 'Yellow') {
-                        $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Yellow' && status == 'Red') {
-                        $('<td class="month"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Red' && status == 'Green') {
-                        $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Red' && status == 'Yellow') {
-                        $('<td class="month"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else if (kpiColor == 'Red' && status == 'Red') {
-                        $('<td class="month"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
+                        $('<td class="month"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#kpiRowPlace' + i);
                     }
                     else {
                         $('<td class="month"></td>').appendTo('#kpiRowPlace' + i);
