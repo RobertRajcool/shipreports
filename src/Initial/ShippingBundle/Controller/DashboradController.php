@@ -625,6 +625,7 @@ class DashboradController extends Controller
                         'rankinKpiCount' => $rKPICount,
                         'currentmonth' => '',
                         'currentyear' => $yChange,
+                        'heading' => 'Management Performance'
                     )
                 );
             } else {
@@ -670,7 +671,8 @@ class DashboradController extends Controller
                 'yearAvgScore' => $yearValue['yearAvgScore'],
                 'yearMonthName' => $yearValue['yearMonthName'],
                 'currentYear' => $yearValue['currentYear'],
-                'kpiNameList' => $yearValue['kpi_list']
+                'kpiNameList' => $yearValue['kpi_list'],
+                'heading' => 'Management Performance'
             ));
             return $response;
         } else {
