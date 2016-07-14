@@ -798,6 +798,14 @@
                 <source>data_import_admin</source>
                 <target>Attached Files</target>
             </trans-unit>
+            <trans-unit id="vessel_alert">
+                <source>dashboard.vesselalert</source>
+                <target>Vessel Alerts</target>
+            </trans-unit>
+            <trans-unit id="kpi_alert">
+                 <source>dashboard.kpialert</source>
+                 <target>Kpi Alerts</target>
+            </trans-unit>
 
 
         </body>
