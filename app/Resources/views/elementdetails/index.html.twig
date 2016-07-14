@@ -247,9 +247,16 @@
                     editActiveYear.val(active_date.getFullYear());
                     editEndMonth.val(end_date.getMonth());
                     editEndYear.val(end_date.getFullYear());
-                    if(editVesselWiseTotal.val() == data.element_detail[0].vesselWiseTotal) {
+                    /*if(editVesselWiseTotal.val() == data.element_detail[0].vesselWiseTotal) {
                         var tempId = editVesselWiseTotal.attr('id');
                         $('#'+tempId).attr('checked','checked');
+                    }*/
+                    var averageId = $('#Average');
+                    var sumId = $('#Sum');
+                    if(averageId.val() == data.element_detail[0].vesselWiseTotal ) {
+                        averageId.attr('checked','checked');
+                    } else if(sumId.val() == data.element_detail[0].vesselWiseTotal) {
+                        sumId.attr('checked','checked');
                     }
                 }
 
@@ -883,8 +890,8 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4 required_field"><strong>Vessel Wise Total</strong></label>
                                     <div class="col-xs-8">
-                                        <input type="radio" class="edit-vessel-wise-total" value="Average" id="Average" name="vesselTotal"> <label>Average</label>
-                                        <input type="radio" class="edit-vessel-wise-total" value="Sum" id="Sum" name="vesselTotal"> <label>Sum</label>
+                                        <input type="radio" class="edit-vessel-wise-total" value="Average" id="Average" name="vesselTotal"> <label class="required">Average</label>
+                                        <input type="radio" class="edit-vessel-wise-total" value="Sum" id="Sum" name="vesselTotal" style="margin-left: 25px"> <label class="required">Sum</label>
                                     </div>
                                 </div>
                             </fieldset>

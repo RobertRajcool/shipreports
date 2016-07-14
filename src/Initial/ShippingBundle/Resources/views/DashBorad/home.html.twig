@@ -34,10 +34,7 @@
                             locale = "en-us",
                             month = nowdate.toLocaleString(locale, {month: "long"}),
                             year = nowdate.getFullYear();
-                    /*$('#currentid').text(month + '-' + year);
-                    $('#dataofmonth').val(nowdate);*/
                     var tempdate='May-2016';
-                    //$('#currentid').text(tempdate);
                     $('#dataofmonth').val(new Date('2016/05/01'));
 
 
@@ -205,6 +202,7 @@
                                 var createScorecardTable = createScorecardTableFunction(data);
                                 var setMonthName = setMonthNameFunction(data);
                                 var setScorecardTableDetails = setScorecardTableDetailsFunction(data);
+                                var setGraphValues = setGraphValuesFunction(data);
                                 wholeViewContent.hide();
                                 previousYearView.show();
                             },
@@ -255,6 +253,7 @@
                                 var createScorecardTable = createScorecardTableFunction(data);
                                 var setMonthName = setMonthNameFunction(data);
                                 var setScorecardTableDetails = setScorecardTableDetailsFunction(data);
+                                var setGraphValues = setGraphValuesFunction(data);
                                 yearViewContent.hide();
                                 previousYearView.show();
                             },
@@ -357,6 +356,30 @@
                         }
                     }
 
+                    function setGraphValuesFunction(data) {
+                        $('#year-view-graph').highcharts({
+                            chart: {
+                                type: 'line',
+                                width: 1000
+                            },
+                            title: {
+                                text: ''
+                            },
+                            xAxis: {
+                                categories: data.yearMonthName
+                            },
+                            exporting: {"enabled": true},
+                            plotOptions: {"series": {"allowPointSelect": true, "dataLabels": {"enabled": true}}},
+                            series: [{
+                                name: data.heading,
+                                showInLegend: false,
+                                data: data.yearAvgScore,
+                                color: '#103a71'
+                            }],
+                            yAxis: {"max": 3, "min": 0}
+                        });
+                    }
+
                     var nextYear = $('.nextYear');
                     nextYear.click(function ($e) {
                         $e.preventDefault();
@@ -385,6 +408,7 @@
                                     var createScorecardTable = createScorecardTableFunction(data);
                                     var setMonthName = setMonthNameFunction(data);
                                     var setScorecardTableDetails = setScorecardTableDetailsFunction(data);
+                                    var setGraphValues = setGraphValuesFunction(data);
                                     yearViewContent.hide();
                                     previousYearView.show();
                                 },
@@ -408,7 +432,7 @@
                             <thead>
                             <tr>
                                 <th>
-                                    Management Performance
+                                    {{ heading }}
                                     <div class="year_view_btn">
                                         <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
                                         <a href=""><span class="item yearView">{{ currentYear }}</span></a>
@@ -702,7 +726,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
         </div>
@@ -716,7 +739,7 @@
                                 <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
                                     <thead>
                                     <tr>
-                                        <th>Management Performance
+                                        <th>{{ heading }}
                                             <div class="year_view_btn">
                                                 <a href="#" class="left-arrow ss-navigateleft previousYear">&nbsp;</a>
                                                 <a href=""><span id="previousYearShow"
@@ -735,7 +758,25 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </section>
 
+            <section>
+                <div class="col-sm-12">
+                    <div class="dashboard">
+                        <table class="table table-striped normal_table">
+                            <thead>
+                                <tr>
+                                    <th>{{ heading }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="year-view-graph"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
         </div>
