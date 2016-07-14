@@ -5,7 +5,9 @@ initial_shipping_archived_report:
 initial_shipping_scorecard_data_import:
     resource: "@InitialShippingBundle/Controller/ScorecardDataImportController.php"
     type:     annotation
-
+initial_shipping_piechart_dashboard:
+    resource: "@InitialShippingBundle/Controller/PieChartDashboardController.php"
+    type:     annotation
 initial_shipping_ship_scorecard_report:
     resource: "@InitialShippingBundle/Controller/ScorecardReportController.php"
     type:     annotation

@@ -20,6 +20,12 @@
             <script type="text/javascript">
                 {{ chart(chart) }}
             </script>
+            <script type="text/javascript">
+                {{ chart(vessel_piechart) }}
+            </script>
+            <script type="text/javascript">
+                {{ chart(kpi_piechart) }}
+            </script>
             <script>
                 $(document).ready(function () {
                     var base_url = window.location.origin;
@@ -412,6 +418,8 @@
                             })
                         }
                     })
+                    $('.highcharts-container','#vessel_piechart').css('height','150px !important');
+                    $('.highcharts-container','#kpi_piechart').css('height','150px !important');
                 });
             </script>
         {% endblock %}
@@ -559,7 +567,7 @@
                 </div>
             </div>
 
-            <div class="col-sm-2 dashboard">
+            {#<div class="col-sm-2 dashboard">
                 <div class="widget time time-new">
                     <div class="x-header x-header-new">
                         <div class="x-panel-header-text-new">{{ 'dashboard.shipname'|trans }}  {{ ship_count }}</div>
@@ -573,6 +581,24 @@
                                 {% endfor %}
                             </ul>
                         </div>
+                    </div>
+                </div>
+            </div>#}
+            <div class="col-sm-2 dashboard">
+                <div class="widget time time-new">
+                    <div class="x-header x-header-new">
+                        <div class="x-panel-header-text-new">{{ 'dashboard.kpialert'|trans }}({{ kpiCount }})</div>
+                    </div>
+                    <div class="chart-2" style="height: 158px;padding: 0px; margin: 0 auto" id="kpi_piechart">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 dashboard">
+                <div class="widget time time-new">
+                    <div class="x-header x-header-new">
+                        <div class="x-panel-header-text-new">{{ 'dashboard.vesselalert'|trans }}({{ ship_count }})</div>
+                    </div>
+                    <div class="chart-2" style="height: 158px;padding: 0px; margin: 0 auto" id="vessel_piechart">
                     </div>
                 </div>
             </div>
