@@ -2547,11 +2547,31 @@ input[type="color"],
 }
 .img-icon {
     width: 14px;
+    height: 14px;
 }
 .img-status-icon {
     width: 13px;
+    height: 13px;
 }
-
+.scorecard_report_inner {
+    width:482px;
+    float:left;
+}
+.ranking_report {
+    width:460px;
+    float:left;
+}
+.scorecard_checkbox {
+    margin-top: 8px;
+}
+.report_submit_main {
+    text-align: right;
+    padding-right: 15px;
+}
+.report_submit_main .report_submit {
+    cursor: pointer;
+    font-weight: bold;
+}
 
 
 
