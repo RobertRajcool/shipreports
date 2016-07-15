@@ -575,6 +575,7 @@ class DashboradController extends Controller
                 $monthLetterArray = array();
                 $monthlyScorecardKpiColorArray = array();
                 $monthlyKpiAverageValueTotal = array();
+                $lastMonthKpiPieChart="";
                 for ($dateCount = (int)$initial; $dateCount < (int)$statusVerified; $dateCount++) {
                     $scorecardKpiColorArray = array();
                     $date = strtotime($datesArray[$dateCount]);
@@ -595,10 +596,12 @@ class DashboradController extends Controller
                             ->getQuery()
                             ->getResult();
                         if (count($kpiResult) != 0) {
+                           // $lastMonthKpiPieChart=
                             $kpi_Color_Result=$kpiResult[0]['kpiColor'];
                             array_push($scorecardKpiColorArray,$kpi_Color_Result );
                             if($dateCount==(int)$initial)
                             {
+                                $lastMonthKpiPieChart=date('M-Y', $date);
                                 if($kpi_Color_Result=='Green')
                                 {
                                     array_push($greenarea_kpiids,$scorecardAllKpiId);
@@ -652,10 +655,11 @@ class DashboradController extends Controller
                     $yChange = $yearChange;
                 }
                 //Vessel Pie Charts Starts Here//
+                //Url 1 is Green ,2 is Yellow,3 is Red
                 $vessel_Piechart_data=array(
-                    array('name'=>'Green(Greater Than Equal 80)','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/'.$rKPICount.'/listall','color'=>'green'),
-                    array('name'=>'Yellow(Greater Than Equal 70)','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/'.$rKPICount.'/listall','color'=>'yellow'),
-                    array('name'=>'Red(Less Than 70)','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/'.$rKPICount.'/listall','color'=>'red')
+                    array('name'=>'Green(Greater Than Equal 80)','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/1_'.implode('_',$greenarea_vessel_shipids).'/listall','color'=>'green'),
+                    array('name'=>'Yellow(Greater Than Equal 70)','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/2_'.implode('_',$yellowarea_vessel_shipid).'/listall','color'=>'yellow'),
+                    array('name'=>'Red(Less Than 70)','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/3_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'red')
                 );
                 $vessel_Piechart = new Highchart();
                 $vessel_Piechart->chart->renderTo('vessel_piechart');
@@ -676,25 +680,34 @@ class DashboradController extends Controller
 
 
                 //KPI Pie Charts Starts Here//
+                //Url 1 is Green ,2 is Yellow,3 is Red
                 $kpi_Piechart_data=array(
-                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/'.$rKPICount.'/listall','color'=>'green'),
-                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/'.$rKPICount.'/listall','color'=>'yellow'),
-                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/'.$rKPICount.'/listall','color'=>'red')
+                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/1_'.implode('_',$greenarea_kpiids).'/listall','color'=>'green'),
+                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/2_'.implode('_',$yellowarea_kpiids).'/listall','color'=>'yellow'),
+                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/3_'.implode('_',$redarea_kpiids).'/listall','color'=>'red')
                 );
+                $titlearry=array('fontSize'=>'10px');
                 $kpi_Piechart = new Highchart();
                 $kpi_Piechart->chart->renderTo('kpi_piechart');
                 $kpi_Piechart->chart->hieght(150);
+                $kpi_Piechart->chart->plotBackgroundColor(null);
+                $kpi_Piechart->chart->plotBorderWidth(0);
+                $kpi_Piechart->chart->plotShadow(false);
                 $kpi_Piechart->credits->enabled(false);
-                $kpi_Piechart->title->text('');
+                $kpi_Piechart->title->text($lastMonthKpiPieChart);
+                $kpi_Piechart->title->align('center');
+                $kpi_Piechart->title->verticalAlign('middle');
+                $kpi_Piechart->title->y(40);
+                $kpi_Piechart->title->style($titlearry);
                 $kpi_Piechart->plotOptions->pie(array(
-                    'allowPointSelect'  => true,
-                    'cursor'    => 'pointer',
-                    'dataLabels'    => array('enabled' => false),
-                    'showInLegend'  => false
+                    'startAngle'=> -90,
+                    'endAngle'=> 90,
+                    'center'=>array('50%', '75%'),
+                    'dataLabels'    => array('enabled' => false,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black'))
                 ));
                 $kpi_Piechart->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => false),
                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
-                $kpi_Piechart->series(array(array('type' => 'pie','name' => 'KPI', 'data' => $kpi_Piechart_data)));
+                $kpi_Piechart->series(array(array('type' => 'pie','name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
                 $kpi_Piechart->exporting->enabled(false);
                 //KPI Pie Charts Ends Here//
 

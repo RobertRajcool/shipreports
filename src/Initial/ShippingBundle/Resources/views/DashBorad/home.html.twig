@@ -313,43 +313,43 @@
 
                     function setKpiColorFunction(color, inn) {
                         if (color == 'Green') {
-                            $('<td class="month"><img src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month"><img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Red') {
-                            $('<td class="month"><img src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month"><img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Yellow') {
-                            $('<td class="month"><img src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month"><img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                     }
 
                     function setKpiStatusFunction(color, status, inn) {
                         if (color == 'Green' && status == 'Green') {
-                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Green' && status == 'Yellow') {
-                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Green' && status == 'Red') {
-                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Yellow' && status == 'Green') {
-                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Yellow' && status == 'Yellow') {
-                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Yellow' && status == 'Red') {
-                            $('<td class="month_difference"><img src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/down_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Red' && status == 'Green') {
-                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Red' && status == 'Yellow') {
-                            $('<td class="month_difference"><img src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/up_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else if (color == 'Red' && status == 'Red') {
-                            $('<td class="month_difference"><img src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
+                            $('<td class="month_difference"><img class="img-status-icon" src="/images/straight_arrow.png" alt="Loader Image"/></td>').appendTo('#praviousRowId' + inn);
                         }
                         else {
                             $('<td class="month_difference"></td>').appendTo('#praviousRowId' + inn);
@@ -476,22 +476,22 @@
                                             {% if j != 2 %}
                                                 <td class="month_td_1">
                                                     {% if kpicolorarray[j][i]=="Green" %}
-                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                        <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
                                                     {% elseif kpicolorarray[j][i]=="Red" %}
-                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                        <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
                                                     {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                        <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
                                                     {% endif %}
                                                 </td>
                                             {% endif %}
                                             {% if j == 2 %}
                                                 <td class="month_td_3">
                                                     {% if kpicolorarray[j][i]=="Green" %}
-                                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                                        <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
                                                     {% elseif kpicolorarray[j][i]=="Red" %}
-                                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                                        <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
                                                     {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                                        <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
                                                     {% endif %}
                                                 </td>
                                             {% endif %}
@@ -499,23 +499,23 @@
                                                 {% set j1=j+1 %}
                                                 <td class="month_difference_td_1">
                                                     {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
-                                                        <img src="/images/straight_arrow.png">
+                                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
-                                                        <img src="/images/down_arrow.png">
+                                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Yellow" %}
-                                                        <img src="/images/down_arrow.png">
+                                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Green" %}
-                                                        <img src="/images/up_arrow.png">
+                                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Red" %}
-                                                        <img src="/images/straight_arrow.png">
+                                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Yellow" %}
-                                                        <img src="/images/up_arrow.png">
+                                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Green" %}
-                                                        <img src="/images/up_arrow.png">
+                                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Red" %}
-                                                        <img src="/images/down_arrow.png">
+                                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                                     {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
-                                                        <img src="/images/straight_arrow.png">
+                                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                                     {% endif %}
                                                 </td>
                                             {% endif %}
@@ -682,23 +682,23 @@
                                                     {% set j1=j+1 %}
                                                     <td class="month_difference">
                                                         {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
-                                                            <img src="/images/straight_arrow.png">
+                                                            <img class="img-status-icon" src="/images/straight_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
-                                                            <img src="/images/down_arrow.png">
+                                                            <img class="img-status-icon" src="/images/down_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                                            <img src="/images/down_arrow.png">
+                                                            <img class="img-status-icon" src="/images/down_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
-                                                            <img src="/images/up_arrow.png">
+                                                            <img class="img-status-icon" src="/images/up_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
-                                                            <img src="/images/straight_arrow.png">
+                                                            <img class="img-status-icon" src="/images/straight_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                                            <img src="/images/up_arrow.png">
+                                                            <img class="img-status-icon" src="/images/up_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
-                                                            <img src="/images/up_arrow.png">
+                                                            <img class="img-status-icon" src="/images/up_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
-                                                            <img src="/images/down_arrow.png">
+                                                            <img class="img-status-icon" src="/images/down_arrow.png">
                                                         {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                                            <img src="/images/straight_arrow.png">
+                                                            <img class="img-status-icon" src="/images/straight_arrow.png">
                                                         {% endif %}
                                                     </td>
                                                 {% endif %}

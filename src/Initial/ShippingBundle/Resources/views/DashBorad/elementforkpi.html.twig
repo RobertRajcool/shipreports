@@ -490,34 +490,34 @@
                             <td>
                                 {% set newcolorarray = newcolorarray|merge({('_'~akj):(elementcolorarray[j][i])}) %}
                                 {% if elementcolorarray[j][i]=="Green" %}
-                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[j][i]=="Red" %}
-                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
                                 {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if j != 2 %}
                                 {% set j1=j+1 %}
                                 <td>
                                     {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
-                                        <img src="/images/straight_arrow.png">
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
-                                        <img src="/images/down_arrow.png">
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Yellow" %}
-                                        <img src="/images/down_arrow.png">
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Green" %}
-                                        <img src="/images/up_arrow.png">
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Red" %}
-                                        <img src="/images/straight_arrow.png">
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Yellow" %}
-                                        <img src="/images/up_arrow.png">
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Green" %}
-                                        <img src="/images/up_arrow.png">
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Red" %}
-                                        <img src="/images/down_arrow.png">
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
-                                        <img src="/images/straight_arrow.png">
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                     {% endif %}
                                 </td>
                             {% endif %}
@@ -537,34 +537,34 @@
                         {% for kpi_colors in kpi_colors_first %}
                             <td class="month">
                                 {% if kpi_colors_first[0] =="Green" %}
-                                    <img src="/images/01.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/01.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Red" %}
-                                    <img src="/images/03.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/03.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Yellow" %}
-                                    <img src="/images/02.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/02.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if k != 2 %}
                                 {% set k1=0 %}
                                 <td class="month_difference">
                                     {% if kpi_colors=="Green" and kpi_color[k+1][k1]=="Green" %}
-                                        <img src="/images/straight_arrow.png">
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                     {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Red" %}
-                                        <img src="/images/down_arrow.png">
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Yellow" %}
                                         <img src="/images/down_arrow.png">
                                     {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Green" %}
-                                        <img src="/images/up_arrow.png">
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Red" %}
-                                        <img src="/images/straight_arrow.png">
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                     {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Yellow" %}
-                                        <img src="/images/up_arrow.png">
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Green" %}
-                                        <img src="/images/up_arrow.png">
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Red" %}
-                                        <img src="/images/down_arrow.png">
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif kpi_colors=="Yellow" and kpi_color[k+1][k1]=="Yellow" %}
-                                        <img src="/images/straight_arrow.png">
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
                                     {% endif %}
                                 </td>
                             {% endif %}
