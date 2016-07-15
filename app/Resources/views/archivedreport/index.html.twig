@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {% block javascripts %}
+
+        <script>
+            $(document).ready(function() {
+                var scorecardSubmitId = $('#scorecard-submit-id');
+                scorecardSubmitId.live('click',function($e) {
+                    $e.preventDefault();
+                });
+            });
+        </script>
+
+    {% endblock %}
+
+    <section class="scorecard_report">
+        <div class="col-sm-11">
+            <div class="add_kpi_views_screen">
+                <form class="form-horizontal no-style" method="post">
+                    <div class="kpi_basic_details">
+                        <fieldset class="fieldset_box add_rule_form">
+                            <legend class="legend_name">Scorecard</legend>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4">Report</label>
+                                <div class="col-xs-8">
+                                    <span>
+                                        <select class="add_rule_basic_date_drop activeMonth" name="activeMonth">
+                                            <option>--</option>
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4">Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop activeYear" name="activeYear">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                    To
+                                    <span>
+                                        <select class="add_rule_basic_date_drop endMonth" name="endMonth">
+                                            <option>--</option>
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4">Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop endYear" name="endYear">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="col-xs-8" >
+                                    <span><label>Save Report</label><input type="checkbox" class="scorecard_checkbox" style="display: inline"></span>
+                                </div>
+                                <div class="col-xs-8" >
+                                    <a class="scorecard_submit" id="scorecard-submit-id" style="cursor: pointer">View report</a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="ranking_report">
+        <div class="col-sm-11">
+            <div class="add_kpi_views_screen">
+                <form class="form-horizontal no-style" method="post">
+                    <div class="kpi_basic_details">
+                        <fieldset class="fieldset_box add_rule_form">
+                            <legend class="legend_name">Ranking</legend>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">{{ 'ranking_report.cho_vessels'|trans }}</label>
+                                    <div class="col-xs-8">
+                                        <select required name="shipid" >
+                                            <option value="">Select</option>
+                                            {% for vessel in vesselList %}
+                                                <option value="{{ vessel.id }} ">{{ vessel.shipName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">{{ 'ranking_report.cho_year'|trans }}</label>
+                                    <div class="col-xs-8">
+                                        <select required class="add_rule_basic_drop"  name="year">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xs-8" >
+                                    <a class="ranking_submit" style="cursor: pointer">View report</a>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
