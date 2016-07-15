@@ -1338,11 +1338,11 @@ class DashboradController extends Controller
             $ob->exporting->enabled(false);
 
             $commentForElementKpi = $em->createQueryBuilder()
-                ->select('a.comment', 'a.datetime', 'b.adminName')
+                ->select('a.comment', 'a.datetime', 'b.username')
                 ->from('InitialShippingBundle:SendCommand', 'a')
-                ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
                 ->where('a.kpiid = :kpiid')
-                ->andwhere('b.emailId = :username')
+                ->andwhere('b.email = :username')
                 ->setParameter('username', $email)
                 ->setParameter('kpiid', $kpiid)
                 ->getQuery()
@@ -1467,11 +1467,11 @@ class DashboradController extends Controller
         $session->set('commandid', $lastid);
 
         $listofcomment = $em->createQueryBuilder()
-            ->select('a.comment', 'a.datetime', 'b.adminName')
+            ->select('a.comment', 'a.datetime', 'b.username')
             ->from('InitialShippingBundle:SendCommandRanking', 'a')
-            ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+            ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
             ->where('a.shipid = :shipid')
-            ->andwhere('b.emailId = :username')
+            ->andwhere('b.email = :username')
             ->setParameter('username', $emailid)
             ->setParameter('shipid', $kpiid)
             ->getQuery()
@@ -1514,12 +1514,13 @@ class DashboradController extends Controller
         $lastarray = array('id' => $lastid);
         $session->set('commandid', $lastid);
 
+
         $listofcomment = $em->createQueryBuilder()
-            ->select('a.comment', 'a.datetime', 'b.adminName')
+            ->select('a.comment', 'a.datetime', 'b.username')
             ->from('InitialShippingBundle:SendCommandRanking', 'a')
-            ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+            ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
             ->where('a.kpiid = :kpiid')
-            ->andwhere('b.emailId = :username')
+            ->andwhere('b.email = :username')
             ->setParameter('username', $emailid)
             ->setParameter('kpiid', $kpiid)
             ->getQuery()
@@ -1802,11 +1803,11 @@ class DashboradController extends Controller
             $ob->plotOptions->series(array('allowPointSelect' => true, 'dataLabels' => array('enabled' => true)));
             $ob->exporting->enabled(false);
             $listofcomment = $em->createQueryBuilder()
-                ->select('a.comment', 'a.datetime', 'b.adminName')
+                ->select('a.comment', 'a.datetime', 'b.username')
                 ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
                 ->where('a.shipid = :shipid')
-                ->andwhere('b.emailId = :username')
+                ->andwhere('b.email = :username')
                 ->setParameter('username', $loginuseremail)
                 ->setParameter('shipid', $shipid)
                 ->getQuery()
@@ -1971,11 +1972,11 @@ class DashboradController extends Controller
                 $ob->exporting->enabled(false);
 
                 $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment', 'a.datetime', 'b.adminName')
+                    ->select('a.comment', 'a.datetime', 'b.username')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                    ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
                     ->where('a.kpiid = :kpiid')
-                    ->andwhere('b.emailId = :username')
+                    ->andwhere('b.email = :username')
                     ->setParameter('username', $email)
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
@@ -2120,11 +2121,11 @@ class DashboradController extends Controller
                     $ob->exporting->enabled(false);
 
                     $listofcomment = $em->createQueryBuilder()
-                        ->select('a.comment', 'a.datetime', 'b.adminName')
+                        ->select('a.comment', 'a.datetime', 'b.username')
                         ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                        ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                        ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
                         ->where('a.kpiid = :kpiid')
-                        ->andwhere('b.emailId = :username')
+                        ->andwhere('b.email = :username')
                         ->setParameter('username', $email)
                         ->setParameter('kpiid', $kpiid)
                         ->getQuery()
@@ -2265,11 +2266,11 @@ class DashboradController extends Controller
                     $ob->exporting->enabled(false);
 
                     $listofcomment = $em->createQueryBuilder()
-                        ->select('a.comment', 'a.datetime', 'b.adminName')
+                        ->select('a.comment', 'a.datetime', 'b.username')
                         ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                        ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                        ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
                         ->where('a.kpiid = :kpiid')
-                        ->andwhere('b.emailId = :username')
+                        ->andwhere('b.email = :username')
                         ->setParameter('username', $email)
                         ->setParameter('kpiid', $kpiid)
                         ->getQuery()
@@ -2362,9 +2363,9 @@ class DashboradController extends Controller
                 $commentForElementKpi = $em->createQueryBuilder()
                     ->select('a.comment')
                     ->from('InitialShippingBundle:SendCommand', 'a')
-                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
+                    ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
                     ->where('a.kpiid = :kpiid')
-                    ->andwhere('b.emailId = :username')
+                    ->andwhere('b.email = :username')
                     ->setParameter('username', $useremailaddres)
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
