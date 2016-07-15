@@ -483,7 +483,19 @@ class CompanyUsersController extends Controller
 
     }
 
+  public function DocumentAction()
+  {
+      $user = $this->getUser();
+      $userId =$user->getId();
+      if ($user != null) {
 
+      return $this->render('companyusers/index.html.twig', array(
+
+      ));
+          }else{
+           return $this->redirectToRoute('fos_user_security_login');
+      }
+  }
 
 
 
