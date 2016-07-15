@@ -806,6 +806,10 @@
                  <source>dashboard.kpialert</source>
                  <target>Kpi Alerts</target>
             </trans-unit>
+            <trans-unit id="faq">
+                 <source>layout.menu.faq</source>
+                 <target>FAQ</target>
+            </trans-unit>
 
 
         </body>
