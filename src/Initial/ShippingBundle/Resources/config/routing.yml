@@ -96,6 +96,12 @@ fos_user_registration_profile:
                path: /register/profile_change
                defaults: { _controller: "InitialShippingBundle:CompanyUsers:editall"}
 
+document_read:
+               path: /document
+               defaults: { _controller: "InitialShippingBundle:CompanyUsers:Document"}
+
+
+
 
 
 

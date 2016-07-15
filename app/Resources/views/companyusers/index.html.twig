@@ -1,45 +1,135 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>CompanyUsers list</h1>
+ <style>
+  .ship{
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>CompanyName</th>
-                <th>UserName</th>
-                <th>Role</th>
-                <th>EmailId</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for companyUser in companyUsers %}
-            <tr>
-                <td><a href="{{ path('companyusers_show', { 'id': companyUser.id }) }}">{{ companyUser.id }}</a></td>
-                <td>{{ companyUser.companyName }}</td>
-                <td>{{ companyUser.userName }}</td>
-                <td>{{ companyUser.role }}</td>
-                <td>{{ companyUser.emailId }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('companyusers_show', { 'id': companyUser.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('companyusers_edit', { 'id': companyUser.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+   float: left;
+   margin: 5px;
+   padding: 5px;
+   width: 800px;
+   height: 130px;
+   border: 1px solid black;
+   background-color: #f1f1f1;
+   padding: 0.01em 16px;
+  }
+.show{
+ background-color: #fff;
+ padding: 8px 12px ;
+ }
+  p{
+   font-style: initial;
+   font-size: 15.64px;
+  }
 
-    <ul>
-        <li>
-            <a href="{{ path('companyusers_new') }}">Create a new entry</a>
-        </li>
-    </ul>
+ </style>
+
+
+<h2><img src="/images/book.png" style="height:60px; ">Steps to Remember</h2>
+ <div class="ship" style="" >
+  <h4>1.Create Ship</h4>
+  <div class="show">
+  <p>
+   Click vessels in left side of the menu and it will show add ship  enter all the fields and submit.once the ship has been created, if you need the user can activate and deactivate a ship.
+  </p>
+  </div>
+ </div>
+<div>
+ <div class="ship">
+  <h4>2.Create Kpi</h4>
+  <div class="show">
+
+  <p>Click the left side of the menu  and it will show add KPI create a kpi enter all the fields and create rules for kpi based on your values and submit.
+  </p>
+ </div>
+  </div>
+
+
+ <div class="ship">
+<h4>3.Create Element</h4>
+  <div class="show">
+
+  <p>Click the left side of the menu and it will show add element create a element for particular kpi enter all the fields and submit.
+  </p>
+ </div>
+  </div>
+</div>
+ <div class="ship">
+
+  <h4>4.Add Rules</h4>
+  <div class="show">
+
+  <p>Click the left side of the menu and it will show add Rules. choose kpi and element in dropdownlist create a rule based on your values and submit.
+  </p>
+ </div>
+  </div>
+ <div class="ship">
+
+  <h4>5.Data Verification</h4>
+  <div class="show">
+
+   <p>Click the left side of the menu and it will show dataverification.only vship can enter the data in the form Manager have rights to verify the data and Finally Admin have rights to upload data .
+   </p>
+  </div>
+ </div>
+
+ <div class="ship">
+
+  <h4>6.Scorecard Reports</h4>
+  <div class="show">
+
+   <p>Click scorecard in the left side of the menu and it will show reports.the user can view reports by choosing specific month an year.and also the user can mail a report and comment on reports.
+   </p>
+  </div>
+ </div>
+
+ <div class="ship">
+
+  <h4>7.Ranking Reports</h4>
+  <div class="show">
+
+   <p>Click vessel Ranking in the left side of the menu and it will show reports.the user can view reports by choosing ship and year.and also the user can mail a report and comment on reports.
+   </p>
+  </div>
+ </div>
+
+ <div class="ship">
+
+  <h4>8.Attach Files</h4>
+  <div class="show">
+
+   <p>Only V-ships user have rights to attach excel files.admin and manager can download and view the excel files attached by vship user.</p>
+  </div>
+ </div>
+
+
+ <div class="ship">
+
+  <h4>9.Create User</h4>
+  <div class="show">
+
+   <p>we have three privileges for user.only Admin have rights to create Manager and v-ship user.</p>
+  </div>
+ </div>
+
+ <div class="ship">
+  <h4>10.Dashboard</h4>
+  <div class="show">
+   <p>In Dashboard you can view the performance of ship for Scorecard and Ranking of everymonth and see the status of kpi level and element level for everymonth.</p>
+  </div>
+ </div>
+ <div class="ship">
+
+  <h4>11.Mail</h4>
+  <div class="show">
+   <p>
+    Click the left side of the menu and it will show mailing group.the user want to create a group for mailing and you can add multiple email address for group. once the group has been created we can use the group name to send email to all users in the group.
+   </p>
+  </div>
+ </div>
+
+
+
+
+
 {% endblock %}
