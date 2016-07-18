@@ -172,9 +172,4 @@ class Excel_file_details
         $this->company_id = $company_id;
     }
 
-
-
-
-
-
 }

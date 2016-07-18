@@ -660,63 +660,50 @@ class DashboradController extends Controller
                 }
                 //Vessel Pie Charts Starts Here//
                 //Url 1 is Green ,2 is Yellow,3 is Red
-                $data=array(array( 'Bananas', 8),array('Kiwi', 3),array('Mixed nuts', 1));
+                //$data=array(array( 'Bananas', 8),array('Kiwi', 3),array('Mixed nuts', 1));
+                /*$vessel_Piechart_data=array(
+                    array('name'=>'Green(Greater Than Equal 80)','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$greenarea_vessel_shipids).'/listall','color'=>'#1ea50b'),
+                    array('name'=>'Yellow(Greater Than Equal 70)','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$yellowarea_vessel_shipid).'/listall','color'=>'#feba06'),
+                    array('name'=>'Red(Less Than 70)','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'#b30000')
+                );*/
+                //Vessel Pie Charts Starts Here//
                 $vessel_Piechart_data=array(
-                    array('name'=>'Green(Greater Than Equal 80)','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/1_'.implode('_',$greenarea_vessel_shipids).'/listall','color'=>'#1ea50b'),
-                    array('name'=>'Yellow(Greater Than Equal 70)','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/2_'.implode('_',$yellowarea_vessel_shipid).'/listall','color'=>'#feba06'),
-                    array('name'=>'Red(Less Than 70)','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/3_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'#b30000')
+                    array('name'=>'Green','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$greenarea_vessel_shipids).'/listall','color'=>'#1ea50b'),
+                    array('name'=>'Yellow','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$yellowarea_vessel_shipid).'/listall','color'=>'#feba06'),
+                    array('name'=>'Red','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'#b30000')
                 );
                 $titlearry=array('fontSize'=>'10px');
-                $vessetitlearray=array( 'fontSize'=> '10px', 'fontFamily'=> 'Avenir LT Std Light' );
+
+
+
                 $vessel_Piechart = new Highchart();
                 $vessel_Piechart->chart->renderTo('vessel_piechart');
-                $vessel_Piechart->chart->type('pie');
-                $vessel_Piechart->chart->options3d(array('enabled'=> true,'alpha'=> 45));
+                $vessel_Piechart->chart->hieght(150);
+                $vessel_Piechart->chart->plotBackgroundColor(null);
+                $vessel_Piechart->chart->plotBorderWidth(0);
+                $vessel_Piechart->chart->plotShadow(false);
                 $vessel_Piechart->credits->enabled(false);
-                $vessel_Piechart->title->text('<span>'.$lastMonthvesselpieChart.'</span>');
-                $vessel_Piechart->title->floating(true);
+                $vessel_Piechart->title->text($lastMonthvesselpieChart);
                 $vessel_Piechart->title->align('center');
                 $vessel_Piechart->title->verticalAlign('middle');
-                $vessel_Piechart->title->style($vessetitlearray);
+                $vessel_Piechart->title->y(40);
+                $vessel_Piechart->title->style($titlearry);
                 $vessel_Piechart->plotOptions->pie(array(
-                    'innerSize'=> 100,
-                    'depth'=> 45
+                    'dataLabels' => array('enabled' => true,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black')),
+                    'startAngle'=> -90,
+                    'endAngle'=> 90,
+                    'center'=>array('50%', '75%')
                 ));
-                $vessel_Piechart->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => false),
+                $vessel_Piechart->plotOptions->series(array(
                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
-                $vessel_Piechart->series(array(array('name' => 'Vessel', 'data' => $vessel_Piechart_data)));
+                $vessel_Piechart->series(array(array('type' => 'pie','name' => 'Vessel','innerSize'=> '50%', 'data' => $vessel_Piechart_data)));
                 $vessel_Piechart->exporting->enabled(false);
-
-                /* $vessel_Piechart->chart->renderTo('vessel_piechart');
-                 $vessel_Piechart->chart->hieght(150);
-                 $vessel_Piechart->chart->plotBackgroundColor(null);
-                 $vessel_Piechart->chart->plotBorderWidth(0);
-                 $vessel_Piechart->chart->plotShadow(false);
-                 $vessel_Piechart->credits->enabled(false);
-                 $vessel_Piechart->title->text($lastMonthvesselpieChart);
-                 $vessel_Piechart->title->align('center');
-                 $vessel_Piechart->title->verticalAlign('middle');
-                 $vessel_Piechart->title->y(40);
-                 $vessel_Piechart->title->style($titlearry);
-                 $vessel_Piechart->plotOptions->pie(array(
-                     'startAngle'=> -90,
-                     'endAngle'=> 90,
-                     'center'=>array('50%', '75%'),
-                     'dataLabels'    => array('enabled' => false,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black'))
-                 ));
-                 $vessel_Piechart->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => false),
-                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
-                 $vessel_Piechart->series(array(array('type' => 'pie','name' => 'Vessel','innerSize'=> '50%', 'data' => $vessel_Piechart_data)));
-                 $vessel_Piechart->exporting->enabled(false);*/
                 //Vessel Pie Charts Ends Here//
-
-
                 //KPI Pie Charts Starts Here//
-                //Url 1 is Green ,2 is Yellow,3 is Red
                 $kpi_Piechart_data=array(
-                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/1_'.implode('_',$greenarea_kpiids).'/listall','color'=>'#1ea50b'),
-                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/2_'.implode('_',$yellowarea_kpiids).'/listall','color'=>'#feba06'),
-                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/3_'.implode('_',$redarea_kpiids).'/listall','color'=>'#b30000')
+                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/1_'.implode('_',$greenarea_kpiids).'/listall_kpipiechart','color'=>'#1ea50b'),
+                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/2_'.implode('_',$yellowarea_kpiids).'/listall_kpipiechart','color'=>'#feba06'),
+                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/3_'.implode('_',$redarea_kpiids).'/listall_kpipiechart','color'=>'#b30000')
                 );
 
                 $kpi_Piechart = new Highchart();
@@ -732,12 +719,12 @@ class DashboradController extends Controller
                 $kpi_Piechart->title->y(40);
                 $kpi_Piechart->title->style($titlearry);
                 $kpi_Piechart->plotOptions->pie(array(
+                    'dataLabels' => array('enabled' => true,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black')),
                     'startAngle'=> -90,
                     'endAngle'=> 90,
-                    'center'=>array('50%', '75%'),
-                    'dataLabels'    => array('enabled' => false,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black'))
+                    'center'=>array('50%', '75%')
                 ));
-                $kpi_Piechart->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => false),
+                $kpi_Piechart->plotOptions->series(array(
                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
                 $kpi_Piechart->series(array(array('type' => 'pie','name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
                 $kpi_Piechart->exporting->enabled(false);
