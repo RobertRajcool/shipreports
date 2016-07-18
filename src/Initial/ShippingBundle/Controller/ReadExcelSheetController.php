@@ -88,9 +88,6 @@ class ReadExcelSheetController extends Controller
             $i = 1;
 
             $fileName = $name . date('Y-m-d H-i-s') .'.'. $ext;
-
-
-
             if ( $file->move($uploaddir, $fileName))
             {
 
@@ -310,12 +307,8 @@ class ReadExcelSheetController extends Controller
                         for ($k = 0; $k < count($shipdetailsarray); $k++) {
                             $shipnamename = $shipdetailsarray[$k]['shipName'];
                             if ($shipnamename != " " && $shipnamename != null) {
-
                                 array_push($databaseshipsname, $shipnamename);
-
                             }
-
-
                         }
 
                         // print_r($databaseshipsname);die;
@@ -403,21 +396,6 @@ class ReadExcelSheetController extends Controller
 
                             }
                         }
-
-
-                        //Validation For Kpi Details
-
-                        /* $kpiquery= $em -> createQueryBuilder()
-                              ->select('a.cellName', 'a.kpiName', 'a.id', 'a.endDate')
-                              ->from('InitialShippingBundle:KpiDetails', 'a')
-                              ->leftjoin('InitialShippingBundle:ShipDetails','e','WITH','e.id = a.shipDetailsId')
-                              ->leftjoin('InitialShippingBundle:CompanyDetails','b','WITH','b.id = e.companyDetailsId')
-                              ->leftjoin('InitialShippingBundle:CompanyUsers','c','WITH','b.id = c.companyName')
-                              ->leftjoin('InitialShippingBundle:User','d','WITH','d.username = b.adminName or d.username = c.userName')
-                              ->where('d.id = :userId')
-                              ->groupby('a.kpiName')
-                              ->setParameter('userId',$userId)
-                              ->getQuery();*/
                         if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
                             $kpiquery = $em->createQueryBuilder()
                                 ->select('a.cellName', 'a.kpiName', 'a.id', 'a.endDate')
@@ -447,8 +425,6 @@ class ReadExcelSheetController extends Controller
                         //$flag=true;
                         $j = count($newkpidetailsarray);
                         for ($i = 0; $i < $j; $i++) {
-
-
                             $cellname = $newkpidetailsarray[$i]['cellName'];
                             $cellvalue = $newkpidetailsarray[$i]['kpiName'];
 

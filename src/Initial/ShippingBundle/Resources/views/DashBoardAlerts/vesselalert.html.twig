@@ -1,0 +1,92 @@
+
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/drilldown.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts-3d.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+        <script type="text/javascript">
+            {{ chart(chart) }}
+        </script>
+        <script>
+            $(document).ready(function()
+            {
+                $('#spantext').hide();
+                var chartId = $('#area');
+                $('.changemonth').click(function ($e) {
+                    $e.preventDefault();
+                    var attrributeId=$(this).attr('id');
+                    var currentdate = $('#currentid').text();
+                    var shipids=$('#shipids').val();
+
+
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        'url': Routing.generate('monthchangevessel_alters', {'dataofmonth': currentdate,'shipids':shipids,'requestmonth':attrributeId}),
+                        beforeSend: function () {
+                            defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            defaultAjaxCompleteFunction()
+                        }
+                    });
+                    $.ajax({
+                        success: function (data) {
+                            chartId.highcharts().series[0].setData(data.changechartdata);
+                            chartId.highcharts().series[0].update({name: data.dataofmonth});
+                            $('#currentid').text(data.dataofmonth);
+                            $('#resultLoading .bg').height('100%');
+                            $('#resultLoading').fadeOut(300);
+                            $('body').css('cursor', 'default');
+
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown)
+                        {
+                            // window.location.href = base_url+'/login';
+                        }
+                    });
+                });
+
+
+            });
+        </script>
+
+    {% endblock %}
+
+    <div class="wholeContent">
+        <div class="col-sm-10">
+
+
+            <div class="dashboard">
+                <div class="widget time">
+                    <div class="x-header">
+                        <div class="x-panel-header-text">Vessel Alerts</div>
+                        <span id="spantext" class="errormsg">March-2016</span>
+                        <div class="toolbar-title">
+                            <a class="linkclass" href="{{ path('dashboardhome') }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a>
+                            <a id="proviousmonth" class="left-arrow ss-navigateleft changemonth">&nbsp;</a>
+                            <span id="currentid" class="item">{{ currentmonthdata }}</span>
+                            <input type="hidden" id="shipids" name="shipids" value="{{ shipids }}">
+                            <a id="nextmonth" class="right-arrow ss-navigateright changemonth">&nbsp;</a>
+                        </div>
+                    </div>
+                    <div id="area" class="chart large_chart">
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+{% endblock %}
