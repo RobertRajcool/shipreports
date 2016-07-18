@@ -4,10 +4,11 @@
 {% block body %}
     {% if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
         {% block javascripts %}
+
             {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
             <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
-            {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
+            {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts-more.js' %}
             <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
             {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
@@ -19,7 +20,9 @@
             {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts-3d.js' %}
             <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
-
+            {#{% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}#}
             <script type="text/javascript">
                 {{ chart(chart) }}
             </script>
@@ -423,152 +426,356 @@
                     })
                     $('.highcharts-container','#vessel_piechart').css('height','150px !important');
                     $('.highcharts-container','#kpi_piechart').css('height','150px !important');
+                    var rankingkpi='{{ rankinKpiCount }}';
+                    var rankingkpicount = parseInt(rankingkpi)
+                    var ranking_kpi_array = [rankingkpicount];
+                    var scorecardkpi='{{ kpiCount }}';
+                    var scorecardkpicount=parseInt(scorecardkpi);
+                    var scorecardkpiarray=[scorecardkpicount]
+
+
+                    $('#rankingkpi_chart').highcharts({
+
+                        chart: {
+                            type: 'gauge',
+                            plotBackgroundColor: null,
+                            plotBackgroundImage: null,
+                            plotBorderWidth: 0,
+                            plotShadow: false,
+
+                        },
+                        credits: {
+                            enabled: false
+                        },
+
+                        title: {
+                            text: ''
+                        },
+
+                        pane: {
+                            startAngle: -150,
+                            endAngle: 150,
+                            background: [{
+                                backgroundColor: {
+                                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                    stops: [
+                                        [0, '#FFF'],
+                                        [1, '#333']
+                                    ]
+                                },
+                                borderWidth: 0,
+                                outerRadius: '109%'
+                            }, {
+                                backgroundColor: {
+                                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                    stops: [
+                                        [0, '#333'],
+                                        [1, '#FFF']
+                                    ]
+                                },
+                                borderWidth: 1,
+                                outerRadius: '107%'
+                            }, {
+                                // default background
+                            }, {
+                                backgroundColor: '#DDD',
+                                borderWidth: 0,
+                                outerRadius: '105%',
+                                innerRadius: '103%'
+                            }]
+                        },
+
+                        // the value axis
+                        yAxis: {
+                            min: 0,
+                            max: 20,
+
+                            minorTickInterval: 'auto',
+                            minorTickWidth: 1,
+                            minorTickLength: 10,
+                            minorTickPosition: 'inside',
+                            minorTickColor: '#666',
+
+                            tickPixelInterval: 30,
+                            tickWidth: 2,
+                            tickPosition: 'inside',
+                            tickLength: 10,
+                            tickColor: '#666',
+                            labels: {
+                                step: 2,
+                                rotation: 'auto'
+                            },
+                            title: {
+                                text: ''
+                            },
+                            plotBands: [{
+                                from: 0,
+                                to: 12,
+                                color: '#55BF3B' // green
+                            }, {
+                                from: 12,
+                                to: 17,
+                                color: '#DDDF0D' // yellow
+                            }, {
+                                from: 17,
+                                to: 20,
+                                color: '#DF5353' // red
+                            }]
+                        },
+
+                        series: [{
+                            name: 'Ranking Kpi',
+                            data: ranking_kpi_array,
+                            tooltip: {
+                                valueSuffix: ''
+                            }
+                        }]
+
+                    });
+                    $('#scorecardkpi_chart').highcharts({
+
+                        chart: {
+                            type: 'gauge',
+                            plotBackgroundColor: null,
+                            plotBackgroundImage: null,
+                            plotBorderWidth: 0,
+                            plotShadow: false,
+
+                        },
+                        credits: {
+                            enabled: false
+                        },
+
+                        title: {
+                            text: ''
+                        },
+
+                        pane: {
+                            startAngle: -150,
+                            endAngle: 150,
+                            background: [{
+                                backgroundColor: {
+                                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                    stops: [
+                                        [0, '#FFF'],
+                                        [1, '#333']
+                                    ]
+                                },
+                                borderWidth: 0,
+                                outerRadius: '109%'
+                            }, {
+                                backgroundColor: {
+                                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                                    stops: [
+                                        [0, '#333'],
+                                        [1, '#FFF']
+                                    ]
+                                },
+                                borderWidth: 1,
+                                outerRadius: '107%'
+                            }, {
+                                // default background
+                            }, {
+                                backgroundColor: '#DDD',
+                                borderWidth: 0,
+                                outerRadius: '105%',
+                                innerRadius: '103%'
+                            }]
+                        },
+
+                        // the value axis
+                        yAxis: {
+                            min: 0,
+                            max: 20,
+
+                            minorTickInterval: 'auto',
+                            minorTickWidth: 1,
+                            minorTickLength: 10,
+                            minorTickPosition: 'inside',
+                            minorTickColor: '#666',
+
+                            tickPixelInterval: 30,
+                            tickWidth: 2,
+                            tickPosition: 'inside',
+                            tickLength: 10,
+                            tickColor: '#666',
+                            labels: {
+                                step: 2,
+                                rotation: 'auto'
+                            },
+                            title: {
+                                text: ''
+                            },
+                            plotBands: [{
+                                from: 0,
+                                to: 12,
+                                color: '#55BF3B' // green
+                            }, {
+                                from: 12,
+                                to: 17,
+                                color: '#DDDF0D' // yellow
+                            }, {
+                                from: 17,
+                                to: 20,
+                                color: '#DF5353' // red
+                            }]
+                        },
+
+                        series: [{
+                            name: 'Scorecard Kpi',
+                            data: scorecardkpiarray,
+                            tooltip: {
+                                valueSuffix: ''
+                            }
+                        }]
+
+                    });
                 });
             </script>
         {% endblock %}
 
-        <div class="wholeContent">
-            <div class="col-sm-10">
-                <div class="dashboard">
-                    <div class="table-responsive">
-                        <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
-                            <thead>
-                            <tr>
-                                <th>
-                                    {{ heading }}
-                                    <div class="year_view_btn">
-                                        <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
-                                        <a href=""><span class="item yearView">{{ currentYear }}</span></a>
-                                        <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
-                                    </div>
-                                </th>
-                            </tr>
-                            </thead>
-                        </table>
-
-                        <div class="table_container_dashboard">
-                            <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
+                   <div class="wholeContent">
+                <div class="col-sm-10">
+                    <div class="dashboard">
+                        <div class="table-responsive">
+                            <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
                                 <thead>
                                 <tr>
-                                    <th class="kpi_name_th kpi_name_thtd">KPI</th>
-                                    <th class="weightage_th">Weightage</th>
-                                    {% set i2=0 %}
-                                    {% for month in month_name %}
-
-                                        {% if i2 != 2 %}
-                                            <th class="month_th_1">{{ month }}</th>
-                                        {% endif %}
-                                        {% if i2 == 2 %}
-                                            <th class="month_th_3 last">{{ month }}</th>
-                                        {% endif %}
-                                        {% set i2=i2+1 %}
-                                    {% endfor %}
+                                    <th>
+                                        {{ heading }}
+                                        <div class="year_view_btn">
+                                            <a href="#" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                            <a href=""><span class="item yearView">{{ currentYear }}</span></a>
+                                            <a href="#" class="right-arrow ss-navigateright">&nbsp;</a>
+                                        </div>
+                                    </th>
                                 </tr>
                                 </thead>
-                                <tbody>
-                                {% set i=0 %}
-                                {% for kpi in kpi_list %}
-
-                                    <tr>
-                                        <td class="kpi_name_td kpi_name_thtd"><a
-                                                    href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}"
-                                                    class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
-                                        <td class="weightage_td">{{ kpi.weightage }}</td>
-                                        {% set j=0 %}
-                                        {% for kpiColor in kpicolorarray %}
-                                            {% if j != 2 %}
-                                                <td class="month_td_1">
-                                                    {% if kpicolorarray[j][i]=="Green" %}
-                                                        <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
-                                                    {% elseif kpicolorarray[j][i]=="Red" %}
-                                                        <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
-                                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                        <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
-                                                    {% endif %}
-                                                </td>
-                                            {% endif %}
-                                            {% if j == 2 %}
-                                                <td class="month_td_3">
-                                                    {% if kpicolorarray[j][i]=="Green" %}
-                                                        <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
-                                                    {% elseif kpicolorarray[j][i]=="Red" %}
-                                                        <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
-                                                    {% elseif kpicolorarray[j][i]=="Yellow" %}
-                                                        <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
-                                                    {% endif %}
-                                                </td>
-                                            {% endif %}
-                                            {% if j != 2 %}
-                                                {% set j1=j+1 %}
-                                                <td class="month_difference_td_1">
-                                                    {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
-                                                        <img class="img-status-icon" src="/images/straight_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
-                                                        <img class="img-status-icon" src="/images/down_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Yellow" %}
-                                                        <img class="img-status-icon" src="/images/down_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Green" %}
-                                                        <img class="img-status-icon" src="/images/up_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Red" %}
-                                                        <img class="img-status-icon" src="/images/straight_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Yellow" %}
-                                                        <img class="img-status-icon" src="/images/up_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Green" %}
-                                                        <img class="img-status-icon" src="/images/up_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Red" %}
-                                                        <img class="img-status-icon" src="/images/down_arrow.png">
-                                                    {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
-                                                        <img class="img-status-icon" src="/images/straight_arrow.png">
-                                                    {% endif %}
-                                                </td>
-                                            {% endif %}
-                                            {% set j=j+1 %}
-                                        {% endfor %}
-                                        {% set i=i+1 %}
-                                    </tr>
-                                {% endfor %}
-                                {% set i1=0 %}
-                                <tr>
-                                    <td class="kpi_name_td kpi_name_thtd"><strong>Average score</strong></td>
-                                    <td class="weightage_td"><strong>100</strong></td>
-                                    {% for avg in kpiAverageScore %}
-                                        {% if i1 != 2 %}
-                                            <td class="month_td_1">
-                                                <strong>{{ avg }}</strong>
-                                            </td>
-                                            <td class="month_difference_td_1">&nbsp;</td>
-                                        {% endif %}
-                                        {% if i1 == 2 %}
-                                            <td class="month_td_3">
-                                                <strong>{{ avg }}</strong>
-                                            </td>
-                                        {% endif %}
-                                        {% set i1=i1+1 %}
-                                    {% endfor %}
-                                </tr>
-                                </tbody>
                             </table>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="dashboard">
-                    <div class="widget time">
-                        <div class="x-header">
-                            <div class="x-panel-header-text">{{ 'dashboard.main.content'|trans }}</div>
-                            <span id="spantext" class="errormsg">March-2016</span>
-                            <div class="toolbar-title">
-                                <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
-                                <span id="currentid" class="item">{{ currentYear }}</span>
-                                <input type="hidden" id="dataofmonth" name="dataofmonth">
-                                <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
+                            <div class="table_container_dashboard">
+                                <table class="table table-striped-2 graph_and_colour_coding_dashboard_row">
+                                    <thead>
+                                    <tr>
+                                        <th class="kpi_name_th kpi_name_thtd">KPI</th>
+                                        <th class="weightage_th">Weightage</th>
+                                        {% set i2=0 %}
+                                        {% for month in month_name %}
+
+                                            {% if i2 != 2 %}
+                                                <th class="month_th_1">{{ month }}</th>
+                                            {% endif %}
+                                            {% if i2 == 2 %}
+                                                <th class="month_th_3 last">{{ month }}</th>
+                                            {% endif %}
+                                            {% set i2=i2+1 %}
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set i=0 %}
+                                    {% for kpi in kpi_list %}
+
+                                        <tr>
+                                            <td class="kpi_name_td kpi_name_thtd"><a
+                                                        href="{{ path('listelementforkpi', { 'kpiid': kpi.id}) }}"
+                                                        class="kpi_class" id="{{ kpi.id }}">{{ kpi.kpiName }}</a></td>
+                                            <td class="weightage_td">{{ kpi.weightage }}</td>
+                                            {% set j=0 %}
+                                            {% for kpiColor in kpicolorarray %}
+                                                {% if j != 2 %}
+                                                    <td class="month_td_1">
+                                                        {% if kpicolorarray[j][i]=="Green" %}
+                                                            <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
+                                                        {% elseif kpicolorarray[j][i]=="Red" %}
+                                                            <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
+                                                        {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                                            <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
+                                                        {% endif %}
+                                                    </td>
+                                                {% endif %}
+                                                {% if j == 2 %}
+                                                    <td class="month_td_3">
+                                                        {% if kpicolorarray[j][i]=="Green" %}
+                                                            <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
+                                                        {% elseif kpicolorarray[j][i]=="Red" %}
+                                                            <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
+                                                        {% elseif kpicolorarray[j][i]=="Yellow" %}
+                                                            <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
+                                                        {% endif %}
+                                                    </td>
+                                                {% endif %}
+                                                {% if j != 2 %}
+                                                    {% set j1=j+1 %}
+                                                    <td class="month_difference_td_1">
+                                                        {% if kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Green" %}
+                                                            <img class="img-status-icon" src="/images/straight_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Red" %}
+                                                            <img class="img-status-icon" src="/images/down_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Green" and kpicolorarray[j1][i]=="Yellow" %}
+                                                            <img class="img-status-icon" src="/images/down_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Green" %}
+                                                            <img class="img-status-icon" src="/images/up_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Red" %}
+                                                            <img class="img-status-icon" src="/images/straight_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Red" and kpicolorarray[j1][i]=="Yellow" %}
+                                                            <img class="img-status-icon" src="/images/up_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Green" %}
+                                                            <img class="img-status-icon" src="/images/up_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Red" %}
+                                                            <img class="img-status-icon" src="/images/down_arrow.png">
+                                                        {% elseif kpicolorarray[j][i]=="Yellow" and kpicolorarray[j1][i]=="Yellow" %}
+                                                            <img class="img-status-icon" src="/images/straight_arrow.png">
+                                                        {% endif %}
+                                                    </td>
+                                                {% endif %}
+                                                {% set j=j+1 %}
+                                            {% endfor %}
+                                            {% set i=i+1 %}
+                                        </tr>
+                                    {% endfor %}
+                                    {% set i1=0 %}
+                                    <tr>
+                                        <td class="kpi_name_td kpi_name_thtd"><strong>Average score</strong></td>
+                                        <td class="weightage_td"><strong>100</strong></td>
+                                        {% for avg in kpiAverageScore %}
+                                            {% if i1 != 2 %}
+                                                <td class="month_td_1">
+                                                    <strong>{{ avg }}</strong>
+                                                </td>
+                                                <td class="month_difference_td_1">&nbsp;</td>
+                                            {% endif %}
+                                            {% if i1 == 2 %}
+                                                <td class="month_td_3">
+                                                    <strong>{{ avg }}</strong>
+                                                </td>
+                                            {% endif %}
+                                            {% set i1=i1+1 %}
+                                        {% endfor %}
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <div id="area" class="chart large_chart">
+                    </div>
+
+                    <div class="dashboard">
+                        <div class="widget time">
+                            <div class="x-header">
+                                <div class="x-panel-header-text">{{ 'dashboard.main.content'|trans }}</div>
+                                <span id="spantext" class="errormsg">March-2016</span>
+                                <div class="toolbar-title">
+                                    <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                    <span id="currentid" class="item">{{ currentYear }}</span>
+                                    <input type="hidden" id="dataofmonth" name="dataofmonth">
+                                    <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
+                                </div>
+                            </div>
+                            <div id="area" class="chart large_chart">
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
             {#<div class="col-sm-2 dashboard">
                 <div class="widget time time-new">
@@ -590,7 +797,7 @@
             <div class="col-sm-2 dashboard">
                 <div class="widget time time-new">
                     <div class="x-header x-header-new">
-                        <div class="x-panel-header-text-new">{{ 'dashboard.kpialert'|trans }}({{ kpiCount }})</div>
+                        <div class="x-panel-header-text-new">{{ 'dashboard.kpialert'|trans }}</div>
                     </div>
                     <div class="chart-2" style="height: 158px;padding: 0px; margin: 0 auto" id="kpi_piechart">
                     </div>
@@ -599,7 +806,7 @@
             <div class="col-sm-2 dashboard">
                 <div class="widget time time-new">
                     <div class="x-header x-header-new">
-                        <div class="x-panel-header-text-new">{{ 'dashboard.vesselalert'|trans }}({{ ship_count }})</div>
+                        <div class="x-panel-header-text-new">{{ 'dashboard.vesselalert'|trans }}</div>
                     </div>
                     <div class="chart-2" style="height: 158px;padding: 0px; margin: 0 auto" id="vessel_piechart">
                     </div>
@@ -611,8 +818,8 @@
                     <div class="x-header x-header-new">
                         <div class="x-panel-header-text-new">{{ 'dashboard.ranking'|trans }} {{ 'dashboard.kpi'|trans }}</div>
                     </div>
-                    <div class="chart-2">
-                        {{ rankinKpiCount }}
+                    <div class="chart-2" style="height: 158px;padding: 0px; margin: 0 auto" id="rankingkpi_chart">
+                       {# {{ rankinKpiCount }}#}
                     </div>
                 </div>
             </div>
@@ -621,8 +828,8 @@
                     <div class="x-header x-header-new">
                         <div class="x-panel-header-text-new">{{ 'dashboard.score'|trans }} {{ 'dashboard.kpi'|trans }}</div>
                     </div>
-                    <div class="chart-2">
-                        {{ kpiCount }}
+                    <div class="chart-2" style="height: 158px;padding: 0px; margin: 0 auto" id="scorecardkpi_chart">
+                       {# {{ kpiCount }}#}
                     </div>
                 </div>
             </div>

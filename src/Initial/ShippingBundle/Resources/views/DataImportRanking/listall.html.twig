@@ -3,6 +3,7 @@
     {% block javascripts %}
         <script>
             $(document).ready(function() {
+                $('#errortext').hide();
                 var role='{{ app.user.roles[0] }}';
                 var base_url = window.location.origin;
                 $(function () {
@@ -94,7 +95,11 @@
                     }
                     else
                     {
-                        alert("Choose Date");
+                        $('#errortext').text('Choose Date');
+                        $('#errortext').show();
+                        setTimeout(function() {
+                            $('#errortext').fadeOut('fast');
+                        }, 4000)
                     }
 
                 });
@@ -105,6 +110,8 @@
     <div class="col-md-12 users_advanced_list_views_screen">
 
         <div>
+
+            <span id="errortext"></span>
             <div class="container">
                 <div class="col-sm-6" style="height:50px;">
                     <div class="form-group">
