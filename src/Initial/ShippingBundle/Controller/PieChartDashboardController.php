@@ -266,4 +266,15 @@ class PieChartDashboardController extends Controller
         return $response;
 
     }
+    /**
+     * Lists all PieChartDashboard kpi elements.
+     *
+     * @Route("/{serialized}/listall_kpipiechart", name="kpi_piechart")
+     */
+    public function listallkpiAction(Request $request,$serialized,$mode = '')
+    {
+
+        return $this->render('InitialShippingBundle:DataVerficationRanking:backup.html.twig');
+
+    }
 }
