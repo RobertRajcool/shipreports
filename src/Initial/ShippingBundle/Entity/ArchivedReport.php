@@ -31,7 +31,16 @@ class ArchivedReport
     /**
      * @var string
      *
-     * @ORM\Column(name="userId", type="string", length=255)
+     * @ORM\Column(name="reportType", type="string", length=255)
+     */
+    private $reportType;
+
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
+     * })
      */
     private $userId;
 
@@ -123,6 +132,22 @@ class ArchivedReport
     public function getDateTime()
     {
         return $this->dateTime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReportType()
+    {
+        return $this->reportType;
+    }
+
+    /**
+     * @param string $reportType
+     */
+    public function setReportType($reportType)
+    {
+        $this->reportType = $reportType;
     }
 }
 
