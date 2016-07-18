@@ -10,6 +10,7 @@ use Initial\ShippingBundle\Entity\ArchivedReport;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Ob\HighchartsBundle\Highcharts\Highchart;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * ArchivedReport controller.
@@ -217,10 +218,8 @@ class ArchivedReportController extends Controller
                 array_push($overallMonthlyKpiSumValue, $monthlyKpiSumValue);
             }
 
-            $series = array
-            (
-                array("name" => "Management Performance", 'showInLegend' => false, 'color' => 'blue', "data" => $monthlyKpiAverageValueTotal),
-
+            $series = array(
+                array("name" => "Management Performance", 'showInLegend' => false, 'color' => 'blue', "data" => $monthlyKpiAverageValueTotal)
             );
 
             $ob = new Highchart();
@@ -246,10 +245,118 @@ class ArchivedReportController extends Controller
                 $archivedReportObj->setReportType('scorecard');
                 $em->persist($archivedReportObj);
                 $em->flush();
+
+                $todayTime = date("H:i:s");
+                $todayDate = date("Y-m-d");
+                $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
+                $pdfObject->defaultheaderline = 0;
+                $pdfObject->defaultheaderfontstyle = 'B';
+                $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+                $pdfObject->SetWatermarkImage($waterMarkImage);
+                $pdfObject->showWatermarkImage = true;
+
+                $graphObject = array(
+                    'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                    'exporting' => array('enabled' => false),
+                    'plotOptions' => array('series' => array(
+                        "allowPointSelect" => true,
+                        "dataLabels" => array(
+                            "enabled" => true
+                        )
+                    )),
+                    'series' => array(
+                        array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $monthlyKpiAverageValueTotal)
+                    ),
+                    'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                    'title' => array('text' => ''),
+                    'xAxis' => array('categories' => $monthLetterArray, 'labels' => array('style' => array('color' => '#0000F0'))),
+                    'yAxis' => array('max' => 3, 'min' => 0)
+                );
+
+                $jsonFileData = json_encode($graphObject);
+                $jsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json';
+                file_put_contents($jsonFilePath, $jsonFileData);
+                $HighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
+                $inFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json ';
+                $outFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/graphImage' . $todayDate . $todayTime . '.png ';
+                $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 2.5 -width 1024';
+                $fileHandle = popen($imageGeneration, 'r');
+                $result = fread($fileHandle, 2096);
+
+                $customerListDesign = $this->renderView('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
+                    array(
+                        'yearKpiColorArray' => $monthlyScorecardKpiColorArray,
+                        'kpiAvgScore' => $monthlyKpiAverageValueTotal,
+                        'monthName' => $monthLetterArray,
+                        'kpiNameList' => $scorecardKpiList,
+                        'imageSource' => 'graphImage' . $todayDate . $todayTime . '.png',
+                        'headerTitle' => 'Pioneer Scorecard Report'
+                    ));
+
+                $pdfObject->AddPage('', 4, '', 'on');
+                $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
+                $pdfObject->WriteHTML($customerListDesign);
+
+                for ($kpiCount = 0; $kpiCount < count($scorecardKpiList); $kpiCount++) {
+                    $kpiDataArray = array();
+                    $elementColorArray = array();
+                    $elementNameList = array();
+                    $kpiColorArray = array();
+                    array_push($elementNameList, $overallElementListArray[$kpiCount]);
+                    for ($monthCount = 0; $monthCount < count($monthLetterArray); $monthCount++) {
+                        array_push($kpiDataArray, (int)$overallMonthlyKpiSumValue[$monthCount][$kpiCount]);
+                        array_push($elementColorArray, $overallMonthlyElementColorArray[$monthCount][$kpiCount]);
+                        array_push($kpiColorArray, $monthlyScorecardKpiColorArray[$monthCount][$kpiCount]);
+                    }
+                    $kpiGraphObject = array(
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'exporting' => array('enabled' => false),
+                        'plotOptions' => array('series' => array(
+                            "allowPointSelect" => true,
+                            "dataLabels" => array(
+                                "enabled" => true
+                            )
+                        )),
+                        'series' => array(
+                            array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $kpiDataArray)
+                        ),
+                        'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                        'title' => array('text' => $scorecardKpiList[$kpiCount]['kpiName']),
+                        'xAxis' => array('categories' => $monthLetterArray, 'labels' => array('style' => array('color' => '#0000F0'))),
+                        'yAxis' => array('max' => 3, 'min' => 0)
+                    );
+
+                    $kpiJsonFileData = json_encode($kpiGraphObject);
+                    $kpiJsonFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/KPI-' . $scorecardKpiList[$kpiCount]['id'] . $todayDate . $todayTime . '.json';
+                    file_put_contents($kpiJsonFilePath, $kpiJsonFileData);
+                    $kpiHighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
+                    $kpiInFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/KPI-' . $scorecardKpiList[$kpiCount]['id'] . $todayDate . $todayTime . '.json ';
+                    $kpiOutFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/KPI-' . $scorecardKpiList[$kpiCount]['id'] . $todayDate . $todayTime . '.png ';
+                    $kpiImageGeneration = 'phantomjs ' . $kpiHighChartLocation . '-infile ' . $kpiInFile . '-outfile ' . $kpiOutFile . ' -scale 2.5 -width 1024';
+                    $kpiFileHandle = popen($kpiImageGeneration, 'r');
+                    $kpiResult = fread($kpiFileHandle, 2096);
+
+                    $customerListDesign = $this->renderView('InitialShippingBundle:ScorecardReport:kpiLevelPdfTemplate.html.twig',
+                        array(
+                            'yearKpiColorArray' => $kpiColorArray,
+                            'monthName' => $monthLetterArray,
+                            'kpiNameList' => $scorecardKpiList[$kpiCount]['kpiName'],
+                            'imageSource' => 'KPI-' . $scorecardKpiList[$kpiCount]['id'] . $todayDate . $todayTime . '.png',
+                            'headerTitle' => $scorecardKpiList[$kpiCount]['kpiName'],
+                            'elementNameList' => $elementNameList,
+                            'elementColorArray' => $elementColorArray
+                        ));
+
+                    $pdfObject->AddPage('', 4, '', 'on');
+                    $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
+                    $pdfObject->WriteHTML($customerListDesign);
+                }
+                $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs/' . $reportName . '.pdf';
+                $pdfObject->Output($pdfFilePath,'F');
             }
 
             $archivedReport = $em->createQueryBuilder()
-                ->select('a.fileName, a.reportType, a.dateTime, identity(a.userId)')
+                ->select('a.fileName, a.reportType, a.dateTime, identity(a.userId), a.id')
                 ->from('InitialShippingBundle:ArchivedReport', 'a')
                 ->getQuery()
                 ->getResult();
@@ -630,6 +737,7 @@ class ArchivedReportController extends Controller
             }
 
             if($archiveStatus==1) {
+                $currentdateitme=date('Y-m-d-H-i-s');
                 $reportName = $vesselName.'-'.$year;
                 $userId = $user->getId();
                 $dateTime = date("Y-m-d H:i:s");
@@ -642,10 +750,153 @@ class ArchivedReportController extends Controller
                 $archivedReportObj->setReportType('Ranking');
                 $em->persist($archivedReportObj);
                 $em->flush();
+
+                $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
+                $mpdf->defaultheaderline = 0;
+                $mpdf->defaultheaderfontstyle = 'B';
+                $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+                $mpdf->SetWatermarkImage($WateMarkImagePath);
+                $mpdf->showWatermarkImage = true;
+
+                $graphObject = array(
+                    'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
+                    'exporting' => array('enabled' => false),
+                    'credits'=>array('enabled' => false),
+                    'plotOptions' => array('series' => array(
+                        "allowPointSelect" => true,
+                        "dataLabels" => array(
+                            "enabled" => true
+                        )
+                    )),
+                    'series' => array(
+                        array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $dataforgraphforship)
+                    ),
+                    'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                    'title' => array('text' => $shipname),
+                    'xAxis' => array('categories' => $newcategories, 'labels' => array('style' => array('color' => '#0000F0'))),
+                    'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                );
+
+                $jsondata = json_encode($graphObject);
+                if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                    mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+                }
+                if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                    mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+                }
+                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $vesselId.'_'.$currentdateitme. '.json';
+                file_put_contents($pdffilenamefullpath, $jsondata);
+                $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+
+                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $vesselId.'_'.$currentdateitme. '.png';
+                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $vesselId.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+                $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
+                $handle = popen($ImageGeneration, 'r');
+                $charamee = fread($handle, 2096);
+
+                $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
+                    'shipid' => $vesselId,
+                    'screenName' => 'Ranking Report',
+                    'userName' => '',
+                    'date' => date('Y-m-d'),
+                    'link' => 'shipimage_' . $vesselId.'_'.$currentdateitme. '.png',
+                    'listofkpi' => $rankingKpiList,
+                    'kpiweightage' => $rankingKpiWeightarray,
+                    'montharray' => $newcategories,
+                    'shipname' => $shipname,
+                    'countmonth' => count($newcategories),
+                    'avgscore' => $monthlyKpiAverageScore,
+                    'ageofvessel' => $yearcount,
+                    'kpimonthdata' => $monthlyKpiValue,
+                    'currentyear' => date('Y')
+                ));
+                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+                $mpdf->WriteHTML($customerListDesign);
+
+                for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
+                    $kpiName = $rankingKpiList[$KpiPdfcount]['kpiName'];
+                    $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
+                    $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
+                    if ($kpiName != 'Vessel age') {
+                        $graphObject = array(
+                            'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                            'exporting' => array('enabled' => false),
+                            'credits'=>array('enabled' => false),
+                            'plotOptions' => array('series' => array(
+                                "allowPointSelect" => true,
+                                "dataLabels" => array(
+                                    "enabled" => true
+                                )
+                            )),
+                            'series' => array(
+                                array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $New_overallfindingelementgraph[$kpiid])
+                            ),
+                            'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                            'title' => array('text' => $kpiName),
+                            'xAxis' => array('categories' => $newcategories, 'labels' => array('style' => array('color' => '#0000F0'))),
+                            'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                        );
+                    }
+                    else
+                    {
+                        $graphObject = array(
+                            'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                            'exporting' => array('enabled' => false),
+                            'credits'=>array('enabled' => false),
+                            'plotOptions' => array('series' => array(
+                                "allowPointSelect" => true,
+                                "dataLabels" => array(
+                                    "enabled" => true
+                                )
+                            )),
+                            'series' => array(
+                                array('name' => 'Series', 'showInLegend' => false, 'color' => '#103a71', 'data' => $vesseldata)
+                            ),
+                            'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
+                            'title' => array('text' => $kpiName),
+                            'xAxis' => array('categories' => $newcategories, 'labels' => array('style' => array('color' => '#0000F0'))),
+                            'yAxis' => array('max' => $weightage, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                        );
+                    }
+                    $jsondata = json_encode($graphObject);
+                    $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
+                    file_put_contents($pdffilenamefullpath, $jsondata);
+                    $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+                    $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid.'_'.$currentdateitme. '.png';
+                    $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+                    $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
+                    $handle = popen($ImageGeneration, 'r');
+                    $charamee = fread($handle, 2096);
+
+                    $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
+                        'kpiid' => $kpiid,
+                        'screenName' => 'Ranking Report',
+                        'userName' => '',
+                        'date' => date('Y-m-d'),
+                        'link' => 'kpiimage_' . $kpiid .'_'.$currentdateitme. '.png',
+                        'montharray' => $newcategories,
+                        'kpiname' => $kpiName,
+                        'countmonth' => count($newcategories),
+                        'kpigraph' => $New_overallfindingelementgraph[$kpiid],
+                        'elementcolorarray' => $New_overallfindingelementcolor[$kpiid],
+                        'monthlydata' => $New_overallfindingelementvalue[$kpiid],
+                        'elementRule' => $scorecardElementRules,
+                        'listofelement' => $ElementName_Weightage[$kpiid],
+                        'countofelement' => count($ElementName_Weightage[$kpiid]),
+                        'currentyear' => date('Y')
+                    ));
+
+                    $mpdf->AddPage('', 4, '', 'on');
+                    $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
+                    $mpdf->WriteHTML($customerListDesign);
+                }
+                $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs/' . $reportName . '.pdf';
+                $mpdf->Output($pdfFilePath,'F');
             }
 
             $archivedReport = $em->createQueryBuilder()
-                ->select('a.fileName, a.reportType, a.dateTime, identity(a.userId)')
+                ->select('a.fileName, a.reportType, a.dateTime, identity(a.userId), a.id')
                 ->from('InitialShippingBundle:ArchivedReport', 'a')
                 ->getQuery()
                 ->getResult();
@@ -706,7 +957,7 @@ class ArchivedReportController extends Controller
         if ($user != null) {
             $em = $this->getDoctrine()->getManager();
             $archivedReport = $em->createQueryBuilder()
-                ->select('a.fileName, a.reportType, a.dateTime, identity(a.userId)')
+                ->select('a.fileName, a.reportType, a.dateTime, identity(a.userId),a.id')
                 ->from('InitialShippingBundle:ArchivedReport', 'a')
                 ->getQuery()
                 ->getResult();
@@ -736,6 +987,31 @@ class ArchivedReportController extends Controller
         }
     }
 
+    /**
+     * Lists all ArchivedReport entities.
+     *
+     * @Route("/archived_report_pdf_download/{id}", name="archived_report_pdf_download")
+     * @Method("GET")
+     */
+    public function pdfReportDownloadAction(Request $request,ArchivedReport $archivedReport)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $fileName_fromDb = $archivedReport->getFileName();
+            $directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs';
+            $filePath = $directoryLocation . '/' . $fileName_fromDb . '.pdf';
+            $content = file_get_contents($filePath);
+            $response = new Response();
+            $response->setContent($content);
+            header('Content-Type: application/octet-stream');
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"" . $fileName_fromDb . "\"");
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
 
     /**
      * Finds and displays a ArchivedReport entity.

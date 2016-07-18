@@ -91,10 +91,14 @@
 
                 function setReportTableContentsFunction(data) {
                     if(data.length != 0) {
+                        console.log(data)
                         $.each(data.archivedReports, function(i) {
                             reportTableBodyId.append('<tr id="table-row-id'+i+'"></tr>');
                             var tableRowId = $('#table-row-id'+i+'');
-                            tableRowId.append('<td>'+data.archivedReports[i].fileName+'</td> <td>'+data.archivedReports[i].reportType+'</td> <td>'+data.userDetails[i][0].username+'</td> <td>'+data.archivedReports[i].dateTime.date+'</td>');
+                            var period = new Date(data.archivedReports[i].dateTime.date);
+                            var pathInTwigFormat = "{{ path('archived_report_pdf_download', { 'id': 'value'}) }}";
+                            var pathName = pathInTwigFormat.replace("value",data.archivedReports[i].id);
+                            tableRowId.append('<td>'+data.archivedReports[i].fileName+'</td> <td>'+data.archivedReports[i].reportType+'</td> <td>'+data.userDetails[i][0].username+'</td> <td>'+period.getDate()+'-'+period.getMonth()+'-'+period.getFullYear()+'</td> <td style="text-align: center"><a href="'+pathName+'"><img style="width: 29px; height: 26px" src="/images/pdf-download.png"  alt="Loader Image" /></a></td>');
                         });
                     }
                 }
@@ -883,7 +887,7 @@
                         <th class="filename">Reports</th>
                         <th class="month">Report Type</th>
                         <th class="time">User Name</th>
-                        <th class="option">Date Time</th>
+                        <th class="option">Date</th>
                         <th class="option">Options</th>
                     </tr>
                 </thead>
