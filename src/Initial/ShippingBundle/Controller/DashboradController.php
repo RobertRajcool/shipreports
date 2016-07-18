@@ -701,9 +701,9 @@ class DashboradController extends Controller
                 //Vessel Pie Charts Ends Here//
                 //KPI Pie Charts Starts Here//
                 $kpi_Piechart_data=array(
-                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/1_'.implode('_',$greenarea_kpiids).'/listall','color'=>'#1ea50b'),
-                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/2_'.implode('_',$yellowarea_kpiids).'/listall','color'=>'#feba06'),
-                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/3_'.implode('_',$redarea_kpiids).'/listall','color'=>'#b30000')
+                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/1_'.implode('_',$greenarea_kpiids).'/listall_kpipiechart','color'=>'#1ea50b'),
+                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/2_'.implode('_',$yellowarea_kpiids).'/listall_kpipiechart','color'=>'#feba06'),
+                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/3_'.implode('_',$redarea_kpiids).'/listall_kpipiechart','color'=>'#b30000')
                 );
 
                 $kpi_Piechart = new Highchart();
