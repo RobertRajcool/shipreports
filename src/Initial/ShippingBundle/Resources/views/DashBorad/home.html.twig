@@ -16,6 +16,9 @@
             {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/drilldown.js' %}
             <script src="{{ asset_url }}"></script>
             {% endjavascripts %}
+            {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts-3d.js' %}
+            <script src="{{ asset_url }}"></script>
+            {% endjavascripts %}
 
             <script type="text/javascript">
                 {{ chart(chart) }}

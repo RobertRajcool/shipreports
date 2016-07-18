@@ -183,7 +183,7 @@
                                                         [ d.getHours().padLeft(),
                                                             d.getMinutes().padLeft(),
                                                             d.getSeconds().padLeft()].join(':');
-                                        $('<p>'+listelemnt.adminName+' -'+dformat+':'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
+                                        $('<p><strong>'+listelemnt.username+' -'+dformat+':</strong>'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
 
 
                                     });
@@ -413,7 +413,7 @@
                     {% endif %}
                     {% if commentarray|length > 0 %}
                         {% for comobject in commentarray %}
-                            <p><strong>{{ comobject.adminName }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
+                            <p><strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
 
 
                         {% endfor %}

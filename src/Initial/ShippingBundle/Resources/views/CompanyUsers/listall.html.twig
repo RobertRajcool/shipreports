@@ -18,6 +18,9 @@
         #errormsg {
             color: red;
         }
+        .pass2{
+            color:white;
+        }
     </style>
 
     {% block javascripts %}
@@ -513,6 +516,7 @@
                 $('#fos_user_registration_form_roles').hide();
 
 
+
                 $('#fos_user_registration_form_plainPassword_first').keyup(function ($e) {
                     var CheckPassword = $(this).val();
                     var pattern = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{7,15}$/;
@@ -725,13 +729,13 @@
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">{{ 'user.security'|trans }}</legend>
                             <div class="form-group">
-                                <label class="control-label required_field col-xs-4">{{ 'user.password'|trans }}
+                               <label class="control-label required_field col-xs-4"> <label class="pass2">..</label>{{ 'user.password'|trans }}
                                     <span class="change">*</span><label class="pass">.</label>
-                                    <labe>{{ 'user.confirm'|trans }}</label></label>
+                                    <labe>{{ 'user.confirm'|trans }}</labe></label>
                                 <div class="col-xs-8">
                                     {{ form_row(form.plainPassword) }}<span class="error" id="errormsg"> </span>
                                 </div>
-                                <div class="col-xs-8"></div>
+
                             </div>
                         </fieldset>
                     </div>
