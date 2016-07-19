@@ -32,6 +32,7 @@
             <script type="text/javascript">
                 {{ chart(kpi_piechart) }}
             </script>
+
             <script>
                 $(document).ready(function () {
                     var base_url = window.location.origin;
@@ -442,6 +443,10 @@
                             plotBackgroundImage: null,
                             plotBorderWidth: 0,
                             plotShadow: false,
+                            marginTop: -1,
+                            marginLeft: -1,
+                            marginRight: -1,
+                            marginBottom: -1
 
                         },
                         credits: {
@@ -540,6 +545,10 @@
                             plotBackgroundImage: null,
                             plotBorderWidth: 0,
                             plotShadow: false,
+                            marginTop: -1,
+                            marginLeft: -1,
+                            marginRight: -1,
+                            marginBottom: -1
 
                         },
                         credits: {
@@ -632,6 +641,7 @@
                     });
                 });
             </script>
+
         {% endblock %}
 
                    <div class="wholeContent">
@@ -799,7 +809,7 @@
                     <div class="x-header">
                         <div class="x-panel-header-text">{{ 'dashboard.kpialert'|trans }}</div>
                     </div>
-                    <div class="chart-2 chart_min_height" id="kpi_piechart">
+                    <div class="chart-2 chart_min_height"  id="kpi_piechart">
                     </div>
                 </div>
             </div>

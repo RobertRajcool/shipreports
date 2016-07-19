@@ -668,9 +668,9 @@ class DashboradController extends Controller
                 );*/
                 //Vessel Pie Charts Starts Here//
                 $vessel_Piechart_data=array(
-                    array('name'=>'Green','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$greenarea_vessel_shipids).'/listall','color'=>'#1ea50b'),
-                    array('name'=>'Yellow','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$yellowarea_vessel_shipid).'/listall','color'=>'#feba06'),
-                    array('name'=>'Red','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'#b30000')
+                    array('name'=>'G','y'=>count($greenarea_vessel_shipids),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$greenarea_vessel_shipids).'/listall','color'=>'#1ea50b'),
+                    array('name'=>'Y','y'=>count($yellowarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$yellowarea_vessel_shipid).'/listall','color'=>'#feba06'),
+                    array('name'=>'R','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'#b30000')
                 );
                 $titlearry=array('fontSize'=>'10px');
 
@@ -679,20 +679,21 @@ class DashboradController extends Controller
                 $vessel_Piechart = new Highchart();
                 $vessel_Piechart->chart->renderTo('vessel_piechart');
                 $vessel_Piechart->chart->hieght(150);
+                $vessel_Piechart->chart->zoomType('xy');
                 $vessel_Piechart->chart->plotBackgroundColor(null);
                 $vessel_Piechart->chart->plotBorderWidth(0);
                 $vessel_Piechart->chart->plotShadow(false);
+                $vessel_Piechart->chart->marginTop(-25);
+                $vessel_Piechart->chart->marginLeft(-25);
+                $vessel_Piechart->chart->marginRight(-25);
+                $vessel_Piechart->chart->marginBottom(-25);
                 $vessel_Piechart->credits->enabled(false);
-                $vessel_Piechart->title->text($lastMonthvesselpieChart);
-                $vessel_Piechart->title->align('center');
-                $vessel_Piechart->title->verticalAlign('middle');
-                $vessel_Piechart->title->y(40);
-                $vessel_Piechart->title->style($titlearry);
+                $vessel_Piechart->title->text('');
                 $vessel_Piechart->plotOptions->pie(array(
-                    'dataLabels' => array('enabled' => true,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black')),
+                    'dataLabels' => array('enabled' => true,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
                     'startAngle'=> -90,
                     'endAngle'=> 90,
-                    'center'=>array('50%', '75%')
+                    'center'=>array('50%', '75%'),
                 ));
                 $vessel_Piechart->plotOptions->series(array(
                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
@@ -700,15 +701,11 @@ class DashboradController extends Controller
                 $vessel_Piechart->exporting->enabled(false);
                 //Vessel Pie Charts Ends Here//
                 //KPI Pie Charts Starts Here//
-                $kpi_Piechart_data=array(
-                    array('name'=>'Green','y'=>count($greenarea_kpiids),'url'=>'/piechart/1_'.implode('_',$greenarea_kpiids).'/listall_kpipiechart','color'=>'#1ea50b'),
-                    array('name'=>'Yellow','y'=>count($yellowarea_kpiids),'url'=>'/piechart/2_'.implode('_',$yellowarea_kpiids).'/listall_kpipiechart','color'=>'#feba06'),
-                    array('name'=>'Red','y'=>count($redarea_kpiids),'url'=>'/piechart/3_'.implode('_',$redarea_kpiids).'/listall_kpipiechart','color'=>'#b30000')
-                );
 
-                $kpi_Piechart = new Highchart();
+                /*$kpi_Piechart = new Highchart();
                 $kpi_Piechart->chart->renderTo('kpi_piechart');
                 $kpi_Piechart->chart->hieght(150);
+                $kpi_Piechart->chart->zoomType('xy');
                 $kpi_Piechart->chart->plotBackgroundColor(null);
                 $kpi_Piechart->chart->plotBorderWidth(0);
                 $kpi_Piechart->chart->plotShadow(false);
@@ -724,11 +721,42 @@ class DashboradController extends Controller
                     'endAngle'=> 90,
                     'center'=>array('50%', '75%')
                 ));
-                $kpi_Piechart->plotOptions->series(array(
-                    'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
                 $kpi_Piechart->series(array(array('type' => 'pie','name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
-                $kpi_Piechart->exporting->enabled(false);
+                $kpi_Piechart->exporting->enabled(false);*/
                 //KPI Pie Charts Ends Here//
+                $kpi_alerts=new Highchart();
+                $kpi_alerts->chart->renderTo('kpi_piechart');
+                $kpi_alerts->chart->plotBackgroundColor(null);
+                $kpi_alerts->chart->plotBorderWidth(0);
+                $kpi_alerts->chart->plotShadow(false);
+                $kpi_alerts->chart->marginTop(-25);
+                $kpi_alerts->chart->marginLeft(-25);
+                $kpi_alerts->chart->marginRight(-25);
+                $kpi_alerts->chart->marginBottom(-25);
+                $kpi_alerts->credits->enabled(false);
+                $kpi_alerts->title->text('');/*
+                $kpi_alerts->title->align('center');
+                $kpi_alerts->title->verticalAlign('middle');
+                $kpi_alerts->title->y(40);
+                $kpi_alerts->title->style($titlearry);*/
+               // $kpi_alerts->tooltip->pointFormat('<span style="font-size:11px">{series.name}</span><br>');
+                $kpi_alerts->plotOptions->pie(array(
+                    'dataLabels' => array('enabled' => true,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
+                    'startAngle'=> -90,
+                    'endAngle'=> 90,
+                    'center'=>array('50%', '75%'),
+                ));
+                $kpi_Piechart_data=array(
+                    array('name'=>'G','y'=>count($greenarea_kpiids),'color'=>'#1ea50b'),
+                    array('name'=>'Y','y'=>count($yellowarea_kpiids),'color'=>'#feba06'),
+                    array('name'=>'R','y'=>count($redarea_kpiids),'color'=>'#b30000')
+                );
+
+                //$kpi_alerts->series(array(array('type' => 'pie','name' => 'Browser share', 'data' => $kpi_Piechart_data)));
+                $kpi_alerts->series(array(array('type' => 'pie','name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
+                $kpi_alerts->plotOptions->series(array(
+                    'dataLabels'=>array( 'enabled'=> true,'inside'=> true,)
+                    ));
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:home.html.twig',
@@ -746,17 +774,21 @@ class DashboradController extends Controller
                         'allships' => $listAllShipForCompany,
                         'chart' => $ob,
                         'vessel_piechart'=>$vessel_Piechart,
-                        'kpi_piechart'=>$kpi_Piechart,
+                        'kpi_piechart'=>$kpi_alerts,
                         'rankinKpiCount' => $rKPICount,
                         'currentmonth' => '',
                         'currentyear' => $yChange,
                         'heading' => 'Management Performance'
                     )
                 );
-            } else {
+            }
+            else
+            {
                 return $this->redirectToRoute('adddata_scorecard');
             }
-        } else {
+        }
+        else
+        {
             return $this->redirectToRoute('fos_user_security_login');
         }
     }
