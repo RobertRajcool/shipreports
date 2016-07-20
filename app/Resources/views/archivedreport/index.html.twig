@@ -416,6 +416,7 @@
                     });
 
                 });
+
                 var liveSearchDiv = $('#livesearchdiv');
                 var commentId = $('#mycommentid');
                 $(".dynamiclabel").live("click", function (e) {
@@ -423,6 +424,7 @@
                     $('#toemail').val(b);
                     liveSearchDiv.hide();
                 });
+
                 liveSearchDiv.hide();
                 commentId.click(function () {
                     liveSearchDiv.hide();
@@ -478,6 +480,8 @@
                     scorecardReportClass.show();
                 });
 
+                /*----------------------------------Archived Reports-------------------------------*/
+
                 var archiveReportView = $('#archived-report-view');
                 var archiveButtonId = $('#archive-btn-id');
                 archiveReportView.hide();
@@ -512,7 +516,7 @@
                     }
                 });
 
-                /*--------Ranking Reports Coding--------*/
+                /*--------------------------------Ranking Reports Coding--------------------------*/
 
                 var rankingSubmitId = $('#ranking-submit-id');
                 var rankingCheckbox = $('.ranking_checkbox');
@@ -747,6 +751,15 @@
                     }
 
                 });
+
+                /*------------------------------Predefined Reports------------------------------*/
+
+               /* var predefinedBtnId = $('#predefined-btn-id');
+                var predefinedReportView = $('#predefined-report-view');
+                predefinedBtnId.click(function($e) {
+                    $e.preventDefault();
+                    predefinedReportView.toggle();
+                })*/
             });
         </script>
 
@@ -877,7 +890,16 @@
         </div>
     </section>
 
+    <button class="submit_btn" id="predefined-btn-id" style="margin-bottom: 10px;">Predefined Reports</button>
+
     <button class="submit_btn" id="archive-btn-id" style="margin-bottom: 10px;">Archived Reports</button>
+
+    {#<section id="predefined-report-view">
+        <div class="">
+            <a id="" style="cursor: pointer;">Scorecard current year full report</a>
+            <a id="" style="cursor: pointer;">Scorecard current year full report</a>
+        </div>
+    </section>#}
 
     <section id="archived-report-view">
         <div class="table-responsive">
