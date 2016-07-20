@@ -96,7 +96,6 @@
 
                 function setReportTableContentsFunction(data) {
                     if(data.length != 0) {
-                        console.log(data)
                         $.each(data.archivedReports, function(i) {
                             reportTableBodyId.append('<tr id="table-row-id'+i+'"></tr>');
                             var tableRowId = $('#table-row-id'+i+'');
@@ -565,6 +564,7 @@
                         success: function (data) {
                             scorecardReportClass.hide();
                             archiveReportView.hide();
+                            reportTableBodyId.empty();
                             var setRankingReportData = setRankingReportDataFunction(data);
                             var setReportTableContents = setReportTableContentsFunction(data);
                             rankingReportView.show();
