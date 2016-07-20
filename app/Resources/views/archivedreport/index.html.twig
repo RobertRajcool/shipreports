@@ -827,16 +827,17 @@
 
     {% endblock %}
 
-    <section class="scorecard_report">
+    <section>
         <div class="col-sm-12">
-            <div class="add_kpi_views_screen">
-                <form class="form-horizontal no-style create-form" method="post">
-                    <div class="scorecard_report_inner">
-                        <fieldset class="fieldset_box add_rule_form">
-                            <legend class="legend_name">Scorecard</legend>
-                            <div class="form-group">
-                                <label class="control-label col-xs-4">Choose Month</label>
-                                <div class="col-xs-8">
+            <div class="scorecard_report">
+                <div class="view_report_screen">
+                    <form class="form-horizontal no-style create-form" method="post">
+                        <div class="scorecard_report_inner">
+                            <fieldset class="fieldset_box add_rule_form">
+                                <legend class="legend_name">Scorecard</legend>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">Month</label>
+                                    <div class="col-xs-8">
                                     <span>
                                         <select class="add_rule_basic_date_drop activeMonth" name="activeMonth">
                                             <option>--</option>
@@ -862,7 +863,7 @@
                                             {% endfor %}
                                         </select>
                                     </span>
-                                    To
+                                        To
                                     <span>
                                         <select class="add_rule_basic_date_drop endMonth" name="endMonth">
                                             <option>--</option>
@@ -888,128 +889,119 @@
                                             {% endfor %}
                                         </select>
                                     </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-xs-4">Save Report</label>
-                                <div class="col-xs-8" >
-                                    <input type="checkbox" class="scorecard_checkbox">
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">Save Report</label>
+                                    <div class="col-xs-8" >
+                                        <input type="checkbox" class="scorecard_checkbox">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-xs-4">&nbsp;</label>
-                                <div class="col-xs-8 report_submit_main">
-                                    <a class="scorecard_submit report_submit" id="scorecard-submit-id" >View report</a>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4">&nbsp;</label>
+                                    <div class="col-xs-8 report_submit_main">
+                                        <a class="scorecard_submit report_submit" id="scorecard-submit-id" >View report</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                    <div class="ranking_report">
-                        <form class="form-horizontal no-style" method="post">
-                            <div class="kpi_basic_details">
-                                <fieldset class="fieldset_box add_rule_form">
-                                    <legend class="legend_name">Ranking</legend>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">{{ 'ranking_report.cho_vessels'|trans }}</label>
-                                        <div class="col-xs-8">
-                                            <select required name="shipid" class="select-vessel">
+                            </fieldset>
+                        </div>
+                        <div class="ranking_report">
+                            <form class="form-horizontal no-style" method="post">
+                                <div class="kpi_basic_details">
+                                    <fieldset class="fieldset_box add_rule_form">
+                                        <legend class="legend_name">Ranking</legend>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-4">Vessel</label>
+                                            <div class="col-xs-8">
+                                            <span>
+                                            <select required name="shipid" class="report_Vessel select-vessel">
                                                 <option value="">--Select--</option>
                                                 {% for vessel in vesselList %}
                                                     <option value="{{ vessel.id }} ">{{ vessel.shipName }}</option>
                                                 {% endfor %}
                                             </select>
+                                            </span>
+                                                Year
+                                            <span>
+                                               <select required class="report_year select-year"  name="year">
+                                                   <option selected="selected" value="">--</option>
+                                                   {% for i in 2000..2020 %}
+                                                       <option value={{ i }}>{{ i }}</option>
+                                                   {% endfor %}
+                                               </select>
+                                            </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">{{ 'ranking_report.cho_year'|trans }}</label>
-                                        <div class="col-xs-8">
-                                            <select required class="add_rule_basic_drop select-year"  name="year">
-                                                <option selected="selected" value="">--</option>
-                                                {% for i in 2000..2020 %}
-                                                    <option value={{ i }}>{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-4">Save Report</label>
+                                            <div class="col-xs-8" >
+                                                <input type="checkbox" class="ranking_checkbox">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">Save Report</label>
-                                        <div class="col-xs-8" >
-                                            <input type="checkbox" class="ranking_checkbox">
+                                        <div class="form-group">
+                                            <label class="control-label col-xs-4">&nbsp;</label>
+                                            <div class="col-xs-8 report_submit_main">
+                                                <a class="ranking_submit report_submit" id="ranking-submit-id" >View report</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">&nbsp;</label>
-                                        <div class="col-xs-8 report_submit_main">
-                                            <a class="ranking_submit report_submit" id="ranking-submit-id" >View report</a>
+                                    </fieldset>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="scorecard-predefined-report">
+                            <form class="form-horizontal no-style" method="post">
+                                <div class="scorecard_report_inner">
+                                    <fieldset class="fieldset_box margin_small add_rule_form">
+                                        <legend class="legend_name">Reports</legend>
+                                        <div class="reports_list">
+                                            <ul>
+                                                <li><a id="scorecard-predefined-report-1">As on date</a></li>
+                                                <li><a id="scorecard-predefined-report-2">First quarter</a></li>
+                                                <li><a id="scorecard-predefined-report-3">First half</a></li>
+                                                <li><a id="scorecard-predefined-report-4">report 4</a></li>
+                                            </ul>
                                         </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="scorecard-predefined-report">
-                        <form class="form-horizontal no-style" method="post">
-                            <div class="scorecard_report_inner">
-                                <fieldset class="fieldset_box add_rule_form">
-                                    <legend class="legend_name">Reports</legend>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">
-                                            <a id="scorecard-predefined-report-1" style="cursor: pointer;">As on date</a>
-                                        </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">
-                                            <a id="scorecard-predefined-report-2" style="cursor: pointer;">First quarter</a>
-                                        </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">
-                                            <a id="scorecard-predefined-report-3" style="cursor: pointer;">First half</a>
-                                        </label>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label col-xs-4">
-                                            <a id="scorecard-predefined-report-4" style="cursor: pointer;">report 4</a>
-                                        </label>
-                                    </div>
-                                </fieldset>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="scorecard-predefined-report">
-                        <form class="form-horizontal no-style" method="post">
-                            <div class="kpi_basic_details">
-                                <fieldset class="fieldset_box add_rule_form">
-                                    <legend class="legend_name">Reports</legend>
-                                </fieldset>
-                            </div>
-                        </form>
-                    </div>
-                </form>
+                                    </fieldset>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="scorecard-predefined-report">
+                            <form class="form-horizontal no-style" method="post">
+                                <div class="kpi_basic_details">
+                                    <fieldset class="fieldset_box margin_small add_rule_form">
+                                        <legend class="legend_name">Reports</legend>
+                                    </fieldset>
+                                </div>
+                            </form>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <button class="submit_btn" id="archive-btn-id" style="margin-bottom: 10px;">Archived Reports</button>
+
+            <div id="archived-report-view">
+                <div class="table-responsive">
+                    <table class="table table-striped table_dividere data_import_list_table">
+                        <thead>
+                        <tr>
+                            <th class="filename">Reports</th>
+                            <th class="month">Report Type</th>
+                            <th class="time">User Name</th>
+                            <th class="option">Date</th>
+                            <th class="option">Options</th>
+                        </tr>
+                        </thead>
+                        <tbody id="report-table-body-id">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
     </section>
 
-    <button class="submit_btn" id="archive-btn-id" style="margin-bottom: 10px;">Archived Reports</button>
 
-    <section id="archived-report-view">
-        <div class="table-responsive">
-            <table class="table table-striped table_dividere data_import_list_table">
-                <thead>
-                    <tr>
-                        <th class="filename">Reports</th>
-                        <th class="month">Report Type</th>
-                        <th class="time">User Name</th>
-                        <th class="option">Date</th>
-                        <th class="option">Options</th>
-                    </tr>
-                </thead>
-                <tbody id="report-table-body-id">
-
-                </tbody>
-            </table>
-        </div>
-    </section>
 
     <section class="scorecard_report_view">
         <div class="col-sm-12">
