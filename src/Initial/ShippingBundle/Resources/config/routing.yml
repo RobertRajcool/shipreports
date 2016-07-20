@@ -99,6 +99,21 @@ fos_user_registration_profile:
 document_read:
                path: /document
                defaults: { _controller: "InitialShippingBundle:CompanyUsers:Document"}
+back_up:
+         path: /backup
+         defaults: { _controller: "InitialShippingBundle:CompanyUsers:Backup"}
+
+import_db:
+         path: /db_export
+         defaults: { _controller: "InitialShippingBundle:CompanyUsers:dbBackup"}
+
+view_file:
+           path: /archived_report_view
+           defaults: { _controller: "InitialShippingBundle:CompanyUsers:archivedReportShow"}
+
+
+
+
 
 
 

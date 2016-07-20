@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Initial\ShippingBundle\Entity\User;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Initial\ShippingBundle\Entity\Backupreport;
 
 /**
  * CompanyUsers controller.
@@ -496,6 +497,97 @@ class CompanyUsersController extends Controller
            return $this->redirectToRoute('fos_user_security_login');
       }
   }
+
+    public function BackupAction(){
+        $user = $this->getUser();
+        $userId =$user->getId();
+
+        return $this->render('companyusers/edit.html.twig', array(
+
+        ));
+    }
+
+
+    public function dbBackupAction(Request $request)
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+
+        $em = $this->getDoctrine()->getManager();
+        if ($user == null)
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        else
+        {    $em = $this->getDoctrine()->getManager();
+
+            $date = new \DateTime();
+            $archiveStatus = $request->request->get('archiveStatus');
+            $box = $request->request->get('checked');
+            $connection = $em->getConnection();
+            $refConn = new \ReflectionObject($connection);
+            $refParams = $refConn->getProperty('_params');
+            $refParams->setAccessible('public');
+            $params = $refParams->getValue($connection);
+
+            $filelocation = $this->container->getParameter('kernel.root_dir') . '/../web/sqlfiles';
+            if (!is_dir($filelocation)) {
+                mkdir($filelocation);
+            }
+            $outfile_filepath = $filelocation . '/' . $params['dbname'] . '.sql';
+            if (file_exists($outfile_filepath)) {
+                unlink($outfile_filepath);
+            }
+
+
+
+            $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . '  > ' . $outfile_filepath;
+            system($command);
+            $content = file_get_contents($outfile_filepath);
+            $response = new Response();
+            $response->setContent($content);
+            header('Content-Type: application/octet-stream');
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"" . $params['dbname'] . ".sql\"");
+
+                $backup = new Backupreport();
+                $backup->setfileName($outfile_filepath);
+                $backup->setusername($user);
+                $backup->setDateTime($date);
+                $em->persist($backup);
+                $em->flush();
+
+
+            return $response;
+        }
+    }
+
+
+
+    public function archivedReportShowAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $em = $this->getDoctrine()->getManager();
+            $backupReport = $em->createQueryBuilder()
+                ->select('a.fileName,a.dateTime, a.username,a.id')
+                ->from('InitialShippingBundle:Backupreport', 'a')
+                ->getQuery()
+                ->getResult();
+
+
+
+            $response = new JsonResponse();
+            $response->setData(array(
+
+                'archivedReports' =>   $backupReport,
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
 
 
 
