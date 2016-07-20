@@ -366,6 +366,9 @@ class ArchivedReportController extends Controller
                     $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
                     $pdfObject->WriteHTML($customerListDesign);
                 }
+                if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/pdfs')) {
+                    mkdir($this->container->getParameter('kernel.root_dir') . '/../web/pdfs', 0777, true);
+                }
                 $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs/' . $reportName . '.pdf';
                 $pdfObject->Output($pdfFilePath,'F');
             }
@@ -905,6 +908,9 @@ class ArchivedReportController extends Controller
                     $mpdf->AddPage('', 4, '', 'on');
                     $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                     $mpdf->WriteHTML($customerListDesign);
+                }
+                if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/pdfs')) {
+                    mkdir($this->container->getParameter('kernel.root_dir') . '/../web/pdfs', 0777, true);
                 }
                 $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs/' . $reportName . '.pdf';
                 $mpdf->Output($pdfFilePath,'F');
