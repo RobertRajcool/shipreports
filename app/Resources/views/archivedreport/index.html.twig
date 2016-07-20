@@ -61,6 +61,10 @@
                         endYear: eY,
                         archiveStatus: archiveStatus
                     };
+                    var scorecardAjaxSetup = scorecardAjaxSetupFunction(data);
+                });
+
+                function scorecardAjaxSetupFunction(data) {
                     $.ajaxSetup({
                         global: false,
                         type: "post",
@@ -77,6 +81,7 @@
                         success: function (data) {
                             scorecardReportClass.hide();
                             archiveReportView.hide();
+                            archiveButtonId.hide();
                             reportTableBodyId.empty();
                             var setOverallKpiDetails = setOverallKpiDetailsFunction(data);
                             var setElementLevelDetail = setElementLevelDetailFunction(data);
@@ -87,7 +92,7 @@
                             alert('Error : ' + errorThrown);
                         }
                     });
-                });
+                }
 
                 function setReportTableContentsFunction(data) {
                     if(data.length != 0) {
@@ -478,6 +483,7 @@
                     $('#area_ranking').empty();
                     $('#kpigraphlist').empty();
                     scorecardReportClass.show();
+                    archiveButtonId.show();
                 });
 
                 /*----------------------------------Archived Reports-------------------------------*/
@@ -516,7 +522,7 @@
                     }
                 });
 
-                /*--------------------------------Ranking Reports Coding--------------------------*/
+                /*--------------------------------Ranking Reports---------------------------------*/
 
                 var rankingSubmitId = $('#ranking-submit-id');
                 var rankingCheckbox = $('.ranking_checkbox');
@@ -752,14 +758,70 @@
 
                 });
 
-                /*------------------------------Predefined Reports------------------------------*/
+                /*------------------------------Predefined Reports-------------------------------*/
 
-               /* var predefinedBtnId = $('#predefined-btn-id');
-                var predefinedReportView = $('#predefined-report-view');
-                predefinedBtnId.click(function($e) {
+                var today = new Date();
+                var currentYear = today.getFullYear();
+                var currentMonth = today.getMonth();
+                var asOnDate = $('#scorecard-predefined-report-1');
+                asOnDate.click(function($e) {
                     $e.preventDefault();
-                    predefinedReportView.toggle();
-                })*/
+                    archiveAjaxStatus = 1;
+                    var archiveStatus = 0;
+                    var data = {
+                        activeMonth: 1,
+                        activeYear: currentYear,
+                        endMonth: currentMonth+1,
+                        endYear: currentYear,
+                        archiveStatus: archiveStatus
+                    };
+                    var scorecardAjaxSetup = scorecardAjaxSetupFunction(data);
+                });
+
+                var firstQuarter = $('#scorecard-predefined-report-2');
+                firstQuarter.click(function($e) {
+                    $e.preventDefault();
+                    archiveAjaxStatus = 1;
+                    var archiveStatus = 0;
+                    var data = {
+                        activeMonth: 1,
+                        activeYear: currentYear,
+                        endMonth: 3,
+                        endYear: currentYear,
+                        archiveStatus: archiveStatus
+                    };
+                    var scorecardAjaxSetup = scorecardAjaxSetupFunction(data);
+                });
+
+                var firstHalf = $('#scorecard-predefined-report-3');
+                firstHalf.click(function($e) {
+                    $e.preventDefault();
+                    archiveAjaxStatus = 1;
+                    var archiveStatus = 0;
+                    var data = {
+                        activeMonth: 1,
+                        activeYear: currentYear,
+                        endMonth: 6,
+                        endYear: currentYear,
+                        archiveStatus: archiveStatus
+                    };
+                    var scorecardAjaxSetup = scorecardAjaxSetupFunction(data);
+                });
+
+                var report4 = $('#scorecard-predefined-report-4');
+                report4.click(function($e) {
+                    $e.preventDefault();
+                    archiveAjaxStatus = 1;
+                    var archiveStatus = 0;
+                    var data = {
+                        activeMonth: 1,
+                        activeYear: currentYear,
+                        endMonth: 'check',
+                        endYear: currentYear,
+                        archiveStatus: archiveStatus
+                    };
+                    var scorecardAjaxSetup = scorecardAjaxSetupFunction(data);
+                });
             });
         </script>
 
@@ -885,21 +947,50 @@
                             </div>
                         </form>
                     </div>
+                    <div class="scorecard-predefined-report">
+                        <form class="form-horizontal no-style" method="post">
+                            <div class="scorecard_report_inner">
+                                <fieldset class="fieldset_box add_rule_form">
+                                    <legend class="legend_name">Reports</legend>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4">
+                                            <a id="scorecard-predefined-report-1" style="cursor: pointer;">As on date</a>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4">
+                                            <a id="scorecard-predefined-report-2" style="cursor: pointer;">First quarter</a>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4">
+                                            <a id="scorecard-predefined-report-3" style="cursor: pointer;">First half</a>
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4">
+                                            <a id="scorecard-predefined-report-4" style="cursor: pointer;">report 4</a>
+                                        </label>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="scorecard-predefined-report">
+                        <form class="form-horizontal no-style" method="post">
+                            <div class="kpi_basic_details">
+                                <fieldset class="fieldset_box add_rule_form">
+                                    <legend class="legend_name">Reports</legend>
+                                </fieldset>
+                            </div>
+                        </form>
+                    </div>
                 </form>
             </div>
         </div>
     </section>
 
-    <button class="submit_btn" id="predefined-btn-id" style="margin-bottom: 10px;">Predefined Reports</button>
-
     <button class="submit_btn" id="archive-btn-id" style="margin-bottom: 10px;">Archived Reports</button>
-
-    {#<section id="predefined-report-view">
-        <div class="">
-            <a id="" style="cursor: pointer;">Scorecard current year full report</a>
-            <a id="" style="cursor: pointer;">Scorecard current year full report</a>
-        </div>
-    </section>#}
 
     <section id="archived-report-view">
         <div class="table-responsive">
