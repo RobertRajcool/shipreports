@@ -399,7 +399,8 @@
                         </a>
                     </li>
                     <li id="backuplist">
-                        <a href="{{ path('database_export') }}" target="">
+                      {#<a href="{{ path('database_export') }}" target="">#}
+                        <a href ="{{ path('back_up') }}">
                             <span class="menu-item-icon ss-briefcase">&nbsp;</span>
                             <span class="menu-item-text">{{ 'layout.menu.backup'|trans }}</span>
                         </a>
