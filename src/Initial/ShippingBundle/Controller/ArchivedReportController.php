@@ -970,6 +970,197 @@ class ArchivedReportController extends Controller
     /**
      * Lists all ArchivedReport entities.
      *
+     * @Route("/archived_ranking_predefined_report", name="archived_ranking_predefined_report")
+     */
+    public function rankingPredefinedReportAction(Request $request)
+    {
+        $user = $this->getUser();
+        $userId = $user->getId();
+        $userName = $user->getUsername();
+        if ($user != null) {
+            $em = $this->getDoctrine()->getManager();
+            $year = $request->request->get('selectedYear');
+            $title = $request->request->get('title');
+
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a.shipName', 'a.id', 'a.manufacturingYear')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->where('b.adminName = :username')
+                    ->setParameter('username', $userName)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a.shipName', 'a.id', 'a.manufacturingYear')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+            $listAllShipForCompany = $query->getResult();
+
+            $oneyear_montharray = array();
+            $oneChart_Data = array();
+            if ($year == ' ') {
+                for ($m = 1; $m <= 12; $m++) {
+                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
+                    array_push($oneyear_montharray, $month);
+                }
+            }
+            if ($year != ' ') {
+                for ($m = 1; $m <= 12; $m++) {
+                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
+                    array_push($oneyear_montharray, $month);
+                }
+            }
+
+            $vesselArray = array();
+            $newcategories = array();
+            $DataRankingReports = 0;
+
+            $monthlyShipDataStatus = $em->createQueryBuilder()
+                ->select('b.status, b.dataofmonth')
+                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->where('b.shipid = :shipId')
+                ->setParameter('shipId', $listAllShipForCompany[0]['id'])
+                ->getQuery()
+                ->getResult();
+            $statusMonth = $monthlyShipDataStatus[count($monthlyShipDataStatus)-1]['dataofmonth'];
+
+            for ($shipCount = 0; $shipCount < count($listAllShipForCompany); $shipCount++) {
+                $rankingShipName = $listAllShipForCompany[$shipCount]['shipName'];
+                $rankingShipId = $listAllShipForCompany[$shipCount]['id'];
+
+                array_push($vesselArray,$rankingShipName);
+
+                $initial = 0;
+                $statusVerified = 0;
+
+                if($title == 'As on date') {
+                    $initial= 0;
+                    $statusVerified = date('n');
+                } elseif($title == 'Quarterly') {
+                    $initial = 0;
+                    $statusVerified= 3;
+                } elseif($title == 'Half-Yearly') {
+                    $initial = 0;
+                    $statusVerified= 6;
+                } elseif ($title == 'Last two months') {
+                    $statusVerified = $statusMonth->format('n');
+                    $initial = $statusVerified-3;
+                }
+
+                $ShipDetailDataarray = array();
+                for ($d = $initial; $d < $statusVerified; $d++) {
+                    $monthcount = 0;
+                    $time2 = strtotime($oneyear_montharray[$d]);
+                    $monthinletter = date('M', $time2);
+                    if ($shipCount == 0) {
+                        array_push($newcategories, $monthinletter);
+                    }
+                    $new_monthdetail_date = new \DateTime($oneyear_montharray[$d]);
+                    $new_monthdetail_date->modify('last day of this month');
+                    $rankingKpiValueCountArray = array();
+                    $rankingKpiList = $em->createQueryBuilder()
+                        ->select('b.kpiName', 'b.id', 'b.weightage')
+                        ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                        ->where('b.shipDetailsId = :shipid')
+                        ->setParameter('shipid', $listAllShipForCompany[0]['id'])
+                        ->getQuery()
+                        ->getResult();
+
+                    for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++) {
+                        $rankingElementValueTotal = 0;
+                        $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
+                        $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
+                        $rankingElementList = $em->createQueryBuilder()
+                            ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
+                            ->from('InitialShippingBundle:RankingElementDetails', 'c')
+                            ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
+                            ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
+                            ->setParameter('kpiid', $rankingKpiId)
+                            ->setParameter('datamonth', $new_monthdetail_date)
+                            ->setParameter('rankingStatusValue', 3)
+                            ->setParameter('shipId', $rankingShipId)
+                            ->getQuery()
+                            ->getResult();
+
+                        if ($rankingElementList > 0) {
+                            if ($monthcount == 0) {
+                                $DataRankingReports++;
+                            }
+                            for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++) {
+                                $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
+                                $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
+                                $elementResultColor = "";
+                                $rankingElementColorValue = 0;
+                                $rankingElementResult = $em->createQueryBuilder()
+                                    ->select('b.elementdata, b.elementcolor')
+                                    ->from('InitialShippingBundle:Ranking_LookupData', 'b')
+                                    ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
+                                    ->setParameter('kpiId', $rankingKpiId)
+                                    ->setParameter('shipId', $rankingShipId)
+                                    ->setParameter('elementId', $rankingElementId)
+                                    ->setParameter('monthDetail', $new_monthdetail_date)
+                                    ->getQuery()
+                                    ->getResult();
+                                if (count($rankingElementResult) != 0) {
+                                    $elementResultColor = $rankingElementResult[0]['elementcolor'];
+                                } else {
+                                    $rankingElementResult[0]['elementdata'] = 0;
+                                }
+
+                                if ($elementResultColor == "false") {
+                                    $rankingElementColorValue = 0;
+                                }
+
+                                if ($elementResultColor == 'Green') {
+                                    $rankingElementColorValue = $rankingElementWeight;
+                                } else if ($elementResultColor == 'Yellow') {
+                                    $rankingElementColorValue = $rankingElementWeight / 2;
+                                } else if ($elementResultColor == 'Red') {
+                                    $rankingElementColorValue = 0;
+                                }
+                                $rankingElementValueTotal += $rankingElementColorValue;
+                            }
+                            $monthcount++;
+                        }
+                        array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
+                    }
+                    array_push($ShipDetailDataarray, (array_sum($rankingKpiValueCountArray)));
+                }
+                array_push($oneChart_Data, array("name" => $rankingShipName, 'showInLegend' => true, "data" => $ShipDetailDataarray));
+            }
+
+            $series = array();
+            for($monthCount=0;$monthCount<count($newcategories);$monthCount++) {
+                $dataArray = array();
+                for($i=0;$i<count($oneChart_Data);$i++) {
+                    array_push($dataArray,$oneChart_Data[$i]['data'][$monthCount]);
+                }
+                array_push($series,array("name" => $newcategories[$monthCount], "data" => $dataArray));
+            }
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                    'series' => $series,
+                    'year' => $year,
+                    'title' => $title,
+                    'categories' => $vesselArray
+                )
+            );
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
+     * Lists all ArchivedReport entities.
+     *
      * @Route("/archived_report_show", name="archived_report_show")
      */
     public function archivedReportShowAction(Request $request)

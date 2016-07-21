@@ -102,7 +102,7 @@
                             var period = new Date(data.archivedReports[i].dateTime.date);
                             var pathInTwigFormat = "{{ path('archived_report_pdf_download', { 'id': 'value'}) }}";
                             var pathName = pathInTwigFormat.replace("value",data.archivedReports[i].id);
-                            tableRowId.append('<td>'+data.archivedReports[i].fileName+'</td> <td>'+data.archivedReports[i].reportType+'</td> <td>'+data.userDetails[i][0].username+'</td> <td>'+period.getDate()+'-'+period.getMonth()+'-'+period.getFullYear()+'</td> <td style="text-align: center"><a href="'+pathName+'"><img style="width: 29px; height: 26px" src="/images/pdf-download.png"  alt="Loader Image" /></a></td>');
+                            tableRowId.append('<td>'+data.archivedReports[i].fileName+'</td> <td>'+data.archivedReports[i].reportType+'</td> <td>'+data.userDetails[i][0].username+'</td> <td>'+period.getDate()+'-'+period.getMonthName()+'-'+period.getFullYear()+'</td> <td style="text-align: center"><a href="'+pathName+'"><img style="width: 29px; height: 26px" src="/images/pdf-download.png"  alt="Loader Image" /></a></td>');
                         });
                     }
                 }
@@ -475,12 +475,14 @@
                     $e.preventDefault();
                     rankingReportView.hide();
                     scorecardReportViewClass.hide();
+                    rankingPredefinedReportView.hide();
                     $('.create-form')[0].reset();
                     $('.reportElementShow').empty();
                     $('#previousScorecardTable').empty();
                     $('#area').empty();
                     $('#area_ranking').empty();
                     $('#kpigraphlist').empty();
+                    $('#area_predefined_ranking').empty();
                     scorecardReportClass.show();
                     archiveButtonId.show();
                 });
@@ -556,33 +558,38 @@
                     };
 
                     if(validateStatus==0) {
-                        $.ajaxSetup({
-                            global: false,
-                            type: "post",
-                            url: /*Routing.generate('archived_ranking_report'),*/ "archived_ranking_report",
-                            beforeSend: function () {
-                                var setAjaxBeforeSend = ajaxbefore_send();
-                            },
-                            complete: function () {
-                                var setAjaxComplete = ajax_complete();
-                            }
-                        });
-                        $.ajax({
-                            data: data,
-                            success: function (data) {
-                                scorecardReportClass.hide();
-                                archiveReportView.hide();
-                                reportTableBodyId.empty();
-                                var setRankingReportData = setRankingReportDataFunction(data);
-                                var setReportTableContents = setReportTableContentsFunction(data);
-                                rankingReportView.show();
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                alert('Error : ' + errorThrown);
-                            }
-                        });
+                        var setRankingAjaxSetup = setRankingAjaxSetupFunction(data);
                     }
                 });
+
+                function setRankingAjaxSetupFunction(data) {
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: /*Routing.generate('archived_ranking_report'),*/ "archived_ranking_report",
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data) {
+                            scorecardReportClass.hide();
+                            archiveButtonId.hide();
+                            archiveReportView.hide();
+                            reportTableBodyId.empty();
+                            var setRankingReportData = setRankingReportDataFunction(data);
+                            var setReportTableContents = setReportTableContentsFunction(data);
+                            rankingReportView.show();
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                }
 
                 function setRankingReportDataFunction(data) {
                     $('#kpigraphlist').html(' ');
@@ -615,7 +622,7 @@
 
                         $('<tr class="newtempclass"><td class="kpi_name_thtd"><strong>Score</strong></td><td><strong>100</strong></td></tr>').appendTo('#tablebodyid');
                         var kk = 0;
-                        for (kk = 0; kk < data.countmonth; kk++) {  // console.log(data.avgscore[j]);
+                        for (kk = 0; kk < data.countmonth; kk++) {
                             if (data.avgscore[kk] != null) {
                                 $('<td><strong>' + data.avgscore[kk] + '</strong></td>').appendTo('.newtempclass');
                             }
@@ -629,15 +636,12 @@
                         $.each(data.kpigraph, function (key, listofelementvalues) {
                             if (data.listofkpi[tempcount]['kpiName'] == 'Vessel age') {
 
-                            }
-                            else {
-
+                            } else {
                                 $('<table class="table table-striped graph_and_colour_coding_main_title_row"><thead><tr><th>' + data.listofkpi[tempcount]['kpiName'] + '</th></tr></thead><tbody><tr><td></td></tr></tbody></table>').appendTo('#score_color_' + key);
                                 $('<table class="table table-striped-3 element_ranking_new_row"><thead><tr id="tableheader_' + key + '"><th>Element Name</th></tr></thead><tbody id="scoretablebodyid_' + key + '"></tbody></table>').appendTo('#score_color_' + key)
                                 var datamonthcount;
                                 for (datamonthcount = 0; datamonthcount < data.countmonth; datamonthcount++) {
                                     $('<th colspan="2" class="month">' + data.montharray[datamonthcount] + '</th>').appendTo('#tableheader_' + key);
-
                                 }
                             }
 
@@ -645,14 +649,12 @@
                                 $('<tr id="elementid_' + elementtrdynamic + '"></tr>').appendTo('#scoretablebodyid_' + key);
                                 $('<td  class="element_name_title">' + data.listofelement[key][b]['elementName'] + '</td>').appendTo('#elementid_' + elementtrdynamic);
 
-
                                 var monthcount = 0;
                                 for (monthcount = 0; monthcount < data.countmonth; monthcount++) {
                                     var ranking_value = '';
                                     var ranking_color = '';
 
                                     if (data.monthlydata[key][monthcount].length != 0) {
-
                                         ranking_value = data.monthlydata[key][monthcount][b];
                                         ranking_color = data.elementcolorarray[key][monthcount][b];
                                     }
@@ -660,16 +662,15 @@
 
                                     if (ranking_color != 'false' && ranking_color != '') {
                                         if (ranking_color == 'Green') {
-                                            $('<td><img src="/images/box_green.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
+                                            $('<td><img class="img-icon" src="/images/02.large.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
                                         }
                                         else if (ranking_color == 'Red') {
-                                            $('<td><img src="/images/box_red.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
+                                            $('<td><img class="img-icon" src="/images/03.large.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
                                         }
                                         else if (ranking_color == 'Yellow') {
-                                            $('<td><img src="/images/box_yellow.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
+                                            $('<td><img class="img-icon" src="/images/01.large.png" alt="Loader Image"/></td>').appendTo('#elementid_' + elementtrdynamic);
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         $('<td></td>').appendTo('#elementid_' + elementtrdynamic);
                                     }
                                 }
@@ -830,6 +831,129 @@
                     };
                     var scorecardAjaxSetup = scorecardAjaxSetupFunction(data);
                 });
+
+                /*---------------------Ranking Predefined Reports-------------------------------*/
+
+                var rankingPredefinedReportView = $('.ranking-predefined-report-view');
+                rankingPredefinedReportView.hide();
+                var asOnDateRanking = $('#ranking-predefined-report-1');
+                asOnDateRanking.click(function($e) {
+                    $e.preventDefault();
+                    var title = 'As on date';
+                    var data = {
+                        selectedYear : currentYear,
+                        title: title
+                    };
+                    var setRankingPredefinedAjaxSetup = setRankingPredefinedAjaxSetupFunction(data);
+                });
+
+                var firstQuarterRanking = $('#ranking-predefined-report-2');
+                firstQuarterRanking.click(function($e) {
+                    $e.preventDefault();
+                    var title = 'Quarterly';
+                    var data = {
+                        selectedYear : currentYear,
+                        title: title
+                    };
+                    var setRankingPredefinedAjaxSetup = setRankingPredefinedAjaxSetupFunction(data);
+                });
+
+                var firstHalfRanking = $('#ranking-predefined-report-3');
+                firstHalfRanking.click(function($e) {
+                    $e.preventDefault();
+                    var title = 'Half-Yearly';
+                    var data = {
+                        selectedYear : currentYear,
+                        title: title
+                    };
+                    var setRankingPredefinedAjaxSetup = setRankingPredefinedAjaxSetupFunction(data);
+                });
+
+                var lastTwoMonthsRanking = $('#ranking-predefined-report-4');
+                lastTwoMonthsRanking.click(function($e) {
+                    $e.preventDefault();
+                    var title = 'Last two months';
+                    var data = {
+                        selectedYear : currentYear,
+                        title: title
+                    };
+                    var setRankingPredefinedAjaxSetup = setRankingPredefinedAjaxSetupFunction(data);
+                });
+
+                function setRankingPredefinedAjaxSetupFunction(data) {
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        url: /*Routing.generate('archived_ranking_predefined_report'),*/ "archived_ranking_predefined_report",
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        data: data,
+                        success: function (data) {
+                            scorecardReportClass.hide();
+                            archiveButtonId.hide();
+                            archiveReportView.hide();
+                            reportTableBodyId.empty();
+                            var setOverallVesselGraph = setOverallVesselGraphFunction(data);
+                            rankingPredefinedReportView.show();
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                }
+
+                function setOverallVesselGraphFunction(data) {
+                    $('#area_predefined_ranking').highcharts({
+                        chart: {
+                            type: 'column',
+                            width: 965,
+                            height: 525
+                        },
+                        title: {
+                            text: data.title
+                        },
+                        xAxis: {
+                            categories: data.categories
+                        },
+                        yAxis: {
+                            min: 0,
+                            max: 100,
+                            title: {
+                                text: 'Month wise data'
+                            },
+                            stackLabels: {
+                                enabled: true,
+                                style: {
+                                    fontWeight: 'bold',
+                                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<b>{point.x}</b><br/>',
+                            pointFormat: '{series.name}: {point.y}<br/>Total: 100'
+                        },
+                        plotOptions: {
+                            column: {
+                                stacking: 'percent',
+                                dataLabels: {
+                                    enabled: true,
+                                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                                    style: {
+                                        textShadow: '0 0 3px black'
+                                    }
+                                }
+                            }
+                        },
+                        series: data.series
+                    });
+                }
             });
         </script>
 
@@ -963,10 +1087,10 @@
                                         <legend class="legend_name">Reports</legend>
                                         <div class="reports_list">
                                             <ul>
-                                                <li><a id="scorecard-predefined-report-1">As on date</a></li>
-                                                <li><a id="scorecard-predefined-report-2">First quarter</a></li>
-                                                <li><a id="scorecard-predefined-report-3">First half</a></li>
-                                                <li><a id="scorecard-predefined-report-4">report 4</a></li>
+                                                <li><a id="scorecard-predefined-report-1">This month</a></li>
+                                                <li><a id="scorecard-predefined-report-2">Quarterly</a></li>
+                                                <li><a id="scorecard-predefined-report-3">Half-yearly</a></li>
+                                                <li><a id="scorecard-predefined-report-4">Last two months</a></li>
                                             </ul>
                                         </div>
                                     </fieldset>
@@ -978,6 +1102,14 @@
                                 <div class="kpi_basic_details">
                                     <fieldset class="fieldset_box margin_small add_rule_form">
                                         <legend class="legend_name">Reports</legend>
+                                        <div class="reports_list">
+                                            <ul>
+                                                <li><a id="ranking-predefined-report-1">This month</a></li>
+                                                <li><a id="ranking-predefined-report-2">Quarterly</a></li>
+                                                <li><a id="ranking-predefined-report-3">Half-yearly</a></li>
+                                                <li><a id="ranking-predefined-report-4">Last two months</a></li>
+                                            </ul>
+                                        </div>
                                     </fieldset>
                                 </div>
                             </form>
@@ -993,10 +1125,10 @@
                     <table class="table table-striped table_dividere data_import_list_table">
                         <thead>
                         <tr>
-                            <th class="filename">Reports</th>
+                            <th style="width:30%;" class="filename">Reports</th>
                             <th class="month">Report Type</th>
                             <th class="time">User Name</th>
-                            <th class="option">Date</th>
+                            <th class="month">Date</th>
                             <th class="option">Options</th>
                         </tr>
                         </thead>
@@ -1101,7 +1233,7 @@
         </div>
     </div>
 
-    <section class="ranking-report-view">
+    <div class="ranking-report-view">
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
@@ -1113,46 +1245,43 @@
                 <a class="actions_report_btn scorecard_view_back" style="cursor: pointer;">{{ 'ranking_report.back'|trans }}</a>
             </div>
             <div id="listalltable" class="table-responsive rankingreport">
-
                 <table class="table table-striped-4 element_ranking_main_title_row">
                     <thead>
-                    <tr>
-                        <th colspan="4">
-                            {{ 'kpiranking.header'|trans }}
-                        </th>
-                    </tr>
+                        <tr>
+                            <th colspan="4">
+                                {{ 'kpiranking.header'|trans }}
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
-                        <td id="shipnameid"></td>
-                        <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
-                        <td>V-ships</td>
-                    </tr>
-                    <tr>
-                        <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
-                        <td id="currentyearid"></td>
-                        <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
-                        <td id="ageofvesselid"></td>
-                    </tr>
+                        <tr>
+                            <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
+                            <td id="shipnameid"></td>
+                            <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
+                            <td>V-ships</td>
+                        </tr>
+                        <tr>
+                            <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
+                            <td id="currentyearid"></td>
+                            <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
+                            <td id="ageofvesselid"></td>
+                        </tr>
                     </tbody>
                 </table>
                 <div id="tableofcontent"></div>
                 <table id="shipchart" class="table table-striped normal_table">
                     <thead>
-                    <tr>
-                        <th id="graphtitle">Title</th>
-                    </tr>
+                        <tr>
+                            <th id="graphtitle">Title</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td id="area_ranking"></td>
-                    </tr>
+                        <tr>
+                            <td id="area_ranking"></td>
+                        </tr>
                     </tbody>
                 </table>
-                <div id="kpigraphlist">
-
-                </div>
+                <div id="kpigraphlist"></div>
             </div>
         </div>
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1195,6 +1324,78 @@
                 </div> <!-- /.modal-content -->
             </div> <!-- /.modal-dialog -->
         </div>
-    </section>
+    </div>
+
+    <div class="ranking-predefined-report-view">
+        <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
+            <div class="actions_report_top">
+                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
+                    <input type="hidden" id="sendreportshipid" name="shipid">
+                    <input type="hidden" id="yearid" name="year">
+                    <button type="submit" class="actions_report_btn" id="sendreportid-ranking" >{{ 'ranking_report.print'|trans }}</button>
+                </form>
+                <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">{{ 'ranking_report.sendreport'|trans }}</a>
+                <a class="actions_report_btn scorecard_view_back" style="cursor: pointer;">{{ 'ranking_report.back'|trans }}</a>
+            </div>
+            <div id="listalltable" class="table-responsive rankingreport">
+                <div id="tableofcontent"></div>
+                <table id="shipchart" class="table table-striped normal_table">
+                    {#<thead>
+                    <tr>
+                        <th id="graphtitle">Title</th>
+                    </tr>
+                    </thead>#}
+                    <tbody>
+                    <tr>
+                        <td id="area_predefined_ranking"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div id="kpigraphlist"></div>
+            </div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog model_content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">{{ 'elementranking.sendreport'|trans }}</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <form id="chatform" class="form-horizontal no-style" method="post">
+
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
+                                <div class="col-xs-9">
+
+                                    <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
+                                    <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                        <ul id="livesearch">
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
+                                <div class="col-xs-9">
+                                    <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
+                    </div>
+
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div>
+    </div>
+
+
 
 {% endblock %}
