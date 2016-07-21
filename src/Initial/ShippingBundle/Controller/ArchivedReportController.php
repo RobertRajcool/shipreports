@@ -114,6 +114,21 @@ class ArchivedReportController extends Controller
             $inactiveMonth = $request->request->get('endMonth');
             $inactiveYear = $request->request->get('endYear');
             $archiveStatus = $request->request->get('archiveStatus');
+            if($inactiveMonth=='check') {
+                $statusFieldQuery = $em->createQueryBuilder()
+                    ->select('b.dataofmonth,b.status')
+                    ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
+                    ->where('b.status = :monthStatus')
+                    ->setParameter('monthStatus', 4)
+                    ->groupby('b.dataofmonth')
+                    ->getQuery()
+                    ->getResult();
+                if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
+                    $dateFromDb = $statusFieldQuery[count($statusFieldQuery) - 1]['dataofmonth'];
+                    $inactiveMonth = $dateFromDb->format('n');
+                    $activeMonth = $inactiveMonth - 2;
+                }
+            }
             $monthArray = array();
             $startDate = new \DateTime(date('Y-m-d', mktime(0, 0, 0, $activeMonth + 1, 0, date($activeYear))));
             $startDate->modify('first day of this month');
@@ -350,6 +365,9 @@ class ArchivedReportController extends Controller
                     $pdfObject->AddPage('', 4, '', 'on');
                     $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
                     $pdfObject->WriteHTML($customerListDesign);
+                }
+                if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/pdfs')) {
+                    mkdir($this->container->getParameter('kernel.root_dir') . '/../web/pdfs', 0777, true);
                 }
                 $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs/' . $reportName . '.pdf';
                 $pdfObject->Output($pdfFilePath,'F');
@@ -890,6 +908,9 @@ class ArchivedReportController extends Controller
                     $mpdf->AddPage('', 4, '', 'on');
                     $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                     $mpdf->WriteHTML($customerListDesign);
+                }
+                if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/pdfs')) {
+                    mkdir($this->container->getParameter('kernel.root_dir') . '/../web/pdfs', 0777, true);
                 }
                 $pdfFilePath = $this->container->getParameter('kernel.root_dir') . '/../web/pdfs/' . $reportName . '.pdf';
                 $mpdf->Output($pdfFilePath,'F');

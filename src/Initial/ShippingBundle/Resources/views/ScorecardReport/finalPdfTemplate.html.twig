@@ -55,11 +55,11 @@
                         {% for monthname in monthName %}
                             <td class="month">
                                 {% if yearKpiColorArray[j][i]=="Green" %}
-                                    <img src="/images/01_score_card.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
                                 {% elseif yearKpiColorArray[j][i]=="Red" %}
-                                    <img src="/images/03_score_card.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
                                 {% elseif yearKpiColorArray[j][i]=="Yellow" %}
-                                    <img src="/images/02_score_card.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if j < monthName|length-1 %}
@@ -67,23 +67,23 @@
                                 <td class="month">
                                     {% if yearKpiColorArray[j][i]|length != 0 and  yearKpiColorArray[j1][i]|length != 0 %}
                                         {% if yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Green" %}
-                                            <img src="/images/straight_arrow.png">
+                                            <img class="img-status-icon" src="/images/straight_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Red" %}
-                                            <img src="/images/down_arrow.png">
+                                            <img class="img-status-icon" src="/images/down_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Green" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                            <img src="/images/down_arrow.png">
+                                            <img class="img-status-icon" src="/images/down_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Green" %}
-                                            <img src="/images/up_arrow.png">
+                                            <img class="img-status-icon" src="/images/up_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Red" %}
-                                            <img src="/images/straight_arrow.png">
+                                            <img class="img-status-icon" src="/images/straight_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Red" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                            <img src="/images/up_arrow.png">
+                                            <img class="img-status-icon" src="/images/up_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Green" %}
-                                            <img src="/images/up_arrow.png">
+                                            <img class="img-status-icon" src="/images/up_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Red" %}
-                                            <img src="/images/down_arrow.png">
+                                            <img class="img-status-icon" src="/images/down_arrow.png">
                                         {% elseif yearKpiColorArray[j][i]=="Yellow" and yearKpiColorArray[j1][i]=="Yellow" %}
-                                            <img src="/images/straight_arrow.png">
+                                            <img class="img-status-icon" src="/images/straight_arrow.png">
                                         {% endif %}
                                     {% endif %}
                                 </td>
