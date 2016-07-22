@@ -5,6 +5,7 @@ namespace Initial\ShippingBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class ElementDetailsType extends AbstractType
 {
@@ -68,6 +69,17 @@ class ElementDetailsType extends AbstractType
                 'required' => true,
                 'label' => false,
                 'data' => 'Average'
+            ))
+            ->add('indicationValue')
+            ->add('SymbolId','entity', array(
+                'required' => true,
+                'class' => 'Initial\ShippingBundle\Entity\ElementSymbols',
+                'property' => 'symbolName',
+                'empty_value' =>"-- Select --",
+            ))
+            ->add('ComparisonStatus', CheckboxType::class, array(
+                'label'    => 'Show this entry publicly?',
+                'required' => false,
             ))
         ;
     }
