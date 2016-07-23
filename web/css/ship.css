@@ -2639,7 +2639,12 @@ input[type="color"],
     color: #265882;
 }
 
-
+.add_element_comparison_select_field {
+    width:79%;
+}
+.add_element_comparison_text_field {
+    width:19%;
+}
 
 
 
