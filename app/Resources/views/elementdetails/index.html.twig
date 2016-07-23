@@ -192,6 +192,11 @@
                 var endMonth = $('.element_endDate_month');
                 var endYear = $('.element_endDate_year');
                 var vesselWiseTotal = $('.vessel-wise-total');
+                var indicationValue = $('.indication-value');
+                var symbolValue = $('.symbol-value');
+                var comparisonStatusShow = $('.comparison-status-show');
+                var showComparisonTableBody = $('.show-comparison-table-body');
+                var comparisonTableShowClass = $('.comparison-table-show-class');
 
                 function emptyDetailsFunction(data) {
                     kpiName.empty();
@@ -207,6 +212,10 @@
                     editElementErrorMsg.empty();
                     validDate.empty();
                     vesselWiseTotal.empty();
+                    indicationValue.empty();
+                    symbolValue.empty();
+                    comparisonStatusShow.empty();
+                    showComparisonTableBody.empty();
                 }
 
                 function setShowValueFunction(data, monthNames, active_date, end_date) {
@@ -221,6 +230,31 @@
                     endMonth.append(monthNames[end_date.getMonth()]);
                     endYear.append(end_date.getFullYear());
                     vesselWiseTotal.append(data.element_detail[0].vesselWiseTotal);
+                    indicationValue.append(data.element_detail[0].indicationValue);
+                    if(data.symbolDetail.length>0) {
+                        symbolValue.append(data.symbolDetail[0].symbolName);
+                    }
+
+                    if(data.element_detail[0].comparisonStatus==1) {
+                        comparisonStatusShow.append('Yes');
+                        comparisonTableShowClass.show();
+                    } else {
+                        comparisonStatusShow.append('No');
+                        comparisonTableShowClass.hide();
+                    }
+
+                    if(data.comparisonRule.length>0) {
+                        $.each(data.comparisonRule, function($i) {
+                            $('<tr id="comparison-row-'+$i+'"><td>'+data.comparisonRule[$i].firstName+'</td><td>'+data.comparisonRule[$i].firstValue+'</td><td>'+data.comparisonRule[$i].secondName+'</td><td>'+data.comparisonRule[$i].secondValue+'</td></tr>').appendTo(showComparisonTableBody);
+                            if(data.comparisonRule[$i].action=='Green') {
+                                $('<td style="color: green">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
+                            } else if(data.comparisonRule[$i].action=='Yellow') {
+                                $('<td style="color: orange">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
+                            } else if(data.comparisonRule[$i].action=='Red') {
+                                $('<td style="color: red">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
+                            }
+                        });
+                    }
                 }
 
                 var editElementId = $('.element_edit_id');
@@ -940,15 +974,41 @@
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">Additional Details</legend>
                         <div class="form_view">
+                            <label class="form_labell"><strong>Indication Value :</strong></label>
+                            <label class="form_input indication-value"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Symbol :</strong></label>
+                            <label class="form_input symbol-value"> </label>
+                        </div>
+                        <div class="form_view">
                             <label class="form_labell"><strong>Vessel Wise Total :</strong></label>
                             <label class="form_input vessel-wise-total"> </label>
                         </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Comparison Status :</strong></label>
+                            <label class="form_input comparison-status-show"> </label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset_box comparison-table-show-class" style="width: 700px;">
+                        <legend class="legend_name">Comparison Rule</legend>
+                        <table class="table-responsive">
+                            <thead class="table-header">
+                                <tr>
+                                    <th style="width: 32%">Element 1</th>
+                                    <th style="width: 9%">Value</th>
+                                    <th style="width: 32%">Element 2</th>
+                                    <th style="width: 9%">Value</th>
+                                    <th style="width: 16%">Color</th>
+                                </tr>
+                            </thead>
+                            <tbody class="show-comparison-table-body"></tbody>
+                        </table>
                     </fieldset>
                 </div>
             </div>
         </section>
     </div>
-
 
     <div class="grid_edit_element">
         <section>
