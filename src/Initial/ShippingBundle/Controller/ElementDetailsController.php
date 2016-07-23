@@ -79,6 +79,36 @@ class ElementDetailsController extends Controller
     }
 
     /**
+     * Get elements based on kpi id.
+     *
+     * @Route("/elements_for_kpi", name="elementdetails_elements_for_kpi")
+     */
+    public function elementsForKpiAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('kpiDetailsId', $kpiDetailsId)
+                ->getQuery();
+            $elementDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementDetails' => $elementDetail
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
      * Lists all ElementDetails entities.
      *
      * @Route("/{id}/select", name="elementdetails_select")
