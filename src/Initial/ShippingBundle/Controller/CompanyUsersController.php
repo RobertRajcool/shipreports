@@ -511,20 +511,30 @@ class CompanyUsersController extends Controller
     public function dbBackupAction(Request $request)
     {
         $user = $this->getUser();
-        $userId = $user->getId();
-
         $em = $this->getDoctrine()->getManager();
         if ($user == null)
         {
             return $this->redirectToRoute('fos_user_security_login');
         }
         else
-        {    $em = $this->getDoctrine()->getManager();
-
+        {
+            $userId=$user->getId();
+            $em = $this->getDoctrine()->getManager();
             $date = new \DateTime();
-            $archiveStatus = $request->request->get('archiveStatus');
-            $box = $request->request->get('checked');
+            $activeMonth = $request->request->get('activeMonth');
+            $activeYear = $request->request->get('activeYear');
+            $inactiveMonth = $request->request->get('endMonth');
+            $inactiveYear = $request->request->get('endYear');
+            $checkboxvalue = $request->request->get('checked');
+            $stringstart_date='01-'.$activeMonth.'-'.$activeYear;
+            $start_Dateformat=new \DateTime($stringstart_date);
+            $start_Dateformat->modify('last day of this month');
+            $stringend_date='01-'.$inactiveMonth.'-'.$inactiveYear;
+            $end_Dateformat=new \DateTime($stringend_date);
+            $end_Dateformat->modify('last day of this month');
             $connection = $em->getConnection();
+            $listoftables=array();
+            $sm = $connection->getSchemaManager();
             $refConn = new \ReflectionObject($connection);
             $refParams = $refConn->getProperty('_params');
             $refParams->setAccessible('public');
@@ -538,11 +548,37 @@ class CompanyUsersController extends Controller
             if (file_exists($outfile_filepath)) {
                 unlink($outfile_filepath);
             }
+            $tables = $sm->listTables();
+            foreach ($tables as $table) {
+                array_push($listoftables,$table->getName());
+            }
+            for($tablecount=0;$tablecount<count($listoftables);$tablecount++)
+            {
+                $tablename=$listoftables[$tablecount];
+                if($tablecount==0)
+                {
+                    $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . ' '.$tablename.'  > ' . $outfile_filepath;
 
+                }
+                else
+                {
+                    if($tablename=='reading_kpi_values' ||$tablename=='scorecard__lookup_data' ||$tablename=='scorecard__lookup_status'||$tablename=='scorecard_data_import'||$tablename=='ranking_monthly_data'||$tablename=='ranking__lookup_status'||$tablename=='ranking__lookup_data'||$tablename=='excel_file_details')
+                    {
+                        $newstart_date=$start_Dateformat->format('Y-m-d');
+                        $newend_date=$end_Dateformat->format('Y-m-d');
+                        $whereconditon="--where=\"monthdetail between '".$newstart_date."' and '".$newend_date."'\"";
+                        $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . ' '.$tablename.' '.$whereconditon.'  >> ' . $outfile_filepath;
 
+                    }
+                    else
+                    {
+                        $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . ' '.$tablename.'  >> ' . $outfile_filepath;
+                    }
 
-            $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . '  > ' . $outfile_filepath;
-            system($command);
+                }
+                system($command);
+            }
+
             $content = file_get_contents($outfile_filepath);
             $response = new Response();
             $response->setContent($content);
@@ -550,45 +586,66 @@ class CompanyUsersController extends Controller
             header("Content-Transfer-Encoding: Binary");
             header("Content-disposition: attachment; filename=\"" . $params['dbname'] . ".sql\"");
 
+            if( $checkboxvalue=='checked_true' ){
                 $backup = new Backupreport();
-                $backup->setfileName($outfile_filepath);
-                $backup->setusername($user);
-                $backup->setDateTime($date);
+
+            $backup->setfileName($outfile_filepath);
+            $backup->setusername($user);
+            $backup->setDateTime($date);
                 $em->persist($backup);
-                $em->flush();
+            $em->flush();
+                return $response;
+            }
 
-
-            return $response;
         }
     }
 
 
 
+
+
     public function archivedReportShowAction(Request $request)
+   {
+    $user = $this->getUser();
+    if ($user != null) {
+        $em = $this->getDoctrine()->getManager();
+        $backupReport = $em->createQueryBuilder()
+            ->select('a.fileName,a.dateTime, a.username,a.id')
+            ->from('InitialShippingBundle:Backupreport', 'a')
+            ->getQuery()
+            ->getResult();
+        $response = new JsonResponse();
+        $response->setData(array(
+
+            'archivedReports' => $backupReport,
+        ));
+        return $response;
+
+    } else {
+        return $this->redirectToRoute('fos_user_security_login');
+    }
+   }
+
+    public function DownloadAction(Request $request,Backupreport $backupreport)
     {
         $user = $this->getUser();
         if ($user != null) {
-            $em = $this->getDoctrine()->getManager();
-            $backupReport = $em->createQueryBuilder()
-                ->select('a.fileName,a.dateTime, a.username,a.id')
-                ->from('InitialShippingBundle:Backupreport', 'a')
-                ->getQuery()
-                ->getResult();
+            $fileName_fromDb = $backupreport->getFileName();
 
 
-
-            $response = new JsonResponse();
-            $response->setData(array(
-
-                'archivedReports' =>   $backupReport,
-            ));
+            $directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/sqlfiles';
+            $filePath = $fileName_fromDb;
+            $content = file_get_contents($filePath);
+            $response = new Response();
+            $response->setContent($content);
+            header('Content-Type: application/octet-stream');
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"" . 'Database_backup'. ".sql\"");
             return $response;
 
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
     }
-
-
 
 }
