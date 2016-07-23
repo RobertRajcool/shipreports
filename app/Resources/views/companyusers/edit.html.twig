@@ -6,6 +6,7 @@
         $(document).ready(function () {
             var archiveAjaxStatus = 0;
             var reportTableBodyId = $('#report-table-body-id');
+            var backupSubmitId= $('#backup_id')
 
             function setReportTableContentsFunction(data) {
                 if (data.length != 0) {
@@ -13,12 +14,13 @@
                         reportTableBodyId.append('<tr id="table-row-id' + i + '"></tr>');
                         var tableRowId = $('#table-row-id' + i + '');
                         var period = new Date(data.archivedReports[i].dateTime.date);
-                        var pathInTwigFormat = "{{ path('database_export', { 'id': 'value'}) }}";
+                        var pathInTwigFormat = "{{ path('download_backup', { 'id': 'value'}) }}";
                         var pathName = pathInTwigFormat.replace("value", data.archivedReports[i].id);
-                        tableRowId.append(' <td>' + data.archivedReports[i].username + '</td> <td>shipping_development.sql</td> <td>' + period.getDate() + '-' + period.getMonthName() + '-' + period.getFullYear() + '</td> <td style="text-align: center"><a href="' + pathName + '"><img style="width: 29px; height: 24px" src="/images/download-icon.png"  alt="Loader Image" /></a></td>');
+                        tableRowId.append(' <td>' + data.archivedReports[i].username + '</td> <td>Backup</td> <td>' + period.getDate() + '-' + period.getMonthName() + '-' + period.getFullYear() + '</td> <td style="text-align: center"><a href="' + pathName + '"><img style="width: 29px; height: 24px" src="/images/download-icon.png"  alt="Loader Image" /></a></td>');
                     });
                 }
             }
+
 
             var archiveReportView = $('#archived-report-view');
             var archiveButtonId = $('#archive-btn-id');
@@ -60,21 +62,77 @@
     <section class="scorecard_report">
         <div class="col-sm-12">
             <div class="add_kpi_views_screen">
-                <form class="form-horizontal no-style create-form" method="post">
+                <form class="form-horizontal no-style create-form" action="{{ path('import_db') }}"  method="post">
                     <div class="scorecard_report_inner">
                         <fieldset class="fieldset_box add_rule_form">
                             <legend class="legend_name">Backup</legend>
                             <div class="form-group">
+                                <label class="control-label col-xs-4">Month</label>
+                                <div class="col-xs-8">
+                                    <span>
+                                        <select class="add_rule_basic_date_drop activeMonth" name="activeMonth">
+                                            <option>--</option>
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4">Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop activeYear" name="activeYear">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                    To
+                                    <span>
+                                        <select class="add_rule_basic_date_drop endMonth" name="endMonth">
+                                            <option>--</option>
+                                            <option value="1">Jan</option>
+                                            <option value="2">Feb</option>
+                                            <option value="3">Mar</option>
+                                            <option value="4">Apr</option>
+                                            <option value="5">May</option>
+                                            <option value="6">Jun</option>
+                                            <option value="7">Jul</option>
+                                            <option value="8">Aug</option>
+                                            <option value="9">Sep</option>
+                                            <option value="10">Oct</option>
+                                            <option value="11">Nov</option>
+                                            <option value="12">Dec</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop endYear" name="endYear">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label col-xs-4">Save Files</label>
                                 <div class="col-xs-8">
-                                    <input type="checkbox" class="scorecard_checkbox" name="checked">
+                                    <input type="checkbox" class="scorecard_checkbox" name="checked" value="checked_true">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8 ">
-                                    <button class="submit_btn" style="margin-bottom: 10px;background-color:#103a71;color:#FFFFFF">
-                                        <a href="{{ path('import_db') }}" target style="color:white">Download</a>
+                                    <button class="submit_btn" type="submit" id="backup_id" value="Submit" >Download
+                                       {# <a href="{{ path('import_db') }}"  id="backup_id" target style="color:white">Download</a>#}
                                     </button>
                                 </div>
                             </div>
@@ -84,7 +142,7 @@
                 </form>
             </div>
             </div>
-            <button class="submit_btn" id="archive-btn-id" style="margin-bottom: 10px;">Backup Files</button>
+            <button class="submit_btn" id="archive-btn-id" onclick="return validateDate()" style="margin-bottom: 10px;">Archived Backups</button>
 
             <div id="archived-report-view">
                 <div class="table-responsive">
@@ -92,7 +150,7 @@
                         <thead>
                         <tr>
                             <th class="filename">Username</th>
-                            <th class="filenames">Filename</th>
+                            <th class="filenames">FileType</th>
                             <th class="filenames">Backup Date</th>
                             <th class="option">Options</th>
                         </tr>

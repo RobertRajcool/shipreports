@@ -111,6 +111,14 @@ view_file:
            path: /archived_report_view
            defaults: { _controller: "InitialShippingBundle:CompanyUsers:archivedReportShow"}
 
+download_backup:
+
+           path: /download_backup/{id}
+           defaults: { _controller: "InitialShippingBundle:CompanyUsers:Download"}
+
+           path: /archived_report_view
+           defaults: { _controller: "InitialShippingBundle:CompanyUsers:archivedReportShow"}
+
 
 
 
