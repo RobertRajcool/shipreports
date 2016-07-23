@@ -341,6 +341,7 @@
                         }
                     });
                 });
+
                 function editEmptyValuesFunction() {
                     editElementErrorMsg.empty();
                     editKpiErrorMsg.empty();
@@ -407,7 +408,8 @@
                     }
                 }
 
-                /*Rules creation process*/
+                /*----------------------------------Rules creation process-------------------------------------*/
+
                 $('.add-rule').live('click',function($e) {
                     $e.preventDefault();
                     var dynamicAdd = $("<a>", {
@@ -423,7 +425,108 @@
                     });
                     $('#actions').append(actionText);
                     $('.add_button_place').append(dynamicAdd);
-                })
+                });
+
+                /*----------------------------------Elements Comparing Logic-----------------------------------*/
+
+                var comparisonId = $('#comparison-id');
+                var comparisonRuleView = $('.comparison-rule-view');
+                var firstSubElement = $('.first-sub-element');
+                var secondSubElement = $('.second-sub-element');
+                var firstSubElementValue = $('.first-sub-element-value');
+                var secondSubElementValue = $('.second-sub-element-value');
+                var comparisonAddClass = $('.comparison-add-class');
+                var comparisonActionValue = $('.comparison-action-value');
+                var textBoxPlaceClass = $('.text-box-place-class');
+                var comparisonRuleTable = $('#comparison-rule-table');
+                var comparisonTableBody = $('#comparison-table-body');
+                var comparisonRuleTotalClass = $('.comparison-rule-total-class');
+                var ruleCount=0;
+
+                comparisonRuleView.hide();
+                comparisonRuleTable.hide();
+
+                comparisonId.live('click',function($e) {
+                    if(comparisonId.is(':checked') == true) {
+                        if(kpiId.val()== "") {
+                            alert('select KPI to create comparison rule');
+                            return false;
+                        } else {
+                            var data = {
+                                kpiDetailsId: kpiId.val()
+                            };
+                            $.ajaxSetup({
+                                global: false,
+                                type:"POST",
+                                url:"elements_for_kpi",/*Routing.generate('elements_for_kpi'),*/
+                                data:data,
+                                beforeSend: function () {
+                                    var setAjaxBeforeSend = ajaxbefore_send();
+                                },
+                                complete: function () {
+                                    var setAjaxComplete = ajax_complete();
+                                }
+                            });
+                            $.ajax({
+                                success: function(data) {
+                                    firstSubElement.empty();
+                                    secondSubElement.empty();
+                                    $.each(data.elementDetails, function(i) {
+                                        $('<option>'+data.elementDetails[i].elementName+'</option>').val(data.elementDetails[i].id).attr('id',data.elementDetails[i].elementName).appendTo(firstSubElement);
+                                        $('<option>'+data.elementDetails[i].elementName+'</option>').val(data.elementDetails[i].id).appendTo(secondSubElement);
+                                    });
+                                    comparisonRuleView.show();
+                                },
+                                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                    alert('Error : ' + errorThrown);
+                                }
+                            });
+                        }
+                    } else {
+                        comparisonRuleView.hide();
+                        firstSubElementValue.val("");
+                        secondSubElementValue.val("");
+                        textBoxPlaceClass.empty();
+                    }
+                });
+
+                comparisonAddClass.click(function($e) {
+                    $e.preventDefault();
+                    if(firstSubElement.val()=="" || secondSubElement.val()=="" || firstSubElementValue.val()=="" || secondSubElementValue.val()=="") {
+                        alert('Choose all required fields to create comparison rule')
+                    }  else {
+                        var comparisonRuleObj = {
+                            first: {
+                                id:firstSubElement.val(),
+                                value:firstSubElementValue.val()
+                            },
+                            second: {
+                                id:secondSubElement.val(),
+                                value:secondSubElementValue.val()
+                            },
+                            action: {
+                                color:comparisonActionValue.val()
+                            }
+                        };
+                        ruleCount++;
+                        var textBox = $("<input>", {
+                            "type": "hidden",
+                            "class": "rulesTextBox",
+                            "id": "comparison-rules-text-id" + ruleCount,
+                            "name": "comparison-rules-" + ruleCount
+                        });
+                        textBoxPlaceClass.append(textBox);
+                        var textBoxWithId = $('#comparison-rules-text-id'+ruleCount+'');
+                        textBoxWithId.val(JSON.stringify(comparisonRuleObj));
+                        var tooltipFirst = $('.first-sub-element option[value='+firstSubElement.val()+']').text();
+                        var tooltipSecond = $('.second-sub-element option[value='+secondSubElement.val()+']').text();
+                        $('<tr><td title='+tooltipFirst+'> '+firstSubElementValue.val()+'</td><td title='+tooltipSecond+'>'+secondSubElementValue.val()+'</td><td>'+comparisonActionValue.val()+'</td></tr>').appendTo(comparisonTableBody);
+                        comparisonRuleTable.show();
+                        firstSubElementValue.val("");
+                        secondSubElementValue.val("");
+                        comparisonRuleTotalClass.val(ruleCount);
+                    }
+                });
 
             });
         </script>
@@ -552,13 +655,11 @@
     </div>
 
     <div class="element_create_view">
-
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
                     <h2>{{'element.add'|trans }}</h2>
-                    <form class="form-horizontal no-style create-form" action="{{ path('elementdetails_new1') }}"
-                          method="post">
+                    <form class="form-horizontal no-style create-form" action="{{ path('elementdetails_new1') }}" method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
@@ -699,12 +800,84 @@
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Additional Details</legend>
                                 <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Indication Value</strong></label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.indicationValue) }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Symbol</strong></label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.SymbolId) }}
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="control-label col-xs-4 required_field"><strong>Vessel Wise Total</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.vesselWiseTotal) }}
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>Comparison Status</strong></label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.ComparisonStatus,{'id':'comparison-id'}) }}
+                                    </div>
+                                </div>
                             </fieldset>
+                            <fieldset class="fieldset_box comparison-rule-view">
+                                <legend class="legend_name">Comparison Rule</legend>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>First Element</strong></label>
+                                    <div class="col-xs-8">
+                                        <select class="first-sub-element add_element_comparison_select_field">
+                                            <option value="">--select element--</option>
+                                        </select>
+                                        <input type="text" name="" class="first-sub-element-value add_element_comparison_text_field">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Second Element</strong></label>
+                                    <div class="col-xs-8">
+                                        <select class="second-sub-element add_element_comparison_select_field">
+                                            <option value="">--select element--</option>
+                                        </select>
+                                        <input type="text" name="" class="second-sub-element-value add_element_comparison_text_field">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Choose Action</strong></label>
+                                    <div class="col-xs-8">
+                                        <select class="comparison-action-value">
+                                            <option value="Green">Green</option>
+                                            <option value="Yellow">Yellow</option>
+                                            <option value="Red">Red</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <label class="control-label col-xs-4">&nbsp;</label>
+                                    <div class="col-xs-8 report_submit_main">
+                                        <a class="comparison-add-class report_submit">Add</a>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table" id="comparison-rule-table">
+                                        <thead>
+                                            <tr id="comparison-table-row-id">
+                                                <th class="color">Value-1</th>
+                                                <th class="color">Value-2</th>
+                                                <th class="color">Color</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="comparison-table-body">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="text-box-place-class">
+                            <input type="hidden" name="comparison-rule-total" class="comparison-rule-total-class" value="0">
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="get_value" type="submit">{{ 'vessel.add'|trans }}</button>
@@ -713,6 +886,7 @@
                     </form>
                 </div>
             </div>
+
         </section>
     </div>
 

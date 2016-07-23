@@ -673,73 +673,58 @@ class DashboradController extends Controller
                     array('name'=>'R','y'=>count($redarea_vessel_shipid),'url'=>'/piechart/'.$lastMonthvesselpieChart.'_'.implode('_',$redarea_vessel_shipid).'/listall','color'=>'#b30000')
                 );
                 $titlearry=array('fontSize'=>'10px');
-
-
+                $formatter =new \Zend\Json\Expr('function () {return this.name + ":" + this.y + ""; }');
 
                 $vessel_Piechart = new Highchart();
                 $vessel_Piechart->chart->renderTo('vessel_piechart');
                 $vessel_Piechart->chart->hieght(150);
-                $vessel_Piechart->chart->zoomType('xy');
                 $vessel_Piechart->chart->plotBackgroundColor(null);
                 $vessel_Piechart->chart->plotBorderWidth(0);
                 $vessel_Piechart->chart->plotShadow(false);
-                $vessel_Piechart->chart->marginTop(-25);
-                $vessel_Piechart->chart->marginLeft(-25);
-                $vessel_Piechart->chart->marginRight(-25);
-                $vessel_Piechart->chart->marginBottom(-25);
+                $vessel_Piechart->chart->marginTop(-35);
+                $vessel_Piechart->chart->marginLeft(-0);
+                $vessel_Piechart->chart->marginRight(-0);
+                $vessel_Piechart->chart->marginBottom(-0);
                 $vessel_Piechart->credits->enabled(false);
                 $vessel_Piechart->title->text('');
+                $vessel_Piechart->legend->enabled(true);
+                $vessel_Piechart->legend->floating(true);
+                $vessel_Piechart->legend->symbolHeight(4);
+                $vessel_Piechart->legend->symbolWidth(4);
+                $vessel_Piechart->legend->symbolRadius(2);
+                $vessel_Piechart->legend->itemMarginTop(1);
+                $vessel_Piechart->legend->labelFormatter($formatter);
                 $vessel_Piechart->plotOptions->pie(array(
-                    'dataLabels' => array('enabled' => true,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
+                    'dataLabels' => array('enabled' => false,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
                     'startAngle'=> -90,
                     'endAngle'=> 90,
                     'center'=>array('50%', '75%'),
                 ));
-                $vessel_Piechart->plotOptions->series(array(
+                $vessel_Piechart->series(array(array('type' => 'pie','showInLegend' => true,'name' => 'Vessel','innerSize'=> '50%', 'data' => $vessel_Piechart_data)));
+               $vessel_Piechart->plotOptions->series(array(
                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
-                $vessel_Piechart->series(array(array('type' => 'pie','name' => 'Vessel','innerSize'=> '50%', 'data' => $vessel_Piechart_data)));
                 $vessel_Piechart->exporting->enabled(false);
+
                 //Vessel Pie Charts Ends Here//
                 //KPI Pie Charts Starts Here//
-
-                /*$kpi_Piechart = new Highchart();
-                $kpi_Piechart->chart->renderTo('kpi_piechart');
-                $kpi_Piechart->chart->hieght(150);
-                $kpi_Piechart->chart->zoomType('xy');
-                $kpi_Piechart->chart->plotBackgroundColor(null);
-                $kpi_Piechart->chart->plotBorderWidth(0);
-                $kpi_Piechart->chart->plotShadow(false);
-                $kpi_Piechart->credits->enabled(false);
-                $kpi_Piechart->title->text($lastMonthKpiPieChart);
-                $kpi_Piechart->title->align('center');
-                $kpi_Piechart->title->verticalAlign('middle');
-                $kpi_Piechart->title->y(40);
-                $kpi_Piechart->title->style($titlearry);
-                $kpi_Piechart->plotOptions->pie(array(
-                    'dataLabels' => array('enabled' => true,'distance'=>-50,'style'=>array('fontWeight'> 'bold', 'color'=>'white','textShadow'> '0px 1px 2px black')),
-                    'startAngle'=> -90,
-                    'endAngle'=> 90,
-                    'center'=>array('50%', '75%')
-                ));
-                $kpi_Piechart->series(array(array('type' => 'pie','name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
-                $kpi_Piechart->exporting->enabled(false);*/
-                //KPI Pie Charts Ends Here//
                 $kpi_alerts=new Highchart();
                 $kpi_alerts->chart->renderTo('kpi_piechart');
                 $kpi_alerts->chart->plotBackgroundColor(null);
                 $kpi_alerts->chart->plotBorderWidth(0);
                 $kpi_alerts->chart->plotShadow(false);
-                $kpi_alerts->chart->marginTop(-25);
-                $kpi_alerts->chart->marginLeft(-25);
-                $kpi_alerts->chart->marginRight(-25);
-                $kpi_alerts->chart->marginBottom(-25);
+                $kpi_alerts->chart->marginTop(-35);
+                $kpi_alerts->chart->marginLeft(-0);
+                $kpi_alerts->chart->marginRight(-0);
+                $kpi_alerts->chart->marginBottom(-0);
                 $kpi_alerts->credits->enabled(false);
-                $kpi_alerts->title->text('');/*
-                $kpi_alerts->title->align('center');
-                $kpi_alerts->title->verticalAlign('middle');
-                $kpi_alerts->title->y(40);
-                $kpi_alerts->title->style($titlearry);*/
-               // $kpi_alerts->tooltip->pointFormat('<span style="font-size:11px">{series.name}</span><br>');
+                $kpi_alerts->title->text('');
+                $kpi_alerts->legend->enabled(true);
+                $kpi_alerts->legend->floating(true);
+                $kpi_alerts->legend->symbolHeight(4);
+                $kpi_alerts->legend->symbolWidth(4);
+                $kpi_alerts->legend->symbolRadius(2);
+                $kpi_alerts->legend->itemMarginTop(1);
+                $kpi_alerts->legend->labelFormatter($formatter);
                 $kpi_alerts->plotOptions->pie(array(
                     'dataLabels' => array('enabled' => true,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
                     'startAngle'=> -90,
@@ -753,10 +738,11 @@ class DashboradController extends Controller
                 );
 
                 //$kpi_alerts->series(array(array('type' => 'pie','name' => 'Browser share', 'data' => $kpi_Piechart_data)));
-                $kpi_alerts->series(array(array('type' => 'pie','name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
+                $kpi_alerts->series(array(array('type' => 'pie','showInLegend' => true,'name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
                 $kpi_alerts->plotOptions->series(array(
-                    'dataLabels'=>array( 'enabled'=> true,'inside'=> true,)
+                    'dataLabels'=>array( 'enabled'=> false,'inside'=> true,)
                     ));
+                //KPI Pie Charts Ends Here//
 
                 return $this->render(
                     'InitialShippingBundle:DashBorad:home.html.twig',

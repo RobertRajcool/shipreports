@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ElementDetails;
 use Initial\ShippingBundle\Form\ElementDetailsType;
+use Initial\ShippingBundle\Entity\ElementComparisonRules;
 
 /**
  * ElementDetails controller.
@@ -76,6 +77,36 @@ class ElementDetailsController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+    }
+
+    /**
+     * Get elements based on kpi id.
+     *
+     * @Route("/elements_for_kpi", name="elementdetails_elements_for_kpi")
+     */
+    public function elementsForKpiAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('kpiDetailsId', $kpiDetailsId)
+                ->getQuery();
+            $elementDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementDetails' => $elementDetail
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
 
     /**
@@ -200,6 +231,11 @@ class ElementDetailsController extends Controller
             $description = $params['description'];
             $cellName = $params['cellName'];
             $cellDetails = $params['cellDetails'];
+            $indicationValue = $params['indicationValue'];
+            $vesselWiseTotal = $params['vesselWiseTotal'];
+            $symbolId = $params['SymbolId'];
+            $comparisonStatus = $params['ComparisonStatus'];
+            $comparisonValueTotal = $request->request->get('comparison-rule-total');
             $activeMonth = $request->request->get('activeMonth');
             $activeYear = $request->request->get('activeYear');
             $endMonth = $request->request->get('endMonth');
@@ -210,13 +246,10 @@ class ElementDetailsController extends Controller
             $monthtostring1 = $endYear . '-' . $endMonth . '-' . $day;
             $new_date1 = new \DateTime($monthtostring1);
             $weightage = $params['weightage'];
-            $vesselWiseTotal = $params['vesselWiseTotal'];
             //$rules         = $request->request->get('value');
 
-            $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiDetailsId));
-
             $elementDetail = new ElementDetails();
-            $elementDetail->setkpiDetailsId($course);
+            $elementDetail->setkpiDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiDetailsId)));
             $elementDetail->setelementName($elementName);
             $elementDetail->setdescription($description);
             $elementDetail->setcellName($cellName);
@@ -225,10 +258,25 @@ class ElementDetailsController extends Controller
             $elementDetail->setendDate($new_date1);
             $elementDetail->setweightage($weightage);
             $elementDetail->setVesselWiseTotal($vesselWiseTotal);
+            $elementDetail->setComparisonStatus($comparisonStatus);
+            $elementDetail->setIndicationValue($indicationValue);
+            $elementDetail->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
             $em->flush();
+
+            if($comparisonStatus==1) {
+                for($i=1;$i<=$comparisonValueTotal;$i++) {
+                    $comparisonRule = $request->request->get('comparison-rules-'.$i);
+                    $elementComparisonRule = new ElementComparisonRules();
+                    $elementComparisonRule->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementDetail->getId())));
+                    $elementComparisonRule->setRules($comparisonRule);
+
+                    $em->persist($elementComparisonRule);
+                    $em->flush();
+                }
+            }
 
             return $this->redirectToRoute('elementdetails_select1');
         } else {
