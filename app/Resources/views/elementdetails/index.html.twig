@@ -437,10 +437,11 @@
                 var secondSubElementValue = $('.second-sub-element-value');
                 var comparisonAddClass = $('.comparison-add-class');
                 var comparisonActionValue = $('.comparison-action-value');
-                var ruleCount=0;
                 var textBoxPlaceClass = $('.text-box-place-class');
                 var comparisonRuleTable = $('#comparison-rule-table');
                 var comparisonTableBody = $('#comparison-table-body');
+                var comparisonRuleTotalClass = $('.comparison-rule-total-class');
+                var ruleCount=0;
 
                 comparisonRuleView.hide();
                 comparisonRuleTable.hide();
@@ -494,7 +495,6 @@
                     if(firstSubElement.val()=="" || secondSubElement.val()=="" || firstSubElementValue.val()=="" || secondSubElementValue.val()=="") {
                         alert('Choose all required fields to create comparison rule')
                     }  else {
-                        //console.log($('.first-sub-element option[value='+firstSubElement.val()+']').text());
                         var comparisonRuleObj = {
                             first: {
                                 id:firstSubElement.val(),
@@ -519,10 +519,12 @@
                         var textBoxWithId = $('#comparison-rules-text-id'+ruleCount+'');
                         textBoxWithId.val(JSON.stringify(comparisonRuleObj));
                         var tooltipFirst = $('.first-sub-element option[value='+firstSubElement.val()+']').text();
-                        $('<tr><td title='+tooltipFirst+'> '+firstSubElementValue.val()+'</td><td>'+secondSubElementValue.val()+'</td><td>'+comparisonActionValue.val()+'</td></tr>').appendTo(comparisonTableBody);
+                        var tooltipSecond = $('.second-sub-element option[value='+secondSubElement.val()+']').text();
+                        $('<tr><td title='+tooltipFirst+'> '+firstSubElementValue.val()+'</td><td title='+tooltipSecond+'>'+secondSubElementValue.val()+'</td><td>'+comparisonActionValue.val()+'</td></tr>').appendTo(comparisonTableBody);
                         comparisonRuleTable.show();
                         firstSubElementValue.val("");
                         secondSubElementValue.val("");
+                        comparisonRuleTotalClass.val(ruleCount);
                     }
                 });
 
@@ -827,19 +829,19 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4 required_field"><strong>First Element</strong></label>
                                     <div class="col-xs-8">
-                                        <select class="first-sub-element">
+                                        <select class="first-sub-element add_element_comparison_select_field">
                                             <option value="">--select element--</option>
                                         </select>
-                                        <input type="text" name="" class="first-sub-element-value">
+                                        <input type="text" name="" class="first-sub-element-value add_element_comparison_text_field">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4 required_field"><strong>Second Element</strong></label>
                                     <div class="col-xs-8">
-                                        <select class="second-sub-element">
+                                        <select class="second-sub-element add_element_comparison_select_field">
                                             <option value="">--select element--</option>
                                         </select>
-                                        <input type="text" name="" class="second-sub-element-value">
+                                        <input type="text" name="" class="second-sub-element-value add_element_comparison_text_field">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -852,8 +854,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><a class="comparison-add-class" style="cursor: pointer">Add</a></label>
+                                <div class="form-group ">
+                                    <label class="control-label col-xs-4">&nbsp;</label>
+                                    <div class="col-xs-8 report_submit_main">
+                                        <a class="comparison-add-class report_submit">Add</a>
+                                    </div>
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table" id="comparison-rule-table">
@@ -871,9 +876,8 @@
                                 </div>
                             </fieldset>
                         </div>
-
                         <div class="text-box-place-class">
-
+                            <input type="hidden" name="comparison-rule-total" class="comparison-rule-total-class" value="0">
                         </div>
                         <div class="actions_submit">
                             <button class="submit_btn" id="get_value" type="submit">{{ 'vessel.add'|trans }}</button>
