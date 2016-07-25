@@ -138,7 +138,7 @@ class DataVerficationController extends Controller
                     }
 
                 }
-                if(count($finddatawithstatus)==4)
+                if(count($finddatawithstatus)==6)
                 {
                     return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
                         array('listofships' => $listallshipforcompany,
@@ -146,6 +146,8 @@ class DataVerficationController extends Controller
                             'elementkpiarray'=>$finddatawithstatus['elementnamekpiname'],'elementcount'=>$finddatawithstatus['maxelementcount'],
                             'elementvalues'=>$finddatawithstatus['elementvalues'],
                             'elementweightage'=>$finddatawithstatus['elementweightage'],
+                            'indicationValue'=>$finddatawithstatus['indicationValue'],
+                            'symbolIndication'=>$finddatawithstatus['symbolIndication'],
                             'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
                         ));
                 }
@@ -329,8 +331,9 @@ class DataVerficationController extends Controller
             $kpiname = $ids[$i]['kpiName'];
 
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id')
+                ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                 ->from('InitialShippingBundle:ElementDetails', 'b')
+                ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
@@ -350,8 +353,9 @@ class DataVerficationController extends Controller
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id')
+                    ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                     ->from('InitialShippingBundle:ElementDetails', 'b')
+                    ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
@@ -407,6 +411,8 @@ class DataVerficationController extends Controller
         $elementvalues=array();
         $returnarray=array();
         $elementweightage=array();
+        $elementindicationValue=array();
+        $symbolIndication=array();
 
         $resularray = $em->createQueryBuilder()
             ->select('b.value')
@@ -434,8 +440,9 @@ class DataVerficationController extends Controller
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id','b.weightage')
+                ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                 ->from('InitialShippingBundle:ElementDetails', 'b')
+                ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
@@ -454,8 +461,9 @@ class DataVerficationController extends Controller
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id','b.weightage')
+                    ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                     ->from('InitialShippingBundle:ElementDetails', 'b')
+                    ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
@@ -468,6 +476,8 @@ class DataVerficationController extends Controller
                     // $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
+                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    array_push($elementindicationValue,$elementids[$j]['indicationValue']);
                 }
             }
             else {
@@ -478,6 +488,8 @@ class DataVerficationController extends Controller
                     // $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
+                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    array_push($elementindicationValue,$elementids[$j]['indicationValue']);
                 }
             }
         }
@@ -486,7 +498,7 @@ class DataVerficationController extends Controller
             array_push($elementvalues, $resularray[$kkk]['value']);
         }
 
-        return array('elementvalues'=>$elementvalues,'elementweightage'=>$elementweightage,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
+        return array('elementvalues'=>$elementvalues,'symbolIndication'=>$symbolIndication,'indicationValue'=>$elementindicationValue,'elementweightage'=>$elementweightage,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
     }
     private function finddatawithstatus_MonthChange($status,$status1,$shipid,$dataofmonth = '')
     {
@@ -1018,6 +1030,8 @@ class DataVerficationController extends Controller
 
         $returnarray = array();
         $elementweightage=array();
+        $elementindicationValue=array();
+        $symbolIndication=array();
         $sessionkpielementid = array();
         $k = 0;
         for ($i = 0; $i < count($ids); $i++) {
@@ -1025,8 +1039,9 @@ class DataVerficationController extends Controller
             $kpiname = $ids[$i]['kpiName'];
 
             $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id','b.weightage')
-                ->from('InitialShippingBundle:ElementDetails','b')
+                ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
+                ->from('InitialShippingBundle:ElementDetails', 'b')
+                ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
@@ -1046,8 +1061,9 @@ class DataVerficationController extends Controller
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
                 $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id','b.weightage')
+                    ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                     ->from('InitialShippingBundle:ElementDetails', 'b')
+                    ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
@@ -1060,6 +1076,8 @@ class DataVerficationController extends Controller
                     $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
+                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    array_push($elementindicationValue,$elementids[$j]['indicationValue']);
 
 
                 }
@@ -1072,6 +1090,8 @@ class DataVerficationController extends Controller
                     $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
+                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    array_push($elementindicationValue,$elementids[$j]['indicationValue']);
 
                 }
             }
@@ -1083,10 +1103,10 @@ class DataVerficationController extends Controller
             array_push($elementvalues, $resularray[$kkk]['value']);
         }
         if ($mode == 'listkpielement') {
-            return array('returnarray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
+            return array('returnarray' => $returnarray,'elementindicationValue'=>$elementindicationValue,'symbolIndication'=>$symbolIndication,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues);
         }
         $response = new JsonResponse();
-        $response->setData(array('kpiNameArray' => $returnarray,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
+        $response->setData(array('kpiNameArray' => $returnarray,'indicationValue'=>$elementindicationValue,'symbolIndication'=>$symbolIndication,'elementweightage'=>$elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues));
         return $response;
     }
 
@@ -3525,13 +3545,15 @@ class DataVerficationController extends Controller
             }
 
             $response = new JsonResponse();
-            if (count($finddatawithstatus) == 4) {
+            if (count($finddatawithstatus) == 6) {
                 $response->setData(
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray' => $finddatawithstatus['elementnamekpiname'], 'elementcount' => $finddatawithstatus['maxelementcount'],
                         'elementvalues' => $finddatawithstatus['elementvalues'],
                         'elementweightage' => $finddatawithstatus['elementweightage'],
+                        'indicationValue'=>$finddatawithstatus['indicationValue'],
+                        'symbolIndication'=>$finddatawithstatus['symbolIndication'],
                         'currentshipid' => $shipid, 'currentshipname' => $shipname,'commontext'=>false
                     ));
                 return $response;
@@ -3711,11 +3733,7 @@ class DataVerficationController extends Controller
         }
 
     }
-    /**
-     * Ajax Call For change of Prev monthdata of Scorecard
-     *
-     * @Route("/db_backup", name="database_export")
-     */
+
     public function dbBackupAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
@@ -3750,6 +3768,100 @@ class DataVerficationController extends Controller
             header("Content-Transfer-Encoding: Binary");
             header("Content-disposition: attachment; filename=\"" . $params['dbname'] . ".sql\"");
             return $response;
+        }
+    }
+    /**
+     * Ajax Call For change of Prev monthdata of Scorecard
+     *
+     * @Route("/db_backup", name="database_export")
+     */
+    public function newbackupAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        } else {
+            $connection = $em->getConnection();
+            $refConn = new \ReflectionObject($connection);
+            $refParams = $refConn->getProperty('_params');
+            $refParams->setAccessible('public');
+            $params = $refParams->getValue($connection);
+            $dbhost = $params["host"];
+            $dbuser =$params['user'];
+            $dbpass = $params['password'];
+            $dbname = $params['dbname'];
+// db connect
+            $pdo = new \PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
+// file header stuff
+            $output = "-- PHP MySQL Dump\n--\n";
+            $output .= "-- Host: $dbhost\n";
+            $output .= "-- Generated: " . date("r", time()) . "\n";
+            $output .= "-- PHP Version: " . phpversion() . "\n\n";
+            $output .= "SET SQL_MODE=\"NO_AUTO_VALUE_ON_ZERO\";\n\n";
+            $output .= "--\n-- Database: `$dbname`\n--\n";
+// get all table names in db and stuff them into an array
+            $tables = array();
+            $stmt = $pdo->query("SHOW TABLES");
+            while ($row = $stmt->fetch(\PDO::FETCH_NUM)) {
+                $tables[] = $row[0];
+            }
+// process each table in the db
+            foreach ($tables as $table) {
+                $fields = "";
+                $sep2 = "";
+                $output .= "\n-- " . str_repeat("-", 60) . "\n\n";
+                $output .= "--\n-- Table structure for table `$table`\n--\n\n";
+                // get table create info
+                $stmt = $pdo->query("SHOW CREATE TABLE $table");
+                $row = $stmt->fetch(\PDO::FETCH_NUM);
+                $output .= $row[1] . ";\n\n";
+                // get table data
+                $output .= "--\n-- Dumping data for table `$table`\n--\n\n";
+                $stmt = $pdo->query("SELECT * FROM $table");
+                while ($row = $stmt->fetch(\PDO::FETCH_OBJ)) {
+                    // runs once per table - create the INSERT INTO clause
+                    if ($fields == "") {
+                        $fields = "INSERT INTO `$table` (";
+                        $sep = "";
+                        // grab each field name
+                        foreach ($row as $col => $val) {
+                            $fields .= $sep . "`$col`";
+                            $sep = ", ";
+                        }
+                        $fields .= ") VALUES";
+                        $output .= $fields . "\n";
+                    }
+                    // grab table data
+                    $sep = "";
+                    $output .= $sep2 . "(";
+                    foreach ($row as $col => $val) {
+                        // add slashes to field content
+                        $val = addslashes($val);
+                        // replace stuff that needs replacing
+                        $search = array("\'", "\n", "\r");
+                        $replace = array("''", "\\n", "\\r");
+                        $val = str_replace($search, $replace, $val);
+                        $output .= $sep . "'$val'";
+                        $sep = ", ";
+                    }
+                    // terminate row data
+                    $output .= ")";
+                    $sep2 = ",\n";
+                }
+                // terminate insert data
+                $output .= ";\n";
+            }
+// output file to browser
+            header('Content-Description: File Transfer');
+            header('Content-type: application/octet-stream');
+            header('Content-Disposition: attachment; filename=' . $dbname . '.sql');
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Length: ' . strlen($output));
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Expires: 0');
+            header('Pragma: public');
+            echo $output;
         }
     }
 
