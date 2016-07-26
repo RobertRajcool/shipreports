@@ -105,10 +105,10 @@
                         url:"check_elementName",/*Routing.generate('elementdetails_check_elementName'),*/
                         data:data,
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -156,10 +156,10 @@
                         data: data,
                         url: Routing.generate('elementdetails_ajax_show'), /*"ajax_show",*/
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -414,10 +414,10 @@
                         data: data,
                         url: Routing.generate('elementdetails_ajax_element_edit'), /*"ajax_element_edit",*/
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -489,10 +489,10 @@
                             data: data,
                             url: Routing.generate('elementdetails_element_ajax_weightage'), /*"element_ajax_weightage",*/
                             beforeSend: function () {
-                                var setAjaxBeforeSend = ajaxbefore_send();
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                             },
                             complete: function () {
-                                var setAjaxComplete = ajax_complete();
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
@@ -574,10 +574,10 @@
                                 url:"elements_for_kpi",/*Routing.generate('elements_for_kpi'),*/
                                 data:data,
                                 beforeSend: function () {
-                                    var setAjaxBeforeSend = ajaxbefore_send();
+                                    var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                                 },
                                 complete: function () {
-                                    var setAjaxComplete = ajax_complete();
+                                    var setAjaxComplete = defaultAjaxCompleteFunction();
                                 }
                             });
                             $.ajax({
@@ -653,10 +653,10 @@
                             url:"elements_for_kpi",/*Routing.generate('elements_for_kpi'),*/
                             data:data,
                             beforeSend: function () {
-                                var setAjaxBeforeSend = ajaxbefore_send();
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                             },
                             complete: function () {
-                                var setAjaxComplete = ajax_complete();
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
@@ -757,7 +757,6 @@
                         }
                         editFirstElementValue.val('');
                         editSecondElementValue.val('');
-                        console.log(editComparisonRuleArray);
                     }
                 });
 
