@@ -395,7 +395,6 @@ class ElementDetailsController extends Controller
                     ->setParameter('userId', $userId)
                     ->getQuery();
             }
-
             $kpi_name_array = $kpi_name_array_query->getResult();
 
             $query = $em->createQueryBuilder()
@@ -405,6 +404,13 @@ class ElementDetailsController extends Controller
                 ->setParameter('element_id', $id)
                 ->getQuery();
             $kpi_name_id = $query->getResult();
+
+            $elementDetailQuery = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('kpiDetailsId', $kpi_name_id[0][1])
+                ->getQuery();
 
             $kpi_name = $em->createQueryBuilder()
                 ->select('a.kpiName', 'a.id')
@@ -432,6 +438,10 @@ class ElementDetailsController extends Controller
                     ->getQuery();
                 $symbolDetail = $symbolQuery->getResult();
             }
+            $symbolAllQuery = $em->createQueryBuilder()
+                ->select('a.id','a.symbolName')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery();
 
             $comparisonRuleArray = array();
             if($elementDetail[0]['comparisonStatus']==1) {
@@ -480,7 +490,9 @@ class ElementDetailsController extends Controller
                 'kpi_name' => $kpi_name,
                 'kpi_name_array' => $kpi_name_array,
                 'symbolDetail' => $symbolDetail,
-                'comparisonRule' => $comparisonRuleArray
+                'symbolAllDetail' => $symbolAllQuery->getResult(),
+                'comparisonRule' => $comparisonRuleArray,
+                'elementDetailAll' => $elementDetailQuery->getResult()
             ));
 
             if ($hi == 'hi') {
