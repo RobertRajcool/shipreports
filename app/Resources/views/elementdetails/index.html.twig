@@ -259,6 +259,8 @@
                     }
                 }
 
+                /*----------------------------------Element Edit Functions--------------------------*/
+
                 var editElementId = $('.element_edit_id');
                 var editKpiName = $('.edit_kpiName');
                 var editElementName = $('.edit_element_name');
@@ -276,11 +278,15 @@
                 var editComparisonStatus = $('.edit-comparison-status');
                 var editComparisonTableClass = $('.comparison-table-edit-class');
                 var editComparisonTableBody = $('.edit-comparison-table-body');
+                var validDate = $('.edit-valid-dates');
+                var editElementErrorMsg = $('.editErrorName');
+                var editSubmitButton = $('.edit_element_submit_button');
+                var editKpiErrorMsg = $('.edit-error-kpi');
+                var comparisonRuleArray = new Array();
+                var editComparisonRuleArray = new Array();
 
                 editComparisonTableClass.hide();
 
-                var comparisonRuleArray = new Array();
-                var editComparisonRuleArray = new Array();
                 function setEditValueFunction(data, active_date, end_date) {
                     editElementName.val(data.element_detail[0].elementName);
                     editElementDescription.val(data.element_detail[0].description);
@@ -360,12 +366,9 @@
                     editKpiName.val(data.kpi_name[0].id);
                 }
 
-                var validDate = $('.edit-valid-dates');
-                var editElementErrorMsg = $('.editErrorName');
-                var editSubmitButton = $('.edit_element_submit_button');
-                var editKpiErrorMsg = $('.edit-error-kpi');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
+                    console.log(editComparisonRuleArray);
                     var editEmptyValues = editEmptyValuesFunction();
                     var aM = editActiveMonth.val();
                     var aY = editActiveYear.val();
@@ -398,7 +401,11 @@
                         activeYear: editActiveYear.val(),
                         endMonth: editEndMonth.val(),
                         endYear: editEndYear.val(),
-                        vesselWiseTotal: $('.edit-vessel-wise-total:checked').val()
+                        vesselWiseTotal: $('.edit-vessel-wise-total:checked').val(),
+                        indicationValue: editIndicationValue.val(),
+                        symbolId: editSymbol.val(),
+                        comparisonStatus: editComparisonStatus.val(),
+                        comparisonRuleArray: editComparisonRuleArray
                     };
                     var emptyDetails = emptyDetailsFunction(data);
                     $.ajaxSetup({
@@ -441,9 +448,13 @@
                     validDate.empty();
                 }
 
+                /*-------------------------------------Edit screen validation------------------------------------*/
+
                 var errorMessage;
                 var createWeight = $('#weight-id');
                 var kpiId = $('#kpi_id');
+                var editWeight = $('#edit-weight-id');
+
                 createWeight.change(function ($e) {
                     $e.preventDefault();
                     var currentId = $(this).val();
@@ -457,7 +468,6 @@
                     var checkElementWeight = checkElementWeightFunction(data);
                 });
 
-                var editWeight = $('#edit-weight-id');
                 editWeight.change(function ($e) {
                     $e.preventDefault();
                     var currentId = $(this).val();
@@ -520,7 +530,7 @@
                     $('.add_button_place').append(dynamicAdd);
                 });
 
-                /*----------------------------------Elements Comparing Logic-----------------------------------*/
+                /*----------------------------------Elements Comparison Logic-----------------------------------*/
 
                 var comparisonId = $('#comparison-id');
                 var comparisonRuleView = $('.comparison-rule-view');
@@ -534,7 +544,6 @@
                 var comparisonRuleTable = $('#comparison-rule-table');
                 var comparisonTableBody = $('#comparison-table-body');
                 var comparisonRuleTotalClass = $('.comparison-rule-total-class');
-                var ruleCount=0;
                 var editFirstSubElement = $('.edit-first-sub-element');
                 var editSecondSubElement = $('.edit-second-sub-element');
                 var editFirstElementValue = $('.edit-first-sub-element-value');
@@ -544,6 +553,7 @@
                 var editComparisonSaveClass = $('.edit-comparison-save-class');
                 var deleteComparisonIconClass = $('.delete-comparison-icon');
                 var editComparisonStatusForIconClick = 0;
+                var ruleCount = 0;
                 var countId = 0;
 
                 comparisonRuleView.hide();
@@ -713,6 +723,7 @@
                         };
                         if(editComparisonStatusForIconClick==1) {
                             editComparisonStatusForIconClick = 0;
+                            console.log(countId);
                             editComparisonRuleArray[countId] = comparisonRuleObj;
                             comparisonRuleArray[countId] = tempObject;
                             var editElementFirstName = $('.edit-first-sub-element option[value='+editFirstSubElement.val()+']').text();
@@ -746,6 +757,7 @@
                         }
                         editFirstElementValue.val('');
                         editSecondElementValue.val('');
+                        console.log(editComparisonRuleArray);
                     }
                 });
 
