@@ -395,7 +395,6 @@ class ElementDetailsController extends Controller
                     ->setParameter('userId', $userId)
                     ->getQuery();
             }
-
             $kpi_name_array = $kpi_name_array_query->getResult();
 
             $query = $em->createQueryBuilder()
@@ -406,6 +405,13 @@ class ElementDetailsController extends Controller
                 ->getQuery();
             $kpi_name_id = $query->getResult();
 
+            $elementDetailQuery = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('kpiDetailsId', $kpi_name_id[0][1])
+                ->getQuery();
+
             $kpi_name = $em->createQueryBuilder()
                 ->select('a.kpiName', 'a.id')
                 ->from('InitialShippingBundle:KpiDetails', 'a')
@@ -415,12 +421,65 @@ class ElementDetailsController extends Controller
                 ->getResult();
 
             $query1 = $em->createQueryBuilder()
-                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal')
+                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus')
                 ->from('InitialShippingBundle:ElementDetails', 'a')
                 ->where('a.id = :element_id')
                 ->setParameter('element_id', $id)
                 ->getQuery();
             $elementDetail = $query1->getResult();
+
+            $symbolDetail="";
+            if($elementDetail[0][1]!="") {
+                $symbolQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.symbolName')
+                    ->from('InitialShippingBundle:ElementSymbols', 'a')
+                    ->where('a.id = :symbol_id')
+                    ->setParameter('symbol_id', $elementDetail[0][1])
+                    ->getQuery();
+                $symbolDetail = $symbolQuery->getResult();
+            }
+            $symbolAllQuery = $em->createQueryBuilder()
+                ->select('a.id','a.symbolName')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery();
+
+            $comparisonRuleArray = array();
+            if($elementDetail[0]['comparisonStatus']==1) {
+                $comparisonRuleQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.rules')
+                    ->from('InitialShippingBundle:ElementComparisonRules', 'a')
+                    ->where('a.elementDetailsId = :element_id')
+                    ->setParameter('element_id', $elementDetail[0]['id'])
+                    ->getQuery();
+                $comparisonRule = $comparisonRuleQuery->getResult();
+                for($count=0;$count<count($comparisonRule);$count++) {
+                    $ruleObject = json_decode($comparisonRule[$count]['rules']);
+
+                    $firstElementQuery = $em->createQueryBuilder()
+                        ->select('a.elementName')
+                        ->from('InitialShippingBundle:ElementDetails', 'a')
+                        ->where('a.id = :element_id')
+                        ->setParameter('element_id', $ruleObject->first->id)
+                        ->getQuery()
+                        ->getScalarResult();
+                    $secondElementQuery = $em->createQueryBuilder()
+                        ->select('a.elementName')
+                        ->from('InitialShippingBundle:ElementDetails', 'a')
+                        ->where('a.id = :element_id')
+                        ->setParameter('element_id', $ruleObject->second->id)
+                        ->getQuery()
+                        ->getScalarResult();
+                    array_push($comparisonRuleArray,array(
+                        'firstId' =>$ruleObject->first->id,
+                        'firstName'=>$firstElementQuery[0]['elementName'],
+                        'firstValue' => $ruleObject->first->value,
+                        'secondId' =>$ruleObject->second->id,
+                        'secondName' => $secondElementQuery[0]['elementName'],
+                        'secondValue' => $ruleObject->second->value,
+                        'action' => $ruleObject->action->color
+                    ));
+                }
+            }
 
             $rules = $this->element_ruleAction($request, 'hi');
 
@@ -429,7 +488,11 @@ class ElementDetailsController extends Controller
                 'element_detail' => $elementDetail,
                 'element_rules' => $rules,
                 'kpi_name' => $kpi_name,
-                'kpi_name_array' => $kpi_name_array
+                'kpi_name_array' => $kpi_name_array,
+                'symbolDetail' => $symbolDetail,
+                'symbolAllDetail' => $symbolAllQuery->getResult(),
+                'comparisonRule' => $comparisonRuleArray,
+                'elementDetailAll' => $elementDetailQuery->getResult()
             ));
 
             if ($hi == 'hi') {
