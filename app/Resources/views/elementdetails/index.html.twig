@@ -135,6 +135,7 @@
                 var num = 0;
                 var rule_value = 0;
                 var elementList = $('.element_class');
+
                 elementList.live("click", function ($e) {
                     $e.preventDefault();
                     var editEmptyValues = editEmptyValuesFunction();
@@ -352,7 +353,6 @@
                             editComparisonRuleArray.push(tempObj);
                         });
                     }
-
                     $.each(data.elementDetailAll, function(i,element) {
                         $('<option>'+element.elementName+'</option>').val(element.id).appendTo(editFirstSubElement);
                         $('<option>'+element.elementName+'</option>').val(element.id).appendTo(editSecondSubElement);
@@ -368,7 +368,6 @@
 
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
-                    console.log(editComparisonRuleArray);
                     var editEmptyValues = editEmptyValuesFunction();
                     var aM = editActiveMonth.val();
                     var aY = editActiveYear.val();
@@ -1160,8 +1159,7 @@
                             <label class="form_input">
                                 <label><span class="element_activeDate_month "></span>-
                                     <sapn class=" element_activeDate_year"></sapn>
-                                    <strong> {{ 'kpi.to'|trans }} </strong> <span class=" element_endDate_month "></span>-<span
-                                            class="  element_endDate_year"></span></label>
+                                    <strong> {{ 'kpi.to'|trans }} </strong> <span class=" element_endDate_month "></span>-<span class="  element_endDate_year"></span></label>
                             </label>
                         </div>
                     </fieldset>
