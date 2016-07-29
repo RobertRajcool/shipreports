@@ -508,7 +508,7 @@ class RankingElementDetailsController extends Controller
             $symbolId = $request->request->get('symbolId');
             $indicationValue = $request->request->get('indicationValue');
             $comparisonStatus = $request->request->get('comparisonStatus');
-            if($comparisonStatus=='on') {
+            if($comparisonStatus==1) {
                 $comparisonStatusValue = 1;
             } else {
                 $comparisonStatusValue = 0;
@@ -547,7 +547,7 @@ class RankingElementDetailsController extends Controller
             $entity->setComparisonStatus($comparisonStatusValue);
             $em->flush();
 
-            if($comparisonStatus=='on') {
+            if($comparisonStatus==1) {
                 $lastId = $entity->getId();
                 $symbolQuery = $em->createQueryBuilder()
                     ->select('a.id','a.rules')

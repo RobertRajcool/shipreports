@@ -281,6 +281,7 @@
                 var editElementErrorMsg = $('.editErrorName');
                 var editSubmitButton = $('.edit_element_submit_button');
                 var editKpiErrorMsg = $('.edit-error-kpi');
+                var editComparisonStatusIdentification = 0;
                 var comparisonRuleArray = new Array();
                 var editComparisonRuleArray = new Array();
 
@@ -401,7 +402,7 @@
                         vesselWiseTotal: $('.edit-vessel-wise-total:checked').val(),
                         indicationValue: editIndicationValue.val(),
                         symbolId: editSymbol.val(),
-                        comparisonStatus: editComparisonStatus.val(),
+                        comparisonStatus: editComparisonStatusIdentification,
                         comparisonRuleArray: editComparisonRuleArray
                     };
                     var emptyDetails = emptyDetailsFunction(data);
@@ -675,6 +676,7 @@
                 editComparisonStatus.live('click',function() {
                     if(editComparisonStatus.is(':checked') == true) {
                         editComparisonStatus.attr('checked',true);
+                        editComparisonStatusIdentification = 1;
                         var data = {
                             kpiDetailsId: editKpiName.val()
                         };
@@ -707,8 +709,8 @@
                     } else {
                         editComparisonStatus.attr('checked',false);
                         editComparisonTableClass.hide();
+                        editComparisonStatusIdentification = 0;
                     }
-
                 });
 
                 editComparisonIconClass.live('click',function($e) {
