@@ -501,22 +501,22 @@ class CompanyUsersController extends Controller
     public function BackupAction(){
         $user = $this->getUser();
         $userId =$user->getId();
+        if ($user != null) {
+            return $this->render('companyusers/edit.html.twig', array(
 
-        return $this->render('companyusers/edit.html.twig', array(
-
-        ));
+            ));
+        }else{
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
 
 
     public function dbBackupAction(Request $request)
     {
         $user = $this->getUser();
+        $userId = $user->getId();
         $em = $this->getDoctrine()->getManager();
-        if ($user == null)
-        {
-            return $this->redirectToRoute('fos_user_security_login');
-        }
-        else {
+        if ($user != null) {
             $userId = $user->getId();
             $em = $this->getDoctrine()->getManager();
             $date = new \DateTime();
@@ -578,17 +578,16 @@ class CompanyUsersController extends Controller
             header("Content-Transfer-Encoding: Binary");
             header("Content-disposition: attachment; filename=\"" . $params['dbname'] . ".sql\"");
 
-
-
             $backup = new Backupreport();
-
-             $backup->setfileName($outfile_filepath);
-             $backup->setusername($user);
-             $backup->setDateTime($date);
-                 $em->persist($backup);
-             $em->flush();
-
+            $backup->setfileName($outfile_filepath);
+            $backup->setusername($user);
+            $backup->setDateTime($date);
+            $em->persist($backup);
+            $em->flush();
             return $response;
+        }
+        else{
+            return $this->redirectToRoute('fos_user_security_login');
         }
     }
 

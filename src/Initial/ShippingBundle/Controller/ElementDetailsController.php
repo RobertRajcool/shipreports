@@ -528,6 +528,15 @@ class ElementDetailsController extends Controller
             $endMonth = $request->request->get('endMonth');
             $endYear = $request->request->get('endYear');
             $vesselWiseTotal = $request->request->get('vesselWiseTotal');
+            $symbolId = $request->request->get('symbolId');
+            $indicationValue = $request->request->get('indicationValue');
+            $comparisonStatus = $request->request->get('comparisonStatus');
+            if($comparisonStatus=='on') {
+                $comparisonStatusValue = 1;
+            } else {
+                $comparisonStatusValue = 0;
+            }
+            $comparisonRuleArray = $request->request->get('comparisonRuleArray');
             $integerEndMonth = (int)$endMonth + 1;
             $activeMonthDate = $activeYear . '-' . $integerActiveMonth . '-' . '01';
             $activeMonthDateObject = new \DateTime($activeMonthDate);
@@ -551,11 +560,37 @@ class ElementDetailsController extends Controller
             $entity->setActivatedDate($activeMonthDateObject);
             $entity->setEndDate($endMonthDateObject);
             $entity->setVesselWiseTotal($vesselWiseTotal);
+            $entity->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
+            $entity->setIndicationValue($indicationValue);
+            $entity->setComparisonStatus($comparisonStatusValue);
             $em->flush();
 
+            if($comparisonStatus=='on') {
+                $lastId = $entity->getId();
+                $symbolQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.rules')
+                    ->from('InitialShippingBundle:ElementComparisonRules', 'a')
+                    ->where('a.elementDetailsId = :element_id')
+                    ->setParameter('element_id', $lastId)
+                    ->getQuery()
+                    ->getResult();
+                for($i=0;$i<count($symbolQuery);$i++) {
+                    $tempElementRuleObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementComparisonRules')->find($symbolQuery[$i]['id']);
+                    $em->remove($tempElementRuleObj);
+                    $em->flush();
+                }
+                for($comparisonCount=0;$comparisonCount<count($comparisonRuleArray);$comparisonCount++) {
+                    $elementComparisonRuleObj = new ElementComparisonRules();
+                    $elementComparisonRuleObj->setElementDetailsId($em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $lastId)));
+                    $elementComparisonRuleObj->setRules(json_encode($comparisonRuleArray[$comparisonCount]));
+                    $em->persist($elementComparisonRuleObj);
+                    $em->flush();
+                }
+            }
             $show_response = $this->ajax_showAction($request, 'hi');
 
             return $show_response;
+
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }

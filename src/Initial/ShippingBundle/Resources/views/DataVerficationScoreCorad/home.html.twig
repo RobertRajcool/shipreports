@@ -932,6 +932,7 @@
                                                 <th></th>
                                             {% endif %}
                                         </tr>
+
                                         </thead>
                                         <tbody>
 
@@ -940,7 +941,14 @@
                                             <tr>
                                                 <td class="kpi_lement_name">{{ user }}  </td>
                                                 <td class="kpi_lement_number">{{ elementweightage[i] }}</td>
-                                                <td class="kpi_lement_inputname">{{ symbolIndication[i] }}</td>
+                                                <td class="kpi_lement_inputname">
+                                                    {#{% if symbolIndication[i]=='Dollar' %}
+                                                    <span class="menu-item-icon fa fa-usd"></span>
+                                                    {% else %}
+                                                        {{  symbolIndication[i] }}
+                                                    {% endif %}#}
+                                                    {{  symbolIndication[i] }}
+                                                </td>
                                                 <td class="kpi_lement_inputname">{{ indicationValue[i] }}</td>
 
                                                 <td class="kpi_lement_inputname">

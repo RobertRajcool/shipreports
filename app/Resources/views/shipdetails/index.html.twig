@@ -4,9 +4,7 @@
 
     {% block javascripts %}
 
-        {% javascripts
-        '@AppBundle/Resources/public/js/AAA.js'
-        %}
+        {% javascripts '@AppBundle/Resources/public/js/AAA.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
@@ -110,10 +108,10 @@
                         url:"check_vesselName",/*Routing.generate('shipdetails_check_vessel'),*/
                         data:data,
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -145,10 +143,10 @@
                         url:"check_vesselName",/*Routing.generate('shipdetails_check_vessel'),*/
                         data:data,
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -182,10 +180,10 @@
                         url:"check_imoNumber",/*Routing.generate('shipdetails_check_imo'),*/
                         data:data,
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -223,10 +221,10 @@
                         url:"check_imoNumber",/*Routing.generate('shipdetails_check_vessel'),*/
                         data:data,
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -273,10 +271,10 @@
                         url:Routing.generate('shipdetails_ajax_show'),/*"ajax_show",*/
                         data:data,
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -393,10 +391,10 @@
                             url:Routing.generate('shipdetails_ajax_edit'),/*"ajax_edit",*/
                             data: data,
                             beforeSend: function () {
-                                var setAjaxBeforeSend = ajaxbefore_send();
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                             },
                             complete: function () {
-                                var setAjaxComplete = ajax_complete();
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
@@ -483,10 +481,10 @@
                         type:"POST",
                         url:Routing.generate('shipdetails_ajax_status'),/*ajax_status*/
                         beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
                         }
                     });
                     $.ajax({
@@ -541,10 +539,10 @@
                             url:Routing.generate('shipdetails_ajax_status_show'),/*"ajax_status_show",*/
                             data:data,
                             beforeSend: function () {
-                                var setAjaxBeforeSend = ajaxbefore_send();
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                             },
                             complete: function () {
-                                var setAjaxComplete = ajax_complete();
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
@@ -594,10 +592,10 @@
                             url:Routing.generate('shipdetails_ajax_status_show'),/*"ajax_status_show",*/
                             data:data,
                             beforeSend: function () {
-                                var setAjaxBeforeSend = ajaxbefore_send();
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                             },
                             complete: function () {
-                                var setAjaxComplete = ajax_complete();
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
@@ -638,21 +636,15 @@
                         activeInactiveCheckBox.removeClass("opened");
                     }
                 });
-                $('#shipcreate').submit(function($e)
-                {
+                $('#shipcreate').submit(function($e) {
                     var imponumber=$('#ship_details_imoNumber').val();
-                    alert(imponumber.length);
-                    if(imponumber.length!=7)
-                    {
+                    if(imponumber.length!=7) {
                         return false;
                     }
-                    else
-                    {
+                    else {
                         return true;
                     }
-
                 });
-
             });
         </script>
 
@@ -705,7 +697,6 @@
                 <div class="">
                     <div class="add_user_btn_main">
                         <span class="user_btn_main" style="float: left;"><a href="" class="ss-plus add_btn">{{ 'vessel.add_vessel'|trans }}</a></span>
-                        {#<span class="user_btn_main"><button class="submit_btn" >Print</button></span>#}
                         <form id="" class="form-horizontal no-style" action="{{ path('shipdetails_vessel_pdf') }}"
                               target="_blank" method="post" style="float: left;">
                             <input type="hidden" class="activeMonthText" name="activeMonth" value="">
@@ -764,257 +755,249 @@
     </div>
 
     <div class="create_view">
-
-        <section>
-            <div class="col-sm-12">
-                <div class="add_new_users_views_screen">
-                    <h2>{{ 'vessel.add_vessel'|trans }}</h2>
-                    <form class="form-horizontal no-style create-form" id="shipcreate" action="{{ path('shipdetails_new1') }}" method="post">
-                        <div class="kpi_basic_details">
-                            <fieldset class="fieldset_box add_rule_form">
-                                <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.shipName,{'id':'vessel-id','label': ' '}) }}
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message" id="create-vessel-error"></div>
+        <div class="col-sm-12">
+            <div class="add_new_users_views_screen">
+                <h2>{{ 'vessel.add_vessel'|trans }}</h2>
+                <form class="form-horizontal no-style create-form" id="shipcreate" action="{{ path('shipdetails_new1') }}" method="post">
+                    <div class="kpi_basic_details">
+                        <fieldset class="fieldset_box add_rule_form">
+                            <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.shipName,{'id':'vessel-id','label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.shipType,{'label': ' '}) }}
-                                    </div>
+                                <div class="col-xs-8 weight-error-message" id="create-vessel-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.shipType,{'label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.imoNumber,{'id':'imo-id','label': ' '}) }}
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message" id="create-imo-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.imoNumber,{'id':'imo-id','label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.country,{'label': ' '}) }}
-                                    </div>
+                                <div class="col-xs-8 weight-error-message" id="create-imo-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.country,{'label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.location,{'label': ' '}) }}
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.location,{'label': ' '}) }}
                                 </div>
-                            </fieldset>
-                            <fieldset class="fieldset_box">
-                                <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.ship_yard'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.built,{'label': ' '}) }}
-                                    </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.ship_yard'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.built,{'label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.size,{'label': ' '}) }}
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.size,{'label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.gt,{'label': ' '}) }}
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.gt,{'label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.manufacturingYear,{'label': ' '}) }}
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.manufacturingYear,{'label': ' '}) }}
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_row(form.description,{'label': ' '}) }}
-                                    </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_row(form.description,{'label': ' '}) }}
                                 </div>
-                            </fieldset>
-                        </div>
-                        <div class="actions_submit">
-                            <button class="submit_btn create-button" >{{ 'vessel.add'|trans }}</button>
-                            <button class="cancel_btn" type="reset">{{ 'vessel.reset'|trans }}</button>
-                        </div>
-                    </form>
-                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="actions_submit">
+                        <button class="submit_btn create-button" >{{ 'vessel.add'|trans }}</button>
+                        <button class="cancel_btn" type="reset">{{ 'vessel.reset'|trans }}</button>
+                    </div>
+                </form>
             </div>
-        </section>
+        </div>
     </div>
 
-
     <div class="show_ship_view">
-        <section>
-            <div class="col-sm-11">
-                <div class="view_new_user_screen_2 form_view_screen">
-                    <div class="actions_edit_button">
-                        <a href="" class="edit_btn edit_ship_button"> {{ 'vessel.edit'|trans }}</a>
-                        <a href="" class="edit_btn active_btn archive_btn">{{ 'vessel.archive_active'|trans }} / {{ 'vessel.archive_inactive'|trans }}</a>
-                    </div>
-                    <div id="status-text"> </div>
-                    <div class="status_field">
-                        <span><div id="statusId"></div></span>
-                        <div>{{ 'vessel.status'|trans }}</div>
-                    </div>
-                    <fieldset class="fieldset_box">
-                        <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.vessel_name'|trans }}:</label>
-                            <label class="form_input ship_name"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.vessel_type'|trans }}:</label>
-                            <label class="form_input ship_type"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.imo_number'|trans }}:</label>
-                            <label class="form_input ship_ImoNumber"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.country'|trans }}:</label>
-                            <label class="form_input ship_Country"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.location'|trans }}:</label>
-                            <label class="form_input ship_Location"></label>
-                        </div>
-                    </fieldset>
-                    <fieldset class="fieldset_box">
-                        <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.ship_yard'|trans }}:</label>
-                            <label class="form_input ship_Built"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.size'|trans }}:</label>
-                            <label class="form_input ship_size"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.gt'|trans }}:</label>
-                            <label class="form_input ship_GT"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.mf_year'|trans }}:</label>
-                            <label class="form_input ship_manufacturingYear"></label>
-                        </div>
-                        <div class="form_view">
-                            <label class="form_labell" style="color: black">{{ 'vessel.description'|trans }}:</label>
-                            <label class="form_input ship_description"></label>
-                        </div>
-                        <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
-                    </fieldset>
+        <div class="col-sm-11">
+            <div class="view_new_user_screen_2 form_view_screen">
+                <div class="actions_edit_button">
+                    <a href="" class="edit_btn edit_ship_button"> {{ 'vessel.edit'|trans }}</a>
+                    <a href="" class="edit_btn active_btn archive_btn">{{ 'vessel.archive_active'|trans }} / {{ 'vessel.archive_inactive'|trans }}</a>
                 </div>
+                <div id="status-text"> </div>
+                <div class="status_field">
+                    <span><div id="statusId"></div></span>
+                    <div>{{ 'vessel.status'|trans }}</div>
+                </div>
+                <fieldset class="fieldset_box">
+                    <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.vessel_name'|trans }}:</label>
+                        <label class="form_input ship_name"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.vessel_type'|trans }}:</label>
+                        <label class="form_input ship_type"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.imo_number'|trans }}:</label>
+                        <label class="form_input ship_ImoNumber"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.country'|trans }}:</label>
+                        <label class="form_input ship_Country"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.location'|trans }}:</label>
+                        <label class="form_input ship_Location"></label>
+                    </div>
+                </fieldset>
+                <fieldset class="fieldset_box">
+                    <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.ship_yard'|trans }}:</label>
+                        <label class="form_input ship_Built"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.size'|trans }}:</label>
+                        <label class="form_input ship_size"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.gt'|trans }}:</label>
+                        <label class="form_input ship_GT"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.mf_year'|trans }}:</label>
+                        <label class="form_input ship_manufacturingYear"></label>
+                    </div>
+                    <div class="form_view">
+                        <label class="form_labell" style="color: black">{{ 'vessel.description'|trans }}:</label>
+                        <label class="form_input ship_description"></label>
+                    </div>
+                    <input type="hidden"  id="kpi_id_reference_text"  name="kpi_id_reference_text" value="">
+                </fieldset>
             </div>
-        </section>
+        </div>
     </div>
 
     <div class="Edit_ship">
-        <section>
-            <div class="col-sm-11">
-                <div class="add_new_users_views_screen">
-                    <h2>{{ 'vessel.edit_vessel'|trans }}</h2>
-                    <form class="form-horizontal no-style create-form">
-                        <div class="add_new_users_form">
-                            <fieldset class="fieldset_box">
-                                <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_name" required>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message vessel-name"> </div>
+        <div class="col-sm-11">
+            <div class="add_new_users_views_screen">
+                <h2>{{ 'vessel.edit_vessel'|trans }}</h2>
+                <form class="form-horizontal no-style create-form">
+                    <div class="add_new_users_form">
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_name'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_name" required>
                                 </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <select class="edit_ship_type" required>
-                                            <option value="0">--{{ 'vessel.select'|trans }} {{ 'vessel.vessel_type'|trans }}--</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message edit-vessel-type"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_imoNumber">
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message" id="edit-imo-error"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <select class="edit_ship_country" required>
-                                            <option value="0">--{{ 'vessel.select'|trans }} {{ 'vessel.country'|trans }}--</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message edit-error-country"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_location" required>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message edit-error-location"> </div>
-                                </div>
-                            </fieldset>
-                            <fieldset class="fieldset_box">
-                                <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.ship_yard'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_built" required>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message ship-yard"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_size" required>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message size"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_gt" required>
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message gt"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_manufacturingYear" required>
-                                    </div>
-                                    {#<div class="col-xs-8">&nbsp;</div>#}
-                                    <div class="col-xs-8 weight-error-message mf"> </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <input type="text" class="edit_ship_description" >
-                                    </div>
-                                    <div class="col-xs-8">
-                                        <input type="hidden" class="edit_ship_id" >
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <div class="actions_submit">
-                                <button class=" submit_btn edit_submit_btn">{{ 'vessel.save'|trans }}</button>
-                                <button class="cancel_btn edit_cancel_btn">{{ 'vessel.cancel'|trans }}</button>
+                                <div class="col-xs-8 weight-error-message vessel-name"> </div>
                             </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.vessel_type'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <select class="edit_ship_type" required>
+                                        <option value="0">--{{ 'vessel.select'|trans }} {{ 'vessel.vessel_type'|trans }}--</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-8 weight-error-message edit-vessel-type"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.imo_number'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_imoNumber">
+                                </div>
+                                <div class="col-xs-8 weight-error-message" id="edit-imo-error"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.country'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <select class="edit_ship_country" required>
+                                        <option value="0">--{{ 'vessel.select'|trans }} {{ 'vessel.country'|trans }}--</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-8 weight-error-message edit-error-country"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.location'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_location" required>
+                                </div>
+                                <div class="col-xs-8 weight-error-message edit-error-location"> </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">{{ 'vessel.specification'|trans }}</legend>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.ship_yard'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_built" required>
+                                </div>
+                                <div class="col-xs-8 weight-error-message ship-yard"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.size'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_size" required>
+                                </div>
+                                <div class="col-xs-8 weight-error-message size"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.gt'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_gt" required>
+                                </div>
+                                <div class="col-xs-8 weight-error-message gt"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'vessel.mf_year'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_manufacturingYear" required>
+                                </div>
+                                {#<div class="col-xs-8">&nbsp;</div>#}
+                                <div class="col-xs-8 weight-error-message mf"> </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_ship_description" >
+                                </div>
+                                <div class="col-xs-8">
+                                    <input type="hidden" class="edit_ship_id" >
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="actions_submit">
+                            <button class=" submit_btn edit_submit_btn">{{ 'vessel.save'|trans }}</button>
+                            <button class="cancel_btn edit_cancel_btn">{{ 'vessel.cancel'|trans }}</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
-        </section>
+        </div>
     </div>
 
 {% endblock %}
