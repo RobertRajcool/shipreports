@@ -1271,11 +1271,9 @@ select {
     margin: 0 0 70px 0;
     position: relative;
     top: 0;
-    width: 500px;
+    width: 800px;
 }
 .add_new_kpi_top_title {
-
-
     padding: 9px 24px;
     font-size: 14px;
     font-weight:bold;
@@ -1371,7 +1369,7 @@ select {
     width:30%;
 }
 .kpi_table_form_section .kpi_lement_name {
-    width:78%;
+    width:59%;
 }
 .kpi_table_form_section .kpi_lement_number {
     width:8%;
@@ -1380,7 +1378,7 @@ select {
     text-align:center;
 }
 .kpi_table_form_section .kpi_lement_inputname {
-    width:14%;
+    width:11%;
     padding-left:30px !important;
     text-align:center;
 }
@@ -2266,7 +2264,7 @@ input[type="color"],
     background:#d2d2d2 !important;
 }
 .verfication_ranking_table_form_section thead tr.v_r_min_height {
-    height:86px;
+    height:105px;
 }
 .verfication_ranking_table_form_section thead tr th {
     background:#d2d2d2;
@@ -2639,12 +2637,7 @@ input[type="color"],
     color: #265882;
 }
 
-.add_element_comparison_select_field {
-    width:79%;
-}
-.add_element_comparison_text_field {
-    width:19%;
-}
+
 
 
 
