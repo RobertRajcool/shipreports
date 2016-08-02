@@ -88,6 +88,37 @@ class RankingElementDetails
     private $rules;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="VesselWiseTotal", type="string", length=35)
+     */
+    private $vesselWiseTotal;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="IndicationValue", type="string", length=50)
+     */
+    private $indicationValue;
+
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\ElementSymbols")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="SymbolId", referencedColumnName="id")
+     * })
+     */
+    private $symbolId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ComparisonStatus", type="string", length=35)
+     */
+    private $comparisonStatus;
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -281,6 +312,70 @@ class RankingElementDetails
     public function getRules()
     {
         return $this->rules;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVesselWiseTotal()
+    {
+        return $this->vesselWiseTotal;
+    }
+
+    /**
+     * @param string $vesselWiseTotal
+     */
+    public function setVesselWiseTotal($vesselWiseTotal)
+    {
+        $this->vesselWiseTotal = $vesselWiseTotal;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIndicationValue()
+    {
+        return $this->indicationValue;
+    }
+
+    /**
+     * @param string $indicationValue
+     */
+    public function setIndicationValue($indicationValue)
+    {
+        $this->indicationValue = $indicationValue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSymbolId()
+    {
+        return $this->symbolId;
+    }
+
+    /**
+     * @param string $symbolId
+     */
+    public function setSymbolId($symbolId)
+    {
+        $this->symbolId = $symbolId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComparisonStatus()
+    {
+        return $this->comparisonStatus;
+    }
+
+    /**
+     * @param string $comparisonStatus
+     */
+    public function setComparisonStatus($comparisonStatus)
+    {
+        $this->comparisonStatus = $comparisonStatus;
     }
 
     /**

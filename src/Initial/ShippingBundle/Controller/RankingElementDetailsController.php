@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\RankingElementDetails;
 use Initial\ShippingBundle\Form\RankingElementDetailsType;
-use Initial\ShippingBundle\Entity\RankingElementRules;
+use Initial\ShippingBundle\Entity\RankingElementComparisonRules;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -166,6 +166,36 @@ class RankingElementDetailsController extends Controller
 
 
     /**
+     * Get elements based on kpi id.
+     *
+     * @Route("/elements_for_kpi", name="rankingelementdetails_elements_for_kpi")
+     */
+    public function elementsForKpiAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('kpiDetailsId', $kpiDetailsId)
+                ->getQuery();
+            $elementDetail = $query->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementDetails' => $elementDetail
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
      * Creates a new ElementDetails entity.
      *
      * @Route("/new1", name="rankingelementdetails_new1")
@@ -181,6 +211,11 @@ class RankingElementDetailsController extends Controller
             $description = $params['description'];
             $cellName = $params['cellName'];
             $cellDetails = $params['cellDetails'];
+            $indicationValue = $params['indicationValue'];
+            $vesselWiseTotal = $params['vesselWiseTotal'];
+            $symbolId = $params['SymbolId'];
+            $comparisonStatus = $params['ComparisonStatus'];
+            $comparisonValueTotal = $request->request->get('comparison-rule-total');
             $activeMonth = $request->request->get('activeMonth');
             $activeYear = $request->request->get('activeYear');;
             $endMonth = $request->request->get('endMonth');;
@@ -204,27 +239,29 @@ class RankingElementDetailsController extends Controller
             $elementDetail->setactiveDate($new_date);
             $elementDetail->setendDate($new_date1);
             $elementDetail->setweightage($weightage);
-            //$elementDetail->setrules($rules);
+            $elementDetail->setVesselWiseTotal($vesselWiseTotal);
+            $elementDetail->setComparisonStatus($comparisonStatus);
+            $elementDetail->setIndicationValue($indicationValue);
+            $elementDetail->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
             $em->flush();
 
-            $id = $elementDetail->getId();
-            /*for ($i=1;$i<=$rules;$i++)
-            {
-                $variable = "rules-$i";
-                $engine_rules = $request->request->get($variable);
-                if($engine_rules!="")
-                {
-                    $elementRules = new RankingElementRules();
-                    $elementRules->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id'=>$id)));
-                    $elementRules->setRules($engine_rules);
-                    $em->persist($elementRules);
+            if($comparisonStatus==1) {
+                for($i=1;$i<=$comparisonValueTotal;$i++) {
+                    $comparisonRule = $request->request->get('comparison-rules-'.$i);
+                    $elementComparisonRule = new RankingElementComparisonRules();
+                    $elementComparisonRule->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $elementDetail->getId())));
+                    $elementComparisonRule->setRules($comparisonRule);
+
+                    $em->persist($elementComparisonRule);
                     $em->flush();
                 }
-            }*/
+            }
+
             return $this->redirectToRoute('rankingelementdetails_select1');
+
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
@@ -352,6 +389,13 @@ class RankingElementDetailsController extends Controller
                 ->getQuery();
             $kpi_name_id = $query->getResult();
 
+            $elementDetailQuery = $em->createQueryBuilder()
+                ->select('a.id', 'a.elementName')
+                ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiDetailsId')
+                ->setParameter('kpiDetailsId', $kpi_name_id[0][1])
+                ->getQuery();
+
             $kpi_name = $em->createQueryBuilder()
                 ->select('a.kpiName', 'a.id')
                 ->from('InitialShippingBundle:RankingKpiDetails', 'a')
@@ -361,18 +405,75 @@ class RankingElementDetailsController extends Controller
                 ->getResult();
 
             $query1 = $em->createQueryBuilder()
-                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activeDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description')
+                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activeDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus')
                 ->from('InitialShippingBundle:RankingElementDetails', 'a')
                 ->where('a.id = :element_id')
                 ->setParameter('element_id', $id)
                 ->getQuery();
             $elementDetail = $query1->getResult();
 
+            $symbolDetail="";
+            if($elementDetail[0][1]!="") {
+                $symbolQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.symbolName')
+                    ->from('InitialShippingBundle:ElementSymbols', 'a')
+                    ->where('a.id = :symbol_id')
+                    ->setParameter('symbol_id', $elementDetail[0][1])
+                    ->getQuery();
+                $symbolDetail = $symbolQuery->getResult();
+            }
+            $symbolAllQuery = $em->createQueryBuilder()
+                ->select('a.id','a.symbolName')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery();
+
+            $comparisonRuleArray = array();
+            if($elementDetail[0]['comparisonStatus']==1) {
+                $comparisonRuleQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.rules')
+                    ->from('InitialShippingBundle:RankingElementComparisonRules', 'a')
+                    ->where('a.elementDetailsId = :element_id')
+                    ->setParameter('element_id', $elementDetail[0]['id'])
+                    ->getQuery();
+                $comparisonRule = $comparisonRuleQuery->getResult();
+                for($count=0;$count<count($comparisonRule);$count++) {
+                    $ruleObject = json_decode($comparisonRule[$count]['rules']);
+
+                    $firstElementQuery = $em->createQueryBuilder()
+                        ->select('a.elementName')
+                        ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                        ->where('a.id = :element_id')
+                        ->setParameter('element_id', $ruleObject->first->id)
+                        ->getQuery()
+                        ->getScalarResult();
+                    $secondElementQuery = $em->createQueryBuilder()
+                        ->select('a.elementName')
+                        ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                        ->where('a.id = :element_id')
+                        ->setParameter('element_id', $ruleObject->second->id)
+                        ->getQuery()
+                        ->getScalarResult();
+                    array_push($comparisonRuleArray,array(
+                        'firstId' =>$ruleObject->first->id,
+                        'firstName'=>$firstElementQuery[0]['elementName'],
+                        'firstValue' => $ruleObject->first->value,
+                        'secondId' =>$ruleObject->second->id,
+                        'secondName' => $secondElementQuery[0]['elementName'],
+                        'secondValue' => $ruleObject->second->value,
+                        'action' => $ruleObject->action->color
+                    ));
+                }
+            }
+
             $response = new JsonResponse();
             $response->setData(array(
                 'element_detail' => $elementDetail,
                 'kpi_name' => $kpi_name,
-                'kpi_name_array' => $kpi_name_array
+                'kpi_name_array' => $kpi_name_array,
+                'symbolDetail' => $symbolDetail,
+                'symbolAllDetail' => $symbolAllQuery->getResult(),
+                'comparisonRule' => $comparisonRuleArray,
+                'elementDetailAll' => $elementDetailQuery->getResult()
             ));
 
             if ($hi == 'hi') {
@@ -380,6 +481,7 @@ class RankingElementDetailsController extends Controller
             }
             
             return $response;
+
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
@@ -402,6 +504,16 @@ class RankingElementDetailsController extends Controller
             $description = $request->request->get('description');
             $cellName = $request->request->get('cellName');
             $cellDetails = $request->request->get('cellDetails');
+            $vesselWiseTotal = $request->request->get('vesselWiseTotal');
+            $symbolId = $request->request->get('symbolId');
+            $indicationValue = $request->request->get('indicationValue');
+            $comparisonStatus = $request->request->get('comparisonStatus');
+            if($comparisonStatus==1) {
+                $comparisonStatusValue = 1;
+            } else {
+                $comparisonStatusValue = 0;
+            }
+            $comparisonRuleArray = $request->request->get('comparisonRuleArray');
             $activeMonth = $request->request->get('activeMonth');
             $integerActiveMonth = (int)$activeMonth + 1;
             $activeYear = $request->request->get('activeYear');
@@ -429,7 +541,34 @@ class RankingElementDetailsController extends Controller
             $entity->setCellDetails($cellDetails);
             $entity->setActiveDate($activeMonthDateObject);
             $entity->setEndDate($endMonthDateObject);
+            $entity->setVesselWiseTotal($vesselWiseTotal);
+            $entity->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
+            $entity->setIndicationValue($indicationValue);
+            $entity->setComparisonStatus($comparisonStatusValue);
             $em->flush();
+
+            if($comparisonStatus==1) {
+                $lastId = $entity->getId();
+                $symbolQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.rules')
+                    ->from('InitialShippingBundle:RankingElementComparisonRules', 'a')
+                    ->where('a.elementDetailsId = :element_id')
+                    ->setParameter('element_id', $lastId)
+                    ->getQuery()
+                    ->getResult();
+                for($i=0;$i<count($symbolQuery);$i++) {
+                    $tempElementRuleObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingElementComparisonRules')->find($symbolQuery[$i]['id']);
+                    $em->remove($tempElementRuleObj);
+                    $em->flush();
+                }
+                for($comparisonCount=0;$comparisonCount<count($comparisonRuleArray);$comparisonCount++) {
+                    $elementComparisonRuleObj = new RankingElementComparisonRules();
+                    $elementComparisonRuleObj->setElementDetailsId($em->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $lastId)));
+                    $elementComparisonRuleObj->setRules(json_encode($comparisonRuleArray[$comparisonCount]));
+                    $em->persist($elementComparisonRuleObj);
+                    $em->flush();
+                }
+            }
 
             $show_response = $this->ranking_ajax_showAction($request, 'hi');
 
