@@ -476,7 +476,15 @@ class DataVerficationController extends Controller
                     // $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
-                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    $indicationvalue=$elementids[$j]['symbolIndication'];
+                    if($indicationvalue==null)
+                    {
+                        array_push($symbolIndication,"");
+                    }
+                    else
+                    {
+                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    }
                     array_push($elementindicationValue,$elementids[$j]['indicationValue']);
                 }
             }
@@ -488,7 +496,15 @@ class DataVerficationController extends Controller
                     // $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
-                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    $indicationvalue=$elementids[$j]['symbolIndication'];
+                    if($indicationvalue==null)
+                    {
+                        array_push($symbolIndication,"");
+                    }
+                    else
+                    {
+                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    }
                     array_push($elementindicationValue,$elementids[$j]['indicationValue']);
                 }
             }
@@ -1076,7 +1092,15 @@ class DataVerficationController extends Controller
                     $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
-                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    $indicationvalue=$elementids[$j]['symbolIndication'];
+                    if($indicationvalue==null)
+                    {
+                        array_push($symbolIndication,"");
+                    }
+                    else
+                    {
+                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    }
                     array_push($elementindicationValue,$elementids[$j]['indicationValue']);
 
 
@@ -1090,7 +1114,15 @@ class DataVerficationController extends Controller
                     $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
-                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    $indicationvalue=$elementids[$j]['symbolIndication'];
+                    if($indicationvalue==null)
+                    {
+                        array_push($symbolIndication,"");
+                    }
+                    else
+                    {
+                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    }
                     array_push($elementindicationValue,$elementids[$j]['indicationValue']);
 
                 }
@@ -1572,7 +1604,15 @@ class DataVerficationController extends Controller
                     // $sessionkpielementid[$newkpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
-                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    $indicationvalue=$elementids[$j]['symbolIndication'];
+                    if($indicationvalue==null)
+                    {
+                        array_push($symbolIndication,"");
+                    }
+                    else
+                    {
+                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    }
                     array_push($elementindicationValue,$elementids[$j]['indicationValue']);
                 }
             }
@@ -1585,7 +1625,15 @@ class DataVerficationController extends Controller
                     // $sessionkpielementid[$kpiid][$j] = $elementids[$j]['id'];
                     $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
                     array_push($elementweightage,$elementids[$j]['weightage']);
-                    array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    $indicationvalue=$elementids[$j]['symbolIndication'];
+                    if($indicationvalue==null)
+                    {
+                        array_push($symbolIndication,"");
+                    }
+                    else
+                    {
+                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                    }
                     array_push($elementindicationValue,$elementids[$j]['indicationValue']);
                 }
             }
@@ -1982,7 +2030,15 @@ class DataVerficationController extends Controller
                         $sessionkpielementid_ranking[$newkpiid][$j] = $elementids[$j]['id'];
                         $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
                         array_push($elementweightage,$elementids[$j]['weightage']);
-                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                        $indicationvalue=$elementids[$j]['symbolIndication'];
+                        if($indicationvalue==null)
+                        {
+                            array_push($symbolIndication,"");
+                        }
+                        else
+                        {
+                            array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                        }
                         array_push($elementindicationValue,$elementids[$j]['indicationValue']);
 
 
@@ -2000,7 +2056,15 @@ class DataVerficationController extends Controller
                         $sessionkpielementid_ranking[$kpiid][$j] = $elementids[$j]['id'];
                         $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
                         array_push($elementweightage,$elementids[$j]['weightage']);
-                        array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                        $indicationvalue=$elementids[$j]['symbolIndication'];
+                        if($indicationvalue==null)
+                        {
+                            array_push($symbolIndication,"");
+                        }
+                        else
+                        {
+                            array_push($symbolIndication,$elementids[$j]['symbolIndication']);
+                        }
                         array_push($elementindicationValue,$elementids[$j]['indicationValue']);
 
                     }
