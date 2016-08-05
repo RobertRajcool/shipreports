@@ -9,6 +9,7 @@
 namespace Initial\ShippingBundle\service;
 
 
+use Initial\ShippingBundle\Entity\CommonFunctions;
 use Symfony\Component\Console\Output\NullOutput;
 use Mmoreram\GearmanBundle\Command\Util\GearmanOutputAwareInterface;
 use Mmoreram\GearmanBundle\Driver\Gearman;
@@ -682,6 +683,7 @@ class ReadExcelWorker
     public function scorecardLookupDataUpdate(\GearmanJob $job)
     {
         $em= $this->doctrine->getManager();
+        $commonfunction_object=new CommonFunctions();
         $parametervalues = json_decode($job->workload());
         $shipid = $parametervalues->{'shipid'};
         $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
@@ -699,16 +701,17 @@ class ReadExcelWorker
             ->setParameter('statusValue', 3)
             ->getQuery()
             ->getResult();
-       // print_r($TotalShipsInserted);
+        // print_r($TotalShipsInserted);
+        $total_numberofShipsInserted_count=count($TotalShipsInserted);
 
 
         if(count($TotalShipsInserted)!=0)
         {
             $shipids=array();
-           for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
-           {
-               array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
-           }
+            for($findshipidcount=0;$findshipidcount<$total_numberofShipsInserted_count;$findshipidcount++)
+            {
+                array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+            }
             $shipids=implode(',',$shipids);
         }
         else
@@ -753,10 +756,10 @@ class ReadExcelWorker
 
             for($kpiCount=0;$kpiCount<count($scorecardKpiList);$kpiCount++)
             {
-               // echo "Forloop Scorecard";
-               $scorecardKpiId = $scorecardKpiList[0]['id'];
+                // echo "Forloop Scorecard";
+                $scorecardKpiId = $scorecardKpiList[0]['id'];
                 $scorecardAllKpiId = $scorecardKpiList[$kpiCount]['id'];
-               // echo "Forloop Scorecard after";
+                // echo "Forloop Scorecard after";
                 $scorecardKpiWeight = $scorecardKpiList[$kpiCount]['weightage'];
                 $scorecardKpiName = $scorecardKpiList[$kpiCount]['kpiName'];
                 $kpiSumValue=0;
@@ -764,7 +767,7 @@ class ReadExcelWorker
                 $ElementIds=array();
 
                 $scorecardElementArray = $em->createQueryBuilder()
-                    ->select('c.id, c.weightage, sum(a.value) as value','c.vesselWiseTotal')
+                    ->select('c.id, c.weightage, sum(a.value) as value','c.vesselWiseTotal','c.comparisonStatus')
                     ->from('InitialShippingBundle:ElementDetails', 'c')
                     ->leftjoin('InitialShippingBundle:ReadingKpiValues', 'a', 'WITH', 'c.id = a.elementDetailsId and a.monthdetail = :dateOfMonth')
                     ->where('c.kpiDetailsId = :kpiId and a.status=:statusValue' )
@@ -781,57 +784,150 @@ class ReadExcelWorker
                     //echo "if condition";
                     for($elementCount=0;$elementCount<count($scorecardElementArray);$elementCount++)
                     {
-                       // print_r($scorecardElementArray);
+                        // print_r($scorecardElementArray);
                         //echo "forloop";
                         $scorecardElementId = $scorecardElementArray[$elementCount]['id'];
                         array_push($ElementIds,$scorecardElementId);
                         $scorecardElementWeight = $scorecardElementArray[$elementCount]['weightage'];
                         $scorecardElementSumValue = $scorecardElementArray[$elementCount]['value'];
                         $vesselWiseTotalStatus = $scorecardElementArray[$elementCount]['vesselWiseTotal'];
+                        $comparisonStatus=$scorecardElementArray[$elementCount]['comparisonStatus'];
                         //echo  "after for loop";
-                        if($vesselWiseTotalStatus == "Average") {
+                        /*if($vesselWiseTotalStatus == "Average") {
                             $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
                         } else if($vesselWiseTotalStatus == "Sum") {
                             $averageElementValue = $scorecardElementSumValue;
-                        } else {
+                        }
+                        else {
                             $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
-                        }
-
-                        $scorecardElementRulesArray = $em->createQueryBuilder()
-                            ->select('a.rules')
-                            ->from('InitialShippingBundle:Rules', 'a')
-                            ->where('a.elementDetailsId = :elementId')
-                            ->setParameter('elementId', $scorecardElementId)
-                            ->getQuery()
-                            ->getResult();
-
-                        $elementResultColor = "";
-                        $elementColorValue=0;
-
-                        for($elementRulesCount=0;$elementRulesCount<count($scorecardElementRulesArray);$elementRulesCount++)
+                        }*/
+                        //Find element average value
+                        if(int($comparisonStatus)==1)
                         {
-                            $elementRule = $scorecardElementRulesArray[$elementRulesCount];
-                            $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . ((float)$averageElementValue);
-                            $elementJsFileName = 'node ' . $elementJsFileDirectory;
-                            $handle = popen($elementJsFileName, 'r');
-                            $elementColor = fread($handle, 2096);
-                            $elementResultColor = str_replace("\n", '', $elementColor);
+                            $scorecardElementRulesArray = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:ElementComparisonRules', 'a')
+                                ->where('a.elementDetailsId = :elementId')
+                                ->setParameter('elementId', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+                            $elementResultColor = "";
+                            $elementColorValue=0;
+                            for($elementRulesCount=0;$elementRulesCount<count($scorecardElementRulesArray);$elementRulesCount++)
+                            {
+                                $elementRule='\'' . $scorecardElementRulesArray[$elementRulesCount]['rules'] . ' \'';
+                                $newjson_decodevalue=json_decode($elementRule);
+                                $first_ElementId=$newjson_decodevalue->first->id;
+                                $second_ElementId=$newjson_decodevalue->second->id;
 
-                            if ($elementResultColor == "false") {
-                                continue;
+                                $first_ElementValue= $em->createQueryBuilder()
+                                    ->select('sum(a.value) as value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                                    ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
+                                    ->setParameter('elementId', $first_ElementId)
+                                    ->setParameter('monthName',$new_date)
+                                    ->setParameter('statusvalue',3)
+                                    ->setParameter('kpiId',$scorecardAllKpiId)
+                                    ->getQuery()
+                                    ->getResult();
+                                $second_ElementValue=$em->createQueryBuilder()
+                                    ->select('sum(a.value) as value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                                    ->where('a.elementDetailsId = :elementId and a.monthdetail = :monthName and a.kpiDetailsId = :kpiId and a.status = :statusvalue')
+                                    ->setParameter('elementId', $second_ElementId)
+                                    ->setParameter('monthName',$new_date)
+                                    ->setParameter('statusvalue',3)
+                                    ->setParameter('kpiId',$scorecardAllKpiId)
+                                    ->getQuery()
+                                    ->getResult();
+                                $average_FirstElementValue=$commonfunction_object->find_Avg_Sum_Calculation($vesselWiseTotalStatus,$first_ElementValue[0]['value'],$total_numberofShipsInserted_count);
+                                $average_SecondElementValue=$commonfunction_object->find_Avg_Sum_Calculation($vesselWiseTotalStatus,$second_ElementValue[0]['value'],$total_numberofShipsInserted_count);
+                                $first_ElementResult=$commonfunction_object->find_options_ComparsionRule($newjson_decodevalue->first->option,$average_FirstElementValue,(int)$newjson_decodevalue->first->value);
+                                $second_ElementResult=$commonfunction_object->find_options_ComparsionRule($newjson_decodevalue->second->option,$average_SecondElementValue,(int)$newjson_decodevalue->second->value);
+                                if($first_ElementResult==true &&$second_ElementResult==true)
+                                {
+                                    $elementResultColor=$newjson_decodevalue->action->color;
+                                    if ($elementResultColor == "Green") {
+                                        $elementColorValue = 3;
+                                    } else if ($elementResultColor == "Yellow") {
+                                        $elementColorValue = 2;
+                                    } else if ($elementResultColor == "Red") {
+                                        $elementColorValue = 1;
+                                    }
+                                    break;
+
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+
+
+                                /* $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . ((float)$averageElementValue);
+                                 $elementJsFileName = 'node ' . $elementJsFileDirectory;
+                                 $handle = popen($elementJsFileName, 'r');
+                                 $elementColor = fread($handle, 2096);
+                                 $elementResultColor = str_replace("\n", '', $elementColor);
+
+                                 if ($elementResultColor == "false") {
+                                     continue;
+                                 }
+
+                                 if ($elementResultColor == "Green") {
+                                     $elementColorValue = 3;
+                                     break;
+                                 } else if ($elementResultColor == "Yellow") {
+                                     $elementColorValue = 2;
+                                     break;
+                                 } else if ($elementResultColor == "Red") {
+                                     $elementColorValue = 1;
+                                     break;
+                                 }*/
                             }
 
-                            if ($elementResultColor == "Green") {
-                                $elementColorValue = 3;
-                                break;
-                            } else if ($elementResultColor == "Yellow") {
-                                $elementColorValue = 2;
-                                break;
-                            } else if ($elementResultColor == "Red") {
-                                $elementColorValue = 1;
-                                break;
-                            }
                         }
+                        else
+                        {
+                            $averageElementValue=$commonfunction_object->find_Avg_Sum_Calculation($vesselWiseTotalStatus,$scorecardElementSumValue,$total_numberofShipsInserted_count);
+
+                            $scorecardElementRulesArray = $em->createQueryBuilder()
+                                ->select('a.rules')
+                                ->from('InitialShippingBundle:Rules', 'a')
+                                ->where('a.elementDetailsId = :elementId')
+                                ->setParameter('elementId', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+
+                            $elementResultColor = "";
+                            $elementColorValue=0;
+
+                            for($elementRulesCount=0;$elementRulesCount<count($scorecardElementRulesArray);$elementRulesCount++)
+                            {
+                                $elementRule = $scorecardElementRulesArray[$elementRulesCount];
+                                $elementJsFileDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/js/87f1824_part_1_findcolornode_3.js \'' . $elementRule['rules'] . ' \' ' . ((float)$averageElementValue);
+                                $elementJsFileName = 'node ' . $elementJsFileDirectory;
+                                $handle = popen($elementJsFileName, 'r');
+                                $elementColor = fread($handle, 2096);
+                                $elementResultColor = str_replace("\n", '', $elementColor);
+
+                                if ($elementResultColor == "false") {
+                                    continue;
+                                }
+
+                                if ($elementResultColor == "Green") {
+                                    $elementColorValue = 3;
+                                    break;
+                                } else if ($elementResultColor == "Yellow") {
+                                    $elementColorValue = 2;
+                                    break;
+                                } else if ($elementResultColor == "Red") {
+                                    $elementColorValue = 1;
+                                    break;
+                                }
+                            }
+
+                        }
+
                         $elementValueWithWeight = $elementColorValue * (((int)$scorecardElementWeight) / 100);
                         $kpiSumValue+=$elementValueWithWeight;
                         array_push($ElementColor,$elementResultColor);
@@ -881,7 +977,7 @@ class ReadExcelWorker
             }
 
         }
-       // echo "Look up status";
+        // echo "Look up status";
         $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
         if(count($lookstatus)>0) {
             $newlookupstatus=$lookstatus[0];
@@ -890,7 +986,7 @@ class ReadExcelWorker
             $newlookupstatus->setDatetime(new \DateTime());
             $em->flush();
         }
-       echo "Data inserted";
+        echo "Data inserted";
         return true;
 
 
@@ -1141,15 +1237,15 @@ class ReadExcelWorker
         }
 
         $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
-        
+
         if(count($lookstatus)>0)
         {
             $newlookupstatus=$lookstatus[0];
             $newlookupstatus->setStatus(4);
             $newlookupstatus->setDatetime(new \DateTime());
             $em->flush();
-        }     
-        
+        }
+
         echo "Data inserted";
         return true;
 
@@ -1184,13 +1280,13 @@ class ReadExcelWorker
         for($ma=0;$ma<count($to_emailids);$ma++)
         {
 
-             $message = \Swift_Message::newInstance()
-                 ->setFrom($from_emailid)
-                 ->setTo($to_emailids[$ma])
-                 ->setSubject($subject)
-                 ->setBody($comment);
-             $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($filename));
-             $mailer->send($message);
+            $message = \Swift_Message::newInstance()
+                ->setFrom($from_emailid)
+                ->setTo($to_emailids[$ma])
+                ->setSubject($subject)
+                ->setBody($comment);
+            $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($filename));
+            $mailer->send($message);
 
         }
         echo "Mail Has Been Send...";
