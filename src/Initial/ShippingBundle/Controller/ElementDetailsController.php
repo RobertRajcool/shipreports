@@ -234,7 +234,11 @@ class ElementDetailsController extends Controller
             $indicationValue = $params['indicationValue'];
             $vesselWiseTotal = $params['vesselWiseTotal'];
             $symbolId = $params['SymbolId'];
-            $comparisonStatus = $params['ComparisonStatus'];
+            if(array_key_exists('ComparisonStatus',$params)) {
+                $comparisonStatus = $params['ComparisonStatus'];
+            } else {
+                $comparisonStatus = 0;
+            }
             $comparisonValueTotal = $request->request->get('comparison-rule-total');
             $activeMonth = $request->request->get('activeMonth');
             $activeYear = $request->request->get('activeYear');
