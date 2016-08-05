@@ -9,7 +9,6 @@
         '@AppBundle/Resources/public/js/rules.js' %}
         <script src="../js/rules/conditions-builder.js"></script>
         <script src="../js/rules/element-action-builder.js"></script>
-        {#<script src="../js/rules/demo.js"></script>#}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
 
@@ -248,7 +247,9 @@
 
                     if(data.comparisonRule.length>0) {
                         $.each(data.comparisonRule, function($i) {
-                            $('<tr id="comparison-row-'+$i+'"><td>'+data.comparisonRule[$i].firstName+'</td><td>'+data.comparisonRule[$i].firstValue+'</td><td>'+data.comparisonRule[$i].secondName+'</td><td>'+data.comparisonRule[$i].secondValue+'</td></tr>').appendTo(showComparisonTableBody);
+                            var firstSymbol = setOptionSymbolFunction(data.comparisonRule[$i].firstOption);
+                            var secondSymbol = setOptionSymbolFunction(data.comparisonRule[$i].secondOption);
+                            $('<tr id="comparison-row-'+$i+'"><td>'+data.comparisonRule[$i].firstName+'</td><td>'+firstSymbol+'<strong>'+data.comparisonRule[$i].firstValue+'</strong></td><td>'+data.comparisonRule[$i].secondName+'</td><td>'+secondSymbol+'<strong>'+data.comparisonRule[$i].secondValue+'</strong></td></tr>').appendTo(showComparisonTableBody);
                             if(data.comparisonRule[$i].action=='Green') {
                                 $('<td style="color: green">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
                             } else if(data.comparisonRule[$i].action=='Yellow') {
@@ -550,6 +551,10 @@
                 var editSecondElementValue = $('.edit-second-sub-element-value');
                 var editComparisonActionValue = $('.edit-comparison-action-value');
                 var editComparisonIconClass = $('.edit-comparison-icon');
+                var firstOption = $('.first-option');
+                var secondOption = $('.second-option');
+                var editFirstOption = $('.edit-first-option');
+                var editSecondOption = $('.edit-second-option');
                 var editComparisonSaveClass = $('.edit-comparison-save-class');
                 var deleteComparisonIconClass = $('.delete-comparison-icon');
                 var editComparisonStatusForIconClick = 0;
@@ -611,11 +616,13 @@
                         var comparisonRuleObj = {
                             first: {
                                 id:firstSubElement.val(),
-                                value:firstSubElementValue.val()
+                                value:firstSubElementValue.val(),
+                                option:firstOption.val()
                             },
                             second: {
                                 id:secondSubElement.val(),
-                                value:secondSubElementValue.val()
+                                value:secondSubElementValue.val(),
+                                option:secondOption.val()
                             },
                             action: {
                                 color:comparisonActionValue.val()
@@ -633,7 +640,9 @@
                         textBoxWithId.val(JSON.stringify(comparisonRuleObj));
                         var tooltipFirst = $('.first-sub-element option[value='+firstSubElement.val()+']').text();
                         var tooltipSecond = $('.second-sub-element option[value='+secondSubElement.val()+']').text();
-                        $('<tr><td title='+tooltipFirst+'> '+firstSubElementValue.val()+'</td><td title='+tooltipSecond+'>'+secondSubElementValue.val()+'</td><td>'+comparisonActionValue.val()+'</td></tr>').appendTo(comparisonTableBody);
+                        var firstSymbol = setOptionSymbolFunction(firstOption.val());
+                        var secondSymbol = setOptionSymbolFunction(secondOption.val());
+                        $('<tr><td title='+tooltipFirst+'> '+firstSymbol+firstSubElementValue.val()+'</td><td title='+tooltipSecond+'>'+secondSymbol+secondSubElementValue.val()+'</td><td>'+comparisonActionValue.val()+'</td></tr>').appendTo(comparisonTableBody);
                         comparisonRuleTable.show();
                         firstSubElementValue.val("");
                         secondSubElementValue.val("");
@@ -704,11 +713,13 @@
                         var comparisonRuleObj = {
                             first: {
                                 id:editFirstSubElement.val(),
-                                value:editFirstElementValue.val()
+                                value:editFirstElementValue.val(),
+                                option:editFirstOption.val()
                             },
                             second: {
                                 id:editSecondSubElement.val(),
-                                value:editSecondElementValue.val()
+                                value:editSecondElementValue.val(),
+                                option:editSecondOption.val()
                             },
                             action: {
                                 color:editComparisonActionValue.val()
@@ -719,18 +730,21 @@
                             firstId : editFirstSubElement.val(),
                             firstName : editElementFirstName,
                             firstValue : editFirstElementValue.val(),
+                            firstOption :editFirstOption.val(),
                             secondId : editSecondSubElement.val(),
                             secondName : editElementSecondName,
-                            secondValue : editSecondElementValue.val()
+                            secondValue : editSecondElementValue.val(),
+                            secondOption : editSecondOption.val()
                         };
+                        var firstSymbol = setOptionSymbolFunction(editFirstOption.val());
+                        var secondSymbol = setOptionSymbolFunction(editSecondOption.val());
                         if(editComparisonStatusForIconClick==1) {
                             editComparisonStatusForIconClick = 0;
-                            console.log(countId);
                             editComparisonRuleArray[countId] = comparisonRuleObj;
                             comparisonRuleArray[countId] = tempObject;
                             var editElementFirstName = $('.edit-first-sub-element option[value='+editFirstSubElement.val()+']').text();
                             var editElementSecondName = $('.edit-second-sub-element option[value='+editSecondSubElement.val()+']').text();
-                            $('<tr id="edit-comparison-row-'+countId+'"><td style="font-weight: bold;font-size: 12px;">'+editElementFirstName+'</td><td>'+editFirstElementValue.val()+'</td><td style="font-weight: bold;font-size: 12px;">'+editElementSecondName+'</td><td>'+editSecondElementValue.val()+'</td></tr>').appendTo(editComparisonTableBody);
+                            $('<tr id="edit-comparison-row-'+countId+'"><td style="font-weight: bold;font-size: 12px;">'+editElementFirstName+'</td><td>'+firstSymbol+'<strong>'+editFirstElementValue.val()+'<strong></td><td style="font-weight: bold;font-size: 12px;">'+editElementSecondName+'</td><td>'+secondSymbol+'<strong>'+editSecondElementValue.val()+'</strong></td></tr>').appendTo(editComparisonTableBody);
                             var currentRowId = $('#edit-comparison-row-'+countId+'');
                             if(editComparisonActionValue.val()=='Green') {
                                 $('<td style="color: green">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
@@ -746,7 +760,7 @@
                             comparisonRuleArray[tableRowCount] = tempObject;
                             editElementFirstName = $('.edit-first-sub-element option[value='+editFirstSubElement.val()+']').text();
                             editElementSecondName = $('.edit-second-sub-element option[value='+editSecondSubElement.val()+']').text();
-                            $('<tr id="edit-comparison-row-'+tableRowCount+'"><td style="font-weight: bold;font-size: 12px;">'+editElementFirstName+'</td><td>'+editFirstElementValue.val()+'</td><td style="font-weight: bold;font-size: 12px;">'+editElementSecondName+'</td><td>'+editSecondElementValue.val()+'</td></tr>').appendTo(editComparisonTableBody);
+                            $('<tr id="edit-comparison-row-'+tableRowCount+'"><td style="font-weight: bold;font-size: 12px;">'+editElementFirstName+'</td><td>'+firstSymbol+'<strong>'+editFirstElementValue.val()+'</strong></td><td style="font-weight: bold;font-size: 12px;">'+editElementSecondName+'</td><td>'+secondSymbol+'<strong>'+editSecondElementValue.val()+'</strong></td></tr>').appendTo(editComparisonTableBody);
                             currentRowId = $('#edit-comparison-row-'+tableRowCount+'');
                             if(editComparisonActionValue.val()=='Green') {
                                 $('<td style="color: green">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
@@ -767,6 +781,59 @@
                     editComparisonRuleArray.splice(countId,1);
                     comparisonRuleArray.splice(countId,1);
                     $('#edit-comparison-row-'+countId+'').remove();
+                });
+
+                function setOptionSymbolFunction(symbol) {
+                    if(symbol=='equalTo') {
+                        return '='
+                    } else if(symbol=='greaterThan') {
+                        return '>'
+                    } else if(symbol=='lessThan') {
+                        return '<'
+                    } else if(symbol=='greaterThanEqual') {
+                        return '>='
+                    } else if(symbol=='lessThanEqual') {
+                        return '<='
+                    } else {
+                        return '='
+                    }
+                }
+
+                var symbolAddId = $('#symbol-add-id');
+                var symbolName = $('.symbol_name');
+                var symbolIndication = $('.symbol_indication');
+                symbolAddId.click(function($e) {
+                    $e.preventDefault();
+                    var data = {
+                        symbolName: symbolName.val(),
+                        symbolIndication: symbolIndication.val()
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"add_element_symbol",/*Routing.generate('add_element_symbol'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            $('#close_button').click();
+                            $('#element_details_SymbolId option:gt(0)').remove();
+                            $.each(data.elementSymbolDetail, function(i, symbol) {
+                                $('#element_details_SymbolId').append($('<option>', {
+                                    value: symbol.id, text: symbol.symbolName
+                                }));
+                            });
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
                 });
 
             });
@@ -899,7 +966,6 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
-                    <h2>{{'element.add'|trans }}</h2>
                     <form class="form-horizontal no-style create-form" action="{{ path('elementdetails_new1') }}" method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
@@ -1006,7 +1072,7 @@
                                     </div>
                                 </div>
                             </fieldset>
-                            <div class="kpi_rules">
+                            {#<div class="kpi_rules">
                                 <fieldset class="fieldset_box ">
                                     <legend class="legend_name">{{ 'kpi.rules'|trans }}</legend>
                                     <div class="form-group button">
@@ -1024,7 +1090,7 @@
                                         <p class="textbox-place"></p>
                                         <input type="hidden" id="result" name="value">
                                     </div>
-                                    {# <div class="table-responsive">
+                                    #}{# <div class="table-responsive">
                                          <table class="table add_rule_conditions" id="rule-table">
                                              <thead>
                                              <tr id="row_id">
@@ -1035,9 +1101,9 @@
                                              </thead>
                                          </table>
                                          <div class="small"></div>
-                                     </div>#}
+                                     </div>#}{#
                                 </fieldset>
-                            </div>
+                            </div>#}
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Additional Details</legend>
                                 <div class="form-group">
@@ -1050,6 +1116,7 @@
                                     <label class="control-label col-xs-4 required_field"><strong>Symbol</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.SymbolId) }}
+                                        <a data-toggle="modal" class="add_email_btn ss-plus" style="margin-right: 15px" data-target="#myModal"></a>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -1073,6 +1140,13 @@
                                         <select class="first-sub-element add_element_comparison_select_field">
                                             <option value="">--select element--</option>
                                         </select>
+                                        <select class="first-option">
+                                            <option value="equalTo">is equal to</option>
+                                            <option value="greaterThan">is greater than</option>
+                                            <option value="lessThan">is less than</option>
+                                            <option value="greaterThanEqual">is greater than or equal</option>
+                                            <option value="lessThanEqual">is less than or equal</option>
+                                        </select>
                                         <input type="text" name="" class="first-sub-element-value add_element_comparison_text_field">
                                     </div>
                                 </div>
@@ -1081,6 +1155,13 @@
                                     <div class="col-xs-8">
                                         <select class="second-sub-element add_element_comparison_select_field">
                                             <option value="">--select element--</option>
+                                        </select>
+                                        <select class="second-option">
+                                            <option value="equalTo">is equal to</option>
+                                            <option value="greaterThan">is greater than</option>
+                                            <option value="lessThan">is less than</option>
+                                            <option value="greaterThanEqual">is greater than or equal</option>
+                                            <option value="lessThanEqual">is less than or equal</option>
                                         </select>
                                         <input type="text" name="" class="second-sub-element-value add_element_comparison_text_field">
                                     </div>
@@ -1104,11 +1185,11 @@
                                 <div class="table-responsive">
                                     <table class="table" id="comparison-rule-table">
                                         <thead>
-                                            <tr id="comparison-table-row-id">
-                                                <th class="color">Value-1</th>
-                                                <th class="color">Value-2</th>
-                                                <th class="color">Color</th>
-                                            </tr>
+                                        <tr id="comparison-table-row-id">
+                                            <th class="color">Value-1</th>
+                                            <th class="color">Value-2</th>
+                                            <th class="color">Color</th>
+                                        </tr>
                                         </thead>
                                         <tbody id="comparison-table-body">
 
@@ -1125,9 +1206,37 @@
                             <button class="cancel_btn" type="reset">{{ 'vessel.reset'|trans }}</button>
                         </div>
                     </form>
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog model_content">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Add symbol option</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal no-style" method="post">
+                                        <div class="form-group">
+                                            <label class="control-label required_field col-xs-3">Symbol Name</label>
+                                            <div class="col-xs-9">
+                                                <input type="text" class="send_reports_to_input symbol_name" name="symbol-name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label required_field col-xs-3">Symbol Indication</label>
+                                            <div class="col-xs-9">
+                                                <input type="text" class="send_reports_to_input symbol_indication" name="symbol-name" required>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="symbol-add-id" class="actions_report_btn">Add</button>
+                                </div>
+                            </div> <!-- /.modal-content -->
+                        </div> <!-- /.modal-dialog -->
+                    </div>
                 </div>
             </div>
-
         </section>
     </div>
 
@@ -1353,12 +1462,19 @@
                         </fieldset>
                         <fieldset class="fieldset_box comparison-table-edit-class" style="width: 700px; margin-bottom: 150px;">
                             <legend class="legend_name">Comparison Rule</legend>
-                            <div style="margin-right: 150px; margin-left: -50px">
+                            <div style="margin-right: 55px; margin-left: -90px">
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>First Element</strong></label>
                                     <div class="col-xs-8">
                                         <select class="edit-first-sub-element add_element_comparison_select_field">
                                             <option value="">--select element--</option>
+                                        </select>
+                                        <select class="edit-first-option add_element_comparison_option">
+                                            <option value="equalTo">is equal to</option>
+                                            <option value="greaterThan">is greater than</option>
+                                            <option value="lessThan">is less than</option>
+                                            <option value="greaterThanEqual">is greater than or equal</option>
+                                            <option value="lessThanEqual">is less than or equal</option>
                                         </select>
                                         <input type="text" name="" class="edit-first-sub-element-value add_element_comparison_text_field">
                                     </div>
@@ -1368,6 +1484,13 @@
                                     <div class="col-xs-8">
                                         <select class="edit-second-sub-element add_element_comparison_select_field">
                                             <option value="">--select element--</option>
+                                        </select>
+                                        <select class="edit-second-option add_element_comparison_option">
+                                            <option value="equalTo">is equal to</option>
+                                            <option value="greaterThan">is greater than</option>
+                                            <option value="lessThan">is less than</option>
+                                            <option value="greaterThanEqual">is greater than or equal</option>
+                                            <option value="lessThanEqual">is less than or equal</option>
                                         </select>
                                         <input type="text" class="edit-second-sub-element-value add_element_comparison_text_field">
                                     </div>
@@ -1411,6 +1534,7 @@
                 </form>
             </div>
         </div>
+
     </div>
 
 {% endblock %}

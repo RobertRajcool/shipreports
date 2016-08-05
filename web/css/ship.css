@@ -1833,13 +1833,6 @@ select {
     width: auto;
 }
 
-
-
-
-
-
-
-
 form input[type="text"],
 .form_class input[type="text"],
 form input[type="number"],
@@ -1888,8 +1881,6 @@ input[type="color"],
     padding: 3px 2px;
 }
 
-
-
 .graph_and_colour_coding_dashboard_main_title_row {
     border:1px solid #dddddd !important;
     border-top:2px solid #40bad9 !important;
@@ -1909,7 +1900,6 @@ input[type="color"],
 .graph_and_colour_coding_dashboard_main_title_row thead th a:hover {
     color:#CCCCCC;
 }
-
 
 /* Management Performance */
 .table_container_dashboard {
@@ -2066,12 +2056,10 @@ input[type="color"],
     float: left;
     margin: 9px 0 0 0;
 }
-.rankingreport
-{
-
+.rankingreport {
     margin-top: 56px;
-
 }
+
 .actions_report_top {
     padding: 15px 0px 0px 24px;
     font-size: 14px;
@@ -2151,21 +2139,6 @@ input[type="color"],
 #active_inactive_checkbox.opened {
     display: block;
 }
-
-/*
-.conditional {
-    margin-left: 20px !important;
-}
-.conditional .add_rule_drop {
-    margin-left: 4px !important;
-}
-.conditional .add_rule_input {
-    margin-left: 4px !important;
-}
-.conditional .delete_icon_btn {
-    margin: 4px 0 0 4px !important;
-}
-*/
 
 .profile_list {
     margin:0px;
@@ -2379,7 +2352,6 @@ input[type="color"],
 }
 
 .weight-error-message {
-
     float: right;
     margin: 10px 0 -8px 0;
     font-size: 12px;
@@ -2418,7 +2390,6 @@ input[type="color"],
         width: calc(100% - -1px);
     }
 }
-
 
 .table_container_verfication {
     height:240px;
@@ -2591,7 +2562,6 @@ input[type="color"],
     font-weight: bold;
 }
 
-
 .view_report_screen {
     bottom: 0px;
     display: block;
@@ -2637,6 +2607,15 @@ input[type="color"],
     color: #265882;
 }
 
+.add_element_comparison_select_field {
+    width:53%;
+}
+.add_element_comparison_text_field {
+    width:15%;
+}
+.add_element_comparison_option {
+    width:30%;
+}
 
 
 
