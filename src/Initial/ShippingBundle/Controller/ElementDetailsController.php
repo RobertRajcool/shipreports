@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Initial\ShippingBundle\Entity\ElementDetails;
 use Initial\ShippingBundle\Form\ElementDetailsType;
 use Initial\ShippingBundle\Entity\ElementComparisonRules;
+use Initial\ShippingBundle\Entity\ElementSymbols;
 
 /**
  * ElementDetails controller.
@@ -38,7 +39,7 @@ class ElementDetailsController extends Controller
     }
 
     /**
-     * Finds and displays a KpiDetails entity.
+     * Finds and displays a ElementDetails entity.
      *
      * @Route("/check_elementName", name="elementdetails_check_elementName")
      */
@@ -72,6 +73,42 @@ class ElementDetailsController extends Controller
                     'status' => 1
                 ));
             }
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
+     * Finds and displays a ElementDetails entity.
+     *
+     * @Route("/add_element_symbol", name="add_element_symbol")
+     */
+    public function addElementSymbolAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $symbolName = $request->request->get('symbolName');
+            $symbolIndication = $request->request->get('symbolIndication');
+            $em = $this->getDoctrine()->getManager();
+
+            $elementSymbol = new ElementSymbols();
+            $elementSymbol->setSymbolName($symbolName);
+            $elementSymbol->setSymbolIndication($symbolIndication);
+            $em->persist($elementSymbol);
+            $em->flush();
+
+            $query = $em->createQueryBuilder()
+                    ->select('a.symbolName, a.symbolIndication, a.id')
+                    ->from('InitialShippingBundle:ElementSymbols', 'a')
+                    ->getQuery()
+                    ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+               'elementSymbolDetail' => $query
+            ));
             return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
@@ -234,7 +271,11 @@ class ElementDetailsController extends Controller
             $indicationValue = $params['indicationValue'];
             $vesselWiseTotal = $params['vesselWiseTotal'];
             $symbolId = $params['SymbolId'];
-            $comparisonStatus = $params['ComparisonStatus'];
+            if(array_key_exists('ComparisonStatus',$params)) {
+                $comparisonStatus = $params['ComparisonStatus'];
+            } else {
+                $comparisonStatus = 0;
+            }
             $comparisonValueTotal = $request->request->get('comparison-rule-total');
             $activeMonth = $request->request->get('activeMonth');
             $activeYear = $request->request->get('activeYear');
@@ -473,9 +514,11 @@ class ElementDetailsController extends Controller
                         'firstId' =>$ruleObject->first->id,
                         'firstName'=>$firstElementQuery[0]['elementName'],
                         'firstValue' => $ruleObject->first->value,
+                        'firstOption' => $ruleObject->first->option,
                         'secondId' =>$ruleObject->second->id,
                         'secondName' => $secondElementQuery[0]['elementName'],
                         'secondValue' => $ruleObject->second->value,
+                        'secondOption' => $ruleObject->second->option,
                         'action' => $ruleObject->action->color
                     ));
                 }
