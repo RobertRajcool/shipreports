@@ -1145,7 +1145,119 @@ class DashboradController extends Controller
                 )
             );
         }
+    }
 
+
+    /**
+     * Find Elements original value
+     *
+     * @Route("/{id}/find_element_original_value", name="find_element_original_value")
+     */
+    public function findElementOriginalValueAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $monthInNumber = $request->request->get('monthNumber');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $da = new \DateTime(date('01-'.$monthInNumber.'-Y'));
+            $da->modify('last day of this month');
+
+            $shipDetails = $em->createQueryBuilder()
+                ->select('a.shipName, a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->getQuery()
+                ->getResult();
+            $elementDetails = $em->createQueryBuilder()
+                ->select('a.elementName, a.id')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiId')
+                ->setParameter('kpiId', $kpiDetailsId)
+                ->getQuery()
+                ->getResult();
+            $elementOriginalValuesArray = array();
+            for($i=0;$i<count($shipDetails);$i++) {
+                for($j=0;$j<count($elementDetails);$j++) {
+                    $elementOriginalValues = $em->createQueryBuilder()
+                        ->select('a.value')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :month and a.elementDetailsId = :elementId and a.shipDetailsId = :shipId')
+                        ->setParameter('month', $da)
+                        ->setParameter('elementId',$elementDetails[$j]['id'])
+                        ->setParameter('shipId',$shipDetails[$i]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                }
+            }
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementOriginalValues' => $elementOriginalValuesArray,
+                'shipDetail' => $shipDetails,
+                'monthName' => date("M",strtotime('01-'.$monthInNumber.'-2011')),
+                'monthNumber' => $monthInNumber
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
+     * Find previous month elements original value
+     *
+     * @Route("/{id}/previous_month_element_original_value", name="previous_month_element_original_value")
+     */
+    public function previousMonthElementOriginalValueAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $monthInNumber = $request->request->get('monthNumber');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $da = new \DateTime(date('01-'.$monthInNumber.'-Y'));
+            $da->modify('last day of this month');
+
+            $shipDetails = $em->createQueryBuilder()
+                ->select('a.shipName, a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->getQuery()
+                ->getResult();
+            $elementDetails = $em->createQueryBuilder()
+                ->select('a.elementName, a.id')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiId')
+                ->setParameter('kpiId', $kpiDetailsId)
+                ->getQuery()
+                ->getResult();
+            $elementOriginalValuesArray = array();
+            for($i=0;$i<count($shipDetails);$i++) {
+                for($j=0;$j<count($elementDetails);$j++) {
+                    $elementOriginalValues = $em->createQueryBuilder()
+                        ->select('a.value')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :month and a.elementDetailsId = :elementId and a.shipDetailsId = :shipId')
+                        ->setParameter('month', $da)
+                        ->setParameter('elementId',$elementDetails[$j]['id'])
+                        ->setParameter('shipId',$shipDetails[$i]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                }
+            }
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementOriginalValues' => $elementOriginalValuesArray,
+                'shipDetail' => $shipDetails,
+                'monthName' => date("M",strtotime('01-'.$monthInNumber.'-2011')),
+                'monthNumber' => $monthInNumber
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
 
     /**
@@ -1229,6 +1341,7 @@ class DashboradController extends Controller
                 $scorecardKpiColorArray = array();
                 $date = strtotime($quarterDatesArray[$monthCount]);
                 $monthLetterFormat = date('M', $date);
+                $monthNumberFormat = date('m', $date);
                 array_push($monthLetterArray, $monthLetterFormat);
                 $monthDetail = new \DateTime($quarterDatesArray[$monthCount]);
                 $monthlyScorecardKpiWeightAverageValueTotal = 0;
@@ -1374,6 +1487,7 @@ class DashboradController extends Controller
                     'kpiname' => $scorecardKpiName,
                     'chart' => $ob,
                     'montharray' => $monthLetterArray,
+                    'monthInNumber' => $monthNumberFormat,
                     'elementcolorarray' => $monthlyElementColorArray,
                     'countmonth' => count($monthlyElementColorArray),
                     'kpiid' => $kpiid,
@@ -1436,7 +1550,6 @@ class DashboradController extends Controller
 
             $response->setData(array('returnresult' => $result));
             return $response;
-
         }
     }
 
@@ -1485,7 +1598,6 @@ class DashboradController extends Controller
         $response->setData(array('resultarray' => $listofcomment, 'lastinsertid' => $lastid));
         return $response;
 
-
     }
 
     /**
@@ -1533,8 +1645,6 @@ class DashboradController extends Controller
         $response = new JsonResponse();
         $response->setData(array('resultarray' => $listofcomment, 'lastinsertid' => $lastid));
         return $response;
-
-
     }
 
 
@@ -1846,7 +1956,6 @@ class DashboradController extends Controller
                 );
             }
 
-
             return $this->render(
                 'InitialShippingBundle:DashBorad:listallkpiforship_ranking.html.twig',
                 array(
@@ -1865,8 +1974,6 @@ class DashboradController extends Controller
                 )
             );
         }
-
-
     }
 
     /**
@@ -2312,8 +2419,6 @@ class DashboradController extends Controller
                             'elementRule' => $scorecardElementRules
                         )
                     );
-
-
                 }
             }
 
