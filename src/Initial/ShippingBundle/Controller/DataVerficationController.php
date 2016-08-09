@@ -3,6 +3,7 @@
 namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\CommonFunctions;
+use Initial\ShippingBundle\Entity\RankingFolder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -2138,23 +2139,24 @@ class DataVerficationController extends Controller
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles';
+                $exceldataofmonth = $excelobj->getDataOfMonth();
+                $myexcelnewdatevalue = $exceldataofmonth->modify('last day of this month');
+                $folderName=date('F-Y', strtotime(date_format($myexcelnewdatevalue,'Y-m-d')));
+                $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/'.$folderName;
                 $file = $excelobj->getFilename();
-
                 $fileName = $excelobj->getFilename()->getClientOriginalName();
-
                 $ext = pathinfo($uploaddir . $fileName, PATHINFO_EXTENSION);
-
                 $name = substr($fileName, 0, -(strlen($ext) + 1));
-                //  echo $name.'<br>';
-                $i = 1;
+                $fileName = $name.'_' . date('Y-m-d H-i-s') . '.' . $ext;
+                if (!file_exists($uploaddir)) {
+                    mkdir($uploaddir, 0777, true);
+                    $folderobject = new RankingFolder();
+                    $folderobject->setFolderName($folderName);
+                    $em->persist($folderobject);
+                    $em->flush();
 
-                $fileName = $name . date('Y-m-d H-i-s') . '.' . $ext;
-
-
+                }
                 if ($file->move($uploaddir, $fileName)) {
-
-
                     $username = $user->getUsername();
                     $userquery = $em->createQueryBuilder()
                         ->select('IDENTITY(a.companyid)')
@@ -2163,20 +2165,16 @@ class DataVerficationController extends Controller
                         ->setParameter('userId', $userid)
                         ->getQuery();
                     $useremailid = $userquery->getSingleScalarResult();
+                    $folderId = $em->getRepository('InitialShippingBundle:RankingFolder')->findBy(array('folderName' => $folderName));
                     $excelobj->setFilename($fileName);
-                    $mailer = $this->container->get('mailer');
+                    $excelobj->setFolderId($folderId[0]);
                     $input = $uploaddir . '/' . $excelobj->getFilename();
-
-                    $mydatevalue = $excelobj->getDataofmonth();
-                    $exceldataofmonth = $excelobj->getDataOfMonth();
-                    $myexcelnewdatevalue = $exceldataofmonth->modify('last day of this month');
                     $excelobj->setUserid($username);
                     $excelobj->setCompanyId($useremailid);
                     $nowdate1 = date("Y-m-d H:i:s");
                     $nowdatetime = new \DateTime($nowdate1);
                     $excelobj->setDatetime($nowdatetime);
                     $excelobj->setDataOfMonth($myexcelnewdatevalue);
-
                     $em->persist($excelobj);
                     $em->flush();
                 }
@@ -2897,13 +2895,83 @@ class DataVerficationController extends Controller
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                 $templatechoosen = 'v-ships_layout.html.twig';
             }
+            $userdetails = $em->getRepository('InitialShippingBundle:RankingFolder')->findAll();
 
-
-            $userdetails = $em->getRepository('InitialShippingBundle:Excel_file_details')->findBy(array('company_id' => $companyid));
 
             return $this->render('InitialShippingBundle:DataImportRanking:listall.html.twig', array(
                 'userdetails' => $userdetails,'template'=>$templatechoosen
             ));
+        }
+
+    }
+    /**
+     * Show File For Ranking.
+     *
+     * @Route("/{dataofmonth}/showfileslist_ranking", name="showfileslist_ranking")
+     */
+    public function showfiles_listfileAction(Request $request,$dataofmonth)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        } else {
+            $username = $user->getUsername();
+            $role=$user->getRoles();
+            $companyid=$user->getCompanyid();
+                //$convertedformat=new \DateTime($datofmonth);
+                //$convertedformat->modify('last day of this month');
+                if($companyid==null)
+                {
+                    $userquery = $em->createQueryBuilder()
+                        ->select('a.id')
+                        ->from('InitialShippingBundle:CompanyDetails', 'a')
+                        ->where('a.adminName = :adminName')
+                        ->setParameter('adminName', $username)
+                        ->getQuery();
+                    $companyid = $userquery->getSingleScalarResult();
+                }
+            /*
+                $templatechoosen = 'base.html.twig';
+                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    $templatechoosen = 'v-ships_layout.html.twig';
+                }*/
+                $listoffiles = $em->createQueryBuilder()
+                    ->select('a.id','a.dataOfMonth','a.datetime','a.filename','a.userid','c.folderName')
+                    ->from('InitialShippingBundle:Excel_file_details', 'a')
+                    ->leftjoin('InitialShippingBundle:RankingFolder', 'c', 'WITH', 'c.id = a.folderId')
+                    ->where('a.company_id = :company_id')
+                    ->andwhere('c.folderName = :folderName')
+                    ->setParameter('company_id', $companyid)
+                    ->setParameter('folderName', $dataofmonth)
+                    ->getQuery()
+                    ->getResult();
+
+            $childerarray=array();
+            for($listofFileCount=0;$listofFileCount<count($listoffiles);$listofFileCount++)
+            {
+                $fileid='file-'.($listofFileCount+1);
+                $childerarray[$listofFileCount]['id']=$fileid;
+                $childerarray[$listofFileCount]['name']=$listoffiles[$listofFileCount]['filename'];
+                $childerarray[$listofFileCount]['type']='xls';
+                if ($role[0] != 'ROLE_KPI_INFO_PROVIDER') {
+                    $childerarray[$listofFileCount]['url']='/dataverfication/'.$listoffiles[$listofFileCount]['filename'].'/'.$listoffiles[0]['folderName'].'/downfile_ranking';
+                }
+
+
+            }
+            $finalconstractorarray=array();
+            $finalconstractorarray['id']='dir-1';
+            $finalconstractorarray['name']=$listoffiles[0]['folderName'];
+            $finalconstractorarray['type']='dir';
+            $finalconstractorarray['children']=$childerarray;
+
+
+
+
+            $response = new JsonResponse();
+            $response->setData(array('listoffiles'=>array($finalconstractorarray)));
+            return $response;
         }
 
     }
@@ -2987,12 +3055,12 @@ class DataVerficationController extends Controller
     /**
      * Download File For Ranking.
      *
-     * @Route("/{filename}/downfile_ranking", name="downfile_ranking")
+     * @Route("/{filename}/{foldername}/downfile_ranking", name="downfile_ranking")
      */
-    public function downloadexcelAction($filename, Request $request)
+    public function downloadexcelAction($filename,$foldername, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/' . $filename;
+        $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/' . $foldername.'/'.$filename;
         $content = file_get_contents($uploaddir);
 
         $response = new Response();
