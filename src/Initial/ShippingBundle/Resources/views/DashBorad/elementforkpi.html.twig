@@ -67,7 +67,6 @@
                     $('#viewcomment').show();
                     $('#hidecomment').hide();
                     $('#buttonid').show();
-
                 });
                 $('#toemail').keyup(function ($e) {
                     $e.preventDefault();
@@ -78,33 +77,26 @@
                         type: "post",
                         url: Routing.generate('autocompleteformailing'),
                         beforeSend: function () {
-                            /* $("#toemail").css("background","#FFF url(LoaderIcon.gif) no-repeat 165px");*/
+
                         }
                     });
                     $.ajax({
                         data: data,
                         success: function (data) {
-
                             if ($.isArray(data.returnresult)) {
                                 $.each(data.returnresult, function (i, listelemnt) {
-
                                     $('#hiddenresult').val(data.returnresult);
                                     $('#livesearchdiv').show();
                                     $("#livesearch").show();
                                     $("#livesearch").html('<li class="dynamiclabel">' + listelemnt.groupname + '</li><li class="dynamiclabel">' + listelemnt.useremailid + '</li>');
-
                                 });
                             }
-                        }
-                        ,
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             window.location.href = base_url+'/login';
                         }
                     });
-
                 });
-
 
                 $(".dynamiclabel").live("click", function ($e) {
                     $e.preventDefault();
@@ -120,7 +112,6 @@
                     $e.preventDefault();
                     $('#livesearchdiv').hide();
                 });
-
 
                 $('#addcommentid').click(function ($e) {
                     $e.preventDefault();
@@ -138,58 +129,10 @@
                             type: "post",
                             url: Routing.generate('runtimecommentforkpi'),
                             beforeSend: function () {
-                                var text = '';
-
-                                if ($('body').find('#resultLoading').attr('id') != 'resultLoading') {
-                                    $('body').append('<div id="resultLoading" style="display:none"><div><img src="/images/ajax-loader.gif"><div>' + text + '</div></div><div class="bg"></div></div>');
-                                }
-
-                                $('#resultLoading').css({
-                                    'width': '100%',
-                                    'height': '100%',
-                                    'position': 'fixed',
-                                    'z-index': '10000000',
-                                    'top': '0',
-                                    'left': '0',
-                                    'right': '0',
-                                    'bottom': '0',
-                                    'margin': 'auto'
-                                });
-
-                                $('#resultLoading .bg').css({
-                                    'background': '#000000',
-                                    'opacity': '0.7',
-                                    'width': '100%',
-                                    'height': '100%',
-                                    'position': 'absolute',
-                                    'top': '0'
-                                });
-
-                                $('#resultLoading>div:first').css({
-                                    'width': '250px',
-                                    'height': '75px',
-                                    'text-align': 'center',
-                                    'position': 'fixed',
-                                    'top': '0',
-                                    'left': '0',
-                                    'right': '0',
-                                    'bottom': '0',
-                                    'margin': 'auto',
-                                    'font-size': '16px',
-                                    'z-index': '10',
-                                    'color': '#ffffff'
-
-                                });
-
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeIn(300);
-                                $('body').css('cursor', 'wait');
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
                             },
                             complete: function () {
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeOut(300);
-                                $('body').css('cursor', 'default');
-                                $('#commentandreportdiv').hide();
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
                             }
                         });
                         $.ajax({
@@ -201,7 +144,6 @@
                                 $('#lastid').val(a);
                                 $('#viewcommentdiv').text('');
                                 if ($.isArray(data.resultarray)) {
-                                    // alert('if');
                                     $.each(data.resultarray, function (i, listelemnt) {
                                         var dataObj = JSON.stringify(listelemnt.datetime);
                                         var jsonobject = JSON.parse(dataObj);
@@ -215,8 +157,6 @@
                                                             d.getMinutes().padLeft(),
                                                             d.getSeconds().padLeft()].join(':');
                                         $('<p><strong>' + listelemnt.username + ': ' + dformat + '</strong>:' + listelemnt.comment + '</p>').appendTo("#viewcommentdiv");
-
-
                                     });
                                 }
                                 $('#commentandreportdiv').hide();
@@ -239,6 +179,7 @@
 
 
                 });
+
                 $('#chatform').submit(function (e) {
                     e.preventDefault();
                     var self = this;
@@ -259,15 +200,13 @@
                         success: function (data) {
                             $('#imagefilename').val(data);
                             submitchatform();
-
-                        }
-                        ,
+                        },
                         error: function (XMLHttpRequest, textStatus, errorThrown) {
                             window.location.href = base_url+'/login';
                         }
                     });
-
                 });
+
                 function submitchatform() {
 
                     var form = $('#chatform');
@@ -347,10 +286,7 @@
                     });
                 };
 
-
-                //var actionColor = "";
                 var elements = [];
-
                 var k = 0;
                 {% for element in listofelement %}
 
@@ -404,12 +340,26 @@
                 k++;
                 {% endfor %}
 
-                $('.KpiRulesShow').hide();
+                var kpiRulesShow = $('.KpiRulesShow');
+                kpiRulesShow.hide();
                 $('.myFuncKpiRulesShow').live("click", function ($e) {
                     $e.preventDefault();
-                    $('.KpiRulesShow').toggle();
-                })
+                    if(toggleRulesStatus==0 && toggleOriginalDataStatus ==0) {
+                        toggleRulesStatus=1;
+                        kpiRulesShow.toggle();
+                    } else if(toggleRulesStatus==0 && toggleOriginalDataStatus ==1){
+                        kpiRulesShow.toggle();
+                        originalDataTableClass.toggle();
+                        toggleRulesStatus=1;
+                        toggleOriginalDataStatus=0;
+                    } else {
+                        kpiRulesShow.toggle();
+                        toggleRulesStatus=0;
+                    }
+                });
+
                 $('#rule_row_id').hide();
+
                 function splitfun(data) {
                     var result = data.split('*');
                     return result;
@@ -432,31 +382,181 @@
 
                     return that;
                 }());
-
                 Number.prototype.padLeft = function (base, chr) {
                     var len = (String(base || 10).length - String(this).length) + 1;
                     return len > 0 ? new Array(len).join(chr || '0') + this : this;
-                }
+                };
 
+                /*------------------------------Element original values show coding----------------------------------*/
+
+                var monthNumber;
+                var toggleRulesStatus = 0;
+                var toggleOriginalDataStatus = 0;
+                var elementOriginalValuesClass = $('.element-original-values-class');
+                var originalDataTableClass = $('.original-data-table');
+                originalDataTableClass.hide();
+                elementOriginalValuesClass.click(function($e) {
+                    $e.preventDefault();
+                    var data = {
+                        monthNumber:{{ monthInNumber }},
+                        kpiDetailsId:{{ kpiid }}
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"find_element_original_value",/*Routing.generate('find_element_original_value'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            monthNumber = data.monthNumber;
+                            originalDataTableClass.empty();
+                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"><th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th></tr></thead>').appendTo(originalDataTableClass);
+                            $.each(data.shipDetail, function(i,ship) {
+                                $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">'+ship.shipName+'</div></th>').appendTo($('#original-data-head-row'));
+                            });
+                            $('<tbody class="original-table-body"></tbody>').appendTo(originalDataTableClass);
+                            var row_count = 0;
+                            {% for element in listofelement %}
+                            $('<tr id="body-row-id-'+row_count+'"><td class="kpi_lement_name kpi_lement_name">{{ element.elementName }}</td><td>{{ element.weightage }}</td></tr>').appendTo($('.original-table-body'));
+                            $.each(data.elementOriginalValues, function(j,value) {
+                                $('<td>'+value[row_count]+'</td>').appendTo($('#body-row-id-'+row_count+''));
+                            });
+                            row_count++;
+                            {% endfor %}
+                            if(toggleRulesStatus==0 && toggleOriginalDataStatus ==0) {
+                                toggleOriginalDataStatus=1;
+                                originalDataTableClass.toggle();
+                            } else if(toggleRulesStatus==1 && toggleOriginalDataStatus ==0){
+                                kpiRulesShow.toggle();
+                                originalDataTableClass.toggle();
+                                toggleRulesStatus=0;
+                                toggleOriginalDataStatus=1;
+                            } else {
+                                originalDataTableClass.toggle();
+                                toggleOriginalDataStatus=0;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var previousMonth = $('.previous-month');
+                var nextMonth = $('.next-month');
+                previousMonth.live("click",function($e) {
+                    if(monthNumber-1>=1) {
+                        var data = {
+                            monthNumber:monthNumber-1,
+                            kpiDetailsId:{{ kpiid }}
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"previous_month_element_original_value",/*Routing.generate('previous_month_element_original_value'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                monthNumber = data.monthNumber;
+                                var originalTableBody = $('.original-table-body');
+                                var monthNameHead = $('#month-name-head');
+                                originalTableBody.empty();
+                                monthNameHead.empty();
+                                $('<a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a>').appendTo(monthNameHead);
+                                var row_count = 0;
+                                {% for element in listofelement %}
+                                $('<tr id="body-row-id-'+row_count+'"><td class="kpi_lement_name kpi_lement_name">{{ element.elementName }}</td><td>{{ element.weightage }}</td></tr>').appendTo(originalTableBody);
+                                $.each(data.elementOriginalValues, function(j,value) {
+                                    $('<td>'+value[row_count]+'</td>').appendTo($('#body-row-id-'+row_count+''));
+                                });
+                                row_count++;
+                                {% endfor %}
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    } else {
+                        alert('This is the first month of this year');
+                    }
+                });
+
+                nextMonth.live("click",function($e) {
+                    var num = {{ monthInNumber }};
+                    if(parseInt(monthNumber)+1<=parseInt(num)) {
+                        var data = {
+                            monthNumber:parseInt(monthNumber)+1,
+                            kpiDetailsId:{{ kpiid }}
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"previous_month_element_original_value",/*Routing.generate('previous_month_element_original_value'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                monthNumber = data.monthNumber;
+                                var originalTableBody = $('.original-table-body');
+                                var monthNameHead = $('#month-name-head');
+                                originalTableBody.empty();
+                                monthNameHead.empty();
+                                $('<a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a>').appendTo(monthNameHead);
+                                var row_count = 0;
+                                {% for element in listofelement %}
+                                $('<tr id="body-row-id-'+row_count+'"><td class="kpi_lement_name kpi_lement_name">{{ element.elementName }}</td><td>{{ element.weightage }}</td></tr>').appendTo(originalTableBody);
+                                $.each(data.elementOriginalValues, function(j,value) {
+                                    $('<td>'+value[row_count]+'</td>').appendTo($('#body-row-id-'+row_count+''));
+                                });
+                                row_count++;
+                                {% endfor %}
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    } else {
+                        alert('This is current month value');
+                    }
+                });
             });
 
         </script>
 
     {% endblock %}
     <div class="col-md-12 users_advanced_list_views_screen">
-
         <div class="table-responsive">
             <table class="table table-striped graph_and_colour_coding_main_title_row">
                 <thead>
-                <tr>
-                    <th>{{ kpiname }}</th>
-                </tr>
+                    <tr>
+                        <th>{{ kpiname }}</th>
+                    </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    {#<td>Scorecard: Minimum ~ maximum: 0 ~ 3.0</td>#}
                     <td>
-                        <a class="linkclass" href="{{ path('dashboardhome') }}" style="float: right">Back</a></td>
+                        <a class="linkclass" href="{{ path('dashboardhome') }}" style="float: right">Back</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -591,27 +691,29 @@
                             <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
                         {% endif %}
                     {% endif %}
-
                     {% set ik=ik+1 %}
                     {% set newcommandarray = {} %}
                 {% endfor %}
             </div>
 
-            <div class="rules_ranking"><a class="rules_show_btn myFuncKpiRulesShow" href="">Rules</a></div>
+            <div class="rules_ranking">
+                <a class="rules_show_btn myFuncKpiRulesShow" href="">Rules</a>
+                <a class="rules_show_btn element-original-values-class" style="cursor: pointer">Original values</a>
+            </div>
             <table class="table table-striped-4 kpi_ranking_rules_show_row KpiRulesShow">
                 <thead>
-                <tr>
-                    <th colspan="3">Rules</th>
-                </tr>
+                    <tr>
+                        <th colspan="3">Rules</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td id="rulePlaceId" class="rulePlace">
-
-                    </td>
-                </tr>
+                    <tr>
+                        <td id="rulePlaceId" class="rulePlace"></td>
+                    </tr>
                 </tbody>
             </table>
+
+            <table class="table verfication_ranking_table_form_section original-data-table" style="margin-bottom: 20px;"></table>
 
             <table class="table table-striped normal_table">
                 <thead>
@@ -630,15 +732,14 @@
                 <tr>
                     <td id="viewcommentdiv">
                         {% if commentarray|length <= 0 %}
-
                             {{ 'elementranking.nocommands'|trans }}
                         {% endif %}
                         {% if commentarray|length > 0 %}
                             {% for comobject in commentarray %}
-                                <p><strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }}
-                                        :</strong> {{ comobject.comment }}</p>
-
-
+                                <p>
+                                    <strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }}:</strong>
+                                    {{ comobject.comment }}
+                                </p>
                             {% endfor %}
                         {% endif %}
                     </td>
@@ -665,19 +766,13 @@
             <fieldset id="commentform" class="fieldset_box_2">
                 <legend class="legend_name">{{ 'elementranking.addcomment'|trans }}</legend>
                 <form class="form-horizontal no-style" method="post">
-
                     <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
-
                     <div class="form-group">
                         <div class="col-xs-12">
-                                <textarea id="usermycommentid" class="add_comment_textarea"
-                                          placeholder="Enter Comment Here" name="send_command[comment]" required>
-
-                                </textarea>
+                            <textarea id="usermycommentid" class="add_comment_textarea" placeholder="Enter Comment Here" name="send_command[comment]" required></textarea>
                         </div>
                     </div>
-                    <input class="submit_btn_save" id="addcommentid" type="submit"
-                           value="{{ 'elementranking.save'|trans }}">
+                    <input class="submit_btn_save" id="addcommentid" type="submit" value="{{ 'elementranking.save'|trans }}">
                 </form>
             </fieldset>
             <!--Form for Add comment Ends Here  -->
@@ -685,25 +780,23 @@
             <fieldset id="mailform" class="fieldset_box_2">
                 <legend class="legend_name">{{ 'elementranking.sendreport'|trans }}</legend>
                 <form id="chatform" class="form-horizontal no-style" method="post">
-
                     <input id="imagefilename" type="hidden" name="send_command[filename]">
                     <input id="lastid" type="hidden" name="send_command[lastid]">
                     <input id="kpiidforname" type="hidden" name="send_command[kpiid] " value="{{ kpiid }}">
                     <div class="form-group">
                         <label class="control-label  col-xs-3">{{ 'elementranking.addcomment'|trans }}</label>
                         <div class="col-xs-9">
-                            <div class="add_comment_checkbox"><label><input type="checkbox"
-                                                                            name="send_command[addcomment]"
-                                                                            class="inline-checkbox"
-                                                                            value="Yes"> {{ 'elementranking.yes'|trans }}
-                                </label></div>
+                            <div class="add_comment_checkbox">
+                                <label>
+                                    <input type="checkbox" name="send_command[addcomment]" class="inline-checkbox" value="Yes"> {{ 'elementranking.yes'|trans }}
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
                         <div class="col-xs-9">
-                            <input id="toemail" type="text" class="send_reports_to_input"
-                                   name="send_command[clientemail]" required>
+                            <input id="toemail" type="text" class="send_reports_to_input" name="send_command[clientemail]" required>
                             <div id="livesearchdiv" class="send_reports_to_input_list">
                                 <ul id="livesearch"></ul>
                             </div>
@@ -712,24 +805,19 @@
                     <div class="form-group">
                         <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
                         <div class="col-xs-9">
-                            <textarea id="mycommentid" name="send_command[comment]" required
-                                      class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                            <textarea id="mycommentid" name="send_command[comment]" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-xs-3">&nbsp;</label>
                         <div class="col-xs-9">
-
-                            <input id="" class="submit_btn_2" type="submit"
-                                   value="{{ 'elementranking.sendreport'|trans }}">
+                            <input id="" class="submit_btn_2" type="submit" value="{{ 'elementranking.sendreport'|trans }}">
                         </div>
-
                     </div>
                 </form>
             </fieldset>
             {# <a href="{{ path('scorecard_report_pdfReport_mail',{ 'activeMonth': appsCountry.id }) }}">link-check</a>#}
             <!--Form for Send Reports Ends Here  -->
         </div>
-    </div>
     </div>
 {% endblock %}

@@ -50,8 +50,6 @@
                     listIcon.hide();
                 });
 
-                
-
                 var editButton = $('.edit_element_button');
                 editButton.live("click",function($e) {
                     $e.preventDefault();
@@ -135,6 +133,7 @@
                 var num = 0;
                 var rule_value =0;
                 var elementList = $('.element_class');
+
                 elementList.live("click",function($e) {
                     $e.preventDefault();
                     var editEmptyValues = editEmptyValuesFunction();
@@ -164,7 +163,6 @@
                     });
                     $.ajax({
                         success: function(data) {
-                            console.log(data);
                             var monthNames = [
                                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
                             ];
@@ -192,6 +190,13 @@
                 var activeYear = $('.element_activeDate_year');
                 var endMonth = $('.element_endDate_month');
                 var endYear = $('.element_endDate_year');
+                var vesselWiseTotal = $('.vessel-wise-total');
+                var indicationValue = $('.indication-value');
+                var symbolValue = $('.symbol-value');
+                var comparisonStatusShow = $('.comparison-status-show');
+                var showComparisonTableBody = $('.show-comparison-table-body');
+                var comparisonTableShowClass = $('.comparison-table-show-class');
+                var baseValue = $('.base-value-show');
 
                 function emptyDetailsFunction(data) {
                     kpiName.empty();
@@ -206,10 +211,17 @@
                     endYear.empty();
                     editElementErrorMsg.empty();
                     validDate.empty();
-                    errorMessage.empty();
+                    vesselWiseTotal.empty();
+                    indicationValue.empty();
+                    symbolValue.empty();
+                    comparisonStatusShow.empty();
+                    showComparisonTableBody.empty();
+                    editFirstSubElement.empty();
+                    editSecondSubElement.empty();
+                    baseValue.empty();
                 }
 
-                function setShowValueFunction(data,monthNames,active_date,end_date) {
+                function setShowValueFunction(data, monthNames, active_date, end_date) {
                     kpiName.append(data.kpi_name[0].kpiName);
                     elementName.append(data.element_detail[0].elementName);
                     elementDescription.append(data.element_detail[0].description);
@@ -220,7 +232,36 @@
                     activeYear.append(active_date.getFullYear());
                     endMonth.append(monthNames[end_date.getMonth()]);
                     endYear.append(end_date.getFullYear());
+                    vesselWiseTotal.append(data.element_detail[0].vesselWiseTotal);
+                    indicationValue.append(data.element_detail[0].indicationValue);
+                    baseValue.append(data.element_detail[0].baseValue);
+                    if(data.symbolDetail.length>0) {
+                        symbolValue.append(data.symbolDetail[0].symbolName);
+                    }
+
+                    if(data.element_detail[0].comparisonStatus==1) {
+                        comparisonStatusShow.append('Yes');
+                        comparisonTableShowClass.show();
+                    } else {
+                        comparisonStatusShow.append('No');
+                        comparisonTableShowClass.hide();
+                    }
+
+                    if(data.comparisonRule.length>0) {
+                        $.each(data.comparisonRule, function($i) {
+                            $('<tr id="comparison-row-'+$i+'"><td>'+data.comparisonRule[$i].firstName+'</td><td>'+data.comparisonRule[$i].firstValue+'</td><td>'+data.comparisonRule[$i].secondName+'</td><td>'+data.comparisonRule[$i].secondValue+'</td></tr>').appendTo(showComparisonTableBody);
+                            if(data.comparisonRule[$i].action=='Green') {
+                                $('<td style="color: green">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
+                            } else if(data.comparisonRule[$i].action=='Yellow') {
+                                $('<td style="color: orange">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
+                            } else if(data.comparisonRule[$i].action=='Red') {
+                                $('<td style="color: red">'+data.comparisonRule[$i].action+'</td>').appendTo($('#comparison-row-'+$i+''));
+                            }
+                        });
+                    }
                 }
+
+                /*----------------------------------Element Edit Functions--------------------------*/
 
                 var editElementId = $('.element_edit_id');
                 var editKpiName = $('.edit_kpiName');
@@ -233,8 +274,24 @@
                 var editActiveYear = $('.active_year');
                 var editEndMonth = $('.end_month');
                 var editEndYear = $('.end_year');
+                var editVesselWiseTotal = $('.edit-vessel-wise-total');
+                var editIndicationValue = $('.edit-indication-value');
+                var editSymbol = $('.edit-symbol');
+                var editComparisonStatus = $('.edit-comparison-status');
+                var editBaseValue = $('.edit-base-value');
+                var editComparisonTableClass = $('.comparison-table-edit-class');
+                var editComparisonTableBody = $('.edit-comparison-table-body');
+                var validDate = $('.edit-valid-dates');
+                var editElementErrorMsg = $('.editErrorName');
+                var editSubmitButton = $('.edit_element_submit_button');
+                var editKpiErrorMsg = $('.edit-error-kpi');
+                var editComparisonStatusIdentification = 0;
+                var comparisonRuleArray = new Array();
+                var editComparisonRuleArray = new Array();
 
-                function setEditValueFunction(data,active_date,end_date) {
+                editComparisonTableClass.hide();
+
+                function setEditValueFunction(data, active_date, end_date) {
                     editElementName.val(data.element_detail[0].elementName);
                     editElementDescription.val(data.element_detail[0].description);
                     editElementWeight.val(data.element_detail[0].weightage);
@@ -245,6 +302,65 @@
                     editActiveYear.val(active_date.getFullYear());
                     editEndMonth.val(end_date.getMonth());
                     editEndYear.val(end_date.getFullYear());
+                    editIndicationValue.val(data.element_detail[0].indicationValue);
+                    editBaseValue.val(data.element_detail[0].baseValue);
+
+                    var averageId = $('#Average');
+                    var sumId = $('#Sum');
+                    if(averageId.val() == data.element_detail[0].vesselWiseTotal ) {
+                        averageId.attr('checked','checked');
+                    } else if(sumId.val() == data.element_detail[0].vesselWiseTotal) {
+                        sumId.attr('checked','checked');
+                    }
+
+                    editSymbol.empty();
+                    $.each(data.symbolAllDetail, function(i, symbol) {
+                        $('<option>'+symbol.symbolName+'</option>').val(symbol.id).appendTo(editSymbol);
+                    });
+                    editSymbol.val(data.element_detail[0]['1']);
+
+                    if(data.element_detail[0].comparisonStatus==1) {
+                        editComparisonStatus.attr('checked',true);
+                        editComparisonTableClass.show();
+                    } else {
+                        editComparisonStatus.attr('checked',false);
+                        editComparisonTableClass.hide();
+                    }
+
+                    if(data.comparisonRule.length>0) {
+                        editComparisonTableBody.empty();
+                        $.each(data.comparisonRule, function($i,rule) {
+                            comparisonRuleArray.push(rule);
+                            $('<tr id="edit-comparison-row-'+$i+'"><td style="font-weight: bold;font-size: 12px;">'+data.comparisonRule[$i].firstName+'</td><td>'+data.comparisonRule[$i].firstValue+'</td><td style="font-weight: bold;font-size: 12px;">'+data.comparisonRule[$i].secondName+'</td><td>'+data.comparisonRule[$i].secondValue+'</td></tr>').appendTo(editComparisonTableBody);
+                            var currentRowId = $('#edit-comparison-row-'+$i+'');
+                            if(data.comparisonRule[$i].action=='Green') {
+                                $('<td style="color: green">'+data.comparisonRule[$i].action+'</td>').appendTo(currentRowId);
+                            } else if(data.comparisonRule[$i].action=='Yellow') {
+                                $('<td style="color: orange">'+data.comparisonRule[$i].action+'</td>').appendTo(currentRowId);
+                            } else if(data.comparisonRule[$i].action=='Red') {
+                                $('<td style="color: red">'+data.comparisonRule[$i].action+'</td>').appendTo(currentRowId);
+                            }
+                            $('<td><a id="edit-comparison-id-'+$i+'" class="edit-comparison-icon edit_icon_btn ss-write"></a><a id="delete-comparison-id-'+$i+'" style="margin-left: 6px;" class="delete_icon_btn ss-delete delete-comparison-icon"></a></td>').appendTo(currentRowId);
+                            var tempObj = {
+                                first: {
+                                    id:data.comparisonRule[$i].firstId,
+                                    value:data.comparisonRule[$i].firstValue
+                                },
+                                second: {
+                                    id:data.comparisonRule[$i].secondId,
+                                    value:data.comparisonRule[$i].secondValue
+                                },
+                                action: {
+                                    color:data.comparisonRule[$i].action
+                                }
+                            };
+                            editComparisonRuleArray.push(tempObj);
+                        });
+                    }
+                    $.each(data.elementDetailAll, function(i,element) {
+                        $('<option>'+element.elementName+'</option>').val(element.id).appendTo(editFirstSubElement);
+                        $('<option>'+element.elementName+'</option>').val(element.id).appendTo(editSecondSubElement);
+                    });
                 }
 
                 function setKpiNameFunction(data) {
@@ -254,10 +370,6 @@
                     editKpiName.val(data.kpi_name[0].id);
                 }
 
-                var validDate = $('.edit-valid-dates');
-                var editElementErrorMsg = $('.editErrorName');
-                var editKpiErrorMsg = $('.edit-error-kpi');
-                var editSubmitButton = $('.edit_element_submit_button');
                 editSubmitButton.live("click",function($e) {
                     $e.preventDefault();
                     var editEmptyValues = editEmptyValuesFunction();
@@ -291,7 +403,13 @@
                         activeMonth : editActiveMonth.val(),
                         activeYear : editActiveYear.val(),
                         endMonth : editEndMonth.val(),
-                        endYear : editEndYear.val()
+                        endYear : editEndYear.val(),
+                        vesselWiseTotal: $('.edit-vessel-wise-total:checked').val(),
+                        indicationValue: editIndicationValue.val(),
+                        symbolId: editSymbol.val(),
+                        comparisonStatus: editComparisonStatusIdentification,
+                        comparisonRuleArray: editComparisonRuleArray,
+                        baseValue: editBaseValue.val()
                     };
                     var emptyDetails = emptyDetailsFunction(data);
                     $.ajaxSetup({
@@ -327,6 +445,7 @@
                         }
                     });
                 });
+
                 function editEmptyValuesFunction() {
                     editElementErrorMsg.empty();
                     editKpiErrorMsg.empty();
@@ -334,8 +453,13 @@
                     errorMessage.empty();
                 }
 
+                /*-------------------------------------Edit screen validation------------------------------------*/
+
                 var createWeight = $('#weight-id');
                 var kpiId = $('#kpi_id');
+                var editWeight = $('#edit-weight-id');
+                var errorMessage = $('.weight-error-text');
+
                 createWeight.change(function($e) {
                     $e.preventDefault();
                     var currentId = $(this).val();
@@ -348,7 +472,6 @@
                     var checkElementWeight = checkElementWeightFunction(data);
                 });
 
-                var editWeight = $('#edit-weight-id');
                 editWeight.change(function($e) {
                     $e.preventDefault();
                     var currentId = $(this).val();
@@ -361,7 +484,6 @@
                     var checkElementWeight = checkElementWeightFunction(data);
                 });
 
-                var errorMessage = $('.weight-error-text');
                 function checkElementWeightFunction(data) {
                     if(kpiId.val() != null) {
                         $.ajaxSetup({
@@ -446,6 +568,244 @@
                     $('body').css('cursor', 'default');
                 }
 
+                /*----------------------------------Elements Comparison Logic-----------------------------------*/
+
+                var comparisonId = $('#comparison-id');
+                var comparisonRuleView = $('.comparison-rule-view');
+                var firstSubElement = $('.first-sub-element');
+                var secondSubElement = $('.second-sub-element');
+                var firstSubElementValue = $('.first-sub-element-value');
+                var secondSubElementValue = $('.second-sub-element-value');
+                var comparisonAddClass = $('.comparison-add-class');
+                var comparisonActionValue = $('.comparison-action-value');
+                var textBoxPlaceClass = $('.text-box-place-class');
+                var comparisonRuleTable = $('#comparison-rule-table');
+                var comparisonTableBody = $('#comparison-table-body');
+                var comparisonRuleTotalClass = $('.comparison-rule-total-class');
+                var editFirstSubElement = $('.edit-first-sub-element');
+                var editSecondSubElement = $('.edit-second-sub-element');
+                var editFirstElementValue = $('.edit-first-sub-element-value');
+                var editSecondElementValue = $('.edit-second-sub-element-value');
+                var editComparisonActionValue = $('.edit-comparison-action-value');
+                var editComparisonIconClass = $('.edit-comparison-icon');
+                var editComparisonSaveClass = $('.edit-comparison-save-class');
+                var deleteComparisonIconClass = $('.delete-comparison-icon');
+                var editComparisonStatusForIconClick = 0;
+                var ruleCount = 0;
+                var countId = 0;
+
+                comparisonRuleView.hide();
+                comparisonRuleTable.hide();
+
+                comparisonId.live('click',function($e) {
+                    if(comparisonId.is(':checked') == true) {
+                        if(kpiId.val()== "") {
+                            alert('select KPI to create comparison rule');
+                            return false;
+                        } else {
+                            var data = {
+                                kpiDetailsId: kpiId.val()
+                            };
+                            $.ajaxSetup({
+                                global: false,
+                                type:"POST",
+                                url:"elements_for_kpi",/*Routing.generate('elements_for_kpi'),*/
+                                data:data,
+                                beforeSend: function () {
+                                    var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                                },
+                                complete: function () {
+                                    var setAjaxComplete = defaultAjaxCompleteFunction();
+                                }
+                            });
+                            $.ajax({
+                                success: function(data) {
+                                    firstSubElement.empty();
+                                    secondSubElement.empty();
+                                    $.each(data.elementDetails, function(i) {
+                                        $('<option>'+data.elementDetails[i].elementName+'</option>').val(data.elementDetails[i].id).attr('id',data.elementDetails[i].elementName).appendTo(firstSubElement);
+                                        $('<option>'+data.elementDetails[i].elementName+'</option>').val(data.elementDetails[i].id).appendTo(secondSubElement);
+                                    });
+                                    comparisonRuleView.show();
+                                },
+                                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                    alert('Error : ' + errorThrown);
+                                }
+                            });
+                        }
+                    } else {
+                        comparisonRuleView.hide();
+                        firstSubElementValue.val("");
+                        secondSubElementValue.val("");
+                        textBoxPlaceClass.empty();
+                    }
+                });
+
+                comparisonAddClass.click(function($e) {
+                    $e.preventDefault();
+                    if(firstSubElement.val()=="" || secondSubElement.val()=="" || firstSubElementValue.val()=="" || secondSubElementValue.val()=="") {
+                        alert('Choose all required fields to create comparison rule')
+                    }  else {
+                        var comparisonRuleObj = {
+                            first: {
+                                id:firstSubElement.val(),
+                                value:firstSubElementValue.val()
+                            },
+                            second: {
+                                id:secondSubElement.val(),
+                                value:secondSubElementValue.val()
+                            },
+                            action: {
+                                color:comparisonActionValue.val()
+                            }
+                        };
+                        ruleCount++;
+                        var textBox = $("<input>", {
+                            "type": "hidden",
+                            "class": "rulesTextBox",
+                            "id": "comparison-rules-text-id" + ruleCount,
+                            "name": "comparison-rules-" + ruleCount
+                        });
+                        textBoxPlaceClass.append(textBox);
+                        var textBoxWithId = $('#comparison-rules-text-id'+ruleCount+'');
+                        textBoxWithId.val(JSON.stringify(comparisonRuleObj));
+                        var tooltipFirst = $('.first-sub-element option[value='+firstSubElement.val()+']').text();
+                        var tooltipSecond = $('.second-sub-element option[value='+secondSubElement.val()+']').text();
+                        $('<tr><td title='+tooltipFirst+'> '+firstSubElementValue.val()+'</td><td title='+tooltipSecond+'>'+secondSubElementValue.val()+'</td><td>'+comparisonActionValue.val()+'</td></tr>').appendTo(comparisonTableBody);
+                        comparisonRuleTable.show();
+                        firstSubElementValue.val("");
+                        secondSubElementValue.val("");
+                        comparisonRuleTotalClass.val(ruleCount);
+                    }
+                });
+
+                editComparisonStatus.live('click',function() {
+                    if(editComparisonStatus.is(':checked') == true) {
+                        editComparisonStatus.attr('checked',true);
+                        editComparisonStatusIdentification = 1;
+                        var data = {
+                            kpiDetailsId: editKpiName.val()
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"elements_for_kpi",/*Routing.generate('elements_for_kpi'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                editFirstSubElement.empty();
+                                editSecondSubElement.empty();
+                                $.each(data.elementDetails, function(i) {
+                                    $('<option>'+data.elementDetails[i].elementName+'</option>').val(data.elementDetails[i].id).appendTo(editFirstSubElement);
+                                    $('<option>'+data.elementDetails[i].elementName+'</option>').val(data.elementDetails[i].id).appendTo(editSecondSubElement);
+                                });
+                                editComparisonTableClass.show();
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    } else {
+                        editComparisonStatus.attr('checked',false);
+                        editComparisonTableClass.hide();
+                        editComparisonStatusIdentification = 0;
+                    }
+                });
+
+                editComparisonIconClass.live('click',function($e) {
+                    if(editComparisonStatusForIconClick==0) {
+                        editComparisonStatusForIconClick = 1;
+                        countId = $(this).attr('id').substring($(this).attr('id').length-1);
+                        $('#edit-comparison-row-'+countId+'').remove();
+                        editFirstSubElement.val(comparisonRuleArray[countId].firstId);
+                        editFirstElementValue.val(comparisonRuleArray[countId].firstValue);
+                        editSecondSubElement.val(comparisonRuleArray[countId].secondId);
+                        editSecondElementValue.val(comparisonRuleArray[countId].secondValue);
+                        editComparisonActionValue.val(comparisonRuleArray[countId].action)
+                    } else {
+                        alert('Please save above rule');
+                    }
+                });
+
+                editComparisonSaveClass.live('click',function($e) {
+                    if(editFirstSubElement.val()=='' || editSecondSubElement.val()=='' || !$.trim(editFirstElementValue.val()) || !$.trim(editSecondElementValue.val())) {
+                        alert('All fields are required to generate rule !');
+                    } else {
+                        var comparisonRuleObj = {
+                            first: {
+                                id:editFirstSubElement.val(),
+                                value:editFirstElementValue.val()
+                            },
+                            second: {
+                                id:editSecondSubElement.val(),
+                                value:editSecondElementValue.val()
+                            },
+                            action: {
+                                color:editComparisonActionValue.val()
+                            }
+                        };
+                        var tempObject = {
+                            action : editComparisonActionValue.val(),
+                            firstId : editFirstSubElement.val(),
+                            firstName : editElementFirstName,
+                            firstValue : editFirstElementValue.val(),
+                            secondId : editSecondSubElement.val(),
+                            secondName : editElementSecondName,
+                            secondValue : editSecondElementValue.val()
+                        };
+                        if(editComparisonStatusForIconClick==1) {
+                            editComparisonStatusForIconClick = 0;
+                            console.log(countId);
+                            editComparisonRuleArray[countId] = comparisonRuleObj;
+                            comparisonRuleArray[countId] = tempObject;
+                            var editElementFirstName = $('.edit-first-sub-element option[value='+editFirstSubElement.val()+']').text();
+                            var editElementSecondName = $('.edit-second-sub-element option[value='+editSecondSubElement.val()+']').text();
+                            $('<tr id="edit-comparison-row-'+countId+'"><td style="font-weight: bold;font-size: 12px;">'+editElementFirstName+'</td><td>'+editFirstElementValue.val()+'</td><td style="font-weight: bold;font-size: 12px;">'+editElementSecondName+'</td><td>'+editSecondElementValue.val()+'</td></tr>').appendTo(editComparisonTableBody);
+                            var currentRowId = $('#edit-comparison-row-'+countId+'');
+                            if(editComparisonActionValue.val()=='Green') {
+                                $('<td style="color: green">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
+                            } else if(editComparisonActionValue.val()=='Yellow') {
+                                $('<td style="color: orange">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
+                            } else if(editComparisonActionValue.val()=='Red') {
+                                $('<td style="color: red">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
+                            }
+                            $('<td><a id="edit-comparison-id-'+countId+'" class="edit-comparison-icon edit_icon_btn ss-write"></a><a id="delete-comparison-id-'+countId+'" style="margin-left: 6px;" class="delete_icon_btn ss-delete delete-comparison-icon"></a></td>').appendTo(currentRowId);
+                        } else {
+                            var tableRowCount = editComparisonRuleArray.length;
+                            editComparisonRuleArray[tableRowCount] = comparisonRuleObj;
+                            comparisonRuleArray[tableRowCount] = tempObject;
+                            editElementFirstName = $('.edit-first-sub-element option[value='+editFirstSubElement.val()+']').text();
+                            editElementSecondName = $('.edit-second-sub-element option[value='+editSecondSubElement.val()+']').text();
+                            $('<tr id="edit-comparison-row-'+tableRowCount+'"><td style="font-weight: bold;font-size: 12px;">'+editElementFirstName+'</td><td>'+editFirstElementValue.val()+'</td><td style="font-weight: bold;font-size: 12px;">'+editElementSecondName+'</td><td>'+editSecondElementValue.val()+'</td></tr>').appendTo(editComparisonTableBody);
+                            currentRowId = $('#edit-comparison-row-'+tableRowCount+'');
+                            if(editComparisonActionValue.val()=='Green') {
+                                $('<td style="color: green">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
+                            } else if(editComparisonActionValue.val()=='Yellow') {
+                                $('<td style="color: orange">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
+                            } else if(editComparisonActionValue.val()=='Red') {
+                                $('<td style="color: red">'+editComparisonActionValue.val()+'</td>').appendTo(currentRowId);
+                            }
+                            $('<td><a id="edit-comparison-id-'+tableRowCount+'" class="edit-comparison-icon edit_icon_btn ss-write"></a><a id="delete-comparison-id-'+tableRowCount+'" style="margin-left: 6px;" class="delete_icon_btn ss-delete delete-comparison-icon"></a></td>').appendTo(currentRowId);
+                        }
+                        editFirstElementValue.val('');
+                        editSecondElementValue.val('');
+                    }
+                });
+
+                deleteComparisonIconClass.live('click',function($e) {
+                    countId = $(this).attr('id').substring($(this).attr('id').length-1);
+                    editComparisonRuleArray.splice(countId,1);
+                    comparisonRuleArray.splice(countId,1);
+                    $('#edit-comparison-row-'+countId+'').remove();
+                });
+
             });
         </script>
 
@@ -461,8 +821,10 @@
                         <span><a href="" class="grid_list_icon ss-rows list_icon">&nbsp;</a></span>
                     </span>
                 </div>
-                <div class="users_list_main"><span>{{'element.element_count'|trans }} ({{ element_count }})</span> <span
-                            class="show_dropdown_icon">&nbsp;</span></div>
+                <div class="users_list_main">
+                    <span>{{'element.element_count'|trans }} ({{ element_count }})</span>
+                    <span class="show_dropdown_icon">&nbsp;</span>
+                </div>
                 <div class="users_list_grid_main">
                     {% for elementDetail in elementDetails %}
                         <div class="users_list_grid">
@@ -479,221 +841,298 @@
     </div>
 
     <div id="element_list_view">
-        <section>
-            <div class="users_advanced_list_views_screen">
-                <div class="">
-                    <div class="add_user_btn_main">
-                        <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{'element.add'|trans }}</a></span>
-                        <span class="user_btn_main grid_list_main">
-                            <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
-                            <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
-                         </span>
-                    </div>
-                    <div class="spacing"></div>
-
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
+        <div class="users_advanced_list_views_screen">
+            <div class="">
+                <div class="add_user_btn_main">
+                    <span class="user_btn_main"><a href="" class="ss-plus add_btn">{{'element.add'|trans }}</a></span>
+                    <span class="user_btn_main grid_list_main">
+                        <span class="active"><a href="" class="grid_list_icon ss-grid box_icon" >&nbsp;</a></span>
+                        <span><a href="" class="grid_list_icon ss-rows list_icon" >&nbsp;</a></span>
+                     </span>
+                </div>
+                <div class="spacing"></div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{{ 'element.element_name'|trans }}</th>
+                            <th>{{ 'kpi.kpi_name'|trans }}</th>
+                            <th>{{ 'kpi.weight'|trans }}</th>
+                            <th>{{ 'kpi.start_date'|trans }}</th>
+                            <th>{{ 'kpi.end_date'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for elementDetail in elementDetails %}
                             <tr>
-                                <th>{{ 'element.element_name'|trans }}</th>
-                                <th>{{ 'kpi.kpi_name'|trans }}</th>
-                                <th>{{ 'kpi.weight'|trans }}</th>
-                                <th>{{ 'kpi.start_date'|trans }}</th>
-                                <th>{{ 'kpi.end_date'|trans }}</th>
+                                <td style="color: black">{{ elementDetail.elementName }}</td>
+                                <td>{{ elementDetail.kpiDetailsId }}</td>
+                                <td>{{ elementDetail.weightage }}</td>
+                                <td>
+                                    {% if elementDetail.activeDate|date('m') == 01 %}
+                                        {{ 'month.jan'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 02 %}
+                                        {{ 'month.feb'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 03 %}
+                                        {{ 'month.mar'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 04 %}
+                                        {{ 'month.apr'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 05 %}
+                                        {{ 'month.may'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 06 %}
+                                        {{ 'month.jun'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 07 %}
+                                        {{ 'month.jul'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 08 %}
+                                        {{ 'month.aug'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 09 %}
+                                        {{ 'month.sep'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 10 %}
+                                        {{ 'month.oct'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 11 %}
+                                        {{ 'month.nov'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% elseif elementDetail.activeDate|date('m') == 12 %}
+                                        {{ 'month.dec'|trans }}-{{ elementDetail.activeDate|date('Y') }}
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if elementDetail.endDate|date('m') == 01 %}
+                                        {{ 'month.jan'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 02 %}
+                                        {{ 'month.feb'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 03 %}
+                                        {{ 'month.mar'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 04 %}
+                                        {{ 'month.apr'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 05 %}
+                                        {{ 'month.may'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 06 %}
+                                        {{ 'month.jun'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 07 %}
+                                        {{ 'month.jul'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 08 %}
+                                        {{ 'month.aug'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 09 %}
+                                        {{ 'month.sep'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 10 %}
+                                        {{ 'month.oct'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 11 %}
+                                        {{ 'month.nov'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% elseif elementDetail.endDate|date('m') == 12 %}
+                                        {{ 'month.dec'|trans }}-{{ elementDetail.endDate|date('Y') }}
+                                    {% endif %}
+                                </td>
                             </tr>
-                            </thead>
-                            <tbody>
-                            {% for elementDetail in elementDetails %}
-                                <tr>
-                                    <td style="color: black">{{ elementDetail.elementName }}</td>
-                                    <td>{{ elementDetail.kpiDetailsId }}</td>
-                                    <td>{{ elementDetail.weightage }}</td>
-                                    <td>
-                                        {% if elementDetail.activeDate|date('m') == 01 %}
-                                            {{ 'month.jan'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 02 %}
-                                            {{ 'month.feb'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 03 %}
-                                            {{ 'month.mar'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 04 %}
-                                            {{ 'month.apr'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 05 %}
-                                            {{ 'month.may'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 06 %}
-                                            {{ 'month.jun'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 07 %}
-                                            {{ 'month.jul'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 08 %}
-                                            {{ 'month.aug'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 09 %}
-                                            {{ 'month.sep'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 10 %}
-                                            {{ 'month.oct'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 11 %}
-                                            {{ 'month.nov'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% elseif elementDetail.activeDate|date('m') == 12 %}
-                                            {{ 'month.dec'|trans }}-{{ elementDetail.activeDate|date('Y') }}
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if elementDetail.endDate|date('m') == 01 %}
-                                            {{ 'month.jan'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 02 %}
-                                            {{ 'month.feb'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 03 %}
-                                            {{ 'month.mar'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 04 %}
-                                            {{ 'month.apr'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 05 %}
-                                            {{ 'month.may'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 06 %}
-                                            {{ 'month.jun'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 07 %}
-                                            {{ 'month.jul'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 08 %}
-                                            {{ 'month.aug'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 09 %}
-                                            {{ 'month.sep'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 10 %}
-                                            {{ 'month.oct'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 11 %}
-                                            {{ 'month.nov'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% elseif elementDetail.endDate|date('m') == 12 %}
-                                            {{ 'month.dec'|trans }}-{{ elementDetail.endDate|date('Y') }}
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 
     <div class="element_create_view">
+        <div class="col-sm-11">
+            <div class="add_new_users_views_screen">
+                <h2>{{'element.add'|trans }}</h2>
+                <form class="form-horizontal no-style create-form" action="{{ path('rankingelementdetails_new1') }}" method="post">
+                    <div class="kpi_basic_details">
+                        <fieldset class="fieldset_box add_rule_form">
+                            <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{'element.kpi_select'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.kpiDetailsId,{'id':'kpi_id','label': ''}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.elementName,{'id':'element-id','label': ''}) }}
+                                </div>
+                                <div class="col-xs-8 weight-error-message" id="create-element-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.weightage,{'id':'weight-id','label': ''}) }}
+                                </div>
+                                <div class="col-xs-8 weight-error-message weight-error-text"> </div>
+                                <input type="hidden" class="weight-value">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.description,{'label': ''}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <span>
+                                        <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
+                                            <option selected="selected">--</option>
+                                            <option value="1">{{ 'month.jan'|trans }}</option>
+                                            <option value="2">{{ 'month.feb'|trans }}</option>
+                                            <option value="3">{{ 'month.mar'|trans }}</option>
+                                            <option value="4">{{ 'month.apr'|trans }}</option>
+                                            <option value="5">{{ 'month.may'|trans }}</option>
+                                            <option value="6">{{ 'month.jun'|trans }}</option>
+                                            <option value="7">{{ 'month.jul'|trans }}</option>
+                                            <option value="8">{{ 'month.aug'|trans }}</option>
+                                            <option value="9">{{ 'month.sep'|trans }}</option>
+                                            <option value="10">{{ 'month.oct'|trans }}</option>
+                                            <option value="11">{{ 'month.nov'|trans }}</option>
+                                            <option value="12">{{ 'month.dec'|trans }}</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop" name="activeyear" class="full-width-select">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                    <strong>{{ 'kpi.to'|trans }}</strong>
+                                    <span>
+                                        <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
+                                            <option selected="selected">--</option>
+                                            <option value="1">{{ 'month.jan'|trans }}</option>
+                                            <option value="2">{{ 'month.feb'|trans }}</option>
+                                            <option value="3">{{ 'month.mar'|trans }}</option>
+                                            <option value="4">{{ 'month.apr'|trans }}</option>
+                                            <option value="5">{{ 'month.may'|trans }}</option>
+                                            <option value="6">{{ 'month.jun'|trans }}</option>
+                                            <option value="7">{{ 'month.jul'|trans }}</option>
+                                            <option value="8">{{ 'month.aug'|trans }}</option>
+                                            <option value="9">{{ 'month.sep'|trans }}</option>
+                                            <option value="10">{{ 'month.oct'|trans }}</option>
+                                            <option value="11">{{ 'month.nov'|trans }}</option>
+                                            <option value="12">{{ 'month.dec'|trans }}</option>
+                                        </select>
+                                    </span>
+                                    <span>
+                                        <select class="add_rule_basic_year_drop" name="endYear" class="full-width-select">
+                                            <option selected="selected">--</option>
+                                            {% for i in 2000..2020 %}
+                                                <option value={{ i }}>{{ i }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Excel Details</legend>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4"><strong>Cell Detail</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset_box">
+                            <legend class="legend_name">Additional Details</legend>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>Indication Value</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.indicationValue) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>Symbol</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.SymbolId) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>Vessel Wise Total</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.vesselWiseTotal) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>Base Value</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.baseValue) }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4"><strong>Comparison Status</strong></label>
+                                <div class="col-xs-8">
+                                    {{ form_widget(form.ComparisonStatus,{'id':'comparison-id'}) }}
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="fieldset_box comparison-rule-view">
+                            <legend class="legend_name">Comparison Rule</legend>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>First Element</strong></label>
+                                <div class="col-xs-8">
+                                    <select class="first-sub-element add_element_comparison_select_field">
+                                        <option value="">--select element--</option>
+                                    </select>
+                                    <input type="text" name="" class="first-sub-element-value add_element_comparison_text_field">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>Second Element</strong></label>
+                                <div class="col-xs-8">
+                                    <select class="second-sub-element add_element_comparison_select_field">
+                                        <option value="">--select element--</option>
+                                    </select>
+                                    <input type="text" name="" class="second-sub-element-value add_element_comparison_text_field">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4 required_field"><strong>Choose Action</strong></label>
+                                <div class="col-xs-8">
+                                    <select class="comparison-action-value">
+                                        <option value="Green">Green</option>
+                                        <option value="Yellow">Yellow</option>
+                                        <option value="Red">Red</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group ">
+                                <label class="control-label col-xs-4">&nbsp;</label>
+                                <div class="col-xs-8 report_submit_main">
+                                    <a class="comparison-add-class report_submit">Add</a>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table" id="comparison-rule-table">
+                                    <thead>
+                                    <tr id="comparison-table-row-id">
+                                        <th class="color">Value-1</th>
+                                        <th class="color">Value-2</th>
+                                        <th class="color">Color</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="comparison-table-body">
 
-        <section>
-            <div class="col-sm-11">
-                <div class="add_new_users_views_screen">
-                    <h2>{{'element.add'|trans }}</h2>
-                    <form class="form-horizontal no-style create-form" action="{{ path('rankingelementdetails_new1') }}" method="post">
-                        <div class="kpi_basic_details">
-                            <fieldset class="fieldset_box add_rule_form">
-                                <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{'element.kpi_select'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.kpiDetailsId,{'id':'kpi_id','label': ''}) }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'element.element_name'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.elementName,{'id':'element-id','label': ''}) }}
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message" id="create-element-error"></div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.weight'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.weightage,{'id':'weight-id','label': ''}) }}
-                                    </div>
-                                    <div class="col-xs-8 weight-error-message weight-error-text"> </div>
-                                    <input type="hidden" class="weight-value">
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.description,{'label': ''}) }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        <span>
-                                            <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option value="1">{{ 'month.jan'|trans }}</option>
-                                                <option value="2">{{ 'month.feb'|trans }}</option>
-                                                <option value="3">{{ 'month.mar'|trans }}</option>
-                                                <option value="4">{{ 'month.apr'|trans }}</option>
-                                                <option value="5">{{ 'month.may'|trans }}</option>
-                                                <option value="6">{{ 'month.jun'|trans }}</option>
-                                                <option value="7">{{ 'month.jul'|trans }}</option>
-                                                <option value="8">{{ 'month.aug'|trans }}</option>
-                                                <option value="9">{{ 'month.sep'|trans }}</option>
-                                                <option value="10">{{ 'month.oct'|trans }}</option>
-                                                <option value="11">{{ 'month.nov'|trans }}</option>
-                                                <option value="12">{{ 'month.dec'|trans }}</option>
-                                            </select>
-                                        </span>
-                                        <span>
-                                            <select class="add_rule_basic_year_drop" name="activeyear" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                {% for i in 2000..2020 %}
-                                                    <option value={{ i }}>{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </span>
-                                        <strong>{{ 'kpi.to'|trans }}</strong>
-                                        <span>
-                                            <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                <option value="1">{{ 'month.jan'|trans }}</option>
-                                                <option value="2">{{ 'month.feb'|trans }}</option>
-                                                <option value="3">{{ 'month.mar'|trans }}</option>
-                                                <option value="4">{{ 'month.apr'|trans }}</option>
-                                                <option value="5">{{ 'month.may'|trans }}</option>
-                                                <option value="6">{{ 'month.jun'|trans }}</option>
-                                                <option value="7">{{ 'month.jul'|trans }}</option>
-                                                <option value="8">{{ 'month.aug'|trans }}</option>
-                                                <option value="9">{{ 'month.sep'|trans }}</option>
-                                                <option value="10">{{ 'month.oct'|trans }}</option>
-                                                <option value="11">{{ 'month.nov'|trans }}</option>
-                                                <option value="12">{{ 'month.dec'|trans }}</option>
-                                            </select>
-                                        </span>
-                                        <span>
-                                            <select class="add_rule_basic_year_drop" name="endYear" class="full-width-select">
-                                                <option selected="selected">--</option>
-                                                {% for i in 2000..2020 %}
-                                                    <option value={{ i }}>{{ i }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </span>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <fieldset class="fieldset_box">
-                                <legend class="legend_name">Excel Details</legend>
-
-                                <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>Cell Detail</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.cellDetails,{'id':'valueid','label': ''}) }}
-                                    </div>
-                                </div>
-
-                            </fieldset>
-                        </div>
-                        <div class="actions_submit">
-                            <button class="submit_btn create_btn" id="get_value"  type="submit">{{ 'vessel.add'|trans }}</button>
-                            <button class="cancel_btn" type="reset" >{{ 'vessel.reset'|trans }}</button>
-                        </div>
-                    </form>
-                </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="text-box-place-class">
+                        <input type="hidden" name="comparison-rule-total" class="comparison-rule-total-class" value="0">
+                    </div>
+                    <div class="actions_submit">
+                        <button class="submit_btn create_btn" id="get_value"  type="submit">{{ 'vessel.add'|trans }}</button>
+                        <button class="cancel_btn" type="reset" >{{ 'vessel.reset'|trans }}</button>
+                    </div>
+                </form>
             </div>
-
-        </section>
+        </div>
     </div>
 
     <div class = "show_element">
@@ -706,7 +1145,6 @@
                     <fieldset class="fieldset_box">
                         <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                         <div class="form_view">
-
                             <label class="form_labell"><strong>{{ 'kpi.kpi_name'|trans }} :</strong></label>
                             <label class="form_input kpi_name"> </label>
                         </div>
@@ -741,6 +1179,44 @@
                             <label class="form_input element_cellDetail"> </label>
                         </div>
                     </fieldset>
+                    <fieldset class="fieldset_box">
+                        <legend class="legend_name">Additional Details</legend>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Indication Value :</strong></label>
+                            <label class="form_input indication-value"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Symbol :</strong></label>
+                            <label class="form_input symbol-value"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Vessel Wise Total :</strong></label>
+                            <label class="form_input vessel-wise-total"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Base Value :</strong></label>
+                            <label class="form_input base-value-show"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Comparison Status :</strong></label>
+                            <label class="form_input comparison-status-show"> </label>
+                        </div>
+                    </fieldset>
+                    <fieldset class="fieldset_box comparison-table-show-class" style="width: 700px;">
+                        <legend class="legend_name">Comparison Rule</legend>
+                        <table class="table-responsive">
+                            <thead class="table-header">
+                            <tr>
+                                <th style="width: 32%">Element 1</th>
+                                <th style="width: 9%">Value</th>
+                                <th style="width: 32%">Element 2</th>
+                                <th style="width: 9%">Value</th>
+                                <th style="width: 16%">Color</th>
+                            </tr>
+                            </thead>
+                            <tbody class="show-comparison-table-body"></tbody>
+                        </table>
+                    </fieldset>
                 </div>
             </div>
         </section>
@@ -752,14 +1228,13 @@
                 <div class="add_new_users_views_screen">
                     <h2>{{ 'element.element_edit'|trans }}</h2>
                     <form class="form-horizontal no-style">
-
                         <div class="add_new_users_form">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
                                 <div class="form-group">
                                     <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.kpi_name'|trans }}</strong></label>
                                     <div class="col-xs-8 kpi_name_edit">
-                                        <select class="edit_kpiName" name="kpiName" readonly="true">
+                                        <select class="edit_kpiName" name="kpiName" disabled>
                                             <option value="0">----{{'element.kpi_select'|trans }}----</option>
                                         </select>
                                     </div>
@@ -854,6 +1329,92 @@
                                         <input type="text" class="edit_element_cellDetails" value="" placeholder="">
                                     </div>
                                 </div>
+                            </fieldset>
+                            <fieldset class="fieldset_box">
+                                <legend class="legend_name">Additional Details</legend>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Indication Value</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="text" class="edit-indication-value" name="vesselTotal">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Symbol</strong></label>
+                                    <div class="col-xs-8">
+                                        <select class="edit-symbol" ></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Vessel Wise Total</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="radio" class="edit-vessel-wise-total" value="Average" id="Average" name="vesselTotal"> <label class="required">Average</label>
+                                        <input type="radio" class="edit-vessel-wise-total" value="Sum" id="Sum" name="vesselTotal" style="margin-left: 25px"> <label class="required">Sum</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4 required_field"><strong>Base Value</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="number" class="edit-base-value" name="baseValue">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>Comparison Status</strong></label>
+                                    <div class="col-xs-8">
+                                        <input type="checkbox" class="edit-comparison-status">
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset class="fieldset_box comparison-table-edit-class" style="width: 700px; margin-bottom: 150px;">
+                                <legend class="legend_name">Comparison Rule</legend>
+                                <div style="margin-right: 150px; margin-left: -50px">
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4"><strong>First Element</strong></label>
+                                        <div class="col-xs-8">
+                                            <select class="edit-first-sub-element add_element_comparison_select_field">
+                                                <option value="">--select element--</option>
+                                            </select>
+                                            <input type="text" name="" class="edit-first-sub-element-value add_element_comparison_text_field">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4"><strong>Second Element</strong></label>
+                                        <div class="col-xs-8">
+                                            <select class="edit-second-sub-element add_element_comparison_select_field">
+                                                <option value="">--select element--</option>
+                                            </select>
+                                            <input type="text" class="edit-second-sub-element-value add_element_comparison_text_field">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4"><strong>Choose Action</strong></label>
+                                        <div class="col-xs-8">
+                                            <select class="edit-comparison-action-value add_element_comparison_select_field">
+                                                <option value="Green">Green</option>
+                                                <option value="Yellow">Yellow</option>
+                                                <option value="Red">Red</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="control-label col-xs-4">&nbsp;</label>
+                                        <div class="col-xs-8 report_submit_main">
+                                            <a class="edit-comparison-save-class report_submit">Save</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table-responsive">
+                                    <thead class="table-header">
+                                    <tr>
+                                        <th style="width: 30%">Element 1</th>
+                                        <th style="width: 8%">Value</th>
+                                        <th style="width: 30%">Element 2</th>
+                                        <th style="width: 8%">Value</th>
+                                        <th style="width: 15%">Color</th>
+                                        <th style="width: 8%">Options</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="edit-comparison-table-body"></tbody>
+                                </table>
                             </fieldset>
                         </div>
                         <div class="actions_submit">

@@ -7,9 +7,6 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {#{% javascripts '@InitialShippingBundle/Resources/public/js/emailgroup.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}#}
 
         <script>
             $(document).ready(function()
@@ -23,11 +20,9 @@
                 var statusofship='{{ statuscount }}';
                 var shipcount='{{ shipcount }}';
                 var role='{{ app.user.roles[0] }}';
-                console.log(role)
                 if(statusofship==shipcount)
                 {
                     $('#allbuttondiv').hide();
-                    // $('#'+shipid).addClass('active');
                     $('#shipid').val('');
                     $('#shipname').text('');
                 }
@@ -48,6 +43,9 @@
                 $('#currentid_data').text(month+'-'+year)
                 $('#datofmonthid').val(nowdate);
                 $('#datofmonthid_data').val(nowdate);
+                $('#spantext').hide();
+                $('#previousmonthdata').hide();
+                /*------------------------------------- Previous Month Dataview Starts Here-------------------------------------------- */
                 $('.prevmonth').live('click',function($e)
                 {
                     $e.preventDefault();
@@ -211,11 +209,11 @@
 
                                             if(newtemp==0)
                                             {
-                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                             }
                                             else
                                             {
-                                                $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
                                             }
                                             $.each(listkpi, function (mykey, myvalue) {
                                                 if (data.elementvalues.length > 0) {
@@ -225,10 +223,10 @@
                                                     $('#adminbuttonid').show();
 
                                                     if (temp == 1) {
-                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                     }
                                                     if (temp > 1) {
-                                                        $('<tr ><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr ><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td></tr>').appendTo("#tablebody" + j);
                                                     }
 
 
@@ -238,10 +236,10 @@
                                                     $('#savebuttonid').show();
                                                     $('#adminbuttonid').show();
                                                     if (temp == 1) {
-                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody" + j);
                                                     }
                                                     if (temp > 1) {
-                                                        $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                     }
 
 
@@ -281,6 +279,8 @@
 
 
                 });
+                /*------------------------------------- Previous Month Dataview Ends Here-------------------------------------------- */
+                /*------------------------------------- Next Month Dataview Starts Here-------------------------------------------- */
                 $('.nextmonth').live('click',function($e)
                 {
                     $e.preventDefault();
@@ -448,11 +448,11 @@
 
                                                 if(newtemp==0)
                                                 {
-                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                                 }
                                                 else
                                                 {
-                                                    $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                    $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
                                                 }
                                                 $.each(listkpi,function(mykey,myvalue)
                                                 {
@@ -465,11 +465,11 @@
 
                                                         if(temp==1)
                                                         {
-                                                            $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                            $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                                         }
                                                         if(temp>1)
                                                         {
-                                                            $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                                            $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
                                                         }
 
 
@@ -481,11 +481,11 @@
                                                         $('#adminbuttonid').show();
                                                         if(temp==1)
                                                         {
-                                                            $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                                            $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
                                                         }
                                                         if(temp>1)
                                                         {
-                                                            $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                            $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                                         }
 
 
@@ -535,8 +535,8 @@
 
                     }
                 });
-                $('#spantext').hide();
-
+                /*------------------------------------- Next Month Dataview Starts Here-------------------------------------------- */
+                /*------------------------------------- Induvial Ships Dataview Starts Here-------------------------------------------- */
                 $('.linkclass').live('click',function()
                 {
 
@@ -588,11 +588,11 @@
 
                                     if(newtemp==0)
                                     {
-                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                     }
                                     else
                                     {
-                                        $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                        $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
                                     }
                                     $.each(listkpi,function(mykey,myvalue)
                                     {
@@ -605,11 +605,11 @@
 
                                             if(temp==1)
                                             {
-                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td> <td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                             }
                                             if(temp>1)
                                             {
-                                                $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
                                             }
 
 
@@ -621,11 +621,11 @@
                                             $('#adminbuttonid').show();
                                             if(temp==1)
                                             {
-                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
                                             }
                                             if(temp>1)
                                             {
-                                                $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                             }
 
 
@@ -652,7 +652,8 @@
                     });
 
                 });
-
+                /*------------------------------------- Induvial Ships Dataview Ends Here-------------------------------------------- */
+                /*-------------------------------------Text Box Validation Starts Here-------------------------------------------- */
                 $(".textbox").live("keypress keyup blur",function (event) {
                     //this.value = this.value.replace(/[^0-9\.]/g,'');
                     $(this).val($(this).val().replace(/[^0-9\.]/g,''));
@@ -673,11 +674,15 @@
 
                     return true;
                 }
+                /*-------------------------------------Text Box Validation Ends Here-------------------------------------------- */
+                /*-------------------------------------Reset form values Starts Here-------------------------------------------- */
                 $('#resetbuttonid').click(function($e)
                 {
                     $e.preventDefault();
                     $('.resetclass').val(' ');
                 });
+                /*-------------------------------------Reset form values Ends Here-------------------------------------------- */
+                /*-------------------------------------Insertion Process Starts Here-------------------------------------------- */
 
                 $("#kpiform").submit(function($e){
 
@@ -739,10 +744,10 @@
 
                                             $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                             if (newtemp == 0) {
-                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
                                             }
                                             else {
-                                                $(' <th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
                                             }
                                             $.each(listkpi, function (mykey, myvalue) {
                                                 if (valuearray.length > 0) {
@@ -751,10 +756,10 @@
                                                     $('#savebuttonid').hide();
                                                     $('#adminbuttonid').show();
                                                     if (temp == 1) {
-                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
                                                     }
                                                     if (temp > 1) {
-                                                        $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                     }
                                                 }
                                                 else {
@@ -762,10 +767,10 @@
                                                     $('#savebuttonid').show();
                                                     $('#adminbuttonid').show();
                                                     if (temp == 1) {
-                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                     }
                                                     if (temp > 1) {
-                                                        $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                        $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                     }
                                                 }
                                                 newtemp++;
@@ -799,10 +804,11 @@
                         }
                     });
                 });
-                $('#previousmonthdata').hide();
+                /*-------------------------------------Insertion Process Ends Here-------------------------------------------- */
 
 
             });
+            /*-------------------------------------Text Box Validation Use Javascript Starts Here-------------------------------------------- */
 
 
             function isNumberKey(e)
@@ -818,6 +824,7 @@
                     return false;
                 }
             }
+            /*-------------------------------------Text Box Validation Use Javascript Ends Here-------------------------------------------- */
 
         </script>
 
@@ -911,15 +918,20 @@
                                     <table class="table kpi_table_form_section">
                                         <thead>
                                         <tr>
-                                            <th {#colspan=" {{ elementcount }} "#}>  {{ key }}</th>
+                                            <th class="kpi_lement_name" {#colspan=" {{ elementcount }} "#}>  {{ key }}</th>
                                             {% if i == 0 %}
-                                                <th class="kpi_value">Wt</th>
+                                                <th class="" >Wt</th>
+                                                <th class="kpi_value">Symbol</th>
+                                                <th class="kpi_value">Indication</th>
                                                 <th class="kpi_value">Value</th>
                                             {% else %}
                                                 <th></th>
                                                 <th></th>
+                                                <th></th>
+                                                <th></th>
                                             {% endif %}
                                         </tr>
+
                                         </thead>
                                         <tbody>
 
@@ -928,6 +940,16 @@
                                             <tr>
                                                 <td class="kpi_lement_name">{{ user }}  </td>
                                                 <td class="kpi_lement_number">{{ elementweightage[i] }}</td>
+                                                <td class="kpi_lement_inputname">
+                                                    {#{% if symbolIndication[i]=='Dollar' %}
+                                                    <span class="menu-item-icon fa fa-usd"></span>
+                                                    {% else %}
+                                                        {{  symbolIndication[i] }}
+                                                    {% endif %}#}
+                                                    {{  symbolIndication[i] }}
+                                                </td>
+                                                <td class="kpi_lement_inputname">{{ indicationValue[i] }}</td>
+
                                                 <td class="kpi_lement_inputname">
                                                     {% if elementvalues|length <= 0 %}
 

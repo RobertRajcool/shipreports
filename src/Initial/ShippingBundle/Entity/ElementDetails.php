@@ -118,6 +118,14 @@ class ElementDetails
 
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="BaseValue", type="integer", length=11)
+     */
+    private $baseValue;
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -403,6 +411,21 @@ class ElementDetails
     public function setComparisonStatus($comparisonStatus)
     {
         $this->comparisonStatus = $comparisonStatus;
+    }
+    /**
+     * @return string
+     */
+    public function getBaseValue()
+    {
+        return $this->baseValue;
+    }
+
+    /**
+     * @param string $baseValue
+     */
+    public function setBaseValue($baseValue)
+    {
+        $this->baseValue = $baseValue;
     }
 
 }

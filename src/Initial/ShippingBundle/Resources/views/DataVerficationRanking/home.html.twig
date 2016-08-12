@@ -221,11 +221,11 @@
 
                                             if(newtemp==0)
                                             {
-                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                             }
                                             else
                                             {
-                                                $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
                                             }
                                             $.each(listkpi,function(mykey,myvalue)
                                             {
@@ -238,11 +238,11 @@
 
                                                     if(temp==1)
                                                     {
-                                                        $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                        $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                                     }
                                                     if(temp>1)
                                                     {
-                                                        $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                                        $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
                                                     }
 
 
@@ -255,11 +255,11 @@
 
                                                     if(temp==1)
                                                     {
-                                                        $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                                        $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
                                                     }
                                                     if(temp>1)
                                                     {
-                                                        $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                        $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                                     }
 
 
@@ -473,11 +473,11 @@
 
                                                 if(newtemp==0)
                                                 {
-                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                                 }
                                                 else
                                                 {
-                                                    $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                    $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
                                                 }
                                                 $.each(listkpi, function (mykey, myvalue) {
                                                     if (data.elementvalues.length > 0) {
@@ -487,10 +487,10 @@
                                                         $('#adminbuttonid').show();
 
                                                         if (temp == 1) {
-                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
                                                         if (temp > 1) {
-                                                            $('<tr ><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<tr ><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
 
 
@@ -500,10 +500,10 @@
                                                         $('#savebuttonid').show();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
-                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody" + j);
                                                         }
                                                         if (temp > 1) {
-                                                            $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                         }
 
 
@@ -602,11 +602,11 @@
 
                                     if(newtemp==0)
                                     {
-                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
                                     }
                                     else
                                     {
-                                        $(' <th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                        $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
                                     }
                                     $.each(listkpi,function(mykey,myvalue)
                                     {
@@ -620,11 +620,11 @@
 
                                             if(temp==1)
                                             {
-                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                             }
                                             if(temp>1)
                                             {
-                                                $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
                                             }
 
 
@@ -637,11 +637,11 @@
 
                                             if(temp==1)
                                             {
-                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
                                             }
                                             if(temp>1)
                                             {
-                                                $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>   <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
                                             }
 
 
@@ -755,10 +755,10 @@
 
                                                     $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                                     if (newtemp == 0) {
-                                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
                                                     }
                                                     else {
-                                                        $(' <th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                                                        $(' <th></th><<th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
                                                     }
                                                     $.each(listkpi, function (mykey, myvalue) {
                                                         if (valuearray.length > 0) {
@@ -767,10 +767,10 @@
                                                             $('#savebuttonid').hide();
                                                             $('#adminbuttonid').show();
                                                             if (temp == 1) {
-                                                                $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
+                                                                $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname"></td> <td class="kpi_lement_inputname"></td>   <td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
                                                             }
                                                             if (temp > 1) {
-                                                                $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                                $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname"></td> <td class="kpi_lement_inputname"></td>   <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                             }
                                                         }
                                                         else {
@@ -778,10 +778,10 @@
                                                             $('#savebuttonid').show();
                                                             $('#adminbuttonid').show();
                                                             if (temp == 1) {
-                                                                $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                                $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname"></td> <td class="kpi_lement_inputname"></td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                             }
                                                             if (temp > 1) {
-                                                                $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                                $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname"></td> <td class="kpi_lement_inputname"></td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
                                                             }
                                                         }
                                                         newtemp++;
@@ -944,8 +944,12 @@
                                             <th colspan="{# {{ elementcount }}#} ">  {{ key }}</th>
                                             {% if i == 0 %}
                                                 <th class="kpi_value">Wt</th>
+                                                <th class="kpi_value">Symbol</th>
+                                                <th class="kpi_value">Indication</th>
                                                 <th class="kpi_value">Value</th>
                                             {% else %}
+                                                <th></th>
+                                                <th></th>
                                                 <th></th>
                                                 <th></th>
                                             {% endif %}
@@ -958,6 +962,8 @@
                                             <tr>
                                                 <td class="kpi_lement_name">{{ user }}  </td>
                                                 <td class="kpi_lement_number">{{ elementweightage[i] }}</td>
+                                                <td class="kpi_lement_inputname">{{ symbolIndication[i] }}</td>
+                                                <td class="kpi_lement_inputname">{{ indicationValue[i] }}</td>
                                                 <td class="kpi_lement_inputname">
                                                     {% if elementvalues|length <= 0 %}
 

@@ -54,6 +54,14 @@ class Excel_file_details
      * @ORM\Column(name="company_id", type="integer")
      */
     private $company_id;
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\RankingFolder")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="folderId", referencedColumnName="id")
+     * })
+     */
+    private $folderId;
 
 
 
@@ -171,5 +179,22 @@ class Excel_file_details
     {
         $this->company_id = $company_id;
     }
+
+    /**
+     * @return string
+     */
+    public function getFolderId()
+    {
+        return $this->folderId;
+    }
+
+    /**
+     * @param string $folderId
+     */
+    public function setFolderId($folderId)
+    {
+        $this->folderId = $folderId;
+    }
+
 
 }
