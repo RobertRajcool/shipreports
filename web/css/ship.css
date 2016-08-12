@@ -348,7 +348,7 @@ select {
     padding: 8px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    background-color: #333333;
+    background-color: #111111;
     border-right: 1px solid #eee;
     width:14%;
 }
