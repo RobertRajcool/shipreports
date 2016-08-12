@@ -81,6 +81,9 @@ class ElementDetailsType extends AbstractType
                 'label'    => 'Show this entry publicly?',
                 'required' => false,
             ))
+            ->add('baseValue','integer', array(
+                'data' => 0
+            ))
         ;
     }
 
