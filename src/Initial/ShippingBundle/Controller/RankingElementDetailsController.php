@@ -405,7 +405,7 @@ class RankingElementDetailsController extends Controller
                 ->getResult();
 
             $query1 = $em->createQueryBuilder()
-                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activeDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus')
+                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activeDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus', 'a.baseValue')
                 ->from('InitialShippingBundle:RankingElementDetails', 'a')
                 ->where('a.id = :element_id')
                 ->setParameter('element_id', $id)
@@ -508,6 +508,7 @@ class RankingElementDetailsController extends Controller
             $symbolId = $request->request->get('symbolId');
             $indicationValue = $request->request->get('indicationValue');
             $comparisonStatus = $request->request->get('comparisonStatus');
+            $baseValue = $request->request->get('baseValue');
             if($comparisonStatus==1) {
                 $comparisonStatusValue = 1;
             } else {
@@ -545,6 +546,7 @@ class RankingElementDetailsController extends Controller
             $entity->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
             $entity->setIndicationValue($indicationValue);
             $entity->setComparisonStatus($comparisonStatusValue);
+            $entity->setBaseValue($baseValue);
             $em->flush();
 
             if($comparisonStatus==1) {

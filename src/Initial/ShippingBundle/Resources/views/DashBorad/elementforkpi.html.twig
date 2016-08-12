@@ -417,7 +417,7 @@
                         success: function(data) {
                             monthNumber = data.monthNumber;
                             originalDataTableClass.empty();
-                            $('<thead><tr><th>Vessel Performance</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"><th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th></tr></thead>').appendTo(originalDataTableClass);
+                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"><th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th></tr></thead>').appendTo(originalDataTableClass);
                             $.each(data.shipDetail, function(i,ship) {
                                 $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">'+ship.shipName+'</div></th>').appendTo($('#original-data-head-row'));
                             });
