@@ -117,6 +117,13 @@ class RankingElementDetails
      */
     private $comparisonStatus;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="BaseValue", type="integer", length=11)
+     */
+    private $baseValue;
+
 
     /**
      * Get id
@@ -389,6 +396,22 @@ class RankingElementDetails
         $this->rules = $rules;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBaseValue()
+    {
+        return $this->baseValue;
+    }
+
+    /**
+     * @param string $baseValue
+     */
+    public function setBaseValue($baseValue)
+    {
+        $this->baseValue = $baseValue;
     }
 
 
