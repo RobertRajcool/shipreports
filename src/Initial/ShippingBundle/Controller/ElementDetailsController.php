@@ -462,7 +462,7 @@ class ElementDetailsController extends Controller
                 ->getResult();
 
             $query1 = $em->createQueryBuilder()
-                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus')
+                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus', 'a.baseValue')
                 ->from('InitialShippingBundle:ElementDetails', 'a')
                 ->where('a.id = :element_id')
                 ->setParameter('element_id', $id)
@@ -574,6 +574,7 @@ class ElementDetailsController extends Controller
             $symbolId = $request->request->get('symbolId');
             $indicationValue = $request->request->get('indicationValue');
             $comparisonStatus = $request->request->get('comparisonStatus');
+            $baseValue = $request->request->get('baseValue');
             if($comparisonStatus==1) {
                 $comparisonStatusValue = 1;
             } else {
@@ -593,7 +594,6 @@ class ElementDetailsController extends Controller
             $entity = $em->getRepository('InitialShippingBundle:ElementDetails')->find($id);
             $kpiName_obj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiName_id));
 
-            $elementDetail = new ElementDetails();
             $entity->setkpiDetailsId($kpiName_obj);
             $entity->setelementName($elementName);
             $entity->setDescription($description);
@@ -606,6 +606,7 @@ class ElementDetailsController extends Controller
             $entity->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
             $entity->setIndicationValue($indicationValue);
             $entity->setComparisonStatus($comparisonStatusValue);
+            $entity->setBaseValue($baseValue);
             $em->flush();
 
             if($comparisonStatus==1) {
