@@ -23,6 +23,7 @@
                 var showElement = $('.show_element');
                 var editElement = $('.grid_edit_element');
                 var createElementId = $('#element-id');
+                var baseValueId = $('#base-value-id');
 
                 boxIcon.hide();
                 showElement.hide();
@@ -128,6 +129,14 @@
                             alert('Error : ' + errorThrown);
                         }
                     });
+                });
+
+                var baseValueIndication = $('#base-value-indication');
+                baseValueId.change(function($e) {
+                    if(baseValueId.val()!=0) {
+                        baseValueIndication.text('Changing the base value may affect element rules !');
+                        baseValueIndication.delay(3000).fadeOut();
+                    }
                 });
 
                 var count = 0;
@@ -997,17 +1006,10 @@
                                     <div class="col-xs-8 weight-error-message" id="create-weight-error"></div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
-                                    <div class="col-xs-8">
-                                        {{ form_widget(form.description,{'label': ''}) }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
                                     <label class="control-label col-xs-4 required_field"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="activeMonth"
-                                                    class="full-width-select">
+                                            <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
                                                 <option selected="selected">--</option>
                                                 <option value="1">{{ 'month.jan'|trans }}</option>
                                                 <option value="2">{{ 'month.feb'|trans }}</option>
@@ -1034,8 +1036,7 @@
                                         </span>
                                         To
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="endMonth"
-                                                    class="full-width-select">
+                                            <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
                                                 <option selected="selected">--</option>
                                                 <option value="1">{{ 'month.jan'|trans }}</option>
                                                 <option value="2">{{ 'month.feb'|trans }}</option>
@@ -1060,6 +1061,12 @@
                                                 {% endfor %}
                                             </select>
                                         </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
+                                    <div class="col-xs-8">
+                                        {{ form_widget(form.description,{'label': ''}) }}
                                     </div>
                                 </div>
                             </fieldset>
@@ -1134,8 +1141,9 @@
                                 <div class="form-group">
                                     <label class="control-label col-xs-4 required_field"><strong>Base Value</strong></label>
                                     <div class="col-xs-8">
-                                        {{ form_widget(form.baseValue) }}
+                                        {{ form_widget(form.baseValue, {'id':'base-value-id'}) }}
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="base-value-indication"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>Comparison Status</strong></label>
@@ -1275,16 +1283,16 @@
                             <label class="form_input element_weightage"> </label>
                         </div>
                         <div class="form_view">
-                            <label class="form_labell"><strong>{{ 'vessel.description'|trans }} :</strong></label>
-                            <label class="form_input element_description"> </label>
-                        </div>
-                        <div class="form_view">
                             <label class="form_labell"><strong>{{ 'kpi.valid'|trans }} :</strong></label>
                             <label class="form_input">
                                 <label><span class="element_activeDate_month "></span>-
                                     <sapn class=" element_activeDate_year"></sapn>
                                     <strong> {{ 'kpi.to'|trans }} </strong> <span class=" element_endDate_month "></span>-<span class="  element_endDate_year"></span></label>
                             </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>{{ 'vessel.description'|trans }} :</strong></label>
+                            <label class="form_input element_description"> </label>
                         </div>
                     </fieldset>
                     <fieldset class="fieldset_box">
@@ -1374,12 +1382,6 @@
                                 <div class="col-xs-8 weight-error-message" id="edit-weight-error"> </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
-                                <div class="col-xs-8">
-                                    <input type="text" class="edit_element_description" value="" placeholder="">
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label class="control-label col-xs-4 required_field"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                 <div class="col-xs-8">
                                     <span>
@@ -1431,6 +1433,12 @@
                                     </span>
                                 </div>
                                 <div class="col-xs-8 weight-error-message edit-valid-dates"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
+                                <div class="col-xs-8">
+                                    <input type="text" class="edit_element_description" value="" placeholder="">
+                                </div>
                             </div>
                         </fieldset>
                         <fieldset class="fieldset_box">
