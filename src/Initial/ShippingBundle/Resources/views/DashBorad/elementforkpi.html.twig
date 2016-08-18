@@ -637,11 +637,11 @@
                         {% for kpi_colors in kpi_colors_first %}
                             <td class="month">
                                 {% if kpi_colors_first[0] =="Green" %}
-                                    <img class="img-icon" src="/images/01.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Red" %}
-                                    <img class="img-icon" src="/images/03.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
                                 {% elseif kpi_colors_first[0] =="Yellow" %}
-                                    <img class="img-icon" src="/images/02.png" alt="Loader Image"/>
+                                    <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
                             {% if k != 2 %}
@@ -652,7 +652,7 @@
                                     {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Red" %}
                                         <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif kpi_colors=="Green" and kpi_color[k+1][k1]=="Yellow" %}
-                                        <img src="/images/down_arrow.png">
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
                                     {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Green" %}
                                         <img class="img-status-icon" src="/images/up_arrow.png">
                                     {% elseif kpi_colors=="Red" and kpi_color[k+1][k1]=="Red" %}
