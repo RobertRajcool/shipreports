@@ -816,7 +816,7 @@ class DataVerficationController extends Controller
                 for($elementCount=0;$elementCount<count($element);$elementCount++) {
                     $baseValueQuery = $em->createQueryBuilder()
                         ->select('a.baseValue')
-                        ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                        ->from('InitialShippingBundle:ElementDetails', 'a')
                         ->where('a.id=:elementId')
                         ->setParameter('elementId', $element[$elementCount])
                         ->getQuery()
@@ -828,7 +828,7 @@ class DataVerficationController extends Controller
                         $currentMonthValue = (int)$currentMonth * $monthlyCount;
                         $elementRulesQuery = $em->createQueryBuilder()
                             ->select('a.rules,a.id')
-                            ->from('InitialShippingBundle:RankingRules', 'a')
+                            ->from('InitialShippingBundle:Rules', 'a')
                             ->where('a.elementDetailsId=:elementId')
                             ->setParameter('elementId', $element[$elementCount])
                             ->getQuery()
@@ -837,7 +837,7 @@ class DataVerficationController extends Controller
                             $ruleObj = json_decode($rules['rules']);
                             $ruleObj->conditions->all[0]->value = $currentMonthValue;
                             $ruleString = json_encode($ruleObj);
-                            $rulesDetailObject = $em->getRepository('InitialShippingBundle:RankingRules')->find($rules['id']);
+                            $rulesDetailObject = $em->getRepository('InitialShippingBundle:Rules')->find($rules['id']);
                             $rulesDetailObject->setRules($ruleString);
                             $em->flush();
                         }
@@ -983,7 +983,7 @@ class DataVerficationController extends Controller
         }
 
         $response = new JsonResponse();
-        if (count($finddatawithstatus) == 4) {
+        if (count($finddatawithstatus) == 6) {
             $response->setData(array('returnmsg' => $shipname . $returnmsg,
                 'shipname' => $nextshipname,
                 'shipid' => $nextshipid,
@@ -992,6 +992,8 @@ class DataVerficationController extends Controller
                 'elementweightage' => $finddatawithstatus['elementweightage'],
                 'elementvalues' => $finddatawithstatus['elementvalues'],
                 'shipcount'=>count($statusforship),
+                'indicationValue'=>$finddatawithstatus['indicationValue'],
+                'symbolIndication'=>$finddatawithstatus['symbolIndication'],
                 'ship_status_done_count'=>$ship_status_done_count));
             return $response;
         }
@@ -1779,9 +1781,39 @@ class DataVerficationController extends Controller
 
             }
             if ($buttonid == 'savebuttonid') {
+                foreach($kpiandelementids as $element) {
+                    for($elementCount=0;$elementCount<count($element);$elementCount++) {
+                        $baseValueQuery = $em->createQueryBuilder()
+                            ->select('a.baseValue')
+                            ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                            ->where('a.id=:elementId')
+                            ->setParameter('elementId', $element[$elementCount])
+                            ->getQuery()
+                            ->getResult();
+                        $baseValue = $baseValueQuery[0]['baseValue'];
+                        if($baseValue!=0) {
+                            $currentMonth = date('m');
+                            $monthlyCount = $baseValue/12;
+                            $currentMonthValue = (int)$currentMonth * $monthlyCount;
+                            $elementRulesQuery = $em->createQueryBuilder()
+                                ->select('a.rules,a.id')
+                                ->from('InitialShippingBundle:RankingRules', 'a')
+                                ->where('a.elementDetailsId=:elementId')
+                                ->setParameter('elementId', $element[$elementCount])
+                                ->getQuery()
+                                ->getResult();
+                            foreach($elementRulesQuery as $rules) {
+                                $ruleObj = json_decode($rules['rules']);
+                                $ruleObj->conditions->all[0]->value = $currentMonthValue;
+                                $ruleString = json_encode($ruleObj);
+                                $rulesDetailObject = $em->getRepository('InitialShippingBundle:RankingRules')->find($rules['id']);
+                                $rulesDetailObject->setRules($ruleString);
+                                $em->flush();
+                            }
+                        }
+                    }
+                }
                 foreach ($kpiandelementids as $kpikey => $kpipvalue) {
-
-
                     $newkpiid = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpikey));
                     foreach ($kpipvalue as $elementkey => $elementvalue)
                     {
@@ -1893,7 +1925,7 @@ class DataVerficationController extends Controller
 
             }
             $response = new JsonResponse();
-            if(count($finddatawithstatus)==4)
+            if(count($finddatawithstatus)==6)
             {
                 $response->setData(array('returnmsg' => $shipname . $returnmsg,
                     'shipname' =>$nextshipname,
@@ -1903,6 +1935,8 @@ class DataVerficationController extends Controller
                     'elementweightage'=>$finddatawithstatus['elementweightage'],
                     'shipcount'=>count($statusforship),
                     'ship_status_done_count'=>$ship_status_done_count,
+                    'indicationValue'=>$finddatawithstatus['indicationValue'],
+                    'symbolIndication'=>$finddatawithstatus['symbolIndication'],
                     'elementvalues' => $finddatawithstatus['elementvalues']));
                 return $response;
             }
@@ -2926,7 +2960,7 @@ class DataVerficationController extends Controller
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                 $templatechoosen = 'v-ships_layout.html.twig';
             }
-            $userdetails = $em->getRepository('InitialShippingBundle:RankingFolder')->findAll();
+          //  $userdetails = $em->getRepository('InitialShippingBundle:RankingFolder')->findAll();
             $listoffiles = $em->createQueryBuilder()
                 ->select('c.folderName')
                 ->from('InitialShippingBundle:RankingFolder', 'c')

@@ -3,6 +3,7 @@
 namespace Initial\ShippingBundle\Controller;
 
 
+use Initial\ShippingBundle\Entity\ScorecardFolder;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -100,45 +101,37 @@ class ScorecardDataImportController extends Controller
             $form = $this->createCreateForm($dataImportObj);
             $form->handleRequest($request);
             $templatechoosen = "base.html.twig";
-            /*try
-            {
-                $maileruserid=$this->container->getParameter('mailer_user');
-
-            }
-            catch(\Exception $e){
-                $info = $e->getMessage();
-                $role = $user->getRoles();
-                if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                    $templatechoosen = 'v-ships_layout.html.twig';
-                }
-                return $this->render(
-                    'InitialShippingBundle:ExcelFileviews:showmessage.html.twig',
-                    array('erromsg' => $info, 'msg' => '', 'template' => $templatechoosen)
-                );
-            }*/
             if ($form->isValid()) {
-                $importDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles';
+                $monthDetail = $dataImportObj->getMonthDetail();
+                $lastDayOfMonth = $monthDetail->modify('last day of this month');
+                $folderName=date('F-Y', strtotime(date_format($lastDayOfMonth,'Y-m-d')));
+                $beforecrete_importDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/scorecard';
+                if(!file_exists($beforecrete_importDirectory)) {
+                    mkdir($beforecrete_importDirectory);
+                }
+                $importDirectory = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/scorecard/'.$folderName;
                 $file = $dataImportObj->getFilename();
                 $fileName = $file->getClientOriginalName();
                 $fileType = pathinfo($importDirectory . $fileName, PATHINFO_EXTENSION);
                 $fileName_withoutExtension = substr($fileName, 0, -(strlen($fileType) + 1));
                 $importFileName = $fileName_withoutExtension .'('. date('Y-m-d H-i-s') .')'. '.' . $fileType;
-
                 if(!file_exists($importDirectory)) {
                     mkdir($importDirectory);
+                    $folderobject = new ScorecardFolder();
+                    $folderobject->setFolderName($folderName);
+                    $em->persist($folderobject);
+                    $em->flush();
                 }
 
-                if ($file->upload_dir($importDirectory, $importFileName)) {
-                    $monthDetail = $dataImportObj->getMonthDetail();
-                    $lastDayOfMonth = $monthDetail->modify('last day of this month');
+                if ($file->move($importDirectory, $importFileName)) {
                     $dateTime = date("Y-m-d H:i:s");
                     $dateTimeObj = new \DateTime($dateTime);
-
                     $dataImportObj->setUserId($em->getRepository('InitialShippingBundle:User')->findOneBy(array('id' => $userId)));
+                    $folderId = $em->getRepository('InitialShippingBundle:ScorecardFolder')->findBy(array('folderName' => $folderName));
                     $dataImportObj->setFileName($importFileName);
                     $dataImportObj->setMonthDetail($lastDayOfMonth);
                     $dataImportObj->setDateTime($dateTimeObj);
-
+                    $dataImportObj->setFolderId($folderId[0]);
                     $username = $user->getUsername();
                     $role = $user->getRoles();
                     if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
@@ -661,7 +654,7 @@ class ScorecardDataImportController extends Controller
         } else {
             $role=$user->getRoles();
             $em = $this->getDoctrine()->getManager();
-            $fileDetails = $em->createQueryBuilder()
+         /*   $fileDetails = $em->createQueryBuilder()
                 ->select('a.id,a.fileName,a.monthDetail,a.dateTime,identity(a.userId)')
                 ->from('InitialShippingBundle:ScorecardDataImport', 'a')
                 ->getQuery()
@@ -683,17 +676,40 @@ class ScorecardDataImportController extends Controller
                 $fileName_withoutDateTime = explode('(',$fileName_withoutExtension);
                 $originalFileName = $fileName_withoutDateTime[0] . '.' . $fileType;
                 array_push($originalFileNameArray,$originalFileName);
-            }
+            }*/
             $template = 'base.html.twig';
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                 $template = 'v-ships_layout.html.twig';
             }
+
+            $listoffiles = $em->createQueryBuilder()
+                ->select('c.folderName')
+                ->from('InitialShippingBundle:ScorecardFolder', 'c')
+                ->getQuery()
+                ->getResult();
+            $filenamesarray=array();
+            for($filecount=0;$filecount<count($listoffiles);$filecount++)
+            {
+                $foldername=$listoffiles[$filecount]['folderName'];
+                $listoffiles_foldername = $em->createQueryBuilder()
+                    ->select('a.id','a.monthDetail','a.dateTime','a.fileName','b.username','c.folderName')
+                    ->from('InitialShippingBundle:ScorecardDataImport', 'a')
+                    ->leftjoin('InitialShippingBundle:ScorecardFolder', 'c', 'WITH', 'c.id = a.folderId')
+                    ->leftjoin('InitialShippingBundle:User', 'b' ,'WITH','b.id = a.userId')
+                    ->where('c.folderName = :folderName')
+                    ->setParameter('folderName', $foldername)
+                    ->getQuery()
+                    ->getResult();
+                $filenamesarray[$foldername]=$listoffiles_foldername;
+            }
+
+
+           /* return $this->render('InitialShippingBundle:DataImportRanking:listall.html.twig', array(
+                'filenamesarray' => $filenamesarray,'template'=>$templatechoosen
+            ));*/
             return $this->render('scorecarddataimport/show.html.twig',
                 array(
-                    'userDetails' => $userDetailsArray,
-                    'fileDetails' => $fileDetails,
-                    'fileName' => $originalFileNameArray,
-                    'template' => $template
+                    'filenamesarray' => $filenamesarray,'template'=>$template
                 ));
         }
     }
@@ -753,19 +769,20 @@ class ScorecardDataImportController extends Controller
     /**
      * Lists all ScorecardDataImport entities.
      *
-     * @Route("/scorecarddataimport_file_download/{id}", name="scorecarddataimport_file_download")
+     * @Route("/{filename}/{foldername}/scorecarddataimport_file_download", name="scorecarddataimport_file_download")
      * @Method("GET")
      */
-    public function fileDownloadAction(Request $request,ScorecardDataImport $scorecardDataImport)
+    public function fileDownloadAction(Request $request,$filename,$foldername)
     {
         $user = $this->getUser();
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         } else {
-            $fileName_fromDb = $scorecardDataImport->getFileName();
-            $directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles';
-            $filePath = $directoryLocation . '/' . $fileName_fromDb;
-            $content = file_get_contents($filePath);
+            $fileName_fromDb = $filename;
+            //$directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/scorecard';
+            $directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/scorecard/' . $foldername.'/'.$filename;
+           // $filePath = $directoryLocation . '/' . $fileName_fromDb;
+            $content = file_get_contents($directoryLocation);
             $fileType = pathinfo($fileName_fromDb, PATHINFO_EXTENSION);
             $fileName_withoutExtension = substr($fileName_fromDb, 0, -(strlen($fileType) + 1));
             $fileName_withoutDateTime = explode('(',$fileName_withoutExtension);
@@ -776,6 +793,7 @@ class ScorecardDataImportController extends Controller
             header("Content-Transfer-Encoding: Binary");
             header("Content-disposition: attachment; filename=\"" . $originalFileName . "\"");
             return $response;
+
         }
     }
 
