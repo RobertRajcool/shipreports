@@ -736,35 +736,35 @@ class DataVerficationController extends Controller
                 {
                     $newlookupstatus=$lookstatus[0];
 
-                $TotalShipsInserted=$em->createQueryBuilder()
-                    ->select('identity(a.shipDetailsId)')
-                    ->from('InitialShippingBundle:ReadingKpiValues', 'a')
-                    ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
-                    ->setParameter('dateOfMonth', $new_date)
-                    ->groupby('a.shipDetailsId')
-                    ->setParameter('statusValue', 2)
-                    ->getQuery()
-                    ->getResult();
-                //print_r($TotalShipsInserted);
+                    $TotalShipsInserted=$em->createQueryBuilder()
+                        ->select('identity(a.shipDetailsId)')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :dateOfMonth and a.status=:statusValue' )
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->groupby('a.shipDetailsId')
+                        ->setParameter('statusValue', 2)
+                        ->getQuery()
+                        ->getResult();
+                    //print_r($TotalShipsInserted);
 
 
-                if(count($TotalShipsInserted)!=0)
-                {
-                    $shipids=array();
-                    for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                    if(count($TotalShipsInserted)!=0)
                     {
-                        array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        $shipids=array();
+                        for($findshipidcount=0;$findshipidcount<count($TotalShipsInserted);$findshipidcount++)
+                        {
+                            array_push($shipids,$TotalShipsInserted[$findshipidcount][1]);
+                        }
+                        $shipids=implode(',',$shipids);
                     }
-                    $shipids=implode(',',$shipids);
-                }
-                else
-                {
-                    $shipids=$shipid;
-                }
-                $newlookupstatus->setStatus(2);
-                $newlookupstatus->setShipid($shipids);
-                $newlookupstatus->setDatetime(new \DateTime());
-                $em->flush();
+                    else
+                    {
+                        $shipids=$shipid;
+                    }
+                    $newlookupstatus->setStatus(2);
+                    $newlookupstatus->setShipid($shipids);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
 
                 }
 
@@ -812,13 +812,44 @@ class DataVerficationController extends Controller
 
         }
         if ($buttonid == 'savebuttonid') {
+            foreach($kpiandelementids as $element) {
+                for($elementCount=0;$elementCount<count($element);$elementCount++) {
+                    $baseValueQuery = $em->createQueryBuilder()
+                        ->select('a.baseValue')
+                        ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                        ->where('a.id=:elementId')
+                        ->setParameter('elementId', $element[$elementCount])
+                        ->getQuery()
+                        ->getResult();
+                    $baseValue = $baseValueQuery[0]['baseValue'];
+                    if($baseValue!=0) {
+                        $currentMonth = date('m');
+                        $monthlyCount = $baseValue/12;
+                        $currentMonthValue = (int)$currentMonth * $monthlyCount;
+                        $elementRulesQuery = $em->createQueryBuilder()
+                            ->select('a.rules,a.id')
+                            ->from('InitialShippingBundle:RankingRules', 'a')
+                            ->where('a.elementDetailsId=:elementId')
+                            ->setParameter('elementId', $element[$elementCount])
+                            ->getQuery()
+                            ->getResult();
+                        foreach($elementRulesQuery as $rules) {
+                            $ruleObj = json_decode($rules['rules']);
+                            $ruleObj->conditions->all[0]->value = $currentMonthValue;
+                            $ruleString = json_encode($ruleObj);
+                            $rulesDetailObject = $em->getRepository('InitialShippingBundle:RankingRules')->find($rules['id']);
+                            $rulesDetailObject->setRules($ruleString);
+                            $em->flush();
+                        }
+                    }
+                }
+            }
             foreach ($kpiandelementids as $kpikey => $kpipvalue) {
 
 
                 $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpikey));
                 foreach ($kpipvalue as $elementkey => $elementvalue) {
                     $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementvalue));
-
                     $readingkpivalue = new ReadingKpiValues();
                     $readingkpivalue->setKpiDetailsId($newkpiid);
                     $readingkpivalue->setElementDetailsId($newelementid);
@@ -1433,13 +1464,13 @@ class DataVerficationController extends Controller
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
 
-           /* $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id')
-                ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                ->where('b.kpiDetailsId = :kpidetailsid')
-                ->setParameter('kpidetailsid', $kpiid)
-                ->add('orderBy', 'b.id  ASC ')
-                ->getQuery();*/
+            /* $query = $em->createQueryBuilder()
+                 ->select('b.elementName', 'b.id')
+                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                 ->where('b.kpiDetailsId = :kpidetailsid')
+                 ->setParameter('kpidetailsid', $kpiid)
+                 ->add('orderBy', 'b.id  ASC ')
+                 ->getQuery();*/
             $query = $em->createQueryBuilder()
                 ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
@@ -1462,13 +1493,13 @@ class DataVerficationController extends Controller
                 $ids1 = $query1->getResult();
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
-               /* $query = $em->createQueryBuilder()
-                    ->select('b.elementName', 'b.id')
-                    ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                    ->where('b.kpiDetailsId = :kpidetailsid')
-                    ->setParameter('kpidetailsid', $newkpiid)
-                    ->add('orderBy', 'b.id  ASC ')
-                    ->getQuery();*/
+                /* $query = $em->createQueryBuilder()
+                     ->select('b.elementName', 'b.id')
+                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                     ->where('b.kpiDetailsId = :kpidetailsid')
+                     ->setParameter('kpidetailsid', $newkpiid)
+                     ->add('orderBy', 'b.id  ASC ')
+                     ->getQuery();*/
                 $query = $em->createQueryBuilder()
                     ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
@@ -1556,13 +1587,13 @@ class DataVerficationController extends Controller
         {
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
-           /* $query = $em->createQueryBuilder()
-                ->select('b.elementName', 'b.id','b.weightage')
-                ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                ->where('b.kpiDetailsId = :kpidetailsid')
-                ->setParameter('kpidetailsid', $kpiid)
-                ->add('orderBy', 'b.id  ASC ')
-                ->getQuery();*/
+            /* $query = $em->createQueryBuilder()
+                 ->select('b.elementName', 'b.id','b.weightage')
+                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                 ->where('b.kpiDetailsId = :kpidetailsid')
+                 ->setParameter('kpidetailsid', $kpiid)
+                 ->add('orderBy', 'b.id  ASC ')
+                 ->getQuery();*/
             $query = $em->createQueryBuilder()
                 ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
@@ -2007,13 +2038,13 @@ class DataVerficationController extends Controller
                     $ids1 = $query1->getResult();
                     $newkpiid = $ids1[0]['id'];
                     $newkpiname = $ids1[0]['kpiName'];
-                   /* $query = $em->createQueryBuilder()
-                        ->select('b.elementName', 'b.id','b.weightage')
-                        ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                        ->where('b.kpiDetailsId = :kpidetailsid')
-                        ->setParameter('kpidetailsid', $newkpiid)
-                        ->add('orderBy', 'b.id  ASC ')
-                        ->getQuery();*/
+                    /* $query = $em->createQueryBuilder()
+                         ->select('b.elementName', 'b.id','b.weightage')
+                         ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                         ->where('b.kpiDetailsId = :kpidetailsid')
+                         ->setParameter('kpidetailsid', $newkpiid)
+                         ->add('orderBy', 'b.id  ASC ')
+                         ->getQuery();*/
                     $query = $em->createQueryBuilder()
                         ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                         ->from('InitialShippingBundle:RankingElementDetails', 'b')
@@ -2180,70 +2211,70 @@ class DataVerficationController extends Controller
                 }
 
 
-                    /*   $inputFileType = "";
+                /*   $inputFileType = "";
 
-                     switch ($ext) {
-                         case "xls":
-                             $inputFileType = 'Excel5';
-                             break;
-                         case "xlsx":
-                             $inputFileType = 'Excel2007';
-                             break;
+                 switch ($ext) {
+                     case "xls":
+                         $inputFileType = 'Excel5';
+                         break;
+                     case "xlsx":
+                         $inputFileType = 'Excel2007';
+                         break;
 
-                     }
-
-
-                   // Creating Excel Sheet Objects....//
-
-                     $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-                     $objReader->setLoadAllSheets();
-                     $objPHPExcel = $objReader->load($input);
-
-                     $objWorksheet = $objPHPExcel->getActiveSheet();
-                     $sheetCount = $objPHPExcel->getSheetCount();
-                     $cre = "";
+                 }
 
 
-                     if ($sheetCount == 1) {
-                         $user = $this->getUser();
-                         $userId = $user->getId();
-                         $dataofmonthstring = $mydatevalue->format('Y-m-d');
-                         $gearmandataarray = array('filename' => $fileName, 'dataofmonth' => $dataofmonthstring, 'userid' => $userId, 'filetype' => $inputFileType);
-                         $gearman = $this->get('gearman');       //$datafromuser=array();
-                         $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($gearmandataarray));
-                         $msg = "Your Document Has Been verfication.After Verfication Your File Data Has been Reading.";
+               // Creating Excel Sheet Objects....//
+
+                 $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                 $objReader->setLoadAllSheets();
+                 $objPHPExcel = $objReader->load($input);
+
+                 $objWorksheet = $objPHPExcel->getActiveSheet();
+                 $sheetCount = $objPHPExcel->getSheetCount();
+                 $cre = "";
 
 
-                         return $this->render(
-                             'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                             array('creator' => $cre, 'msg' => $msg)
-                         );
+                 if ($sheetCount == 1) {
+                     $user = $this->getUser();
+                     $userId = $user->getId();
+                     $dataofmonthstring = $mydatevalue->format('Y-m-d');
+                     $gearmandataarray = array('filename' => $fileName, 'dataofmonth' => $dataofmonthstring, 'userid' => $userId, 'filetype' => $inputFileType);
+                     $gearman = $this->get('gearman');       //$datafromuser=array();
+                     $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($gearmandataarray));
+                     $msg = "Your Document Has Been verfication.After Verfication Your File Data Has been Reading.";
 
-                     }
-                     if ($sheetCount > 1) {
 
-                         $message = \Swift_Message::newInstance()
-                             ->setFrom('lawrance@commusoft.co.uk')
-                             ->setTo($useremailid)
-                             ->setSubject("Your Document having more than One Sheets!!!!")
-                             ->setBody("Your Document having more than One Sheets!!!!");
-                         $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
-                         $mailer->send($message);
-                         $loadedSheetNames = $objPHPExcel->getSheetNames();
-                         $excelobj->removeUpload($input);
+                     return $this->render(
+                         'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
+                         array('creator' => $cre, 'msg' => $msg)
+                     );
 
-                         $this->addFlash(
-                             'notice',
-                             'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
-                         );
+                 }
+                 if ($sheetCount > 1) {
 
-                         return $this->render(
-                             'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                             array('creator' => $cre, 'msg' => 'Number of Sheets: ' . $sheetCount)
-                         );
-                     }
+                     $message = \Swift_Message::newInstance()
+                         ->setFrom('lawrance@commusoft.co.uk')
+                         ->setTo($useremailid)
+                         ->setSubject("Your Document having more than One Sheets!!!!")
+                         ->setBody("Your Document having more than One Sheets!!!!");
+                     $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
+                     $mailer->send($message);
+                     $loadedSheetNames = $objPHPExcel->getSheetNames();
+                     $excelobj->removeUpload($input);
 
-                 }*/
+                     $this->addFlash(
+                         'notice',
+                         'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
+                     );
+
+                     return $this->render(
+                         'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
+                         array('creator' => $cre, 'msg' => 'Number of Sheets: ' . $sheetCount)
+                     );
+                 }
+
+             }*/
 
 
             }
@@ -2940,33 +2971,33 @@ class DataVerficationController extends Controller
             $username = $user->getUsername();
             $role=$user->getRoles();
             $companyid=$user->getCompanyid();
-                //$convertedformat=new \DateTime($datofmonth);
-                //$convertedformat->modify('last day of this month');
-                if($companyid==null)
-                {
-                    $userquery = $em->createQueryBuilder()
-                        ->select('a.id')
-                        ->from('InitialShippingBundle:CompanyDetails', 'a')
-                        ->where('a.adminName = :adminName')
-                        ->setParameter('adminName', $username)
-                        ->getQuery();
-                    $companyid = $userquery->getSingleScalarResult();
-                }
+            //$convertedformat=new \DateTime($datofmonth);
+            //$convertedformat->modify('last day of this month');
+            if($companyid==null)
+            {
+                $userquery = $em->createQueryBuilder()
+                    ->select('a.id')
+                    ->from('InitialShippingBundle:CompanyDetails', 'a')
+                    ->where('a.adminName = :adminName')
+                    ->setParameter('adminName', $username)
+                    ->getQuery();
+                $companyid = $userquery->getSingleScalarResult();
+            }
             /*
                 $templatechoosen = 'base.html.twig';
                 if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                     $templatechoosen = 'v-ships_layout.html.twig';
                 }*/
-                $listoffiles = $em->createQueryBuilder()
-                    ->select('a.id','a.dataOfMonth','a.datetime','a.filename','a.userid','c.folderName')
-                    ->from('InitialShippingBundle:Excel_file_details', 'a')
-                    ->leftjoin('InitialShippingBundle:RankingFolder', 'c', 'WITH', 'c.id = a.folderId')
-                    ->where('a.company_id = :company_id')
-                    ->andwhere('c.folderName = :folderName')
-                    ->setParameter('company_id', $companyid)
-                    ->setParameter('folderName', $dataofmonth)
-                    ->getQuery()
-                    ->getResult();
+            $listoffiles = $em->createQueryBuilder()
+                ->select('a.id','a.dataOfMonth','a.datetime','a.filename','a.userid','c.folderName')
+                ->from('InitialShippingBundle:Excel_file_details', 'a')
+                ->leftjoin('InitialShippingBundle:RankingFolder', 'c', 'WITH', 'c.id = a.folderId')
+                ->where('a.company_id = :company_id')
+                ->andwhere('c.folderName = :folderName')
+                ->setParameter('company_id', $companyid)
+                ->setParameter('folderName', $dataofmonth)
+                ->getQuery()
+                ->getResult();
 
             $childerarray=array();
             for($listofFileCount=0;$listofFileCount<count($listoffiles);$listofFileCount++)
