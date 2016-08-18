@@ -1205,6 +1205,78 @@ class DashboradController extends Controller
     }
 
     /**
+     * Find Elements original value
+     *
+     * @Route("/{id}/find_ranking_element_original_value", name="find_ranking_element_original_value")
+     */
+    public function findRankingElementOriginalValueAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $monthInNumber = $request->request->get('monthNumber');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $da = new \DateTime(date('01-'.$monthInNumber.'-Y'));
+            $da->modify('last day of this month');
+
+            $kpiNameQuery = $em->createQueryBuilder()
+                ->select('a.kpiName')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.id = :kpiId')
+                ->setParameter('kpiId',$kpiDetailsId)
+                ->getQuery()
+                ->getResult();
+            $kpiIdQuery = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.kpiName = :kpiName')
+                ->setParameter('kpiName',$kpiNameQuery[0]['kpiName'])
+                ->orderBy('a.id')
+                ->getQuery()
+                ->getResult();
+
+            $shipDetails = $em->createQueryBuilder()
+                ->select('a.shipName, a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->getQuery()
+                ->getResult();
+            $elementDetails = $em->createQueryBuilder()
+                ->select('a.elementName, a.id')
+                ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiId')
+                ->setParameter('kpiId', $kpiIdQuery[0]['id'])
+                ->getQuery()
+                ->getResult();
+            $elementOriginalValuesArray = array();
+            for($i=0;$i<count($shipDetails);$i++) {
+                for($j=0;$j<count($elementDetails);$j++) {
+                    $elementOriginalValues = $em->createQueryBuilder()
+                        ->select('a.value')
+                        ->from('InitialShippingBundle:RankingMonthlyData', 'a')
+                        ->where('a.monthdetail = :month and a.elementDetailsId = :elementId and a.shipDetailsId = :shipId')
+                        ->setParameter('month', $da)
+                        ->setParameter('elementId',$elementDetails[$j]['id'])
+                        ->setParameter('shipId',$shipDetails[$i]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                }
+            }
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementOriginalValues' => $elementOriginalValuesArray,
+                'shipDetail' => $shipDetails,
+                'monthName' => date("M",strtotime('01-'.$monthInNumber.'-2011')),
+                'monthNumber' => $monthInNumber
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
      * Find previous month elements original value
      *
      * @Route("/{id}/previous_month_element_original_value", name="previous_month_element_original_value")
@@ -1237,6 +1309,78 @@ class DashboradController extends Controller
                     $elementOriginalValues = $em->createQueryBuilder()
                         ->select('a.value')
                         ->from('InitialShippingBundle:ReadingKpiValues', 'a')
+                        ->where('a.monthdetail = :month and a.elementDetailsId = :elementId and a.shipDetailsId = :shipId')
+                        ->setParameter('month', $da)
+                        ->setParameter('elementId',$elementDetails[$j]['id'])
+                        ->setParameter('shipId',$shipDetails[$i]['id'])
+                        ->getQuery()
+                        ->getResult();
+                    $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                }
+            }
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementOriginalValues' => $elementOriginalValuesArray,
+                'shipDetail' => $shipDetails,
+                'monthName' => date("M",strtotime('01-'.$monthInNumber.'-2011')),
+                'monthNumber' => $monthInNumber
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
+     * Find previous month elements original value
+     *
+     * @Route("/{id}/previous_month_ranking_element_original_value", name="previous_month_ranking_element_original_value")
+     */
+    public function previousMonthRankingElementOriginalValueAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $monthInNumber = $request->request->get('monthNumber');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $da = new \DateTime(date('01-'.$monthInNumber.'-Y'));
+            $da->modify('last day of this month');
+
+            $kpiNameQuery = $em->createQueryBuilder()
+                ->select('a.kpiName')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.id = :kpiId')
+                ->setParameter('kpiId',$kpiDetailsId)
+                ->getQuery()
+                ->getResult();
+            $kpiIdQuery = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.kpiName = :kpiName')
+                ->setParameter('kpiName',$kpiNameQuery[0]['kpiName'])
+                ->orderBy('a.id')
+                ->getQuery()
+                ->getResult();
+
+            $shipDetails = $em->createQueryBuilder()
+                ->select('a.shipName, a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->getQuery()
+                ->getResult();
+            $elementDetails = $em->createQueryBuilder()
+                ->select('a.elementName, a.id')
+                ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiId')
+                ->setParameter('kpiId', $kpiIdQuery[0]['id'])
+                ->getQuery()
+                ->getResult();
+            $elementOriginalValuesArray = array();
+            for($i=0;$i<count($shipDetails);$i++) {
+                for($j=0;$j<count($elementDetails);$j++) {
+                    $elementOriginalValues = $em->createQueryBuilder()
+                        ->select('a.value')
+                        ->from('InitialShippingBundle:RankingMonthlyData', 'a')
                         ->where('a.monthdetail = :month and a.elementDetailsId = :elementId and a.shipDetailsId = :shipId')
                         ->setParameter('month', $da)
                         ->setParameter('elementId',$elementDetails[$j]['id'])
@@ -2049,6 +2193,7 @@ class DashboradController extends Controller
                     $kpiSumValue = 0;
                     $time2 = strtotime($monthDetails[$monthCount]);
                     $monthInLetter = date('M', $time2);
+                    $monthNumberFormat = date('m', $time2);
                     array_push($monthNameLetter, $monthInLetter);
                     $new_monthdetail_date = new \DateTime($monthDetails[$monthCount]);
                     $new_monthdetail_date->modify('last day of this month');
@@ -2121,7 +2266,8 @@ class DashboradController extends Controller
                         'commentarray' => $listofcomment,
                         'shipid' => $shipId,
                         'monthlydata' => array(),
-                        'elementRule' => array()
+                        'elementRule' => array(),
+                        'monthInNumber' => $monthNumberFormat,
                     )
                 );
             }
@@ -2156,6 +2302,7 @@ class DashboradController extends Controller
                         $kpiSumValue = 0;
                         $time2 = strtotime($monthDetails[$monthCount]);
                         $monthInLetter = date('M', $time2);
+                        $monthNumberFormat = date('m', $time2);
                         array_push($monthNameLetter, $monthInLetter);
                         $new_monthdetail_date = new \DateTime($monthDetails[$monthCount]);
                         $new_monthdetail_date->modify('last day of this month');
@@ -2270,7 +2417,8 @@ class DashboradController extends Controller
                             'commentarray' => $listofcomment,
                             'shipid' => $shipId,
                             'monthlydata' => $monthlyElementValueArray,
-                            'elementRule' => $scorecardElementRules
+                            'elementRule' => $scorecardElementRules,
+                            'monthInNumber' => $monthNumberFormat,
                         )
                     );
                 } else {
@@ -2302,6 +2450,7 @@ class DashboradController extends Controller
                         $kpiSumValue = 0;
                         $time2 = strtotime($monthDetails[$monthCount]);
                         $monthInLetter = date('M', $time2);
+                        $monthNumberFormat = date('m', $time2);
                         array_push($monthNameLetter, $monthInLetter);
                         $new_monthdetail_date = new \DateTime($monthDetails[$monthCount]);
                         $new_monthdetail_date->modify('last day of this month');
@@ -2417,7 +2566,8 @@ class DashboradController extends Controller
                             'commentarray' => $listofcomment,
                             'shipid' => $shipId,
                             'monthlydata' => $monthlyElementValueArray,
-                            'elementRule' => $scorecardElementRules
+                            'elementRule' => $scorecardElementRules,
+                            'monthInNumber' => $monthNumberFormat,
                         )
                     );
                 }
