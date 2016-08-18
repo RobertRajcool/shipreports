@@ -2896,10 +2896,31 @@ class DataVerficationController extends Controller
                 $templatechoosen = 'v-ships_layout.html.twig';
             }
             $userdetails = $em->getRepository('InitialShippingBundle:RankingFolder')->findAll();
+            $listoffiles = $em->createQueryBuilder()
+                ->select('c.folderName')
+                ->from('InitialShippingBundle:RankingFolder', 'c')
+                ->getQuery()
+                ->getResult();
+            $filenamesarray=array();
+            for($filecount=0;$filecount<count($listoffiles);$filecount++)
+            {
+                $foldername=$listoffiles[$filecount]['folderName'];
+                $listoffiles_foldername = $em->createQueryBuilder()
+                    ->select('a.id','a.dataOfMonth','a.datetime','a.filename','a.userid','c.folderName')
+                    ->from('InitialShippingBundle:Excel_file_details', 'a')
+                    ->leftjoin('InitialShippingBundle:RankingFolder', 'c', 'WITH', 'c.id = a.folderId')
+                    ->where('a.company_id = :company_id')
+                    ->andwhere('c.folderName = :folderName')
+                    ->setParameter('company_id', $companyid)
+                    ->setParameter('folderName', $foldername)
+                    ->getQuery()
+                    ->getResult();
+                $filenamesarray[$foldername]=$listoffiles_foldername;
+            }
 
 
             return $this->render('InitialShippingBundle:DataImportRanking:listall.html.twig', array(
-                'userdetails' => $userdetails,'template'=>$templatechoosen
+                'filenamesarray' => $filenamesarray,'template'=>$templatechoosen
             ));
         }
 
