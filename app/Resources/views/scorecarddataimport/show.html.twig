@@ -5,78 +5,27 @@
         <script src="../js/numericInput.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
-                var dateIconId = $('#date-icon-id');
-                var applyButtonId = $('#apply-btn-id');
-                var cancelButtonId = $('#cancel-btn-id');
-                var dateValueId = $('#date-picker-value');
-                var originalDataId = $('#original-data-id');
-                var filteredDataId = $('#filtered-data-id');
-                var filterTableBodyId = $('#filter-table-body-id');
-                filteredDataId.hide();
-                cancelButtonId.hide();
-                dateIconId.datetimepicker({
-                    viewMode: 'years',
-                    format: 'MM-YYYY'
-                });
-                dateValueId.numericInput();
-                applyButtonId.click(function($e) {
-                   $e.preventDefault();
-                    var data = {
-                        'month-year': dateValueId.val()
-                    };
-                    if(dateValueId.val()) {
-                        $.ajaxSetup({
-                            global: false,
-                            type: "post",
-                            'url': "scorecarddataimport_file_filter",/*Routing.generate('scorecarddataimport_file_filter'),*/
-                            data:data,
-                            beforeSend: function () {
-                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
-                            },
-                            complete: function () {
-                                var setAjaxComplete = defaultAjaxCompleteFunction();
-                            }
-                        });
-                        $.ajax({
-                            success: function(data) {
-                                filterTableBodyId.empty();
-                                originalDataId.hide();
-                                if(data.length != 0) {
-                                    $.each(data.fileName, function(i) {
-                                        var monthDetail = new Date(data.fileDetails[i].monthDetail.date);
-                                        var monthString = monthDetail.getMonth()+'-'+monthDetail.getFullYear();
-                                        var pathInTwigFormat = "{{ path('scorecarddataimport_file_download', { 'id': 'value'}) }}";
-                                        var fullPath = pathInTwigFormat.replace("value",data.fileDetails[i].id);
-                                        filterTableBodyId.append('<tr id="table-row-id'+i+'"></tr>');
-                                        var tableRowId = $('#table-row-id'+i+'');
-                                        tableRowId.append('<td>'+data.fileName[i]+'</td><td>'+monthString+'</td><td>'+data.fileDetails[i].dateTime.date+'</td>');
-                                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                                            tableRowId.append('<td>'+data.userDetails[i][0].username+'</td><td><a href="'+fullPath+'"><img src="/images/download.png"  alt="Loader Image"/></a></td>');
-                                        {% endif %}
-                                    });
-                                }
-                                dateValueId.val("");
-                                filteredDataId.show();
-                                cancelButtonId.show();
-                            },
-                            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                                alert('Error : ' + errorThrown);
-                            }
-                        });
+
+                $('.foldername').live('click',function($e)
+                {
+                    $e.preventDefault();
+                    var folderName=$(this).attr('title');
+                    var folderId=$(this).attr('id');
+                    if($('#tableid_'+folderId).hasClass('folder_diplay'))
+                    {
+                        $('#tableid_'+folderId).removeClass('folder_diplay');
+                    }
+                    else
+                    {
+                        $('#tableid_'+folderId).addClass('folder_diplay');
                     }
                 });
-                cancelButtonId.click(function($e) {
-                    $e.preventDefault();
-                    cancelButtonId.hide();
-                    filteredDataId.hide();
-                    originalDataId.show();
 
-                });
             });
         </script>
     {% endblock %}
 
-    <div class="col-md-12 users_advanced_list_views_screen">
+    {#<div class="col-md-12 users_advanced_list_views_screen">
         <div class="container">
             <div class="col-sm-6" style="height:50px;">
                 <div class="form-group">
@@ -143,6 +92,67 @@
 
                 </tbody>
             </table>
+        </div>
+    </div>#}
+    <div class="col-sm-12">
+        <div class="dashboard">
+            <div>
+                <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                    <thead>
+                    <tr>
+                        <th>Attached files</th>
+                    </tr>
+                    </thead>
+                </table>
+                <div class="folder_list">
+                    <ul>
+                        {% set i=0 %}
+                        {% if filenamesarray|length <= 0 %}
+                            <span style="margin-left: 50%">No Record Found</span>
+                        {% endif %}
+                        {% if filenamesarray|length > 0 %}
+                            {% for key, childfilearray in filenamesarray %}
+
+                                <li id="listid_{{ i }}" ><label class="foldername" id="{{ i }}" title="{{ key }}">{{ key }}</label>
+                                    {% if childfilearray|length <= 0 %}
+                                    {% endif %}
+                                    {% if childfilearray|length > 0 %}
+                                        <table id="tableid_{{ i }}" class="table table-striped-2 folder_list_row folder_diplay">
+                                            <thead>
+                                            <tr>
+                                                <th class="file_name">File name</th>
+                                                <th class="date">DateTime</th>
+                                                {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                                    <th class="admin_name">Admin name</th>
+                                                    <th class="option">option</th>
+                                                {% endif %}
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for fileobject in childfilearray %}
+
+                                                <tr>
+                                                    <td>{{ fileobject.fileName|trim("@") }}</td>
+                                                    <td>{{ fileobject.dateTime.date }}</td>
+                                                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                                        <td>{{ fileobject.username }}</td>
+                                                        <td><a href="{{ path('scorecarddataimport_file_download', { 'filename':  fileobject.fileName,'foldername':key }) }}"><img src="/images/download.png"></a></td>
+                                                    {% endif %}
+                                                </tr>
+                                            {% endfor %}
+
+
+                                            </tbody>
+                                        </table>
+                                    {% endif %}
+                                </li>
+                                {% set i=i+1 %}
+                            {% endfor %}
+                        {% endif %}
+                    </ul>
+
+                </div>
+            </div>
         </div>
     </div>
 

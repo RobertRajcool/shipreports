@@ -1833,6 +1833,13 @@ select {
     width: auto;
 }
 
+
+
+
+
+
+
+
 form input[type="text"],
 .form_class input[type="text"],
 form input[type="number"],
@@ -1881,6 +1888,8 @@ input[type="color"],
     padding: 3px 2px;
 }
 
+
+
 .graph_and_colour_coding_dashboard_main_title_row {
     border:1px solid #dddddd !important;
     border-top:2px solid #40bad9 !important;
@@ -1900,6 +1909,7 @@ input[type="color"],
 .graph_and_colour_coding_dashboard_main_title_row thead th a:hover {
     color:#CCCCCC;
 }
+
 
 /* Management Performance */
 .table_container_dashboard {
@@ -2056,10 +2066,12 @@ input[type="color"],
     float: left;
     margin: 9px 0 0 0;
 }
-.rankingreport {
-    margin-top: 56px;
-}
+.rankingreport
+{
 
+    margin-top: 56px;
+
+}
 .actions_report_top {
     padding: 15px 0px 0px 24px;
     font-size: 14px;
@@ -2139,6 +2151,21 @@ input[type="color"],
 #active_inactive_checkbox.opened {
     display: block;
 }
+
+/*
+.conditional {
+    margin-left: 20px !important;
+}
+.conditional .add_rule_drop {
+    margin-left: 4px !important;
+}
+.conditional .add_rule_input {
+    margin-left: 4px !important;
+}
+.conditional .delete_icon_btn {
+    margin: 4px 0 0 4px !important;
+}
+*/
 
 .profile_list {
     margin:0px;
@@ -2352,6 +2379,7 @@ input[type="color"],
 }
 
 .weight-error-message {
+
     float: right;
     margin: 10px 0 -8px 0;
     font-size: 12px;
@@ -2390,6 +2418,7 @@ input[type="color"],
         width: calc(100% - -1px);
     }
 }
+
 
 .table_container_verfication {
     height:240px;
@@ -2562,6 +2591,7 @@ input[type="color"],
     font-weight: bold;
 }
 
+
 .view_report_screen {
     bottom: 0px;
     display: block;
@@ -2607,30 +2637,65 @@ input[type="color"],
     color: #265882;
 }
 
-.add_element_comparison_select_field {
-    width:53%;
+
+/* Folder List */
+.folder_list {
+    width:auto;
+    height:auto;
+    border:1px solid #dddddd;
 }
-.add_element_comparison_text_field {
-    width:15%;
+.folder_list ul {
+    margin:0px;
+    padding:0px;
 }
-.add_element_comparison_option {
-    width:30%;
+.folder_list ul li {
+    margin:0px 0px 0 0px;
+    padding:2px 0px 2px 28px;
+    width:100%;
+    height:auto;
+    list-style:none;
+    background:url(../images/icon-folder-20.png) 4px 2px no-repeat #f8f8f8;
+    border-bottom:1px solid #f1f1f1;
+}
+.folder_list ul li label {
+    list-style:none;
+    cursor:pointer;
+}
+.folder_list ul li:hover {
+    background:url(../images/icon-folder-20.png) 4px 2px no-repeat #ffffff;
+}
+.folder_list ul li a {
+    width:auto;
+    height:auto;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.folder_list_row {
+    width:99%;
+    margin-bottom: 0px;
+    border:1px solid #dddddd;
+}
+.folder_list_row thead th {
+    text-align:left;
+    background:#989898;
+    border-right:1px solid #dddddd;
+    padding: 3px 10px !important;
+}
+.folder_list_row .file_name {
+    width:42%;
+}
+.folder_list_row .date {
+    width:20%;
+}
+.folder_list_row .admin_name {
+    width:28%;
+}
+.folder_list_row .option {
+    width:10%;
+}
+.folder_diplay
+{
+    display: none;
+}
 
 
 

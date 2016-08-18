@@ -108,161 +108,81 @@
                     $e.preventDefault();
                     var folderName=$(this).attr('title');
                     var folderId=$(this).attr('id');
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        'url': Routing.generate('showfileslist_ranking', {'dataofmonth': folderName}),
-                        beforeSend: function () {
-                           // var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
-                        },
-                        complete: function () {
-                            //var setAjaxComplete = defaultAjaxCompleteFunction();
-                        }
-                    });
-                    $.ajax({
-                        success: function (data) {
-                            var Jsonstring=JSON.stringify(data.listoffiles);
-                            var Jsonobject=JSON.parse(Jsonstring);
-                            console.log($('#tableid_'+folderId).text());
-                            $('#tableid_'+folderId).text('');
-                            $('#tableid_'+folderId).html('');
-                            $('#tableid_'+folderId).fileTree({
-                                    data: Jsonobject
-                            });
-                            $('.tree li.folder > div').closest('li').toggleClass('mjs-nestedSortable-collapsed').toggleClass('mjs-nestedSortable-expanded');
-
-
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            window.location.href = base_url+'/login';
-                        }
-                    });
-
+                    if($('#tableid_'+folderId).hasClass('folder_diplay'))
+                    {
+                        $('#tableid_'+folderId).removeClass('folder_diplay');
+                    }
+                    else
+                    {
+                        $('#tableid_'+folderId).addClass('folder_diplay');
+                    }
                 });
-                var data = [{
-                    id: 'dir-1',
-                    name: 'Root',
-                    type: 'dir',
-                    children: [
-                        {
-                            id: 'file-2',
-                            name: 'File tree',
-                            type: 'zip',
-                            url: 'http://www.jqueryscript.net/other/Nice-File-Tree-View-Plugin-with-jQuery-Bootstrap-File-Tree.html',
-
-                        },
-                        {
-                            id: 'file-3',
-                            name: 'File tree',
-                            type: 'zip',
-                            url: 'http://www.jqueryscript.net/other/Nice-File-Tree-View-Plugin-with-jQuery-Bootstrap-File-Tree.html',
-                        }
-                    ]
-                }];
-                /*$('#fixed-tree').fileTree({
-                    data: data
-                });
-                var path=base_url+'/uploads/excelfiles/Auguest-2016/';
-                alert(path);
-                $('#container_id').fileTree({ root: path }, function(file) {
-                    alert(file);
-                });*/
-
 
             });
         </script>
 
     {% endblock %}
-    <div class="col-md-12 users_advanced_list_views_screen">
+    <div class="col-sm-12">
+                <div class="dashboard">
+                    <div>
+                        <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row">
+                            <thead>
+                            <tr>
+                                <th>Attached files</th>
+                            </tr>
+                            </thead>
+                        </table>
+                        <div class="folder_list">
+                            <ul>
+                                {% set i=0 %}
+                                {% if filenamesarray|length <= 0 %}
+                                    <span style="margin-left: 50%">No Record Found</span>
+                                {% endif %}
+                                {% if filenamesarray|length > 0 %}
+                                {% for key, childfilearray in filenamesarray %}
 
-        <div>
-{#
-            <span id="errortext"></span>
-            <div class="container">
-                <div class="col-sm-6" style="height:50px;">
-                    <div class="form-group">
-                        <div class='input-group date' id='datetimepicker10'>
-                            <input type='text' id="datepickervalue" class="form-control"  name="filterdate" />
-                <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar">
-                    </span>
-                </span>
+                                    <li id="listid_{{ i }}" ><label class="foldername" id="{{ i }}" title="{{ key }}">{{ key }}</label>
+                                    {% if childfilearray|length <= 0 %}
+                                    {% endif %}
+                                    {% if childfilearray|length > 0 %}
+                                        <table id="tableid_{{ i }}" class="table table-striped-2 folder_list_row folder_diplay">
+                                        <thead>
+                                        <tr>
+                                            <th class="file_name">File name</th>
+                                            <th class="date">DateTime</th>
+                                            {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                            <th class="admin_name">Admin name</th>
+                                            <th class="option">option</th>
+                                            {% endif %}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for fileobject in childfilearray %}
+
+                                                <tr>
+                                                    <td>{{ fileobject.filename|trim("@") }}</td>
+                                                    <td>{{ fileobject.datetime.date }}</td>
+                                                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                                                    <td>{{ fileobject.userid }}</td>
+                                                    <td><a href="{{ path('downfile_ranking', { 'filename':  fileobject.filename,'foldername':key }) }}"><img src="/images/download.png"></a></td>
+                                                    {% endif %}
+                                                </tr>
+                                        {% endfor %}
+
+
+                                        </tbody>
+                                        </table>
+                                    {% endif %}
+                                    </li>
+                                    {% set i=i+1 %}
+                                {% endfor %}
+                                {% endif %}
+                            </ul>
+
                         </div>
                     </div>
                 </div>
-                <input type="submit" class="submit_btn" id="applyfilter"  value="Apply filter">
+            </div>
 
-            </div>#}
-
-           {# <div class="table-responsive" id="listtable">
-
-                <table class="table table-striped table_dividere data_import_list_table">
-                    <thead>
-
-                    <tr>
-
-                        <th class="month">Data of Month</th>
-                        <th  class="time">Upload DateTime</th>
-                        <th class="filename">Filename</th>
-                        {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                            <th class="option">Username</th>
-                            <th class="option">Options</th>
-                        {% endif %}
-
-
-                    </tr>
-                    </thead>
-                    <tbody id="tablebody">
-                    {% set i=0 %}
-                    {% for listofuser in userdetails %}
-                        <tr>
-
-                            #}{#<td>{{ listofuser.userid }}</td>#}{#
-                            <td class="kpi_name_thtd" id="tableid_{{ i }}">
-
-                                <span class="menu-item-icon fa fa-folder" >&nbsp;</span><a class="foldername" id="{{ i }}" title="{{ listofuser.dataOfMonth|date('F-Y') }}">
-                                    {{ listofuser.dataOfMonth|date('F-Y') }}
-                                </a>
-                            </td>
-                            <td class="kpi_name_thtd">{{ listofuser.datetime|date('Y-m-d H:i:s') }}</td>
-                            <td class="kpi_name_thtd">{{ listofuser.filename }}</td>
-                            {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                                <td class="kpi_name_thtd">
-                                    {{ listofuser.userid }}
-                                </td>
-                                <td class="kpi_name_thtd">
-
-                                   #}{# <a href="{{ path('downfile_ranking', { 'filename': listofuser.filename }) }}">
-                                        <img src="/images/download.png"  alt="Loader Image"/>
-                                    </a>#}{#
-                                </td>
-                            {% endif %}
-
-                        </tr>
-                        {% set i=i+1 %}
-                    {% endfor %}
-
-                    </tbody>
-                </table>
-            </div>#}
-            {% set i=0 %}
-            {% for listofuser in userdetails %}
-
-                <div id="tableid_{{ i }}">
-
-                    <span class="menu-item-icon fa fa-folder" >&nbsp;</span><p class="foldername" id="{{ i }}" title="{{ listofuser.folderName }}">
-                        {{ listofuser.folderName }}
-                    </p>
-                </div>
-                {% set i=i+1 %}
-            {% endfor %}
-
-            <div id="fixed-tree"> </div>
-            <div id="container_id"> </div>
-
-
-        </div>
-    </div>
 
 {% endblock %}

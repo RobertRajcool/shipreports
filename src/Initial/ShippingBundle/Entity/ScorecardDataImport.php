@@ -50,6 +50,14 @@ class ScorecardDataImport
      * @ORM\Column(name="dateTime", type="datetime")
      */
     private $dateTime;
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\ScorecardFolder")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="folderId", referencedColumnName="id")
+     * })
+     */
+    private $folderId;
 
 
     /**
@@ -157,5 +165,22 @@ class ScorecardDataImport
     {
         return $this->dateTime;
     }
+
+    /**
+     * @return string
+     */
+    public function getFolderId()
+    {
+        return $this->folderId;
+    }
+
+    /**
+     * @param string $folderId
+     */
+    public function setFolderId($folderId)
+    {
+        $this->folderId = $folderId;
+    }
+
 }
 
