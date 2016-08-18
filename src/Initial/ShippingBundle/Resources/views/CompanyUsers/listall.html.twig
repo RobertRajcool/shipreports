@@ -166,7 +166,14 @@
                             userName.append(data.User_detail[0].username);
                             userEmail.append(data.User_detail[0].email);
                             userMobile.append(data.User_detail[0].mobile);
-                            userRoles.append(data.User_detail[0].roles[0]);
+                            if(data.User_detail[0].roles[0]=="ROLE_MANAGER")
+                            {
+                                userRoles.append("KPI Manager")
+                            }
+                            else if(data.User_detail[0].roles[0]=="ROLE_KPI_INFO_PROVIDER")
+                            {
+                                userRoles.append("V-Ships Manager")
+                            }
                             if(data.User_detail[0].imagepath!=null)
                             {
                                 $("#tempimageid").attr('src', '/uploads/userimages/'+data.User_detail[0].imagepath);
@@ -667,26 +674,24 @@
                     <div class="add_new_users_form">
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">{{ 'user.header'|trans }}</legend>
-
-
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.full_name'|trans }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.fullname,{'label': ' ','required':'true','id':'full_name'}) }}
+                                    {{ form_widget(form.fullname,{'label': ' ','required':'true','id':'full_name'}) }}
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.user_name'|trans }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.username,{'label': ' ' ,'id':'val_name'}) }}
+                                    {{ form_widget(form.username,{'label': ' ' ,'id':'val_name'}) }}
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.email'|trans }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.email,{'label': ' ','id':'val_email'}) }}
+                                    {{ form_widget(form.email,{'label': ' ','id':'val_email'}) }}
                                 </div>
                                 <div class="col-xs-8 weight-error-message" id="create-val-email"></div>
                             </div>
@@ -694,12 +699,10 @@
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.mobile_no'|trans }}</label>
                                 <div class="col-xs-8">
-                                    {{ form_row(form.mobile,{'label': ' ','type':'number','required':'true','id':'user_mobile'}) }}
+                                    {{ form_widget(form.mobile,{'label': ' ','type':'number','required':'true','id':'user_mobile'}) }}
                                 </div>
                                 <div class="col-xs-8 weight-error-message" id="create-val-mobile"></div>
                             </div>
-
-
                         </fieldset>
 
                         <fieldset class="fieldset_box">
@@ -729,7 +732,7 @@
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">{{ 'user.security'|trans }}</legend>
                             <div class="form-group">
-                               <label class="control-label required_field col-xs-4"> <label class="pass2">..</label>{{ 'user.password'|trans }}
+                                <label class="control-label required_field col-xs-4"> <label class="pass2">..</label>{{ 'user.password'|trans }}
                                     <span class="change">*</span><label class="pass">.</label>
                                     <labe>{{ 'user.confirm'|trans }}</labe></label>
                                 <div class="col-xs-8">
@@ -773,6 +776,7 @@
                         </div>
                     </div>
                     <div class="user_view_privileges">
+
                         <p class="title">Privileges</p>
                         <p><label id="user_roles" class="form_input user_roles"></label></p>
                     </div>

@@ -2275,13 +2275,14 @@ class DashboradController extends Controller
                     );
                 } else {
                     $newkpiid = $em->createQueryBuilder()
-                        ->select('b.id')
+                        ->select('b.id','b.weightage')
                         ->from('InitialShippingBundle:RankingKpiDetails', 'b')
                         ->where('b.kpiName = :kpiName')
                         ->setParameter('kpiName', $kpiName)
                         ->groupby('b.kpiName')
                         ->getQuery()
                         ->getResult();
+                    $kpiWeight=$newkpiid[0]['weightage'];
                     $elementForKpiList = $em->createQueryBuilder()
                         ->select('a.elementName', 'a.id', 'a.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'a')
@@ -2347,7 +2348,7 @@ class DashboradController extends Controller
                             }
 
                             array_push($scorecardElementRules, $rankingElementRulesArray);
-                            array_push($scorecardElementValueArray, $rankingElementResult[0]['elementdata']);
+                            array_push($scorecardElementValueArray, (($rankingElementResult[0]['elementdata']) * $kpiWeight) / 100);
                             array_push($kpiElementColorArray, $rankingElementResultColor);
                             $elementValueWithWeight = $elementColorValue;
                             $kpiSumValue += $elementValueWithWeight;
