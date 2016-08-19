@@ -1502,7 +1502,7 @@ class DashboradController extends Controller
                         $scorecardElementArray = $em->createQueryBuilder()
                             ->select('c.id, c.weightage, c.elementName')
                             ->from('InitialShippingBundle:ElementDetails', 'c')
-                            ->where('c.kpiDetailsId = :kpiId')
+                            ->where('c.kpiDetailsId = :kpiId and c.weightage')
                             ->setParameter('kpiId', $scorecardKpiId)
                             ->getQuery()
                             ->getResult();
@@ -2320,29 +2320,8 @@ class DashboradController extends Controller
                                 ->getResult();
                             if($weightage_startus_Result[0]['status']==1)
                             {*/
-                            if($monthCount==0)
-                            {
-                                $weightage_all_result = $em->createQueryBuilder()
-                                    ->select('a.weightage','a.endDate','a.id','a.status')
-                                    ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
-                                    ->where('a.elementId = :elementid')
-                                    ->setParameter('elementid', $scorecardElementId)
-                                    ->getQuery()
-                                    ->getResult();
-                                $resultarray_weightage=array();
-                                for($weightage_all_result_count=0;$weightage_all_result_count<count($weightage_all_result);$weightage_all_result_count++)
-                                {
-                                    $startdate=$weightage_all_result[$weightage_all_result_count]['endDate'];
-                                    $endDate=$weightage_all_result[$weightage_all_result_count]['endDate'];
-                                    if($startdate==$endDate)
-                                    {
-
-                                    }
 
 
-                                }
-                                array_push($monthlyweightage_status,$resultarray_weightage);
-                            }
 
                             /*
                             }*/
