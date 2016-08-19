@@ -2144,11 +2144,11 @@ class DashboradController extends Controller
                         ->getQuery()
                         ->getResult();
                     $shipId = $shipidarray[0][1];
-
                     $monthNameLetter = array();
                     $monthlyKpiAverageValueTotal = array();
                     $monthlyElementColorArray = array();
                     $monthlyElementValueArray = array();
+                    $monthlyweightage_status=array();
                     for ($monthCount = 0; $monthCount < $statusVerified; $monthCount++) {
                         $scorecardElementValueArray = array();
                         $kpiElementColorArray = array();
@@ -2163,6 +2163,42 @@ class DashboradController extends Controller
                         for ($elementCount = 0; $elementCount < count($elementForKpiList); $elementCount++) {
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
+                           /* $weightage_startus_Result = $em->createQueryBuilder()
+                                ->select('a.weightage','a.endDate','a.id','a.status')
+                                ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                ->where('a.elementId = :elementid')
+                                ->andWhere('a.endDate IS NULL')
+                                ->setParameter('elementid', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+                            if($weightage_startus_Result[0]['status']==1)
+                            {*/
+                            if($monthCount==0)
+                            {
+                                $weightage_all_result = $em->createQueryBuilder()
+                                    ->select('a.weightage','a.endDate','a.id','a.status')
+                                    ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                    ->where('a.elementId = :elementid')
+                                    ->setParameter('elementid', $scorecardElementId)
+                                    ->getQuery()
+                                    ->getResult();
+                                $resultarray_weightage=array();
+                                for($weightage_all_result_count=0;$weightage_all_result_count<count($weightage_all_result);$weightage_all_result_count++)
+                                {
+                                    $startdate=$weightage_all_result[$weightage_all_result_count]['endDate'];
+                                    $endDate=$weightage_all_result[$weightage_all_result_count]['endDate'];
+                                    if($startdate==$endDate)
+                                    {
+
+                                    }
+
+
+                                }
+                                array_push($monthlyweightage_status,$resultarray_weightage);
+                            }
+
+                            /*
+                            }*/
 
                             $rankingElementRulesArray = $em->createQueryBuilder()
                                 ->select('a.rules')

@@ -302,7 +302,6 @@ class ElementDetailsController extends Controller
             $elementDetail->setComparisonStatus($comparisonStatus);
             $elementDetail->setIndicationValue($indicationValue);
             $elementDetail->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
-
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
             $em->flush();
