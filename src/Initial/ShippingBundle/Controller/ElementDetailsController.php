@@ -287,6 +287,7 @@ class ElementDetailsController extends Controller
             $monthtostring1 = $endYear . '-' . $endMonth . '-' . $day;
             $new_date1 = new \DateTime($monthtostring1);
             $weightage = $params['weightage'];
+            $baseValue = $params['baseValue'];
             //$rules         = $request->request->get('value');
 
             $elementDetail = new ElementDetails();
@@ -302,6 +303,8 @@ class ElementDetailsController extends Controller
             $elementDetail->setComparisonStatus($comparisonStatus);
             $elementDetail->setIndicationValue($indicationValue);
             $elementDetail->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
+            $elementDetail->setBaseValue($baseValue);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
             $em->flush();

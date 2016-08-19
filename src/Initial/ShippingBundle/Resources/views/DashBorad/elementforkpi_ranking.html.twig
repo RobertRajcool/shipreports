@@ -143,8 +143,6 @@
                     return result;
                 }
 
-
-
                 $('#toemail').keyup(function($e)
                 {
                     $e.preventDefault();
@@ -187,7 +185,6 @@
 
                 });
 
-
                 $(".dynamiclabel").live("click",function($e)
                 {
                     $e.preventDefault();
@@ -195,8 +192,6 @@
                     $('#toemail').val(b);
                     $('#livesearchdiv').hide();
                 });
-
-
 
                 $('#addcommentid').click(function($e)
                 {
@@ -362,34 +357,189 @@
                 {
                     $('#livesearchdiv').hide();
                 });
-                $('#element_btn_rules').click(function($e)
-                {
+
+                var kpiRulesShow = $('#ranking_elementrules');
+                kpiRulesShow.hide();
+                $('#element_btn_rules').click(function($e) {
                     $e.preventDefault();
-                    $('#ranking_elementrules').toggle();
-                });
-                $('#element_weighate_status').click(function($e)
-                {
-                    $e.preventDefault();
-                    $('#weightagestatus').toggle();
+                    if(toggleRulesStatus==0 && toggleOriginalDataStatus ==0) {
+                        toggleRulesStatus=1;
+                        kpiRulesShow.toggle();
+                    } else if(toggleRulesStatus==0 && toggleOriginalDataStatus ==1){
+                        kpiRulesShow.toggle();
+                        originalDataTableClass.toggle();
+                        toggleRulesStatus=1;
+                        toggleOriginalDataStatus=0;
+                    } else {
+                        kpiRulesShow.toggle();
+                        toggleRulesStatus=0;
+                    }
                 });
                 $('#ranking_elementrules').hide();
-                $('#weightagestatus').hide();
                 Number.prototype.padLeft = function(base,chr){
                     var  len = (String(base || 10).length - String(this).length)+1;
                     return len > 0? new Array(len).join(chr || '0')+this : this;
                 }
 
+
+                /*------------------------------Element original values show coding----------------------------------*/
+
+                var monthNumber;
+                var toggleRulesStatus = 0;
+                var toggleOriginalDataStatus = 0;
+                var elementOriginalValuesClass = $('.element-original-values-class');
+                var originalDataTableClass = $('.original-data-table');
+                originalDataTableClass.hide();
+                elementOriginalValuesClass.click(function($e) {
+                    $e.preventDefault();
+                    var data = {
+                        monthNumber:{{ monthInNumber }},
+                        kpiDetailsId:{{ kpiid }}
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"find_ranking_element_original_value",/*Routing.generate('find_ranking_element_original_value'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            monthNumber = data.monthNumber;
+                            originalDataTableClass.empty();
+                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"><th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th></tr></thead>').appendTo(originalDataTableClass);
+                            $.each(data.shipDetail, function(i,ship) {
+                                $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">'+ship.shipName+'</div></th>').appendTo($('#original-data-head-row'));
+                            });
+                            $('<tbody class="original-table-body"></tbody>').appendTo(originalDataTableClass);
+                            var row_count = 0;
+                            {% for element in listofelement %}
+                            $('<tr id="body-row-id-'+row_count+'"><td class="kpi_lement_name kpi_lement_name">{{ element.elementName }}</td><td>{{ element.weightage }}</td></tr>').appendTo($('.original-table-body'));
+                            $.each(data.elementOriginalValues, function(j,value) {
+                                $('<td>'+value[row_count]+'</td>').appendTo($('#body-row-id-'+row_count+''));
+                            });
+                            row_count++;
+                            {% endfor %}
+                            if(toggleRulesStatus==0 && toggleOriginalDataStatus ==0) {
+                                toggleOriginalDataStatus=1;
+                                originalDataTableClass.toggle();
+                            } else if(toggleRulesStatus==1 && toggleOriginalDataStatus ==0){
+                                kpiRulesShow.toggle();
+                                originalDataTableClass.toggle();
+                                toggleRulesStatus=0;
+                                toggleOriginalDataStatus=1;
+                            } else {
+                                originalDataTableClass.toggle();
+                                toggleOriginalDataStatus=0;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var previousMonth = $('.previous-month');
+                var nextMonth = $('.next-month');
+                previousMonth.live("click",function($e) {
+                    if(monthNumber-1>=1) {
+                        var data = {
+                            monthNumber:monthNumber-1,
+                            kpiDetailsId:{{ kpiid }}
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"previous_month_ranking_element_original_value",/*Routing.generate('previous_month_ranking_element_original_value'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                monthNumber = data.monthNumber;
+                                var originalTableBody = $('.original-table-body');
+                                var monthNameHead = $('#month-name-head');
+                                originalTableBody.empty();
+                                monthNameHead.empty();
+                                $('<a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a>').appendTo(monthNameHead);
+                                var row_count = 0;
+                                {% for element in listofelement %}
+                                $('<tr id="body-row-id-'+row_count+'"><td class="kpi_lement_name kpi_lement_name">{{ element.elementName }}</td><td>{{ element.weightage }}</td></tr>').appendTo(originalTableBody);
+                                $.each(data.elementOriginalValues, function(j,value) {
+                                    $('<td>'+value[row_count]+'</td>').appendTo($('#body-row-id-'+row_count+''));
+                                });
+                                row_count++;
+                                {% endfor %}
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    } else {
+                        alert('This is the first month of this year');
+                    }
+                });
+
+                nextMonth.live("click",function($e) {
+                    var num = {{ monthInNumber }};
+                    if(parseInt(monthNumber)+1<=parseInt(num)) {
+                        var data = {
+                            monthNumber:parseInt(monthNumber)+1,
+                            kpiDetailsId:{{ kpiid }}
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"previous_month_ranking_element_original_value",/*Routing.generate('previous_month_ranking_element_original_value'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                monthNumber = data.monthNumber;
+                                var originalTableBody = $('.original-table-body');
+                                var monthNameHead = $('#month-name-head');
+                                originalTableBody.empty();
+                                monthNameHead.empty();
+                                $('<a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a>').appendTo(monthNameHead);
+                                var row_count = 0;
+                                {% for element in listofelement %}
+                                $('<tr id="body-row-id-'+row_count+'"><td class="kpi_lement_name kpi_lement_name">{{ element.elementName }}</td><td>{{ element.weightage }}</td></tr>').appendTo(originalTableBody);
+                                $.each(data.elementOriginalValues, function(j,value) {
+                                    $('<td>'+value[row_count]+'</td>').appendTo($('#body-row-id-'+row_count+''));
+                                });
+                                row_count++;
+                                {% endfor %}
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    } else {
+                        alert('This is current month value');
+                    }
+                });
+
             });
-
-
         </script>
     {% endblock %}
 
     <div class="col-md-12 users_advanced_list_views_screen">
-        {# <div class="page-header">
-             <h2>{{ shipname.shipName }}</h2>
-             <a href="{{ path('dashboradhome') }}">Back</a>
-         </div>#}
         <div class="table-responsive">
 
             <table class="table table-striped graph_and_colour_coding_main_title_row">
@@ -412,7 +562,6 @@
                     {% for monthname in monthdetails %}
                         <th  colspan="2" class="month">{{ monthname }}</th>
                     {% endfor %}
-
                 </tr>
                 </thead>
                 <tbody>
@@ -423,7 +572,6 @@
                         <td  class="element_name_title">{{ element.elementName }}
 
                         {% for j in 0..countmonth1 %}
-                            {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
                             <td>
 
                                 {{ monthlydata[j][i]  }}
@@ -461,80 +609,10 @@
 
                 </tbody>
             </table>
+
             <div class="rules_ranking">
                 <a class="rules_show_btn"  id="element_btn_rules" href="">{{ 'elementranking.ruleshow'|trans }}</a>
-                <a class="rules_show_btn element-original-values-class"  id="element_weighate_status" style="cursor: pointer">Weightage Status</a>
-            </div>
-            <div id="weightagestatus" class="">
-                <table class="table table-striped graph_and_colour_coding_main_title_row">
-                    <thead>
-                    <tr>
-                        <th>{{ kpiname }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>
-                            <a class="linkclass" href="{{ path('listallkpiforship_ranking', { 'shipid': shipid,'year':2016}) }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <table class="table table-striped-3 element_ranking_new_row">
-                    <thead>
-                    <tr>
-                        <th class="kpi_name">{{ 'elementranking.element'|trans }}</th>
-                        {% for monthname in monthdetails %}
-                            <th  colspan="2" class="month">{{ monthname }}</th>
-                        {% endfor %}
-
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% set countmonth1= countmonth-1 %}
-                    {% set i=0 %}
-                    {% for element in listofelement %}
-                        <tr>
-                            <td  class="element_name_title">{{ element.elementName }}
-
-                                {% for j in 0..countmonth1 %}
-                                {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
-                            <td>
-
-                                {{ monthlydata[j][i]  }}
-                            </td>
-
-                            <td>
-                                {% if elementcolorarray[j][i]=="Green" %}
-                                    <img class="img-icon" src="/images/02.large.png" alt="Loader Image"/>
-                                {% elseif elementcolorarray[j][i]=="Red" %}
-                                    <img class="img-icon" src="/images/03.large.png" alt="Loader Image"/>
-                                {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                    <img class="img-icon" src="/images/01.large.png" alt="Loader Image"/>
-                                {% endif %}
-                            </td>
-
-                            {% endfor %}
-
-                        </tr>
-
-                        {% set i=i+1 %}
-                    {% endfor %}
-                    <tr>
-                        <td colspan="" class="kpi_name_thtd"><strong>{{ 'elementranking.score'|trans }}</strong></td>
-
-
-                        {% for avg in avgscore %}
-                            {% set i1=0 %}
-                            <td><strong>{{ avg }}</strong></td>
-                            {% if i1 != 2 %}
-                                <td>&nbsp;</td>
-                            {% endif %}
-                            {% set i1=i1+1 %}
-                        {% endfor %}
-                    </tr>
-
-                    </tbody>
-                </table>
+                <a class="rules_show_btn element-original-values-class" style="cursor: pointer">Original values</a>
             </div>
 
             <table class="table table-striped-4 kpi_ranking_rules_show_row" id="ranking_elementrules">
@@ -551,6 +629,8 @@
                 </tr>
                 </tbody>
             </table>
+
+            <table class="table verfication_ranking_table_form_section original-data-table" style="margin-bottom: 20px;"></table>
 
 
             <table class="table table-striped normal_table">
@@ -619,9 +699,6 @@
         </div>
         </div>
         <div id="commentandreportdiv" class="graph_send_comment">
-
-
-
             <div class="add_new_users_form">
                 <!--Form for Add comment Starts Here  -->
 

@@ -802,8 +802,9 @@ class ReadExcelWorker
                             $averageElementValue = $scorecardElementSumValue / count($TotalShipsInserted);
                         }*/
                         //Find element average value
-                        if(int($comparisonStatus)==1)
+                        if((int)($comparisonStatus)==1)
                         {
+
                             $scorecardElementRulesArray = $em->createQueryBuilder()
                                 ->select('a.rules')
                                 ->from('InitialShippingBundle:ElementComparisonRules', 'a')
@@ -815,11 +816,9 @@ class ReadExcelWorker
                             $elementColorValue=0;
                             for($elementRulesCount=0;$elementRulesCount<count($scorecardElementRulesArray);$elementRulesCount++)
                             {
-                                $elementRule='\'' . $scorecardElementRulesArray[$elementRulesCount]['rules'] . ' \'';
-                                $newjson_decodevalue=json_decode($elementRule);
+                                $newjson_decodevalue=json_decode((string)$scorecardElementRulesArray[$elementRulesCount]['rules']);
                                 $first_ElementId=$newjson_decodevalue->first->id;
                                 $second_ElementId=$newjson_decodevalue->second->id;
-
                                 $first_ElementValue= $em->createQueryBuilder()
                                     ->select('sum(a.value) as value')
                                     ->from('InitialShippingBundle:ReadingKpiValues', 'a')
@@ -840,6 +839,7 @@ class ReadExcelWorker
                                     ->setParameter('kpiId',$scorecardAllKpiId)
                                     ->getQuery()
                                     ->getResult();
+                                echo "print";
                                 $average_FirstElementValue=$commonfunction_object->find_Avg_Sum_Calculation($vesselWiseTotalStatus,$first_ElementValue[0]['value'],$total_numberofShipsInserted_count);
                                 $average_SecondElementValue=$commonfunction_object->find_Avg_Sum_Calculation($vesselWiseTotalStatus,$second_ElementValue[0]['value'],$total_numberofShipsInserted_count);
                                 $first_ElementResult=$commonfunction_object->find_options_ComparsionRule($newjson_decodevalue->first->option,$average_FirstElementValue,(int)$newjson_decodevalue->first->value);
