@@ -317,112 +317,6 @@ class DashboradController extends Controller
 
                             }
                         }
-                        /*     $rankingKpiList = $em->createQueryBuilder()
-                                 ->select('b.kpiName', 'b.id', 'b.weightage')
-                                 ->from('InitialShippingBundle:RankingKpiDetails', 'b')
-                                 ->where('b.shipDetailsId = :shipid')
-                                 ->setParameter('shipid', $listAllShipForCompany[0]['id'])
-                                 ->getQuery()
-                                 ->getResult();
-                             $verifyField = 0;
-                             if (count($monthlyShipDataStatus) != 0) {
-                                 $verifyField = $monthlyShipDataStatus[0]['status'];
-                             }
-                             if ($verifyField == 4) {
-                                 for ($rankingKpiCount = 0; $rankingKpiCount < count($rankingKpiList); $rankingKpiCount++) {
-                                     $rankingElementValueTotal = 0;
-                                     $rankingKpiId = $rankingKpiList[$rankingKpiCount]['id'];
-                                     $rankingKpiWeight = $rankingKpiList[$rankingKpiCount]['weightage'];
-                                     $rankingKpiName = $rankingKpiList[$rankingKpiCount]['kpiName'];
-                                     if ($rankingKpiName == 'Vessel age') {
-                                         if ($manufacturingYear == "") {
-                                             $yearcount = 0;
-                                         } else {
-
-                                             $man_datestring = $manufacturingYear. '-01';
-                                             $temp_man_year = new \DateTime($man_datestring);
-                                             $temp_man_year->modify('last day of this month');
-                                             $Vessage_count = $temp_man_year->diff($lastMonthDetail)->y;
-                                         }
-                                         $vesselage = ($Vessage_count * $rankingKpiWeight) / 20;
-                                         array_push($rankingKpiValueCountArray, $vesselage);
-                                     }
-                                     else
-                                     {
-                                     $rankingElementList = $em->createQueryBuilder()
-                                         ->select('c.id', 'c.elementName', 'c.weightage', 'a.value')
-                                         ->from('InitialShippingBundle:RankingElementDetails', 'c')
-                                         ->join('InitialShippingBundle:RankingMonthlyData', 'a', 'with', 'c.id = a.elementDetailsId')
-                                         ->where('c.kpiDetailsId = :kpiid and a.monthdetail = :datamonth and a.status = :rankingStatusValue and a.shipDetailsId = :shipId')
-                                         ->setParameter('kpiid', $rankingKpiId)
-                                         ->setParameter('datamonth', $lastMonthDetail)
-                                         ->setParameter('rankingStatusValue', 3)
-                                         ->setParameter('shipId', $rankingShipId)
-                                         ->getQuery()
-                                         ->getResult();
-
-                                     if ($rankingElementList > 0) {
-                                         for ($rankingElementCount = 0; $rankingElementCount < count($rankingElementList); $rankingElementCount++) {
-                                             $rankingElementName = $rankingElementList[$rankingElementCount]['elementName'];
-                                             $rankingElementId = $rankingElementList[$rankingElementCount]['id'];
-                                             $rankingElementWeight = $rankingElementList[$rankingElementCount]['weightage'];
-                                             $rankingElementValue = $rankingElementList[$rankingElementCount]['value'];
-                                             $rankingElementResultColor = "";
-                                             $rankingElementColorValue = 0;
-
-                                             $rankingElementResult = $em->createQueryBuilder()
-                                                 ->select('b.elementdata, b.elementcolor')
-                                                 ->from('InitialShippingBundle:Ranking_LookupData', 'b')
-                                                 ->where('b.kpiDetailsId = :kpiId and b.shipDetailsId = :shipId and b.elementDetailsId = :elementId and b.monthdetail = :monthDetail')
-                                                 ->setParameter('kpiId', $rankingKpiId)
-                                                 ->setParameter('shipId', $rankingShipId)
-                                                 ->setParameter('elementId', $rankingElementId)
-                                                 ->setParameter('monthDetail', $lastMonthDetail)
-                                                 ->getQuery()
-                                                 ->getResult();
-                                             if (count($rankingElementResult) != 0) {
-                                                 $rankingElementResultColor = $rankingElementResult[0]['elementcolor'];
-                                             }
-
-                                             if ($rankingElementResultColor == "false") {
-                                                 $rankingElementResultColor = "";
-                                             }
-
-                                             if ($rankingElementResultColor == 'Green') {
-                                                 $rankingElementColorValue = $rankingElementWeight;
-                                             } else if ($rankingElementResultColor == 'Yellow') {
-                                                 $rankingElementColorValue = $rankingElementWeight / 2;
-                                             } else if ($rankingElementResultColor == 'Red') {
-                                                 $rankingElementColorValue = 0;
-                                             }
-
-                                             $rankingElementValueTotal += $rankingElementColorValue;
-                                         }
-                                     }
-                                     array_push($rankingKpiValueCountArray, ($rankingElementValueTotal * $rankingKpiWeight / 100));
-                                 }
-                                 }
-                                 if ($manufacturingYear == "") {
-                                     $yearcount = 0;
-                                 } else {
-                                     $currentdatestring = date('Y-01-01');
-                                     $d1 = new \DateTime($currentdatestring);
-                                     $man_datestring = $manufacturingYear . '-01-' . '01';
-                                     $d2 = new \DateTime($man_datestring);
-                                     $diff = $d2->diff($d1);
-                                     $yearcount = $diff->y + 1;
-                                     $vesselage = 20 / $yearcount;
-                                 }
-                                 $overallShipDetailArray[$shipCount]['name'] = $rankingShipName;
-                                 $overallShipDetailArray[$shipCount]['y'] = (array_sum($rankingKpiValueCountArray)/(count()));
-                                 $yearChange = $lastMonthDetail->format('Y');
-                                 $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
-                             } else {
-                                 $overallShipDetailArray[$shipCount]['name'] = $rankingShipName;
-                                 $overallShipDetailArray[$shipCount]['y'] = 0;
-                                 $yearChange = $lastMonthDetail->format('Y');
-                                 $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
-                             }*/
                         $overallShipDetailArray[$shipCount]['name'] = $rankingShipName;
                         if(count($oneyear_montharray) > 0 ) {
                             $overallShipDetailArray[$shipCount]['y'] = (array_sum($monthlyKpiAverageScore)/(count($oneyear_montharray)));
@@ -431,12 +325,6 @@ class DashboradController extends Controller
                         $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
 
                     }
-
-
-                    /*$monthInLetter = $lastMonthDetail->format('M-Y');
-                    if ($mode == 'getnextmonthchart') {
-                        return array("data" => $overallShipDetailArray, 'currentmonth' => $monthInLetter, 'name' => $monthInLetter,);
-                    }*/
                     //This Ranking Dashboard Highcharts Starts Here//
 
                     $ob = new Highchart();
@@ -701,7 +589,7 @@ class DashboradController extends Controller
                     'center'=>array('50%', '75%'),
                 ));
                 $vessel_Piechart->series(array(array('type' => 'pie','showInLegend' => true,'name' => 'Vessel','innerSize'=> '50%', 'data' => $vessel_Piechart_data)));
-               $vessel_Piechart->plotOptions->series(array(
+                $vessel_Piechart->plotOptions->series(array(
                     'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
                 $vessel_Piechart->exporting->enabled(false);
 
@@ -741,7 +629,7 @@ class DashboradController extends Controller
                 $kpi_alerts->series(array(array('type' => 'pie','showInLegend' => true,'name' => 'KPI','innerSize'=> '50%', 'data' => $kpi_Piechart_data)));
                 $kpi_alerts->plotOptions->series(array(
                     'dataLabels'=>array( 'enabled'=> false,'inside'=> true,)
-                    ));
+                ));
                 //KPI Pie Charts Ends Here//
 
                 return $this->render(
@@ -1498,11 +1386,11 @@ class DashboradController extends Controller
                         $scorecardKpiId = $scorecardKpiList[$kpiCount]['id'];
                         $scorecardKpiWeight = $scorecardKpiList[$kpiCount]['weightage'];
                         $scorecardKpiName = $scorecardKpiList[$kpiCount]['kpiName'];
-
-                        $scorecardElementArray = $em->createQueryBuilder()
-                            ->select('c.id, c.weightage, c.elementName')
+                        $queryBuilder_obj = $em->createQueryBuilder();
+                        $scorecardElementArray = $queryBuilder_obj ->select('c.id, c.weightage, c.elementName')
                             ->from('InitialShippingBundle:ElementDetails', 'c')
-                            ->where('c.kpiDetailsId = :kpiId and c.weightage')
+                            ->where('c.kpiDetailsId = :kpiId')
+                            ->andwhere($queryBuilder_obj->expr()->neq('c.weightage',0))
                             ->setParameter('kpiId', $scorecardKpiId)
                             ->getQuery()
                             ->getResult();
@@ -2273,11 +2161,12 @@ class DashboradController extends Controller
             }
             else
             {
-
-                $elementForKpiList = $em->createQueryBuilder()
+                $queryBuilder_obj = $em->createQueryBuilder();
+                $elementForKpiList = $queryBuilder_obj
                     ->select('a.elementName', 'a.id', 'a.weightage')
                     ->from('InitialShippingBundle:RankingElementDetails', 'a')
                     ->where('a.kpiDetailsId = :kpiid')
+                    ->andwhere($queryBuilder_obj->expr()->neq('a.weightage',0))
                     ->setParameter('kpiid', $kpiid)
                     ->getQuery()
                     ->getResult();
@@ -2310,16 +2199,16 @@ class DashboradController extends Controller
                         for ($elementCount = 0; $elementCount < count($elementForKpiList); $elementCount++) {
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
-                           /* $weightage_startus_Result = $em->createQueryBuilder()
-                                ->select('a.weightage','a.endDate','a.id','a.status')
-                                ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
-                                ->where('a.elementId = :elementid')
-                                ->andWhere('a.endDate IS NULL')
-                                ->setParameter('elementid', $scorecardElementId)
-                                ->getQuery()
-                                ->getResult();
-                            if($weightage_startus_Result[0]['status']==1)
-                            {*/
+                            /* $weightage_startus_Result = $em->createQueryBuilder()
+                                 ->select('a.weightage','a.endDate','a.id','a.status')
+                                 ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                 ->where('a.elementId = :elementid')
+                                 ->andWhere('a.endDate IS NULL')
+                                 ->setParameter('elementid', $scorecardElementId)
+                                 ->getQuery()
+                                 ->getResult();
+                             if($weightage_startus_Result[0]['status']==1)
+                             {*/
 
 
 
@@ -2446,10 +2335,12 @@ class DashboradController extends Controller
                         ->getQuery()
                         ->getResult();
                     $kpiWeight=$newkpiid[0]['weightage'];
-                    $elementForKpiList = $em->createQueryBuilder()
+                    $queryBuilder_obj = $em->createQueryBuilder();
+                    $elementForKpiList = $queryBuilder_obj
                         ->select('a.elementName', 'a.id', 'a.weightage')
                         ->from('InitialShippingBundle:RankingElementDetails', 'a')
                         ->where('a.kpiDetailsId = :kpiid')
+                        ->andwhere($queryBuilder_obj->expr()->neq('a.weightage',0))
                         ->setParameter('kpiid', $newkpiid[0]['id'])
                         ->getQuery()
                         ->getResult();
