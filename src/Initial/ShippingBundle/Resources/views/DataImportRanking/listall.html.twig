@@ -160,7 +160,10 @@
                                         {% for fileobject in childfilearray %}
 
                                                 <tr>
-                                                    <td>{{ fileobject.filename|trim("@") }}</td>
+                                                    <td>
+                                                        {% set filearray = fileobject.filename|split('@') %}
+                                                        {{ filearray[0] }}.xlsx
+                                                    </td>
                                                     <td>{{ fileobject.datetime.date }}</td>
                                                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                                                     <td>{{ fileobject.userid }}</td>
