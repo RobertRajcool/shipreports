@@ -24,6 +24,8 @@
                 var editElement = $('.grid_edit_element');
                 var createElementId = $('#element-id');
                 var baseValueId = $('#base-value-id');
+                var kpiId = $('#kpi_id');
+                var validationStatus = 0;
 
                 boxIcon.hide();
                 showElement.hide();
@@ -115,11 +117,13 @@
                         success: function(data) {
                             createElementErrorMsg.empty();
                             if(data.elementName_status==data.status) {
+                                validationStatus = 1;
                                 createElementErrorMsg.text("Element name is already registered !");
                                 createElementId.focus();
                                 return false;
                             }
                             if(!$.trim(createElementId.val())) {
+                                validationStatus = 1;
                                 createElementErrorMsg.text('Element name cannot be empty !');
                                 createElementId.focus();
                                 return false;
@@ -136,6 +140,41 @@
                     if(baseValueId.val()!=0) {
                         baseValueIndication.text('Changing the base value may affect element rules !');
                         baseValueIndication.delay(3000).fadeOut();
+                    }
+                });
+
+                var errorMessage;
+                var createWeight = $('#weight-id');
+                createWeight.change(function ($e) {
+                    $e.preventDefault();
+                    var currentId = $(this).val();
+                    var data = {
+                        elementId: createElementId.val(),
+                        kpiDetailsId: kpiId.val(),
+                        weightage: currentId,
+                        status: 1
+                    };
+                    errorMessage = $('#create-weight-error');
+                    var checkElementWeight = checkElementWeightFunction(data);
+                });
+
+                var createActiveMonth = $('.create-active-month');
+                var createActiveYear = $('.create-active-year');
+                var createEndMonth = $('.create-end-month');
+                var createEndYear = $('.create-end-year');
+                $('.element-create-form').live('submit',function($e) {
+                    var validError;
+                    if(validationStatus==1) {
+                        return false;
+                    }else if(parseInt(createActiveMonth).val()==0 || parseInt(createEndMonth).val()==0 || parseInt(createActiveYear).val()==0 || parseInt(createEndYear).val()==0) {
+                        validError = 'Date field cannot be empty !';
+                        validationStatus = 1;
+                    } else if(parseInt(createActiveYear) > parseInt(createEndYear) || parseInt(createActiveYear) == parseInt(createEndYear) && parseInt(createActiveMonth) > parseInt(createEndYear)) {
+                        validError = 'Choose valid date !';
+                        validationStatus = 1;
+                    } else {
+                        validationStatus = 0;
+                        return true;
                     }
                 });
 
@@ -466,23 +505,7 @@
 
                 /*-------------------------------------Edit screen validation------------------------------------*/
 
-                var errorMessage;
-                var createWeight = $('#weight-id');
-                var kpiId = $('#kpi_id');
                 var editWeight = $('#edit-weight-id');
-
-                createWeight.change(function ($e) {
-                    $e.preventDefault();
-                    var currentId = $(this).val();
-                    var data = {
-                        elementId: editElementId.val(),
-                        kpiDetailsId: editKpiName.val(),
-                        weightage: currentId,
-                        status: 1
-                    };
-                    errorMessage = $('#create-weight-error');
-                    var checkElementWeight = checkElementWeightFunction(data);
-                });
 
                 editWeight.change(function ($e) {
                     $e.preventDefault();
@@ -515,6 +538,7 @@
                             success: function (data) {
                                 errorMessage.empty();
                                 if (data.Weightage > 100) {
+                                    validationStatus = 1;
                                     var weight = data.Weightage - 100;
                                     errorMessage.text('Weightage value exceeded ! - ' + weight);
                                     createWeight.focus();
@@ -981,7 +1005,7 @@
         <section>
             <div class="col-sm-11">
                 <div class="add_new_users_views_screen">
-                    <form class="form-horizontal no-style create-form" action="{{ path('elementdetails_new1') }}" method="post">
+                    <form class="form-horizontal no-style create-form element-create-form" action="{{ path('elementdetails_new1') }}" method="post">
                         <div class="kpi_basic_details">
                             <fieldset class="fieldset_box add_rule_form">
                                 <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
@@ -1009,8 +1033,8 @@
                                     <label class="control-label col-xs-4 required_field"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                     <div class="col-xs-8">
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
-                                                <option selected="selected">--</option>
+                                            <select class="add_rule_basic_date_drop create-active-month" name="activeMonth" class="full-width-select">
+                                                <option selected="selected" value="0">--</option>
                                                 <option value="1">{{ 'month.jan'|trans }}</option>
                                                 <option value="2">{{ 'month.feb'|trans }}</option>
                                                 <option value="3">{{ 'month.mar'|trans }}</option>
@@ -1026,9 +1050,9 @@
                                             </select>
                                         </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="activeyear"
+                                            <select class="add_rule_basic_year_drop create-active-year" name="activeyear"
                                                     class="full-width-select">
-                                                <option selected="selected">--</option>
+                                                <option selected="selected" value="0">--</option>
                                                 {% for i in 2000..2020 %}
                                                     <option value={{ i }}>{{ i }}</option>
                                                 {% endfor %}
@@ -1036,8 +1060,8 @@
                                         </span>
                                         To
                                         <span>
-                                            <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
-                                                <option selected="selected">--</option>
+                                            <select class="add_rule_basic_date_drop create-end-month" name="endMonth" class="full-width-select">
+                                                <option selected="selected" value="0">--</option>
                                                 <option value="1">{{ 'month.jan'|trans }}</option>
                                                 <option value="2">{{ 'month.feb'|trans }}</option>
                                                 <option value="3">{{ 'month.mar'|trans }}</option>
@@ -1053,15 +1077,15 @@
                                             </select>
                                         </span>
                                         <span>
-                                            <select class="add_rule_basic_year_drop" name="endYear"
-                                                    class="full-width-select">
-                                                <option selected="selected">--</option>
+                                            <select class="add_rule_basic_year_drop create-end-year" name="endYear" class="full-width-select">
+                                                <option selected="selected" value="0">--</option>
                                                 {% for i in 2000..2020 %}
                                                     <option value={{ i }}>{{ i }}</option>
                                                 {% endfor %}
                                             </select>
                                         </span>
                                     </div>
+                                    <div class="col-xs-8 weight-error-message" id="create-weight-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
