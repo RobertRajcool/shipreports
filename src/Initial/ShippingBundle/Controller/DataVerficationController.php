@@ -3148,11 +3148,14 @@ class DataVerficationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $uploaddir = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/' . $foldername.'/'.$filename;
         $content = file_get_contents($uploaddir);
+        $fileType = pathinfo($uploaddir, PATHINFO_EXTENSION);
+        $filenamearray=explode("@",$filename);
+        $outputFilename=$filenamearray[0].".".$fileType;
 
         $response = new Response();
 
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment;filename="' . $filename);
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $outputFilename);
 
         $response->setContent($content);
         return $response;
