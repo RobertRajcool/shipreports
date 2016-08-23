@@ -2534,7 +2534,7 @@ class DashboradController extends Controller
 
             } else {
                 $checkboxvalue = $params['addcomment'];
-                $listofcommentarray = $returnvaluefrommonth['elementcolorarray'];
+                $listofcommentarray = $returnvaluefrommonth['commentarray'];
             }
             $idforrecord = $params['lastid'];
 
