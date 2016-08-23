@@ -239,7 +239,7 @@
                                                         [ d.getHours().padLeft(),
                                                             d.getMinutes().padLeft(),
                                                             d.getSeconds().padLeft()].join(':');
-                                        $('<p>'+listelemnt.username+' -'+dformat+':'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
+                                        $('<p><strong>'+listelemnt.username+' -'+dformat+'</strong>:'+listelemnt.comment+'</p>').appendTo("#viewcommentdiv");
 
 
                                     });
@@ -271,9 +271,9 @@
 
 
                 });
-                $('#chatform').submit(function(e)
+                $('#chatform').submit(function($e)
                 {
-                    e.preventDefault();
+                    $e.preventDefault();
                     var self = this;
                     var obj = {},chart;
                     chart = $('#area').highcharts();

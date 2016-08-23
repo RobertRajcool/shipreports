@@ -125,17 +125,18 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>
+                    <td id="viewcommentdiv" >
                         {% if commentarray|length <= 0 %}
-                            <h4 align="center">{{ 'elementranking.nocommands'|trans }} </h4>
+
+                            {{ 'elementranking.nocommands'|trans }}
                         {% endif %}
                         {% if commentarray|length > 0 %}
                             {% for comobject in commentarray %}
-                                {{ comobject.comment }}
+                                <p><strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
+
 
                             {% endfor %}
-                        {% endif %}
-                    </td>
+                        {% endif %}</td>
                 </tr>
                 </tbody>
             </table>

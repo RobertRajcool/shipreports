@@ -525,7 +525,7 @@ class HighchartController extends Controller
         $today = date("Y-m-d H:i:s");
         $datetime = new \DateTime();
         $sendcommand=new SendCommand();
-        $sendcommand->setClientemail($emailid);
+        $sendcommand->setUseremialid($emailid);
         $sendcommand->setComment($comment);
         $sendcommand->setDatetime($datetime);
         $sendcommand->setKpiid($kpiid);
