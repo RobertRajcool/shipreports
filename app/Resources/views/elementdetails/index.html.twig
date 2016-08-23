@@ -162,17 +162,25 @@
                 var createActiveYear = $('.create-active-year');
                 var createEndMonth = $('.create-end-month');
                 var createEndYear = $('.create-end-year');
+                var createValidErrorPlace = $('#create-valid-error');
                 $('.element-create-form').live('submit',function($e) {
                     var validError;
-                    if(validationStatus==1) {
-                        return false;
-                    }else if(parseInt(createActiveMonth).val()==0 || parseInt(createEndMonth).val()==0 || parseInt(createActiveYear).val()==0 || parseInt(createEndYear).val()==0) {
+                    createValidErrorPlace.empty();
+                    if(parseInt(createActiveMonth.val())==0 || parseInt(createEndMonth.val())==0 || parseInt(createActiveYear.val())==0 || parseInt(createEndYear.val())==0) {
                         validError = 'Date field cannot be empty !';
+                        createValidErrorPlace.append(validError);
                         validationStatus = 1;
-                    } else if(parseInt(createActiveYear) > parseInt(createEndYear) || parseInt(createActiveYear) == parseInt(createEndYear) && parseInt(createActiveMonth) > parseInt(createEndYear)) {
+                        return false;
+                    } else if(parseInt(createActiveYear.val()) > parseInt(createEndYear.val()) || parseInt(createActiveYear.val()) == parseInt(createEndYear.val()) && parseInt(createActiveMonth.val()) > parseInt(createEndYear.val())) {
                         validError = 'Choose valid date !';
+                        createValidErrorPlace.append(validError);
                         validationStatus = 1;
+                        return false;
+                    } else if(validationStatus==1) {
+                        alert('Please fix the error and submit');
+                        return false;
                     } else {
+                        createValidErrorPlace.empty();
                         validationStatus = 0;
                         return true;
                     }
@@ -843,36 +851,40 @@
                 var symbolIndication = $('.symbol_indication');
                 symbolAddId.click(function($e) {
                     $e.preventDefault();
-                    var data = {
-                        symbolName: symbolName.val(),
-                        symbolIndication: symbolIndication.val()
-                    };
-                    $.ajaxSetup({
-                        global: false,
-                        type:"POST",
-                        url:"add_element_symbol",/*Routing.generate('add_element_symbol'),*/
-                        data:data,
-                        beforeSend: function () {
-                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
-                        },
-                        complete: function () {
-                            var setAjaxComplete = defaultAjaxCompleteFunction();
-                        }
-                    });
-                    $.ajax({
-                        success: function(data) {
-                            $('#close_button').click();
-                            $('#element_details_SymbolId option:gt(0)').remove();
-                            $.each(data.elementSymbolDetail, function(i, symbol) {
-                                $('#element_details_SymbolId').append($('<option>', {
-                                    value: symbol.id, text: symbol.symbolName
-                                }));
-                            });
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert('Error : ' + errorThrown);
-                        }
-                    });
+                    if( !$.trim(symbolName.val()) && !$.trim(symbolIndication.val()) ) {
+                        alert('All fields are required !');
+                    } else {
+                        var data = {
+                            symbolName: symbolName.val(),
+                            symbolIndication: symbolIndication.val()
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"add_element_symbol",/*Routing.generate('add_element_symbol'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                $('#close_button').click();
+                                $('#element_details_SymbolId option:gt(0)').remove();
+                                $.each(data.elementSymbolDetail, function(i, symbol) {
+                                    $('#element_details_SymbolId').append($('<option>', {
+                                        value: symbol.id, text: symbol.symbolName
+                                    }));
+                                });
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    }
                 });
 
             });
@@ -1085,7 +1097,7 @@
                                             </select>
                                         </span>
                                     </div>
-                                    <div class="col-xs-8 weight-error-message" id="create-weight-error"></div>
+                                    <div class="col-xs-8 weight-error-message" id="create-valid-error"></div>
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
@@ -1357,13 +1369,13 @@
                         <legend class="legend_name">Comparison Rule</legend>
                         <table class="table-responsive">
                             <thead class="table-header">
-                                <tr>
-                                    <th style="width: 32%">Element 1</th>
-                                    <th style="width: 9%">Value</th>
-                                    <th style="width: 32%">Element 2</th>
-                                    <th style="width: 9%">Value</th>
-                                    <th style="width: 16%">Color</th>
-                                </tr>
+                            <tr>
+                                <th style="width: 32%">Element 1</th>
+                                <th style="width: 9%">Value</th>
+                                <th style="width: 32%">Element 2</th>
+                                <th style="width: 9%">Value</th>
+                                <th style="width: 16%">Color</th>
+                            </tr>
                             </thead>
                             <tbody class="show-comparison-table-body"></tbody>
                         </table>
@@ -1588,7 +1600,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 
 {% endblock %}

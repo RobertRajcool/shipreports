@@ -2,6 +2,7 @@
 
 namespace Initial\ShippingBundle\Controller;
 
+use Initial\ShippingBundle\Entity\RankingElementWeightageStatus;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -10,6 +11,7 @@ use Initial\ShippingBundle\Entity\RankingElementDetails;
 use Initial\ShippingBundle\Form\RankingElementDetailsType;
 use Initial\ShippingBundle\Entity\RankingElementComparisonRules;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Initial\ShippingBundle\Entity\ElementSymbols;
 
 /**
  * RankingElementDetails controller.
@@ -214,7 +216,11 @@ class RankingElementDetailsController extends Controller
             $indicationValue = $params['indicationValue'];
             $vesselWiseTotal = $params['vesselWiseTotal'];
             $symbolId = $params['SymbolId'];
-            $comparisonStatus = $params['ComparisonStatus'];
+            if(array_key_exists('ComparisonStatus',$params)) {
+                $comparisonStatus = $params['ComparisonStatus'];
+            } else {
+                $comparisonStatus = 0;
+            }
             $comparisonValueTotal = $request->request->get('comparison-rule-total');
             $activeMonth = $request->request->get('activeMonth');
             $activeYear = $request->request->get('activeYear');;
@@ -226,10 +232,10 @@ class RankingElementDetailsController extends Controller
             $monthtostring1 = $endYear . '-' . $endMonth . '-' . $day;
             $new_date1 = new \DateTime($monthtostring1);
             $weightage = $params['weightage'];
+            $basevalue = $params['baseValue'];
             //$rules         = $params['rules'];
-
+            $em=$this->getDoctrine()->getManager();
             $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiDetailsId));
-
             $elementDetail = new RankingElementDetails();
             $elementDetail->setkpiDetailsId($course);
             $elementDetail->setelementName($elementName);
@@ -239,14 +245,23 @@ class RankingElementDetailsController extends Controller
             $elementDetail->setactiveDate($new_date);
             $elementDetail->setendDate($new_date1);
             $elementDetail->setweightage($weightage);
+            $elementDetail->setBaseValue($basevalue);
             $elementDetail->setVesselWiseTotal($vesselWiseTotal);
             $elementDetail->setComparisonStatus($comparisonStatus);
             $elementDetail->setIndicationValue($indicationValue);
             $elementDetail->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
-
-            $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
             $em->flush();
+            //This is for Weightage status Starts Here//
+            $weightage_status_object=new RankingElementWeightageStatus();
+            $weightage_status_object->setActiveDate($new_date);
+            $weightage_status_object->setElementId($elementDetail->getId());
+            $weightage_status_object->setStatus(0);
+            $weightage_status_object->setWeightage($weightage);
+            $em->persist($weightage_status_object);
+            $em->flush();
+
+            //This is for Weightage status Starts Here//
 
             if($comparisonStatus==1) {
                 for($i=1;$i<=$comparisonValueTotal;$i++) {
@@ -254,7 +269,6 @@ class RankingElementDetailsController extends Controller
                     $elementComparisonRule = new RankingElementComparisonRules();
                     $elementComparisonRule->setElementDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingElementDetails')->findOneBy(array('id' => $elementDetail->getId())));
                     $elementComparisonRule->setRules($comparisonRule);
-
                     $em->persist($elementComparisonRule);
                     $em->flush();
                 }
@@ -298,6 +312,42 @@ class RankingElementDetailsController extends Controller
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
+    }
+
+    /**
+     * Finds and displays a RankingElementDetails entity.
+     *
+     * @Route("/add_ranking_element_symbol", name="add_ranking_element_symbol")
+     */
+    public function addElementSymbolAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $symbolName = $request->request->get('symbolName');
+            $symbolIndication = $request->request->get('symbolIndication');
+            $em = $this->getDoctrine()->getManager();
+
+            $elementSymbol = new ElementSymbols();
+            $elementSymbol->setSymbolName($symbolName);
+            $elementSymbol->setSymbolIndication($symbolIndication);
+            $em->persist($elementSymbol);
+            $em->flush();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.symbolName, a.symbolIndication, a.id')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementSymbolDetail' => $query
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
     }
 
 
@@ -479,7 +529,7 @@ class RankingElementDetailsController extends Controller
             if ($hi == 'hi') {
                 return $response;
             }
-            
+
             return $response;
 
         } else {
@@ -529,6 +579,36 @@ class RankingElementDetailsController extends Controller
             $endMonthDateObject->modify("last day of this month");
 
             $em = $this->getDoctrine()->getManager();
+            //This is for Weightedit status Starts Here//
+            $weightage_startus_Result = $em->createQueryBuilder()
+                ->select('a.weightage','a.endDate','a.id')
+                ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                ->where('a.elementId = :kpi_id')
+                ->andWhere('a.endDate IS NULL')
+                ->setParameter('kpi_id', $id)
+                ->getQuery()
+                ->getResult();
+            if(count($weightage_startus_Result)==1)
+            {
+                $resultweightage=$weightage_startus_Result[0]['weightage'];
+                if($weightage!=(int)$resultweightage)
+                {
+                    $editweighate_entity = $em->getRepository('InitialShippingBundle:RankingElementWeightageStatus')->find($weightage_startus_Result[0]['id']);
+                    //$ranking_weightagestatus=new RankingWeightageStatus();
+                    $currentdatetime=new \DateTime();
+                    $editweighate_entity->setEndDate($currentdatetime);
+                    $em->flush();
+                    $ranking_weightagestatus=new RankingElementWeightageStatus();
+                    $ranking_weightagestatus->setWeightage($weightage);
+                    $ranking_weightagestatus->setElementId($id);
+                    $ranking_weightagestatus->setActiveDate($currentdatetime);
+                    $ranking_weightagestatus->setStatus(1);
+                    $em->persist($ranking_weightagestatus);
+                    $em->flush();
+
+                }
+            }
+            //This is for Weightedit status Stars Here//
 
             $entity = $em->getRepository('InitialShippingBundle:RankingElementDetails')->find($id);
             $kpiName_obj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:RankingKpiDetails')->findOneBy(array('id' => $kpiName_id));
