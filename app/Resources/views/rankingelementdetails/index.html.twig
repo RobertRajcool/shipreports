@@ -23,6 +23,7 @@
                 var createButton = $('.create_btn');
                 var createElementId = $('#element-id');
                 var baseValueId = $('#base-value-id');
+                var validationStatus = 0;
 
                 boxIcon.hide();
                 showElement.hide();
@@ -114,11 +115,13 @@
                         success: function(data) {
                             createElementErrorMsg.empty();
                             if(data.elementName_status==data.status) {
+                                validationStatus = 1;
                                 createElementErrorMsg.text("Element name is already registered !");
                                 createElementId.focus();
                                 return false;
                             }
                             if(!$.trim(createElementId.val())) {
+                                validationStatus = 1;
                                 createElementErrorMsg.text('Element name cannot be empty !');
                                 createElementId.focus();
                                 return false;
@@ -135,6 +138,34 @@
                     if(baseValueId.val()!=0) {
                         baseValueIndication.text('Changing the base value may affect element rules !');
                         baseValueIndication.delay(3000).fadeOut();
+                    }
+                });
+
+                var createActiveMonth = $('.create-active-month');
+                var createActiveYear = $('.create-active-year');
+                var createEndMonth = $('.create-end-month');
+                var createEndYear = $('.create-end-year');
+                var createValidErrorPlace = $('#create-valid-error');
+                $('.element-create-form').live('submit',function($e) {
+                    var validError;
+                    createValidErrorPlace.empty();
+                    if(parseInt(createActiveMonth.val())==0 || parseInt(createEndMonth.val())==0 || parseInt(createActiveYear.val())==0 || parseInt(createEndYear.val())==0) {
+                        validError = 'Date field cannot be empty !';
+                        createValidErrorPlace.append(validError);
+                        validationStatus = 1;
+                        return false;
+                    } else if(parseInt(createActiveYear.val()) > parseInt(createEndYear.val()) || parseInt(createActiveYear.val()) == parseInt(createEndYear.val()) && parseInt(createActiveMonth.val()) > parseInt(createEndYear.val())) {
+                        validError = 'Choose valid date !';
+                        createValidErrorPlace.append(validError);
+                        validationStatus = 1;
+                        return false;
+                    } else if(validationStatus==1) {
+                        alert('Please fix the error and submit');
+                        return false;
+                    } else {
+                        createValidErrorPlace.empty();
+                        validationStatus = 0;
+                        return true;
                     }
                 });
 
@@ -474,7 +505,7 @@
                     var currentId = $(this).val();
                     var data = {
                         elementId:editElementId.val(),
-                        kpiDetailsId :editKpiName.val(),
+                        kpiDetailsId :kpiId.val(),
                         weightage : currentId,
                         status : 1
                     };
@@ -511,6 +542,7 @@
                             success: function(data) {
                                 errorMessage.empty();
                                 if(data.Weightage>100) {
+                                    validationStatus = 1;
                                     var weight = data.Weightage - 100;
                                     $('.weight-value').val(weight);
                                     errorMessage.text('Weightage value exceeded ! - '+weight);
@@ -815,6 +847,47 @@
                     $('#edit-comparison-row-'+countId+'').remove();
                 });
 
+                var symbolAddId = $('#symbol-add-id');
+                var symbolName = $('.symbol_name');
+                var symbolIndication = $('.symbol_indication');
+                symbolAddId.click(function($e) {
+                    $e.preventDefault();
+                    if( !$.trim(symbolName.val()) && !$.trim(symbolIndication.val()) ) {
+                        alert('All fields are required !');
+                    } else {
+                        var data = {
+                            symbolName: symbolName.val(),
+                            symbolIndication: symbolIndication.val()
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"add_ranking_element_symbol",/*Routing.generate('add_ranking_element_symbol'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                $('#close_button').click();
+                                $('#ranking_element_details_SymbolId option:gt(0)').remove();
+                                $.each(data.elementSymbolDetail, function(i, symbol) {
+                                    $('#ranking_element_details_SymbolId').append($('<option>', {
+                                        value: symbol.id, text: symbol.symbolName
+                                    }));
+                                });
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    }
+                });
+
             });
         </script>
 
@@ -944,7 +1017,7 @@
         <div class="col-sm-11">
             <div class="add_new_users_views_screen">
                 <h2>{{'element.add'|trans }}</h2>
-                <form class="form-horizontal no-style create-form" action="{{ path('rankingelementdetails_new1') }}" method="post">
+                <form class="form-horizontal no-style create-form element-create-form" action="{{ path('rankingelementdetails_new1') }}" method="post">
                     <div class="kpi_basic_details">
                         <fieldset class="fieldset_box add_rule_form">
                             <legend class="legend_name">{{ 'vessel.basic_info'|trans }}</legend>
@@ -973,8 +1046,8 @@
                                 <label class="control-label required_field col-xs-4"><strong>{{ 'kpi.valid'|trans }}</strong></label>
                                 <div class="col-xs-8">
                                     <span>
-                                        <select class="add_rule_basic_date_drop" name="activeMonth" class="full-width-select">
-                                            <option selected="selected">--</option>
+                                        <select class="add_rule_basic_date_drop create-active-month" name="activeMonth" class="full-width-select">
+                                            <option selected="selected" value="0">--</option>
                                             <option value="1">{{ 'month.jan'|trans }}</option>
                                             <option value="2">{{ 'month.feb'|trans }}</option>
                                             <option value="3">{{ 'month.mar'|trans }}</option>
@@ -990,8 +1063,8 @@
                                         </select>
                                     </span>
                                     <span>
-                                        <select class="add_rule_basic_year_drop" name="activeyear" class="full-width-select">
-                                            <option selected="selected">--</option>
+                                        <select class="add_rule_basic_year_drop create-active-year" name="activeyear" class="full-width-select">
+                                            <option selected="selected" value="0">--</option>
                                             {% for i in 2000..2020 %}
                                                 <option value={{ i }}>{{ i }}</option>
                                             {% endfor %}
@@ -999,8 +1072,8 @@
                                     </span>
                                     <strong>{{ 'kpi.to'|trans }}</strong>
                                     <span>
-                                        <select class="add_rule_basic_date_drop" name="endMonth" class="full-width-select">
-                                            <option selected="selected">--</option>
+                                        <select class="add_rule_basic_date_drop create-end-month" name="endMonth" class="full-width-select">
+                                            <option selected="selected" value="0">--</option>
                                             <option value="1">{{ 'month.jan'|trans }}</option>
                                             <option value="2">{{ 'month.feb'|trans }}</option>
                                             <option value="3">{{ 'month.mar'|trans }}</option>
@@ -1016,14 +1089,15 @@
                                         </select>
                                     </span>
                                     <span>
-                                        <select class="add_rule_basic_year_drop" name="endYear" class="full-width-select">
-                                            <option selected="selected">--</option>
+                                        <select class="add_rule_basic_year_drop create-end-year" name="endYear" class="full-width-select">
+                                            <option selected="selected" value="0">--</option>
                                             {% for i in 2000..2020 %}
                                                 <option value={{ i }}>{{ i }}</option>
                                             {% endfor %}
                                         </select>
                                     </span>
                                 </div>
+                                <div class="col-xs-8 weight-error-message" id="create-valid-error"></div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4"><strong>{{ 'vessel.description'|trans }}</strong></label>
@@ -1059,6 +1133,7 @@
                                 <label class="control-label col-xs-4 required_field"><strong>Symbol</strong></label>
                                 <div class="col-xs-8">
                                     {{ form_widget(form.SymbolId) }}
+                                    <a data-toggle="modal" class="add_email_btn ss-plus" style="margin-right: 15px" data-target="#myModal"></a>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -1141,6 +1216,35 @@
                         <button class="cancel_btn" type="reset" >{{ 'vessel.reset'|trans }}</button>
                     </div>
                 </form>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog model_content">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title">Add symbol option</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal no-style" method="post">
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-3">Symbol Name</label>
+                                        <div class="col-xs-9">
+                                            <input type="text" class="send_reports_to_input symbol_name" name="symbol-name" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label required_field col-xs-3">Symbol Indication</label>
+                                        <div class="col-xs-9">
+                                            <input type="text" class="send_reports_to_input symbol_indication" name="symbol-name" required>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="symbol-add-id" class="actions_report_btn">Add</button>
+                            </div>
+                        </div> <!-- /.modal-content -->
+                    </div> <!-- /.modal-dialog -->
+                </div>
             </div>
         </div>
     </div>
