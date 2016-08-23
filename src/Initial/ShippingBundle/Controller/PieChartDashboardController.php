@@ -273,8 +273,89 @@ class PieChartDashboardController extends Controller
      */
     public function listallkpiAction(Request $request,$serialized,$mode = '')
     {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $userId = $user->getId();
+            $kpiids = explode('_', $serialized);
+            $dataofmonth = $kpiids[0];
+            $stringdate = '01-' . $dataofmonth;
+            $currentMonthObject = new \DateTime($stringdate);
+            $currentMonthObject->modify('last day of this month');
+            $monthlyScorecardKpiWeightAverageValueTotal = 0;
+            $monthlyScorecardKpiColorArray = array();
+            $monthlyKpiAverageValueTotal = array();
+            $scorecardKpiColorArray = array();
 
-        return $this->render('InitialShippingBundle:DataVerficationRanking:backup.html.twig');
+            for ($kpiCount = 1; $kpiCount < count($kpiids); $kpiCount++) {
+                $newkpi_id = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiids[$kpiCount]));
+                $scorecardAllKpiId = $newkpi_id->getId();
+                $scorecardKpiWeight =$newkpi_id->getWeightage();
+                $scorecardKpiName=$newkpi_id->getKpiName();
+                $kpiResult = $em->createQueryBuilder()
+                    ->select('b.kpiColor, b.individualKpiAverageScore')
+                    ->from('InitialShippingBundle:Scorecard_LookupData', 'b')
+                    ->where('b.kpiDetailsId = :kpiId and b.monthdetail = :monthDetail')
+                    ->setParameter('kpiId', $scorecardAllKpiId)
+                    ->setParameter('monthDetail', $currentMonthObject)
+                    ->getQuery()
+                    ->getResult();
+                if (count($kpiResult) != 0) {
+                    // $lastMonthKpiPieChart=
+                    $kpi_Color_Result=$kpiResult[0]['kpiColor'];
+                    array_push($scorecardKpiColorArray,$kpi_Color_Result );
+
+                        if($kpi_Color_Result=='Green')
+                        {
+                           // array_push($greenarea_kpiids,$scorecardAllKpiId);
+
+                        }
+                        else if($kpi_Color_Result=='Red')
+                        {
+                           // array_push($redarea_kpiids,$scorecardAllKpiId);
+                        }
+                        else if($kpi_Color_Result=='Yellow')
+                        {
+                           // array_push($yellowarea_kpiids,$scorecardAllKpiId);
+                        }
+
+                    $monthlyScorecardKpiWeightAverageValueTotal += ($kpiResult[0]['individualKpiAverageScore'] * $scorecardKpiWeight) / 100;
+                }
+                else
+                {
+                    array_push($scorecardKpiColorArray, "");
+                    $monthlyScorecardKpiWeightAverageValueTotal += 0;
+                }
+                array_push($monthlyScorecardKpiColorArray, $scorecardKpiColorArray);
+                array_push($monthlyKpiAverageValueTotal, $monthlyScorecardKpiWeightAverageValueTotal);
+            }
+            $vessetitlearray=array( 'fontSize'=> '10px', 'fontFamily'=> 'Avenir LT Std Light' );
+            $vessel_Piechart = new Highchart();
+            $vessel_Piechart->chart->renderTo('area');
+            $vessel_Piechart->chart->type('pie');
+            $vessel_Piechart->chart->options3d(array('enabled'=> true,'alpha'=> 45));
+            $vessel_Piechart->credits->enabled(false);
+            $vessel_Piechart->title->text('');
+            $vessel_Piechart->title->floating(true);
+            $vessel_Piechart->title->align('center');
+            $vessel_Piechart->title->verticalAlign('middle');
+            $vessel_Piechart->title->style($vessetitlearray);
+            $vessel_Piechart->plotOptions->pie(array(
+                'innerSize'=> 100,
+                'depth'=> 45
+            ));
+            $vessel_Piechart->plotOptions->series(array('borderWidth' => 0, 'dataLabels' => array('enabled' => true),
+                'point' => array('events' => array('click' => new \Zend\Json\Expr('function () { location.href = this.options.url; }')))));
+            $vessel_Piechart->series(array(array('name' => 'Vessel', 'data' => $monthlyScorecardKpiWeightAverageValueTotal)));
+            $vessel_Piechart->exporting->enabled(false);
+            return $this->render('InitialShippingBundle:DataVerficationRanking:backup.html.twig');
+
+
+        }
+        else
+        {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
 
     }
 }
