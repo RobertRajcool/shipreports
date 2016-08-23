@@ -22,173 +22,173 @@
 </head>
 
 <body>
-    <div class="certificate-wrapper">
-        <div class="row-fluid">
-            <div class="certificates_header clearfix">
-                <div class="brand-title">
-                    <div class="title">{{ kpiname }}</div>
-                </div>
-                <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
+<div class="certificate-wrapper">
+    <div class="row-fluid">
+        <div class="certificates_header clearfix">
+            <div class="brand-title">
+                <div class="title">{{ kpiname }}</div>
             </div>
-            <section class="data-row-section top-margin-space">
-                <table class="responsive-table certificates-table kpi_name_weightage_row">
-                    <thead>
-                        {% set i1=0 %}
-                        <tr>
-                            <th class="branding-colours">Element Name</th>
-                            <th class="branding-colours">Weightage</th>
-                            {% for monthname in montharray %}
-                                {% if i1 < montharray|length-1 %}
-                                    <th colspan="2" class="branding-colours">{{ monthname }}</th>
-                                {% else %}
-                                    <th class="branding-colours no-td-right-border">{{ monthname }}</th>
-                                {% endif %}
-                                {% set i1 = i1+1 %}
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set i=0 %}
-                        {% for element in elementList %}
-                            <tr>
-                                <td class="kpi_name">{{ element.elementName }}</td>
-                                <td class="weightage">{{ element.weightage }}</td>
-                                {% set j=0 %}
-                                {% for monthname in montharray %}
-                                    <td class="month">
-                                        {% if elementcolorarray[j][i]=="Green" %}
-                                            <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                        {% elseif elementcolorarray[j][i]=="Red" %}
-                                            <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                        {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                            <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                        {% endif %}
-                                    </td>
-                                    {% set j1=j+1 %}
-                                    {% if j < montharray|length-1 %}
-                                        <td class="month">
-                                            {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Yellow" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Red" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Yellow" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Green" %}
-                                                <img src="/images/up_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Red" %}
-                                                <img src="/images/down_arrow.png">
-                                            {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
-                                                <img src="/images/straight_arrow.png">
-                                            {% endif %}
-                                        </td>
-                                    {% endif %}
-                                    {% set j = j+1 %}
-                                {% endfor %}
-                            </tr>
-                            {% set i = i+1 %}
-                        {% endfor %}
-                        <tr>
-                            <td class="kpi_name no-td-right-border">&nbsp;</td>
-                            <td class="weightage no-td-right-border">&nbsp;</td>
-                            {% set i1=0 %}
-                            {% for monthname in montharray %}
-                                {% if i1 < montharray|length-1 %}
-                                    <td colspan="2" class="month ">&nbsp;</td>
-                                {% else %}
-                                    <td class="month">&nbsp;</td>
-                                {% endif %}
-                                {% set i1 = i1+1 %}
-                            {% endfor %}
-                        </tr>
-                        <tr>
-                            <td class="kpi_name"><strong>{{ kpiname }}</strong></td>
-                            <td class="weightage"> <strong>100</strong></td>
-                            {% set j=0 %}
-                            {% for monthname in montharray %}
-                                <td class="month">
-                                    {% if kpi_color[j][0] =="Green" %}
-                                        <img src="/images/01_score_card.png" alt="Loader Image"/>
-                                    {% elseif kpi_color[j][0] =="Red" %}
-                                        <img src="/images/03_score_card.png" alt="Loader Image"/>
-                                    {% elseif kpi_color[j][0] =="Yellow" %}
-                                        <img src="/images/02_score_card.png" alt="Loader Image"/>
-                                    {% endif %}
-                                </td>
-                                {% if j < montharray|length-1 %}
-                                    <td class="month">
-                                        {% if kpi_color[j][0]=="Green" and kpi_color[j+1][0]=="Green" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Green" and kpi_color[j+1][0]=="Red" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Green" and kpi_color[j+1][0]=="Yellow" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Red" and kpi_color[j+1][0]=="Green" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Red" and kpi_color[j+1][0]=="Red" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Red" and kpi_color[j+1][0]=="Yellow" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Yellow" and kpi_color[j+1][0]=="Green" %}
-                                            <img src="/images/up_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Yellow" and kpi_color[j+1][0]=="Red" %}
-                                            <img src="/images/down_arrow.png">
-                                        {% elseif kpi_color[j][0]=="Yellow" and kpi_color[j+1][0]=="Yellow" %}
-                                            <img src="/images/straight_arrow.png">
-                                        {% endif %}
-                                    </td>
-                                {% endif %}
-                                {% set j=j+1 %}
-                            {% endfor %}
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="data-row-section top-margin-space">
-                <table class="responsive-table certificates-table">
-                    <thead>
-                        <tr>
-                            <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpiname }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="data-row-section top-margin-space">
-                <table class="responsive-table certificates-table">
-                    <thead>
-                        <tr>
-                            <th class="branding-colours thead-title-two-row no-td-right-border">{{ 'elementpdf.commands'|trans }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="viewcommentdiv" >
-                                {% if commentarray|length <= 0 %}
-                                    {{ 'elementranking.nocommands'|trans }}
-                                {% endif %}
-                                {% if commentarray|length > 0 %}
-                                    {% for comobject in commentarray %}
-                                        {{ comobject.comment }}
-
-                                    {% endfor %}
+            <div class="brand-logo-2"><img src="/images/pioneer_logo.png"></div>
+        </div>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table kpi_name_weightage_row">
+                <thead>
+                {% set i1=0 %}
+                <tr>
+                    <th class="branding-colours">Element Name</th>
+                    <th class="branding-colours">Weightage</th>
+                    {% for monthname in montharray %}
+                        {% if i1 < montharray|length-1 %}
+                            <th colspan="2" class="branding-colours">{{ monthname }}</th>
+                        {% else %}
+                            <th class="branding-colours no-td-right-border">{{ monthname }}</th>
+                        {% endif %}
+                        {% set i1 = i1+1 %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% set i=0 %}
+                {% for element in elementList %}
+                    <tr>
+                        <td class="kpi_name">{{ element.elementName }}</td>
+                        <td class="weightage">{{ element.weightage }}</td>
+                        {% set j=0 %}
+                        {% for monthname in montharray %}
+                            <td class="month">
+                                {% if elementcolorarray[j][i]=="Green" %}
+                                    <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Red" %}
+                                    <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                    <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
                                 {% endif %}
                             </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-        </div>
+                            {% set j1=j+1 %}
+                            {% if j < montharray|length-1 %}
+                                <td class="month">
+                                    {% if elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Green" %}
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Red" %}
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Green" and elementcolorarray[j1][i]=="Yellow" %}
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Green" %}
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Red" %}
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Red" and elementcolorarray[j1][i]=="Yellow" %}
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Green" %}
+                                        <img class="img-status-icon" src="/images/up_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Red" %}
+                                        <img class="img-status-icon" src="/images/down_arrow.png">
+                                    {% elseif elementcolorarray[j][i]=="Yellow" and elementcolorarray[j1][i]=="Yellow" %}
+                                        <img class="img-status-icon" src="/images/straight_arrow.png">
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                            {% set j = j+1 %}
+                        {% endfor %}
+                    </tr>
+                    {% set i = i+1 %}
+                {% endfor %}
+                <tr>
+                    <td class="kpi_name no-td-right-border">&nbsp;</td>
+                    <td class="weightage no-td-right-border">&nbsp;</td>
+                    {% set i1=0 %}
+                    {% for monthname in montharray %}
+                        {% if i1 < montharray|length-1 %}
+                            <td colspan="2" class="month ">&nbsp;</td>
+                        {% else %}
+                            <td class="month">&nbsp;</td>
+                        {% endif %}
+                        {% set i1 = i1+1 %}
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="kpi_name"><strong>{{ kpiname }}</strong></td>
+                    <td class="weightage"> <strong>100</strong></td>
+                    {% set j=0 %}
+                    {% for monthname in montharray %}
+                        <td class="month">
+                            {% if kpi_color[j][0] =="Green" %}
+                                <img class="img-icon" src="/images/01_score_card.png" alt="Loader Image"/>
+                            {% elseif kpi_color[j][0] =="Red" %}
+                                <img class="img-icon" src="/images/03_score_card.png" alt="Loader Image"/>
+                            {% elseif kpi_color[j][0] =="Yellow" %}
+                                <img class="img-icon" src="/images/02_score_card.png" alt="Loader Image"/>
+                            {% endif %}
+                        </td>
+                        {% if j < montharray|length-1 %}
+                            <td class="month">
+                                {% if kpi_color[j][0]=="Green" and kpi_color[j+1][0]=="Green" %}
+                                    <img class="img-status-icon" src="/images/straight_arrow.png">
+                                {% elseif kpi_color[j][0]=="Green" and kpi_color[j+1][0]=="Red" %}
+                                    <img class="img-status-icon" src="/images/down_arrow.png">
+                                {% elseif kpi_color[j][0]=="Green" and kpi_color[j+1][0]=="Yellow" %}
+                                    <img class="img-status-icon" src="/images/down_arrow.png">
+                                {% elseif kpi_color[j][0]=="Red" and kpi_color[j+1][0]=="Green" %}
+                                    <img class="img-status-icon" src="/images/up_arrow.png">
+                                {% elseif kpi_color[j][0]=="Red" and kpi_color[j+1][0]=="Red" %}
+                                    <img class="img-status-icon" src="/images/straight_arrow.png">
+                                {% elseif kpi_color[j][0]=="Red" and kpi_color[j+1][0]=="Yellow" %}
+                                    <img class="img-status-icon" src="/images/up_arrow.png">
+                                {% elseif kpi_color[j][0]=="Yellow" and kpi_color[j+1][0]=="Green" %}
+                                    <img class="img-status-icon" src="/images/up_arrow.png">
+                                {% elseif kpi_color[j][0]=="Yellow" and kpi_color[j+1][0]=="Red" %}
+                                    <img class="img-status-icon" src="/images/down_arrow.png">
+                                {% elseif kpi_color[j][0]=="Yellow" and kpi_color[j+1][0]=="Yellow" %}
+                                    <img class="img-status-icon" src="/images/straight_arrow.png">
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                        {% set j=j+1 %}
+                    {% endfor %}
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ kpiname }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><img src="/uploads/brochures/{{ link }}" alt="Loader Image"/></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+        <section class="data-row-section top-margin-space">
+            <table class="responsive-table certificates-table">
+                <thead>
+                <tr>
+                    <th class="branding-colours thead-title-two-row no-td-right-border">{{ 'elementpdf.commands'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="viewcommentdiv" >
+                        {% if commentarray|length <= 0 %}
+                            {{ 'elementranking.nocommands'|trans }}
+                        {% endif %}
+                        {% if commentarray|length > 0 %}
+                            {% for comobject in commentarray %}
+                                {{ comobject.comment }}
+
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
     </div>
+</div>
 </body>
 
 </html>
