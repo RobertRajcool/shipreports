@@ -41,8 +41,8 @@
                             locale = "en-us",
                             month = nowdate.toLocaleString(locale, {month: "long"}),
                             year = nowdate.getFullYear();
-                    var tempdate='May-2016';
-                    $('#dataofmonth').val(new Date('2016/05/01'));
+                    var tempdate=month+'-'+year;
+                    $('#dataofmonth').val(nowdate);
 
 
                     var areaId = $('#area');

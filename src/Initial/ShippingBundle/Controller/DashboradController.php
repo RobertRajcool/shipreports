@@ -1494,10 +1494,8 @@ class DashboradController extends Controller
             $commentForElementKpi = $em->createQueryBuilder()
                 ->select('a.comment', 'a.datetime', 'b.username')
                 ->from('InitialShippingBundle:SendCommand', 'a')
-                ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+                ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
                 ->where('a.kpiid = :kpiid')
-                ->andwhere('b.email = :username')
-                ->setParameter('username', $email)
                 ->setParameter('kpiid', $kpiid)
                 ->getQuery()
                 ->getResult();
@@ -1610,7 +1608,7 @@ class DashboradController extends Controller
         $today = date("Y-m-d H:i:s");
         $datetime = new \DateTime();
         $sendcommand = new SendCommandRanking();
-        $sendcommand->setClientemail($emailid);
+        $sendcommand->setUseremialid($emailid);
         $sendcommand->setComment($comment);
         $sendcommand->setDatetime($datetime);
         $sendcommand->setShipid($kpiid);
@@ -1623,7 +1621,7 @@ class DashboradController extends Controller
         $listofcomment = $em->createQueryBuilder()
             ->select('a.comment', 'a.datetime', 'b.username')
             ->from('InitialShippingBundle:SendCommandRanking', 'a')
-            ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+            ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
             ->where('a.shipid = :shipid')
             ->andwhere('b.email = :username')
             ->setParameter('username', $emailid)
@@ -1657,7 +1655,7 @@ class DashboradController extends Controller
         $today = date("Y-m-d H:i:s");
         $datetime = new \DateTime();
         $sendcommand = new SendCommandRanking();
-        $sendcommand->setClientemail($emailid);
+        $sendcommand->setUseremialid($emailid);
         $sendcommand->setComment($comment);
         $sendcommand->setDatetime($datetime);
         $sendcommand->setKpiid($kpiid);
@@ -1671,7 +1669,7 @@ class DashboradController extends Controller
         $listofcomment = $em->createQueryBuilder()
             ->select('a.comment', 'a.datetime', 'b.username')
             ->from('InitialShippingBundle:SendCommandRanking', 'a')
-            ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+            ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
             ->where('a.kpiid = :kpiid')
             ->andwhere('b.email = :username')
             ->setParameter('username', $emailid)
@@ -1956,7 +1954,7 @@ class DashboradController extends Controller
             $listofcomment = $em->createQueryBuilder()
                 ->select('a.comment', 'a.datetime', 'b.username')
                 ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+                ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
                 ->where('a.shipid = :shipid')
                 ->andwhere('b.email = :username')
                 ->setParameter('username', $loginuseremail)
@@ -2123,7 +2121,7 @@ class DashboradController extends Controller
                 $listofcomment = $em->createQueryBuilder()
                     ->select('a.comment', 'a.datetime', 'b.username')
                     ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                    ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+                    ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
                     ->where('a.kpiid = :kpiid')
                     ->andwhere('b.email = :username')
                     ->setParameter('username', $email)
@@ -2294,7 +2292,7 @@ class DashboradController extends Controller
                     $listofcomment = $em->createQueryBuilder()
                         ->select('a.comment', 'a.datetime', 'b.username')
                         ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                        ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+                        ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
                         ->where('a.kpiid = :kpiid')
                         ->andwhere('b.email = :username')
                         ->setParameter('username', $email)
@@ -2445,7 +2443,7 @@ class DashboradController extends Controller
                     $listofcomment = $em->createQueryBuilder()
                         ->select('a.comment', 'a.datetime', 'b.username')
                         ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                        ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
+                        ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.useremialid')
                         ->where('a.kpiid = :kpiid')
                         ->andwhere('b.email = :username')
                         ->setParameter('username', $email)
@@ -2536,17 +2534,7 @@ class DashboradController extends Controller
 
             } else {
                 $checkboxvalue = $params['addcomment'];
-                $commentForElementKpi = $em->createQueryBuilder()
-                    ->select('a.comment')
-                    ->from('InitialShippingBundle:SendCommand', 'a')
-                    ->join('InitialShippingBundle:User', 'b', 'WITH', 'b.email = a.clientemail')
-                    ->where('a.kpiid = :kpiid')
-                    ->andwhere('b.email = :username')
-                    ->setParameter('username', $useremailaddres)
-                    ->setParameter('kpiid', $kpiid)
-                    ->getQuery()
-                    ->getResult();
-                $listofcommentarray = $commentForElementKpi;
+                $listofcommentarray = $returnvaluefrommonth['commentarray'];
             }
             $idforrecord = $params['lastid'];
 
@@ -2675,17 +2663,7 @@ class DashboradController extends Controller
 
             } else {
                 $checkboxvalue = $params['addcomment'];
-                $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment', 'a.datetime', 'b.adminName')
-                    ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
-                    ->where('a.kpiid = :kpiid')
-                    ->andwhere('b.emailId = :username')
-                    ->setParameter('username', $useremailaddres)
-                    ->setParameter('kpiid', $kpiid)
-                    ->getQuery()
-                    ->getResult();
-                $listofcommentarray = $listofcomment;
+                $listofcommentarray = $returnvaluefrommonth['commentarray'];
             }
             $idforrecord = $params['lastid'];
 
@@ -2808,17 +2786,7 @@ class DashboradController extends Controller
 
             } else {
                 $checkboxvalue = $params['addcomment'];
-                $listofcomment = $em->createQueryBuilder()
-                    ->select('a.comment', 'a.datetime', 'b.adminName')
-                    ->from('InitialShippingBundle:SendCommandRanking', 'a')
-                    ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.emailId = a.clientemail')
-                    ->where('a.shipid = :shipid')
-                    ->andwhere('b.emailId = :username')
-                    ->setParameter('username', $useremailaddres)
-                    ->setParameter('shipid', $kpiid)
-                    ->getQuery()
-                    ->getResult();
-                $listofcommentarray = $listofcomment;
+                $listofcommentarray = $returnvaluefrommonth['commentarray'];
             }
             $idforrecord = $params['lastid'];
 

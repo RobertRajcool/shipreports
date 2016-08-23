@@ -239,11 +239,13 @@
                 <tr>
                     <td id="viewcommentdiv" >
                         {% if commentarray|length <= 0 %}
+
                             {{ 'elementranking.nocommands'|trans }}
                         {% endif %}
                         {% if commentarray|length > 0 %}
                             {% for comobject in commentarray %}
-                                {{ comobject.comment }}
+                                <p><strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
+
 
                             {% endfor %}
                         {% endif %}
