@@ -570,18 +570,20 @@ class DashboradController extends Controller
                 $vessel_Piechart->chart->plotBorderWidth(0);
                 $vessel_Piechart->chart->plotShadow(false);
                 $vessel_Piechart->chart->marginTop(-35);
-                $vessel_Piechart->chart->marginLeft(-10);
-                $vessel_Piechart->chart->marginRight(-10);
+                $vessel_Piechart->chart->marginLeft(-0);
+                $vessel_Piechart->chart->marginRight(-0);
                 $vessel_Piechart->chart->marginBottom(-0);
                 $vessel_Piechart->credits->enabled(false);
                 $vessel_Piechart->title->text('');
                 $vessel_Piechart->legend->enabled(true);
                 $vessel_Piechart->legend->floating(true);
-                $vessel_Piechart->legend->symbolHeight(4);
-                $vessel_Piechart->legend->symbolWidth(4);
+                $vessel_Piechart->legend->symbolHeight(6);
+                $vessel_Piechart->legend->symbolWidth(6);
                 $vessel_Piechart->legend->symbolRadius(2);
                 $vessel_Piechart->legend->itemMarginTop(1);
+                $vessel_Piechart->legend->itemMarginLeft(-35);
                 $vessel_Piechart->legend->labelFormatter($formatter);
+                $vessel_Piechart->legend->itemDistance(5);
                 $vessel_Piechart->plotOptions->pie(array(
                     'dataLabels' => array('enabled' => false,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
                     'startAngle'=> -90,
@@ -608,10 +610,12 @@ class DashboradController extends Controller
                 $kpi_alerts->title->text('');
                 $kpi_alerts->legend->enabled(true);
                 $kpi_alerts->legend->floating(true);
-                $kpi_alerts->legend->symbolHeight(4);
-                $kpi_alerts->legend->symbolWidth(4);
+                $kpi_alerts->legend->symbolHeight(6);
+                $kpi_alerts->legend->symbolWidth(6);
                 $kpi_alerts->legend->symbolRadius(2);
                 $kpi_alerts->legend->itemMarginTop(1);
+                $kpi_alerts->legend->itemMarginLeft(-35);
+                $kpi_alerts->legend->itemDistance(5);
                 $kpi_alerts->legend->labelFormatter($formatter);
                 $kpi_alerts->plotOptions->pie(array(
                     'dataLabels' => array('enabled' => true,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
