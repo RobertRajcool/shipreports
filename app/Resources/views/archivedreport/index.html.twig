@@ -30,6 +30,7 @@
 
         <script>
             $(document).ready(function() {
+                var base_url = window.location.origin;
                 var archiveAjaxStatus = 0;
                 var scorecardSubmitId = $('#scorecard-submit-id');
                 var scorecardCheckbox = $('.scorecard_checkbox');
@@ -419,7 +420,7 @@
                             jAlert('', data.updatemsg);
                         },
                         error: function () {
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
                         }
                     });
 
@@ -581,6 +582,9 @@
                     $.ajax({
                         data: data,
                         success: function (data) {
+                            if(printBtnStatus == 1) {
+                                printBtnClass.hide();
+                            }
                             scorecardReportClass.hide();
                             archiveButtonId.hide();
                             archiveReportView.hide();
@@ -773,12 +777,15 @@
 
                 /*------------------------------Predefined Reports-------------------------------*/
 
+                var printBtnClass = $('.print-btn-class');
+                var printBtnStatus = 0;
                 var today = new Date();
                 var currentYear = today.getFullYear();
                 var currentMonth = today.getMonth();
                 var asOnDate = $('#scorecard-predefined-report-1');
                 asOnDate.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     archiveAjaxStatus = 1;
                     var archiveStatus = 0;
                     var data = {
@@ -798,6 +805,7 @@
                 var firstQuarter = $('#scorecard-predefined-report-2');
                 firstQuarter.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     archiveAjaxStatus = 1;
                     var archiveStatus = 0;
                     var data = {
@@ -817,6 +825,7 @@
                 var firstHalf = $('#scorecard-predefined-report-3');
                 firstHalf.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     archiveAjaxStatus = 1;
                     var archiveStatus = 0;
                     var data = {
@@ -836,6 +845,7 @@
                 var report4 = $('#scorecard-predefined-report-4');
                 report4.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     archiveAjaxStatus = 1;
                     var archiveStatus = 0;
                     var data = {
@@ -859,6 +869,7 @@
                 var asOnDateRanking = $('#ranking-predefined-report-1');
                 asOnDateRanking.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     var title = 'As on date';
                     var data = {
                         selectedYear : currentYear,
@@ -870,6 +881,7 @@
                 var firstQuarterRanking = $('#ranking-predefined-report-2');
                 firstQuarterRanking.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     var title = 'Quarterly';
                     var data = {
                         selectedYear : currentYear,
@@ -881,6 +893,7 @@
                 var firstHalfRanking = $('#ranking-predefined-report-3');
                 firstHalfRanking.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     var title = 'Half-Yearly';
                     var data = {
                         selectedYear : currentYear,
@@ -892,6 +905,7 @@
                 var lastTwoMonthsRanking = $('#ranking-predefined-report-4');
                 lastTwoMonthsRanking.click(function($e) {
                     $e.preventDefault();
+                    printBtnStatus = 1;
                     var title = 'Last two months';
                     var data = {
                         selectedYear : currentYear,
@@ -915,6 +929,9 @@
                     $.ajax({
                         data: data,
                         success: function (data) {
+                            if(printBtnStatus == 1) {
+                                printBtnClass.hide();
+                            }
                             scorecardReportClass.hide();
                             archiveButtonId.hide();
                             archiveReportView.hide();
@@ -1170,7 +1187,7 @@
                     <input type="hidden" class="activeYearText" name="activeYear" value="">
                     <input type="hidden" class="endMonthText" name="endMonth" value="">
                     <input type="hidden" class="endYearText" name="endYear" value="">
-                    <button type="submit" class="actions_report_btn" id="sendreportid">{{ 'ranking_report.print'|trans }}</button>
+                    <button type="submit" class="actions_report_btn print-btn-class" id="sendreportid">{{ 'ranking_report.print'|trans }}</button>
                 </form>
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">{{ 'ranking_report.sendreport'|trans }}</a>
                 <a class="actions_report_btn scorecard_view_back" style="cursor: pointer;">{{ 'ranking_report.back'|trans }}</a>
@@ -1267,38 +1284,38 @@
             <div id="listalltable" class="table-responsive rankingreport">
                 <table class="table table-striped-4 element_ranking_main_title_row">
                     <thead>
-                        <tr>
-                            <th colspan="4">
-                                {{ 'kpiranking.header'|trans }}
-                            </th>
-                        </tr>
+                    <tr>
+                        <th colspan="4">
+                            {{ 'kpiranking.header'|trans }}
+                        </th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
-                            <td id="shipnameid"></td>
-                            <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
-                            <td>V-ships</td>
-                        </tr>
-                        <tr>
-                            <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
-                            <td id="currentyearid"></td>
-                            <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
-                            <td id="ageofvesselid"></td>
-                        </tr>
+                    <tr>
+                        <td><strong>{{ 'kpiranking.veseelname'|trans }}</strong></td>
+                        <td id="shipnameid"></td>
+                        <td><strong>{{ 'kpiranking.techmanager'|trans }}</strong></td>
+                        <td>V-ships</td>
+                    </tr>
+                    <tr>
+                        <td><strong>{{ 'kpiranking.year'|trans }}</strong></td>
+                        <td id="currentyearid"></td>
+                        <td><strong>{{ 'kpiranking.ageofvessel'|trans }}</strong></td>
+                        <td id="ageofvesselid"></td>
+                    </tr>
                     </tbody>
                 </table>
                 <div id="tableofcontent"></div>
                 <table id="shipchart" class="table table-striped normal_table">
                     <thead>
-                        <tr>
-                            <th id="graphtitle">Title</th>
-                        </tr>
+                    <tr>
+                        <th id="graphtitle">Title</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td id="area_ranking"></td>
-                        </tr>
+                    <tr>
+                        <td id="area_ranking"></td>
+                    </tr>
                     </tbody>
                 </table>
                 <div id="kpigraphlist"></div>
@@ -1352,7 +1369,7 @@
                 <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
-                    <button type="submit" class="actions_report_btn" id="sendreportid-ranking" >{{ 'ranking_report.print'|trans }}</button>
+                    <button type="submit" class="actions_report_btn print-btn-class" id="sendreportid-ranking" >{{ 'ranking_report.print'|trans }}</button>
                 </form>
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">{{ 'ranking_report.sendreport'|trans }}</a>
                 <a class="actions_report_btn scorecard_view_back" style="cursor: pointer;">{{ 'ranking_report.back'|trans }}</a>
