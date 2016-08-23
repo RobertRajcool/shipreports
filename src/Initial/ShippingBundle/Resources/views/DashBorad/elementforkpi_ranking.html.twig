@@ -30,6 +30,7 @@
                 $('#viewcommentdiv').hide();
                 $('#hidecomment').hide();
                 $('#commentandreportdiv').hide();
+                $('#elementweightage').hide();
 
                 $('#showcommentform').click(function()
                 {
@@ -534,6 +535,13 @@
                         alert('This is current month value');
                     }
                 });
+              $('#weigahte_button').click(function ($e)
+              {
+                  $e.preventDefault();
+                  $('#elementweightage').toggle();
+
+
+              });
 
             });
         </script>
@@ -613,6 +621,76 @@
             <div class="rules_ranking">
                 <a class="rules_show_btn"  id="element_btn_rules" href="">{{ 'elementranking.ruleshow'|trans }}</a>
                 <a class="rules_show_btn element-original-values-class" style="cursor: pointer">Original values</a>
+                <a class="rules_show_btn " id="weigahte_button" style="cursor: pointer">Weightage</a>
+            </div>
+            <div id="elementweightage">
+                <table class="table table-striped graph_and_colour_coding_main_title_row">
+                    <thead>
+                    <tr>
+                        <th>{{ kpiname }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <a class="linkclass" href="{{ path('listallkpiforship_ranking', { 'shipid': shipid,'year':2016}) }}" style="float: right"  >{{ 'elementranking.backlink'|trans }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped-3 element_ranking_new_row">
+                    <thead>
+                    <tr>
+                        <th class="kpi_name">{{ 'elementranking.element'|trans }}</th>
+                        <th>From </th>
+                        <th>To</th>
+                        <th>Weighatge</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set countmonth1= countmonth-1 %}
+                    {% set i=0 %}
+                    {% for element in listofelement %}
+                        <tr>
+                            <td  class="element_name_title">{{ element.elementName }}
+
+                                {% for j in 0..countmonth1 %}
+                            <td>
+
+                                {{ monthlydata[j][i]  }}
+                            </td>
+
+                            <td>
+                                {% if elementcolorarray[j][i]=="Green" %}
+                                    <img class="img-icon" src="/images/02.large.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Red" %}
+                                    <img class="img-icon" src="/images/03.large.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                    <img class="img-icon" src="/images/01.large.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
+
+                            {% endfor %}
+
+                        </tr>
+
+                        {% set i=i+1 %}
+                    {% endfor %}
+                    <tr>
+                        <td colspan="" class="kpi_name_thtd"><strong>{{ 'elementranking.score'|trans }}</strong></td>
+
+
+                        {% for avg in avgscore %}
+                            {% set i1=0 %}
+                            <td><strong>{{ avg }}</strong></td>
+                            {% if i1 != 2 %}
+                                <td>&nbsp;</td>
+                            {% endif %}
+                            {% set i1=i1+1 %}
+                        {% endfor %}
+                    </tr>
+
+                    </tbody>
+                </table>
             </div>
 
             <table class="table table-striped-4 kpi_ranking_rules_show_row" id="ranking_elementrules">
