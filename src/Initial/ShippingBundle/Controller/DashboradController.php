@@ -570,8 +570,8 @@ class DashboradController extends Controller
                 $vessel_Piechart->chart->plotBorderWidth(0);
                 $vessel_Piechart->chart->plotShadow(false);
                 $vessel_Piechart->chart->marginTop(-35);
-                $vessel_Piechart->chart->marginLeft(-0);
-                $vessel_Piechart->chart->marginRight(-0);
+                $vessel_Piechart->chart->marginLeft(-10);
+                $vessel_Piechart->chart->marginRight(-10);
                 $vessel_Piechart->chart->marginBottom(-0);
                 $vessel_Piechart->credits->enabled(false);
                 $vessel_Piechart->title->text('');
@@ -2195,26 +2195,30 @@ class DashboradController extends Controller
                         array_push($monthNameLetter, $monthInLetter);
                         $new_monthdetail_date = new \DateTime($monthDetails[$monthCount]);
                         $new_monthdetail_date->modify('last day of this month');
-
                         for ($elementCount = 0; $elementCount < count($elementForKpiList); $elementCount++) {
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
-                            /* $weightage_startus_Result = $em->createQueryBuilder()
-                                 ->select('a.weightage','a.endDate','a.id','a.status')
-                                 ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
-                                 ->where('a.elementId = :elementid')
-                                 ->andWhere('a.endDate IS NULL')
-                                 ->setParameter('elementid', $scorecardElementId)
-                                 ->getQuery()
-                                 ->getResult();
-                             if($weightage_startus_Result[0]['status']==1)
-                             {*/
+                            $weightage_startus_Result = $em->createQueryBuilder()
+                                ->select('a.weightage','a.activeDate','a.endDate','a.id','a.status')
+                                ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                ->where('a.elementId = :elementid')
+                                ->andWhere('a.endDate IS NULL')
+                                ->setParameter('elementid', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+                            if(count($weightage_startus_Result)>0)
+                            {
+                                $weightage_status_Allresult= $em->createQueryBuilder()
+                                    ->select('a.weightage','a.endDate','a.activeDate','a.id','a.status')
+                                    ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                    ->where('a.elementId = :elementid')
+                                    ->addOrderBy('a.id', 'DESC')
+                                    ->setParameter('elementid', $scorecardElementId)
+                                    ->getQuery()
+                                    ->getResult();
 
-
-
-                            /*
-                            }*/
-
+                                $monthlyweightage_status[$scorecardElementId]=$weightage_status_Allresult;
+                            }
                             $rankingElementRulesArray = $em->createQueryBuilder()
                                 ->select('a.rules')
                                 ->from('InitialShippingBundle:RankingRules', 'a')
@@ -2323,6 +2327,7 @@ class DashboradController extends Controller
                             'monthlydata' => $monthlyElementValueArray,
                             'elementRule' => $scorecardElementRules,
                             'monthInNumber' => $monthNumberFormat,
+                            'elementweightageStatus'=>$monthlyweightage_status
                         )
                     );
                 } else {
