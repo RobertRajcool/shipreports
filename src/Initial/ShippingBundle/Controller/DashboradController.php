@@ -577,11 +577,13 @@ class DashboradController extends Controller
                 $vessel_Piechart->title->text('');
                 $vessel_Piechart->legend->enabled(true);
                 $vessel_Piechart->legend->floating(true);
-                $vessel_Piechart->legend->symbolHeight(4);
-                $vessel_Piechart->legend->symbolWidth(4);
+                $vessel_Piechart->legend->symbolHeight(6);
+                $vessel_Piechart->legend->symbolWidth(6);
                 $vessel_Piechart->legend->symbolRadius(2);
                 $vessel_Piechart->legend->itemMarginTop(1);
+                $vessel_Piechart->legend->itemMarginLeft(-35);
                 $vessel_Piechart->legend->labelFormatter($formatter);
+                $vessel_Piechart->legend->itemDistance(5);
                 $vessel_Piechart->plotOptions->pie(array(
                     'dataLabels' => array('enabled' => false,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
                     'startAngle'=> -90,
@@ -608,10 +610,12 @@ class DashboradController extends Controller
                 $kpi_alerts->title->text('');
                 $kpi_alerts->legend->enabled(true);
                 $kpi_alerts->legend->floating(true);
-                $kpi_alerts->legend->symbolHeight(4);
-                $kpi_alerts->legend->symbolWidth(4);
+                $kpi_alerts->legend->symbolHeight(6);
+                $kpi_alerts->legend->symbolWidth(6);
                 $kpi_alerts->legend->symbolRadius(2);
                 $kpi_alerts->legend->itemMarginTop(1);
+                $kpi_alerts->legend->itemMarginLeft(-35);
+                $kpi_alerts->legend->itemDistance(5);
                 $kpi_alerts->legend->labelFormatter($formatter);
                 $kpi_alerts->plotOptions->pie(array(
                     'dataLabels' => array('enabled' => true,'distance'=>-15,'format' => '{point.name}: {point.y}','style'=>array('fontWeight'> 'bold', 'color'=>'#333333')),
@@ -2195,26 +2199,30 @@ class DashboradController extends Controller
                         array_push($monthNameLetter, $monthInLetter);
                         $new_monthdetail_date = new \DateTime($monthDetails[$monthCount]);
                         $new_monthdetail_date->modify('last day of this month');
-
                         for ($elementCount = 0; $elementCount < count($elementForKpiList); $elementCount++) {
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
-                            /* $weightage_startus_Result = $em->createQueryBuilder()
-                                 ->select('a.weightage','a.endDate','a.id','a.status')
-                                 ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
-                                 ->where('a.elementId = :elementid')
-                                 ->andWhere('a.endDate IS NULL')
-                                 ->setParameter('elementid', $scorecardElementId)
-                                 ->getQuery()
-                                 ->getResult();
-                             if($weightage_startus_Result[0]['status']==1)
-                             {*/
+                            $weightage_startus_Result = $em->createQueryBuilder()
+                                ->select('a.weightage','a.activeDate','a.endDate','a.id','a.status')
+                                ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                ->where('a.elementId = :elementid')
+                                ->andWhere('a.endDate IS NULL')
+                                ->setParameter('elementid', $scorecardElementId)
+                                ->getQuery()
+                                ->getResult();
+                            if(count($weightage_startus_Result)>0)
+                            {
+                                $weightage_status_Allresult= $em->createQueryBuilder()
+                                    ->select('a.weightage','a.endDate','a.activeDate','a.id','a.status')
+                                    ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
+                                    ->where('a.elementId = :elementid')
+                                    ->addOrderBy('a.id', 'DESC')
+                                    ->setParameter('elementid', $scorecardElementId)
+                                    ->getQuery()
+                                    ->getResult();
 
-
-
-                            /*
-                            }*/
-
+                                $monthlyweightage_status[$scorecardElementId]=$weightage_status_Allresult;
+                            }
                             $rankingElementRulesArray = $em->createQueryBuilder()
                                 ->select('a.rules')
                                 ->from('InitialShippingBundle:RankingRules', 'a')
@@ -2323,6 +2331,7 @@ class DashboradController extends Controller
                             'monthlydata' => $monthlyElementValueArray,
                             'elementRule' => $scorecardElementRules,
                             'monthInNumber' => $monthNumberFormat,
+                            'elementweightageStatus'=>$monthlyweightage_status
                         )
                     );
                 } else {
