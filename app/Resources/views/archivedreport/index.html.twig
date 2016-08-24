@@ -386,46 +386,56 @@
                     }
                 }
 
-                $('#sendmailid').click(function ($e) {
+                $('#sendmailid').click(function($e)
+                {
                     $e.preventDefault();
-                    var aM = $('.activeMonth').val();
-                    var aY = $('.activeYear').val();
-                    var eM = $('.endMonth').val();
-                    var eY = $('.endYear').val();
-                    var clientemail = $('#toemail').val();
-                    var comment = $('#mycommentid').val();
-                    var data = {
-                        activeMonth: aM,
-                        activeYear: aY,
-                        endMonth: eM,
-                        endYear: eY,
-                        clientemail: clientemail,
-                        comment: comment
-                    };
+                    var reporttype=$('#ranking_reports_type').val();
+                    if(reporttype=='ranking_predefine')
+                    {
+                        var title=$('#predefine_title').val();
+                        var year=$('#predefine_year').val();
+                        var clientemail=$('#toemail').val();
+                        var comment=$('#mycommentid').val();
+                        var ajaxurl=Routing.generate('archived_ranking_predefined_report_mail');
+                        var data = {selectedYear :year,title:title,clientemail:clientemail,comment:comment} ;
+                    }
+                    if(reporttype=='ranking_all_years')
+                    {
+                        var shipid=$('#sendreportshipid').val();
+                        var year=$('#yearid').val();
+                        var clientemail=$('#toemail').val();
+                        var comment=$('#mycommentid').val();
+                        var ajaxurl=Routing.generate('send_rankingreports_mail');
+                        var data = {shipid :shipid,year:year,clientemail:clientemail,comment:comment} ;
+                    }
                     $('#close_button').click();
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        url: Routing.generate('scorecard_report_pdfReport_mail'),
-                        beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
+                        url:ajaxurl,
+                        beforeSend: function ()
+                        {
+                            var beforsend=ajaxbefore_send();
                         },
                         complete: function () {
-                            var setAjaxComplete = ajax_complete();
+                            var complete=ajax_complete();
                         }
                     });
                     $.ajax({
                         data: data,
-                        success: function (data) {
+                        success: function (data)
+                        {
                             jAlert('', data.updatemsg);
-                        },
-                        error: function () {
+                        }
+                        ,
+                        error: function()
+                        {
                             window.location.href = base_url+'/login';
+
                         }
                     });
 
                 });
-
                 var liveSearchDiv = $('#livesearchdiv');
                 var commentId = $('#mycommentid');
                 $(".dynamiclabel").live("click", function (e) {
@@ -470,7 +480,7 @@
                             }
                         },
                         error: function () {
-                            window.location.href = 'http://shipreports/login';
+                            window.location.href = base_url+'/login';
                         }
                     });
                 });
@@ -563,6 +573,7 @@
                     };
 
                     if(validateStatus==0) {
+                        $('#ranking_reports_type').val('ranking_all_years');
                         var setRankingAjaxSetup = setRankingAjaxSetupFunction(data);
                     }
                 });
@@ -871,6 +882,9 @@
                     $e.preventDefault();
                     printBtnStatus = 1;
                     var title = 'As on date';
+                    $('#predefine_title').val(title);
+                    $('#predefine_year').val(currentYear);
+                    $('#ranking_reports_type').val('ranking_predefine');
                     var data = {
                         selectedYear : currentYear,
                         title: title
@@ -883,6 +897,9 @@
                     $e.preventDefault();
                     printBtnStatus = 1;
                     var title = 'Quarterly';
+                    $('#predefine_title').val(title);
+                    $('#predefine_year').val(currentYear);
+                    $('#ranking_reports_type').val('ranking_predefine');
                     var data = {
                         selectedYear : currentYear,
                         title: title
@@ -895,6 +912,9 @@
                     $e.preventDefault();
                     printBtnStatus = 1;
                     var title = 'Half-Yearly';
+                    $('#predefine_title').val(title);
+                    $('#predefine_year').val(currentYear);
+                    $('#ranking_reports_type').val('ranking_predefine');
                     var data = {
                         selectedYear : currentYear,
                         title: title
@@ -907,6 +927,9 @@
                     $e.preventDefault();
                     printBtnStatus = 1;
                     var title = 'Last two months';
+                    $('#predefine_title').val(title);
+                    $('#predefine_year').val(currentYear);
+                    $('#ranking_reports_type').val('ranking_predefine');
                     var data = {
                         selectedYear : currentYear,
                         title: title
@@ -929,9 +952,9 @@
                     $.ajax({
                         data: data,
                         success: function (data) {
-                            if(printBtnStatus == 1) {
+                           /* if(printBtnStatus == 1) {
                                 printBtnClass.hide();
-                            }
+                            }*/
                             scorecardReportClass.hide();
                             archiveButtonId.hide();
                             archiveReportView.hide();
@@ -1224,7 +1247,7 @@
         </div>
     </section>
 
-    <div class="reportElementShowSection">
+    {#<div class="reportElementShowSection">
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
             <div class="modal-dialog model_content">
@@ -1268,12 +1291,12 @@
                 </div> <!-- /.modal-content -->
             </div> <!-- /.modal-dialog -->
         </div>
-    </div>
+    </div>#}
 
     <div class="ranking-report-view">
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
-                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
+                <form id="printform" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
                     <input type="hidden" id="sendreportshipid" name="shipid">
                     <input type="hidden" id="yearid" name="year">
                     <button type="submit" class="actions_report_btn" id="sendreportid-ranking" >{{ 'ranking_report.print'|trans }}</button>
@@ -1321,54 +1344,15 @@
                 <div id="kpigraphlist"></div>
             </div>
         </div>
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog model_content">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">{{ 'elementranking.sendreport'|trans }}</h4>
-                    </div>
-                    <div class="modal-body">
 
-                        <form id="chatform" class="form-horizontal no-style" method="post">
-
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
-                                <div class="col-xs-9">
-
-                                    <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
-                                    <div id="livesearchdiv"  class="send_reports_to_input_list">
-                                        <ul id="livesearch">
-
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
-                                <div class="col-xs-9">
-                                    <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
-                    <div class="modal-footer">
-
-                        <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
-                    </div>
-
-                </div> <!-- /.modal-content -->
-            </div> <!-- /.modal-dialog -->
-        </div>
     </div>
 
     <div class="ranking-predefined-report-view">
         <div id="resultofreport" class="col-md-12 users_advanced_list_views_screen ">
             <div class="actions_report_top">
-                <form id="" class="form-horizontal no-style" action="{{ path('send_rankingreports') }}" target="_blank"  method="post">
-                    <input type="hidden" id="sendreportshipid" name="shipid">
-                    <input type="hidden" id="yearid" name="year">
+                <form id="" class="form-horizontal no-style" action="{{ path('archived_ranking_predefined_report_print') }}" target="_blank"  method="post">
+                    <input type="hidden" id="predefine_title" name="title">
+                    <input type="hidden" id="predefine_year" name="selectedYear">
                     <button type="submit" class="actions_report_btn print-btn-class" id="sendreportid-ranking" >{{ 'ranking_report.print'|trans }}</button>
                 </form>
                 <a data-toggle="modal" class="actions_report_btn" href="" data-target="#myModal">{{ 'ranking_report.sendreport'|trans }}</a>
@@ -1391,48 +1375,48 @@
                 <div id="kpigraphlist"></div>
             </div>
         </div>
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog model_content">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title">{{ 'elementranking.sendreport'|trans }}</h4>
-                    </div>
-                    <div class="modal-body">
 
-                        <form id="chatform" class="form-horizontal no-style" method="post">
-
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
-                                <div class="col-xs-9">
-
-                                    <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
-                                    <div id="livesearchdiv"  class="send_reports_to_input_list">
-                                        <ul id="livesearch">
-
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
-                                <div class="col-xs-9">
-                                    <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
-                                </div>
-                            </div>
-                        </form>
-
-                    </div>
-                    <div class="modal-footer">
-
-                        <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
-                    </div>
-
-                </div> <!-- /.modal-content -->
-            </div> <!-- /.modal-dialog -->
-        </div>
     </div>
+    <input type="hidden" id="ranking_reports_type" name="report_type">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog model_content">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">{{ 'elementranking.sendreport'|trans }}</h4>
+                </div>
+                <div class="modal-body">
 
+                    <form id="chatform" class="form-horizontal no-style" method="post">
 
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.to'|trans }}</label>
+                            <div class="col-xs-9">
+
+                                <input id="toemail" type="text" class="send_reports_to_input" name="clientemail" required>
+                                <div id="livesearchdiv"  class="send_reports_to_input_list">
+                                    <ul id="livesearch">
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required_field col-xs-3">{{ 'elementranking.mailbox'|trans }}</label>
+                            <div class="col-xs-9">
+                                <textarea id="mycommentid" name="comment" required class="add_comment_textarea" placeholder="Enter comment here"></textarea>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
+                </div>
+
+            </div> <!-- /.modal-content -->
+        </div> <!-- /.modal-dialog -->
+    </div>
 
 {% endblock %}
