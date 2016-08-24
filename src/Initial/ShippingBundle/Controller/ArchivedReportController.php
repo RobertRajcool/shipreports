@@ -1203,6 +1203,12 @@ class ArchivedReportController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Month wise data',' stackLabels'=>array("enabled" => true,'style'=>array('fontWeight'=>'bold')))),
             );
             $jsondata = json_encode($graphObject);
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+            }
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+            }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/predefinedreports_'.$currentdateitme.'.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
@@ -1430,6 +1436,12 @@ class ArchivedReportController extends Controller
                 'yAxis' => array('max' => 100, 'title' => array('text' => 'Month wise data',' stackLabels'=>array("enabled" => true,'style'=>array('fontWeight'=>'bold')))),
             );
             $jsondata = json_encode($graphObject);
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles', 0777, true);
+            }
+            if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
+                mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
+            }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/predefinedreports_'.$currentdateitme.'.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
