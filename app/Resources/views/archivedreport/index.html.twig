@@ -389,51 +389,64 @@
                 $('#sendmailid').click(function($e)
                 {
                     $e.preventDefault();
-                    var reporttype=$('#ranking_reports_type').val();
-                    if(reporttype=='ranking_predefine')
+                    var clientemail=$('#toemail').val();
+                    var comment=$('#mycommentid').val();
+                    if(clientemail!="" && comment!="")
                     {
-                        var title=$('#predefine_title').val();
-                        var year=$('#predefine_year').val();
-                        var clientemail=$('#toemail').val();
-                        var comment=$('#mycommentid').val();
-                        var ajaxurl=Routing.generate('archived_ranking_predefined_report_mail');
-                        var data = {selectedYear :year,title:title,clientemail:clientemail,comment:comment} ;
-                    }
-                    if(reporttype=='ranking_all_years')
-                    {
-                        var shipid=$('#sendreportshipid').val();
-                        var year=$('#yearid').val();
-                        var clientemail=$('#toemail').val();
-                        var comment=$('#mycommentid').val();
-                        var ajaxurl=Routing.generate('send_rankingreports_mail');
-                        var data = {shipid :shipid,year:year,clientemail:clientemail,comment:comment} ;
-                    }
-                    $('#close_button').click();
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        url:ajaxurl,
-                        beforeSend: function ()
+                        var reporttype=$('#ranking_reports_type').val();
+                        if(reporttype=='ranking_predefine')
                         {
-                            var beforsend=ajaxbefore_send();
-                        },
-                        complete: function () {
-                            var complete=ajax_complete();
+                            var title=$('#predefine_title').val();
+                            var year=$('#predefine_year').val();
+                            var ajaxurl=Routing.generate('archived_ranking_predefined_report_mail');
+                            var data = {selectedYear :year,title:title,clientemail:clientemail,comment:comment} ;
                         }
-                    });
-                    $.ajax({
-                        data: data,
-                        success: function (data)
+                        if(reporttype=='ranking_all_years')
                         {
-                            jAlert('', data.updatemsg);
+                            var shipid=$('#sendreportshipid').val();
+                            var year=$('#yearid').val();
+                            var ajaxurl=Routing.generate('send_rankingreports_mail');
+                            var data = {shipid :shipid,year:year,clientemail:clientemail,comment:comment} ;
                         }
-                        ,
-                        error: function()
-                        {
-                            window.location.href = base_url+'/login';
+                        $('#close_button').click();
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            url:ajaxurl,
+                            beforeSend: function ()
+                            {
+                                var beforsend=ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var complete=ajax_complete();
+                            }
+                        });
+                        $.ajax({
+                            data: data,
+                            success: function (data)
+                            {
+                                jAlert('', data.updatemsg);
+                            }
+                            ,
+                            error: function()
+                            {
+                                window.location.href = base_url+'/login';
 
-                        }
-                    });
+                            }
+                        });
+                    }
+                    else if(clientemail="")
+                    {
+                        jAlert('', 'Enter email id');
+                    }
+                    else if(comment="")
+                    {
+                        jAlert('', 'Enter comment');
+                    }
+                    else
+                    {
+                        jAlert('', 'All fields Required');
+                    }
 
                 });
                 var liveSearchDiv = $('#livesearchdiv');
@@ -952,9 +965,9 @@
                     $.ajax({
                         data: data,
                         success: function (data) {
-                           /* if(printBtnStatus == 1) {
-                                printBtnClass.hide();
-                            }*/
+                            /* if(printBtnStatus == 1) {
+                             printBtnClass.hide();
+                             }*/
                             scorecardReportClass.hide();
                             archiveButtonId.hide();
                             archiveReportView.hide();

@@ -363,6 +363,8 @@
                     var year=$('#yearid').val();
                     var clientemail=$('#toemail').val();
                     var comment=$('#mycommentid').val();
+                    if(clientemail!="" && comment!="")
+                    {git ad
                     var data = {shipid :shipid,year:year,clientemail:clientemail,comment:comment} ;
                     $('#close_button').click();
                     $.ajaxSetup({
@@ -390,6 +392,19 @@
 
                         }
                     });
+                }
+                else if(clientemail="")
+            {
+                jAlert('', 'Enter email id');
+            }
+            else if(comment="")
+            {
+                jAlert('', 'Enter comment');
+            }
+            else
+            {
+                jAlert('', 'All fields Required');
+            }
 
                 });
 
