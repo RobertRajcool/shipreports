@@ -538,7 +538,7 @@ class HighchartController extends Controller
         $listofcomment = $em->createQueryBuilder()
             ->select('a.comment','a.datetime','b.username')
             ->from('InitialShippingBundle:SendCommand','a')
-            ->join('InitialShippingBundle:User','b', 'WITH', 'b.email = a.clientemail')
+            ->join('InitialShippingBundle:User','b', 'WITH', 'b.email = a.useremialid')
             ->where('a.kpiid = :kpiid')
             ->andwhere('b.email = :username')
             ->setParameter('username',$emailid)
