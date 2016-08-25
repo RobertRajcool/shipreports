@@ -10,9 +10,6 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/highcharts.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/exporting.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/svg.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -985,7 +982,7 @@
                 }
 
                 function setOverallVesselGraphFunction(data) {
-                    $('#area_predefined_ranking').highcharts({
+                    $('#area_predefined_ranki1ng').highcharts({
                         chart: {
                             type: 'column',
                             width: 965,
@@ -1029,6 +1026,45 @@
                         },
                         series: data.series
                     });
+                    $('#area_predefined_ranking').highcharts({
+                        chart: {
+                            type: 'column',
+                            width: 965,
+                            height: 525,
+                        },
+                        exporting:{
+                            enabled: false
+                        },
+                        title: {
+                            text: data.title
+                        },
+                        xAxis: {
+                            categories: data.categories,
+                            crosshair: true
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                text: 'Rainfall (mm)'
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        },
+                        series: data.series
+                    });
+
                 }
             });
         </script>
