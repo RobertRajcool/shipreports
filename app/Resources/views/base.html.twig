@@ -17,22 +17,6 @@
     <link href="/css/media_queries.css" rel="stylesheet">
     <link href="/css/bootstrap-datetimepicker.css" rel="stylesheet">
     <link rel="stylesheet" href="/js/listfile/file-tree.min.css" type="text/css" >
-    <style>
-        /* Paste this css to your style sheet file or under head tag */
-        /* This only works with JavaScript,
-        if it's not present, don't show loader */
-        .no-js #loader { display: none;  }
-        .js #loader { display: block; position: absolute; left: 100px; top: 0; }
-        .se-pre-con {
-            position: fixed;
-            left: 0px;
-            top: 0px;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            background: url(/images/loader-64x/Preloader_2.gif) center no-repeat #fff;
-        }
-    </style>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 
@@ -49,6 +33,7 @@
     <script src="/js/jquery.alerts.js"></script>
     <script src="/js/functions.js"></script>
     <script src="/js/listfile/file-tree.js"></script>
+    <script src="/js/listfile/star_file_tree.js"></script>
     <link href="/css/jquery.alerts.css" rel="stylesheet">
 
     <script src="/js/router.js"></script>
@@ -65,9 +50,75 @@
              $(".se-pre-con").fadeOut("slow");;
          });
      </script>#}
+    <script>
+
+    </script>
     <script type="text/javascript">
         $(window).ready(function()
         {
+            Highcharts.theme = {
+                colors: ["#7cb5ec", "#f7a35c", "#90ee7e", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
+                    "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+                chart: {
+                    backgroundColor: null,
+                    style: {
+                        fontFamily: "Dosis, sans-serif"
+                    }
+                },
+                title: {
+                    style: {
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        textTransform: 'uppercase'
+                    }
+                },
+                tooltip: {
+                    borderWidth: 0,
+                    backgroundColor: 'rgba(219,219,216,0.8)',
+                    shadow: false
+                },
+                legend: {
+                    itemStyle: {
+                        fontWeight: 'bold',
+                        fontSize: '13px'
+                    }
+                },
+                xAxis: {
+                    gridLineWidth: 1,
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yAxis: {
+                    minorTickInterval: 'auto',
+                    title: {
+                        style: {
+                            textTransform: 'uppercase'
+                        }
+                    },
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                plotOptions: {
+                    candlestick: {
+                        lineColor: '#404048'
+                    }
+                },
+
+
+                // General
+                background2: '#F0F0EA'
+
+            };
+
+
+            // Apply the theme
+            Highcharts.setOptions(Highcharts.theme);
             var base_url = window.location.origin;
             var pathname = window.location.pathname;
             if(pathname=='/dashboard/')
