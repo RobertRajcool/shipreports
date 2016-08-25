@@ -26,6 +26,7 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
+                var base_url = window.location.origin;
                 $('.reportShow').hide();
                 $('.reportElementShowSection').hide();
 
@@ -360,36 +361,39 @@
                     var eY = $('.endYear').val();
                     var clientemail = $('#toemail').val();
                     var comment = $('#mycommentid').val();
-                    var data = {
-                        activeMonth: aM,
-                        activeYear: aY,
-                        endMonth: eM,
-                        endYear: eY,
-                        clientemail: clientemail,
-                        comment: comment
-                    };
-                    $('#close_button').click();
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        url: Routing.generate('scorecard_report_pdfReport_mail'),
-                        beforeSend: function () {
-                            var setAjaxBeforeSend = ajaxbefore_send();
-                        },
-                        complete: function () {
-                            var setAjaxComplete = ajax_complete();
-                        }
-                    });
-                    $.ajax({
-                        data: data,
-                        success: function (data) {
-                            jAlert('', data.updatemsg);
-                        },
-                        error: function () {
-                            window.location.href = 'http://shipreports/login';
-                        }
-                    });
-
+                    if(!$.trim(clientemail) || !$.trim(comment)) {
+                        alert('All fields are required !');
+                    } else {
+                        var data = {
+                            activeMonth: aM,
+                            activeYear: aY,
+                            endMonth: eM,
+                            endYear: eY,
+                            clientemail: clientemail,
+                            comment: comment
+                        };
+                        $('#close_button').click();
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            url: Routing.generate('scorecard_report_pdfReport_mail'),
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = ajax_complete();
+                            }
+                        });
+                        $.ajax({
+                            data: data,
+                            success: function (data) {
+                                jAlert('', data.updatemsg);
+                            },
+                            error: function () {
+                                window.location.href = base_url + '/login';
+                            }
+                        });
+                    }
                 });
                 $(".dynamiclabel").live("click", function (e) {
                     var b = $(this).text();
@@ -412,7 +416,7 @@
                         type: "post",
                         url: Routing.generate('autocompleteformailing'),
                         beforeSend: function () {
-                           // var setAjaxBeforeSend = ajaxbefore_send();
+                            // var setAjaxBeforeSend = ajaxbefore_send();
                         },
                         complete: function () {
                             //var setAjaxComplete = ajax_complete();
@@ -533,9 +537,9 @@
                     <div>
                         <table class="table table-striped graph_and_colour_coding_dashboard_main_title_row" id="top">
                             <thead>
-                                <tr>
-                                    <th>Management Performance</th>
-                                </tr>
+                            <tr>
+                                <th>Management Performance</th>
+                            </tr>
                             </thead>
                         </table>
                         <div id="previousScorecardTable"></div>
@@ -549,9 +553,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td id="area"></td>
-                            </tr>
+                        <tr>
+                            <td id="area"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -597,8 +601,7 @@
                     </div>
                     <div class="modal-footer">
 
-                        <button type="button" id="sendmailid"
-                                class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
+                        <button type="button" id="sendmailid" class="actions_report_btn">{{ 'kpiranking.send'|trans }}</button>
                     </div>
 
                 </div> <!-- /.modal-content -->

@@ -1279,7 +1279,11 @@ class DashboradController extends Controller
                         ->setParameter('shipId',$shipDetails[$i]['id'])
                         ->getQuery()
                         ->getResult();
-                    $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                    if(count($elementOriginalValues)>0) {
+                        $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                    } else {
+                        $elementOriginalValuesArray[$i][$j]=0;
+                    }
                 }
             }
             $response = new JsonResponse();
@@ -2200,7 +2204,7 @@ class DashboradController extends Controller
                         for ($elementCount = 0; $elementCount < count($elementForKpiList); $elementCount++) {
                             $scorecardElementId = $elementForKpiList[$elementCount]['id'];
                             $scorecardElementWeight = $elementForKpiList[$elementCount]['weightage'];
-                            $weightage_startus_Result = $em->createQueryBuilder()
+                            /*$weightage_startus_Result = $em->createQueryBuilder()
                                 ->select('a.weightage','a.activeDate','a.endDate','a.id','a.status')
                                 ->from('InitialShippingBundle:RankingElementWeightageStatus', 'a')
                                 ->where('a.elementId = :elementid')
@@ -2220,7 +2224,7 @@ class DashboradController extends Controller
                                     ->getResult();
 
                                 $monthlyweightage_status[$scorecardElementId]=$weightage_status_Allresult;
-                            }
+                            }*/
                             $rankingElementRulesArray = $em->createQueryBuilder()
                                 ->select('a.rules')
                                 ->from('InitialShippingBundle:RankingRules', 'a')
@@ -2329,7 +2333,6 @@ class DashboradController extends Controller
                             'monthlydata' => $monthlyElementValueArray,
                             'elementRule' => $scorecardElementRules,
                             'monthInNumber' => $monthNumberFormat,
-                            'elementweightageStatus'=>$monthlyweightage_status
                         )
                     );
                 } else {
