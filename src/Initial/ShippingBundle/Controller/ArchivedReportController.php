@@ -305,7 +305,7 @@ class ArchivedReportController extends Controller
                         'monthName' => $monthLetterArray,
                         'kpiNameList' => $scorecardKpiList,
                         'imageSource' => 'graphImage' . $todayDate . $todayTime . '.png',
-                        'headerTitle' => 'Pioneer Scorecard Report'
+                        'headerTitle' => 'Scorecard Report'
                     ));
 
                 $pdfObject->AddPage('', 4, '', 'on');
@@ -755,6 +755,8 @@ class ArchivedReportController extends Controller
             }
 
             if($archiveStatus==1) {
+                $todayTime = date("H:i:s");
+                $todayDate = date("Y-m-d");
                 $currentdateitme=date('Y-m-d-H-i-s');
                 $reportName = $vesselName.'-'.$year;
                 $userId = $user->getId();
@@ -802,13 +804,13 @@ class ArchivedReportController extends Controller
                 if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph')) {
                     mkdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph', 0777, true);
                 }
-                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $vesselId.'_'.$currentdateitme. '.json';
+                $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/'.$todayTime.$todayDate.'.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
                 $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
 
-                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $vesselId.'_'.$currentdateitme. '.png';
-                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $vesselId.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
-                $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
+                $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/'.$todayTime.$todayDate.'.png';
+                $jsonFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/'.$todayTime.$todayDate.'.json';
+                $ImageGeneration = 'phantomjs '.$Highchartconvertjs.$jsonFile.' -outfile '.$outfile.' -scale 2.5 -width 1065';
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
 
@@ -817,7 +819,7 @@ class ArchivedReportController extends Controller
                     'screenName' => 'Ranking Report',
                     'userName' => '',
                     'date' => date('Y-m-d'),
-                    'link' => 'shipimage_' . $vesselId.'_'.$currentdateitme. '.png',
+                    'link' => $todayTime.$todayDate.'.png',
                     'listofkpi' => $rankingKpiList,
                     'kpiweightage' => $rankingKpiWeightarray,
                     'montharray' => $newcategories,
@@ -1247,7 +1249,7 @@ class ArchivedReportController extends Controller
         $userName = $user->getUsername();
         if ($user != null) {
             $em = $this->getDoctrine()->getManager();
-         //   $year = $request->request->get('predefine_year');
+            //   $year = $request->request->get('predefine_year');
             $title = $request->request->get('predefine_title');
 
             /*if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
@@ -1587,4 +1589,6 @@ class ArchivedReportController extends Controller
             'archivedReport' => $archivedReport,
         ));
     }
+
+
 }
