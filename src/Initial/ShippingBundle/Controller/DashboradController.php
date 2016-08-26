@@ -3385,7 +3385,7 @@ class DashboradController extends Controller
                 'subtitle' => array('style' => array('color' => '#0000f0', 'fontWeight' => 'bold')),
                 'title' => array('text' => $reportObject['shipname']),
                 'xAxis' => array('categories' => $reportObject['montharray'], 'labels' => array('style' => array('color' => '#0000F0'))),
-                'yAxis' => array('max' => 100, 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'))),
+                'yAxis' => array('max' => 100,'minorTickInterval'=> 'auto', 'title' => array('text' => 'Values', 'style' => array('color' => '#0000F0'),'labels'=>array('style'=>array('fontSize'=>'12px')))),
             );
             $jsondata = json_encode($graphObject);
             if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {

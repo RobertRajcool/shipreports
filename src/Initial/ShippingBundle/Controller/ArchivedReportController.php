@@ -1188,21 +1188,21 @@ class ArchivedReportController extends Controller
             $mpdf->SetWatermarkImage($WateMarkImagePath);
             $mpdf->showWatermarkImage = true;
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "column",'width'=>965,'height'=>525),
+                'colors'=>array("#7cb5ec", "#f7a35c", "#90ee7e", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
+                    "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "column",'width'=>965,'height'=>525,'backgroundColor'> null,
+                    'style'=>array('fontFamily'=>'Dosis, sans-serif')),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('column' => array(
-                    "stacking" => 'percent',
-                    "dataLabels" => array(
-                        "enabled" => true,
-                        'style'=>array(' textShadow'=>'0 0 3px black')
-
-                    )
-                )),
+                    'pointPadding'=> 0.2,
+                    'borderWidth'=> 0),
+                     ),
                 'series' => $reportObject['series'],
                 'title' => array('text' => $reportObject['title']),
-                'xAxis' => array('categories' => $reportObject['categories']),
-                'yAxis' => array('max' => 100, 'title' => array('text' => 'Month wise data',' stackLabels'=>array("enabled" => true,'style'=>array('fontWeight'=>'bold')))),
+                'xAxis' => array('categories' => $reportObject['categories'],'crosshair'=> true,'gridLineWidth'=> 1,'labels'=>array('style'=>array('fontSize'=>'12px'))),
+                'yAxis' => array('max' => 100,  'minorTickInterval'=> 'auto','title' => array('text' => 'Month wise data','labels'=>array('style'=>array('fontSize'=>'12px')))),
+                'background2'=> '#F0F0EA'
             );
             $jsondata = json_encode($graphObject);
             if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
@@ -1421,21 +1421,21 @@ class ArchivedReportController extends Controller
             $mpdf->SetWatermarkImage($WateMarkImagePath);
             $mpdf->showWatermarkImage = true;
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "column",'width'=>965,'height'=>525),
+                'colors'=>array("#7cb5ec", "#f7a35c", "#90ee7e", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
+                    "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "column",'width'=>965,'height'=>525,'backgroundColor'> null,
+                    'style'=>array('fontFamily'=>'Dosis, sans-serif')),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('column' => array(
-                    "stacking" => 'percent',
-                    "dataLabels" => array(
-                        "enabled" => true,
-                        'style'=>array(' textShadow'=>'0 0 3px black')
-
-                    )
-                )),
+                                 'pointPadding'=> 0.2,
+                                'borderWidth'=> 0),
+                    'candlestick'=>array('lineColor'=>'#404048') ),
                 'series' => $reportObject['series'],
                 'title' => array('text' => $reportObject['title']),
-                'xAxis' => array('categories' => $reportObject['categories']),
-                'yAxis' => array('max' => 100, 'title' => array('text' => 'Month wise data',' stackLabels'=>array("enabled" => true,'style'=>array('fontWeight'=>'bold')))),
+                'xAxis' => array('categories' => $reportObject['categories'],'crosshair'=> true,'gridLineWidth'=> 1,'labels'=>array('style'=>array('fontSize'=>'12px'))),
+                'yAxis' => array('max' => 100,  'minorTickInterval'=> 'auto','title' => array('text' => 'Month wise data','labels'=>array('style'=>array('fontSize'=>'12px')))),
+                'background2'=> '#F0F0EA'
             );
             $jsondata = json_encode($graphObject);
             if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles')) {
