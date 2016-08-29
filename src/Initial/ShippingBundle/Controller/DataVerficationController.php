@@ -2212,7 +2212,7 @@ class DataVerficationController extends Controller
                 $fileName = $excelobj->getFilename()->getClientOriginalName();
                 $ext = pathinfo($uploaddir . $fileName, PATHINFO_EXTENSION);
                 $name = substr($fileName, 0, -(strlen($ext) + 1));
-                $fileName = $name.'_' . date('Y-m-d H-i-s') . '.' . $ext;
+                $fileName = $name.'@' . date('Y-m-d H-i-s') . '.' . $ext;
                 if (!file_exists($uploaddir)) {
                     mkdir($uploaddir, 0777, true);
                     $folderobject = new RankingFolder();
