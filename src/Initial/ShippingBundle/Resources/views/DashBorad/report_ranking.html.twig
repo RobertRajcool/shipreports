@@ -450,6 +450,8 @@
                         data: data,
                         success: function (data)
                         {
+                            $('#toemail').val('');
+                            $('#mycommentid').val('');
                             jAlert('', data.updatemsg);
                         }
                         ,

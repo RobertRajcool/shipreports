@@ -285,7 +285,8 @@
                             data: data,
                             success: function (data)
                             {
-                                $('#usermycommentid').val(' ');
+                                $('#usermycommentid').val(' ')
+                                $('#kpiidforname').val('');
                                 $('#commentform').hide();
                                 var a=data.lastinsertid;
                                 $('#lastid').val(a);
