@@ -16,6 +16,73 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/highchart/drilldown.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        <script>
+            Highcharts.createElement('link', {
+                href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
+                rel: 'stylesheet',
+                type: 'text/css'
+            }, null, document.getElementsByTagName('head')[0]);
+            Highcharts.theme = {
+                colors: ["#7cb5ec", "#f7a35c", "#90ee7e", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
+                    "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
+                chart: {
+                    backgroundColor: null,
+                    style: {
+                        fontFamily: "Dosis, sans-serif"
+                    }
+                },
+                title: {
+                    style: {
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        textTransform: 'uppercase'
+                    }
+                },
+                tooltip: {
+                    borderWidth: 0,
+                    backgroundColor: 'rgba(219,219,216,0.8)',
+                    shadow: false
+                },
+                legend: {
+                    itemStyle: {
+                        fontWeight: 'bold',
+                        fontSize: '13px'
+                    }
+                },
+                xAxis: {
+                    gridLineWidth: 1,
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yAxis: {
+                    minorTickInterval: 'auto',
+                    title: {
+                        style: {
+                            textTransform: 'uppercase'
+                        }
+                    },
+                    labels: {
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                plotOptions: {
+                    candlestick: {
+                        lineColor: '#404048'
+                    }
+                },
+
+
+                // General
+                background2: '#F0F0EA'
+
+            };
+            Highcharts.setOptions(Highcharts.theme);
+        </script>
 
         <script type="text/javascript">
             {{ chart(chart) }}
@@ -430,6 +497,8 @@
                         $.ajax({
                             data: data,
                             success: function (data) {
+                                $('#toemail').val('');
+                                $('#mycommentid').val('');
                                 jAlert('', data.updatemsg);
                             },
                             error: function () {
@@ -982,50 +1051,6 @@
                 }
 
                 function setOverallVesselGraphFunction(data) {
-                    $('#area_predefined_ranki1ng').highcharts({
-                        chart: {
-                            type: 'column',
-                            width: 965,
-                            height: 525
-                        },
-                        title: {
-                            text: data.title
-                        },
-                        xAxis: {
-                            categories: data.categories
-                        },
-                        yAxis: {
-                            min: 0,
-                            max: 100,
-                            title: {
-                                text: 'Month wise data'
-                            },
-                            stackLabels: {
-                                enabled: true,
-                                style: {
-                                    fontWeight: 'bold',
-                                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                                }
-                            }
-                        },
-                        tooltip: {
-                            headerFormat: '<b>{point.x}</b><br/>',
-                            pointFormat: '{series.name}: {point.y}<br/>Total: 100'
-                        },
-                        plotOptions: {
-                            column: {
-                                stacking: 'percent',
-                                dataLabels: {
-                                    enabled: true,
-                                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                                    style: {
-                                        textShadow: '0 0 3px black'
-                                    }
-                                }
-                            }
-                        },
-                        series: data.series
-                    });
                     $('#area_predefined_ranking').highcharts({
                         chart: {
                             type: 'column',
@@ -1045,13 +1070,13 @@
                         yAxis: {
                             min: 0,
                             title: {
-                                text: 'Rainfall (mm)'
+                                text: 'Month wise data'
                             }
                         },
                         tooltip: {
                             headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                             pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                            '<td style="padding:0"><b>{point.y} </b></td></tr>',
                             footerFormat: '</table>',
                             shared: true,
                             useHTML: true
