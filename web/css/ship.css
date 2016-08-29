@@ -1417,14 +1417,14 @@ select {
 }
 .add_email_btn {
     font-size:14px;
-    color:#018b01;
+    color:#C0C0C0;
     cursor:pointer;
     margin-top:6px;
     float:right;
 }
 .add_email_btn:hover {
     font-size:14px;
-    color:#006600;
+    color:#808080;
 }
 .graph_colour {
     width:100%;
