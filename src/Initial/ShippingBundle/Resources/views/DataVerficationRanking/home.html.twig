@@ -706,10 +706,10 @@
                     $('.resetclass').val(' ');
                 });
 
-                $("#kpiform").submit(function($e)
+                $(".add_data").live('click',function($e){
                         {
                             var preshipid=$('#shipid').val();
-                            var btn= $(this).find("input[type=submit]:focus").attr('id');
+                            var btn= $(this).attr('id');
                             $e.preventDefault();
                             var formid = $('#kpiform');
                             $.ajaxSetup({
@@ -1001,17 +1001,17 @@
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
 
                         {% endif %}
                     </div>

@@ -691,19 +691,16 @@
                 /*-------------------------------------Reset form values Ends Here-------------------------------------------- */
                 /*-------------------------------------Insertion Process Starts Here-------------------------------------------- */
 
-                $("#kpiform").submit(function($e){
-
-                    var preshipid=$('#shipid').val();
-                    var btn= $(this).find("input[type=submit]:focus").attr('id');
+                $(".add_data").live('click',function($e){
                     $e.preventDefault();
+                    var preshipid=$('#shipid').val();
+                    var btn= $(this).attr('id');
                     var formid = $('#kpiform');
-                    var data =formid.serialize();
-                    console.log(data);
-                            $.ajaxSetup({
+                    $.ajaxSetup({
                         global: false,
                         type: "post",
                         'url': Routing.generate('addkpivaluesname', {'buttonid':btn}),
-                        data: data,
+                        data: formid.serialize(),
                         beforeSend: function ()
                         {
                             var beforsend=ajaxbefore_send();
@@ -987,17 +984,17 @@
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 
-                            <input type="submit" class="submit_btn" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn add_data" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
 
                         {% endif %}
                     </div>
