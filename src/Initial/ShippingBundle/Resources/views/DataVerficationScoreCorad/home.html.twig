@@ -697,11 +697,13 @@
                     var btn= $(this).find("input[type=submit]:focus").attr('id');
                     $e.preventDefault();
                     var formid = $('#kpiform');
-                    $.ajaxSetup({
+                    var data =formid.serialize();
+                    console.log(data);
+                            $.ajaxSetup({
                         global: false,
                         type: "post",
                         'url': Routing.generate('addkpivaluesname', {'buttonid':btn}),
-                        data: formid.serialize(),
+                        data: data,
                         beforeSend: function ()
                         {
                             var beforsend=ajaxbefore_send();
@@ -807,7 +809,7 @@
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            window.location.href = base_url+'/login';
+                            //window.location.href = base_url+'/login';
                         }
                     });
                 });
