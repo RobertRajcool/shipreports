@@ -639,7 +639,6 @@ class DataVerficationController extends Controller
         else {
             $userid = $user->getId();
             $shipid = $request->request->get('shipid');
-            $cloneshipids=clone $shipid;
             $returnfromcontroller = $this->findelementkpiid($shipid);
             $kpiandelementids = $returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
@@ -895,8 +894,8 @@ class DataVerficationController extends Controller
                 else
                 {
                     $lookupstatusobject = new Scorecard_LookupStatus();
-                    echo $cloneshipids;
-                    $lookupstatusobject->setShipid($cloneshipids);
+                    echo $shipid;
+                    $lookupstatusobject->setShipid($shipid);
                     $lookupstatusobject->setStatus(1);
                     $lookupstatusobject->setDataofmonth($new_date);
                     $lookupstatusobject->setDatetime(new \DateTime());
