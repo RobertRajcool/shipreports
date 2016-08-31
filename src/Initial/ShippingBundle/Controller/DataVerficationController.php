@@ -638,7 +638,15 @@ class DataVerficationController extends Controller
         $kpiandelementids = $returnfromcontroller['elementids'];
         $elementvalues = $request->request->get('newelemetvalues');
         $dataofmonth = $request->request->get('dataofmonth');
-        $date=date_create($dataofmonth);
+        $response = new JsonResponse();
+        $response->setData(array(
+            'shipid' => $shipid,
+            'kpiNameArray' => $kpiandelementids,
+            'elementcount' => $elementvalues,
+            'elementvalues' => $dataofmonth));
+
+        return $response;
+        /*$date=date_create($dataofmonth);
         $tempdate = date_format($date,"d-M-Y");
         $newtemp_date=date_format($date,"M-Y");
         $time = strtotime($tempdate);
@@ -867,14 +875,7 @@ class DataVerficationController extends Controller
             $protocol  = empty($_SERVER['HTTPS']) ? 'http' : 'https';
             $domain    = $_SERVER['SERVER_NAME'];
             $url=$protocol.'://'.$domain.'/login';
-            /*$fullurl = "http://shipreports/login";
-            $mailer = $this->container->get('mailer');
-            $message = \Swift_Message::newInstance()
-                ->setFrom('lawrance@commusoft.co.uk')
-                ->setTo("doss.cclawranc226@gmail.com")
-                ->setSubject($newshipid->getShipName() . ' Data Added By V-Ship Team')
-                ->setBody("This Web Url:" . $url);
-            $mailer->send($message);*/
+
 
             $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
             if(count($lookstatus)!=0)
@@ -1006,7 +1007,7 @@ class DataVerficationController extends Controller
                 'elementcount' => 0,
                 'elementvalues' => array()));
             return $response;
-        }
+        }*/
 
 
     }
@@ -1697,7 +1698,6 @@ class DataVerficationController extends Controller
         else
         {
             $userid=$user->getId();
-
             $shipid = $request->request->get('shipid');
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
