@@ -59,7 +59,10 @@
                     {
                         var currentdate=new Date($('#datofmonthid').val());
                     }
-
+                    if(currentdate.getUTCDate()==31)
+                    {
+                        currentdate.setDate(currentdate.getDate() - 1);
+                    }
                     currentdate.setMonth(currentdate.getMonth() - 1);
                     currentdate,locale = "en-us",
                             month = currentdate.toLocaleString(locale, { month: "long" }),
@@ -293,6 +296,10 @@
                     else
                     {
                         var currentdate=new Date($('#datofmonthid').val());
+                    }
+                    if(currentdate.getUTCDate()==31)
+                    {
+                        currentdate.setDate(currentdate.getDate() - 1);
                     }
                     currentdate.setMonth(currentdate.getMonth() + 1);
                     currentdate,locale = "en-us",
