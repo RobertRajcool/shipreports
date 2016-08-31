@@ -639,7 +639,7 @@ class DataVerficationController extends Controller
         else {
             $userid = $user->getId();
             $shipid = $request->request->get('shipid');
-            //$var=clone $shipid;
+            $cloneshipids=clone $shipid;
             $returnfromcontroller = $this->findelementkpiid($shipid);
             $kpiandelementids = $returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
@@ -654,11 +654,7 @@ class DataVerficationController extends Controller
             $k = 0;
             $returnmsg = '';
             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
-            $response = new JsonResponse();
-
-                $response->setData(array('returnmsg' => $newshipid));
-                return $response;
-         /*   $newlookupstatus = "";
+            $newlookupstatus = "";
 
             if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
@@ -858,7 +854,14 @@ class DataVerficationController extends Controller
                 $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
                 $domain = $_SERVER['SERVER_NAME'];
                 $url = $protocol . '://' . $domain . '/login';
-
+                /*$fullurl = "http://shipreports/login";
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom('lawrance@commusoft.co.uk')
+                    ->setTo("doss.cclawranc226@gmail.com")
+                    ->setSubject($newshipid->getShipName() . ' Data Added By V-Ship Team')
+                    ->setBody("This Web Url:" . $url);
+                $mailer->send($message);*/
 
                 $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth' => $new_date));
                 if (count($lookstatus) != 0) {
@@ -888,9 +891,11 @@ class DataVerficationController extends Controller
                     $newlookupstatus->setShipid($shipids);
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
-                } else {
+                }
+                else
+                {
                     $lookupstatusobject = new Scorecard_LookupStatus();
-                    $lookupstatusobject->setShipid($shipid);
+                    $lookupstatusobject->setShipid($cloneshipids);
                     $lookupstatusobject->setStatus(1);
                     $lookupstatusobject->setDataofmonth($new_date);
                     $lookupstatusobject->setDatetime(new \DateTime());
@@ -971,7 +976,7 @@ class DataVerficationController extends Controller
                     'elementcount' => 0,
                     'elementvalues' => array()));
                 return $response;
-            }*/
+            }
         }
 
     }
