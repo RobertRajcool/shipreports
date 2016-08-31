@@ -696,6 +696,7 @@
                     var preshipid=$('#shipid').val();
                     var btn= $(this).attr('id');
                     var formid = $('#kpiform');
+                    console.log(formid.serialize());
                     $.ajaxSetup({
                         global: false,
                         type: "post",
