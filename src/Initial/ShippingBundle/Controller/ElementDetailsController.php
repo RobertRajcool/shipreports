@@ -117,6 +117,134 @@ class ElementDetailsController extends Controller
     }
 
     /**
+     * Finds and displays a ElementDetails entity.
+     *
+     * @Route("/element_symbol", name="element_symbol")
+     */
+    public function elementSymbolAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.symbolName, a.symbolIndication, a.id')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementSymbolDetail' => $query
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+
+    /**
+     * Finds and displays a ElementDetails entity.
+     *
+     * @Route("/find_element_symbol_name", name="find_element_symbol_name")
+     */
+    public function FindElementSymbolNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $symbolId = $request->request->get('symbolId');
+            $em = $this->getDoctrine()->getManager();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.symbolName, a.symbolIndication, a.id')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->where('a.id = :symbolId')
+                ->setParameter('symbolId', $symbolId)
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementSymbolDetail' => $query
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
+     * Finds and displays a ElementDetails entity.
+     *
+     * @Route("/save_element_symbol", name="save_element_symbol")
+     */
+    public function saveElementSymbolNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $symbolId = $request->request->get('symbolId');
+            $symbolName = $request->request->get('symbolName');
+            $symbolIndication = $request->request->get('symbolIndication');
+            $em = $this->getDoctrine()->getManager();
+
+            $entity = $em->getRepository('InitialShippingBundle:ElementSymbols')->find($symbolId);
+            $entity->setSymbolName($symbolName);
+            $entity->setSymbolIndication($symbolIndication);
+            $em->flush();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.symbolName, a.symbolIndication, a.id')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementSymbolDetail' => $query
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
+     * Finds and displays a ElementDetails entity.
+     *
+     * @Route("/delete_element_symbol", name="delete_element_symbol")
+     */
+    public function deleteElementSymbolNameAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $symbolId = $request->request->get('symbolId');
+            $em = $this->getDoctrine()->getManager();
+
+            $entity = $em->getRepository('InitialShippingBundle:ElementSymbols')->find($symbolId);
+            $em->remove($entity);
+            $em->flush();
+
+            $query = $em->createQueryBuilder()
+                ->select('a.symbolName, a.symbolIndication, a.id')
+                ->from('InitialShippingBundle:ElementSymbols', 'a')
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementSymbolDetail' => $query
+            ));
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+    }
+
+    /**
      * Get elements based on kpi id.
      *
      * @Route("/elements_for_kpi", name="elementdetails_elements_for_kpi")

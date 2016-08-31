@@ -872,6 +872,8 @@
                         });
                         $.ajax({
                             success: function(data) {
+                                symbolName.val('');
+                                symbolIndication.val('');
                                 $('#close_button').click();
                                 $('#element_details_SymbolId option:gt(0)').remove();
                                 $.each(data.elementSymbolDetail, function(i, symbol) {
@@ -886,6 +888,168 @@
                         });
                     }
                 });
+
+                var editSymbolTextPlace = $('.edit-text-place');
+                var symbolEditBtn = $('.symbol-edit-btn');
+                symbolEditBtn.click(function($e) {
+                    $e.preventDefault();
+                    var data = {
+                        symbolName: symbolName.val()
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"element_symbol",/*Routing.generate('element_symbol'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            editSymbolTextPlace.hide();
+                            $('#symbol-edit-option-id option:gt(0)').remove();
+                            $.each(data.elementSymbolDetail, function(i, symbol) {
+                                $('#symbol-edit-option-id').append($('<option>', {
+                                    value: symbol.id, text: symbol.symbolName
+                                }));
+                            });
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var editSymbolNameClass = $('.edit-symbol-name-class');
+                var editSymbolIndicationClass = $('.edit-symbol-indication-class');
+                var symbolEditSelectClass = $('.symbol-edit-option');
+                symbolEditSelectClass.live('change',function($e) {
+                    if(symbolEditSelectClass.val()==0) {
+                        alert('Select symbol');
+                    } else {
+                        var data = {
+                            symbolId: symbolEditSelectClass.val()
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"find_element_symbol_name",/*Routing.generate('find_element_symbol_name'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                editSymbolTextPlace.show();
+                                editSymbolNameClass.val(data.elementSymbolDetail[0].symbolName);
+                                editSymbolIndicationClass.val(data.elementSymbolDetail[0].symbolIndication);
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    }
+                });
+
+                var editSymbolSaveBtn = $('#symbol-save-id');
+                var editSymbolDeleteBtn = $('#symbol-delete-id');
+                editSymbolSaveBtn.click(function($e) {
+                   if(symbolEditSelectClass.val() == 0) {
+                       alert('Select symbol');
+                   } else if( !$.trim(editSymbolNameClass.val()) && !$.trim(editSymbolIndicationClass.val()) ) {
+                       alert('All fields are required')
+                   } else {
+                       var data = {
+                           symbolId: symbolEditSelectClass.val(),
+                           symbolName: editSymbolNameClass.val(),
+                           symbolIndication: editSymbolIndicationClass.val()
+                       };
+                       $.ajaxSetup({
+                           global: false,
+                           type:"POST",
+                           url:"save_element_symbol",/*Routing.generate('save_element_symbol'),*/
+                           data:data,
+                           beforeSend: function () {
+                               var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                           },
+                           complete: function () {
+                               var setAjaxComplete = defaultAjaxCompleteFunction();
+                           }
+                       });
+                       $.ajax({
+                           success: function(data) {
+                               editSymbolNameClass.val('');
+                               editSymbolIndicationClass.val('');
+                               $('#symbol-edit-option-id option:gt(0)').remove();
+                               $.each(data.elementSymbolDetail, function(i, symbol) {
+                                   $('#symbol-edit-option-id').append($('<option>', {
+                                       value: symbol.id, text: symbol.symbolName
+                                   }));
+                               });
+                               $('#element_details_SymbolId option:gt(0)').remove();
+                               $.each(data.elementSymbolDetail, function(i, symbol) {
+                                   $('#element_details_SymbolId').append($('<option>', {
+                                       value: symbol.id, text: symbol.symbolName
+                                   }));
+                               });
+                           },
+                           error: function(XMLHttpRequest, textStatus, errorThrown) {
+                               alert('Error : ' + errorThrown);
+                           }
+                       });
+                   }
+                });
+                editSymbolDeleteBtn.click(function($e) {
+                    if(symbolEditSelectClass.val() == 0) {
+                        alert('Select symbol');
+                    } else {
+                        var data = {
+                            symbolId: symbolEditSelectClass.val()
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type:"POST",
+                            url:"delete_element_symbol",/*Routing.generate('delete_element_symbol'),*/
+                            data:data,
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function(data) {
+                                editSymbolNameClass.val('');
+                                editSymbolIndicationClass.val('');
+                                $('#symbol-edit-option-id option:gt(0)').remove();
+                                $.each(data.elementSymbolDetail, function(i, symbol) {
+                                    $('#symbol-edit-option-id').append($('<option>', {
+                                        value: symbol.id, text: symbol.symbolName
+                                    }));
+                                });
+                                $('#element_details_SymbolId option:gt(0)').remove();
+                                $.each(data.elementSymbolDetail, function(i, symbol) {
+                                    $('#element_details_SymbolId').append($('<option>', {
+                                        value: symbol.id, text: symbol.symbolName
+                                    }));
+                                });
+                            },
+                            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert('Error : ' + errorThrown);
+                            }
+                        });
+                    }
+                });
+
 
             });
         </script>
@@ -1165,6 +1329,7 @@
                                     <label class="control-label col-xs-4 required_field"><strong>Symbol</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.SymbolId) }}
+                                        <a data-toggle="modal" class="add_email_btn symbol-edit-btn ss-write" style="margin-right: 0px" data-target="#editModal"></a>
                                         <a data-toggle="modal" class="add_email_btn ss-plus" style="margin-right: 15px" data-target="#myModal"></a>
                                     </div>
                                 </div>
@@ -1291,6 +1456,48 @@
                             </div> <!-- /.modal-content -->
                         </div> <!-- /.modal-dialog -->
                     </div>
+
+                    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+                        <div class="modal-dialog model_content">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">Edit symbol option</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal no-style" method="post">
+                                        <div class="form-group">
+                                            <label class="control-label required_field col-xs-3">Select Symbol</label>
+                                            <div class="col-xs-9">
+                                                <select class="symbol-edit-option" id="symbol-edit-option-id">
+                                                    <option value="0">--select--</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="edit-text-place">
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-3">Symbol Name</label>
+                                                <div class="col-xs-9">
+                                                    <input type="text" class="send_reports_to_input edit-symbol-name-class" name="symbol-name">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-xs-3">Symbol Indication</label>
+                                                <div class="col-xs-9">
+                                                    <input type="text" class="send_reports_to_input edit-symbol-indication-class" name="symbol-name">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" id="symbol-save-id" class="actions_report_btn">Save</button>
+                                    <button type="button" id="symbol-delete-id" class="actions_report_btn">Delete</button>
+                                </div>
+                            </div> <!-- /.modal-content -->
+                        </div> <!-- /.modal-dialog -->
+                    </div>
+
                 </div>
             </div>
         </section>
