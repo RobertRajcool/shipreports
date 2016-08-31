@@ -639,6 +639,7 @@ class DataVerficationController extends Controller
         else {
             $userid = $user->getId();
             $shipid = $request->request->get('shipid');
+            $finalshipid=$shipid;
             $returnfromcontroller = $this->findelementkpiid($shipid);
             $kpiandelementids = $returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
@@ -798,38 +799,6 @@ class DataVerficationController extends Controller
 
             }
             if ($buttonid == 'savebuttonid') {
-                foreach ($kpiandelementids as $element) {
-                    for ($elementCount = 0; $elementCount < count($element); $elementCount++) {
-                        $baseValueQuery = $em->createQueryBuilder()
-                            ->select('a.baseValue')
-                            ->from('InitialShippingBundle:ElementDetails', 'a')
-                            ->where('a.id=:elementId')
-                            ->setParameter('elementId', $element[$elementCount])
-                            ->getQuery()
-                            ->getResult();
-                        $baseValue = $baseValueQuery[0]['baseValue'];
-                        if ($baseValue != 0) {
-                            $currentMonth = date('m');
-                            $monthlyCount = $baseValue / 12;
-                            $currentMonthValue = (int)$currentMonth * $monthlyCount;
-                            $elementRulesQuery = $em->createQueryBuilder()
-                                ->select('a.rules,a.id')
-                                ->from('InitialShippingBundle:Rules', 'a')
-                                ->where('a.elementDetailsId=:elementId')
-                                ->setParameter('elementId', $element[$elementCount])
-                                ->getQuery()
-                                ->getResult();
-                            foreach ($elementRulesQuery as $rules) {
-                                $ruleObj = json_decode($rules['rules']);
-                                $ruleObj->conditions->all[0]->value = $currentMonthValue;
-                                $ruleString = json_encode($ruleObj);
-                                $rulesDetailObject = $em->getRepository('InitialShippingBundle:Rules')->find($rules['id']);
-                                $rulesDetailObject->setRules($ruleString);
-                                $em->flush();
-                            }
-                        }
-                    }
-                }
                 foreach ($kpiandelementids as $kpikey => $kpipvalue) {
 
 
@@ -874,9 +843,6 @@ class DataVerficationController extends Controller
                         ->setParameter('statusValue', 1)
                         ->getQuery()
                         ->getResult();
-                    //print_r($TotalShipsInserted);
-
-
                     if (count($TotalShipsInserted) != 0) {
                         $shipids = array();
                         for ($findshipidcount = 0; $findshipidcount < count($TotalShipsInserted); $findshipidcount++) {
@@ -895,13 +861,45 @@ class DataVerficationController extends Controller
                 {
                     $lookupstatusobject = new Scorecard_LookupStatus();
                     echo $shipid;
-                    $lookupstatusobject->setShipid($shipid);
+                    $lookupstatusobject->setShipid($finalshipid);
                     $lookupstatusobject->setStatus(1);
                     $lookupstatusobject->setDataofmonth($new_date);
                     $lookupstatusobject->setDatetime(new \DateTime());
                     $lookupstatusobject->setUserid($userid);
                     $em->persist($lookupstatusobject);
                     $em->flush();
+                }
+                foreach ($kpiandelementids as $element) {
+                    for ($elementCount = 0; $elementCount < count($element); $elementCount++) {
+                        $baseValueQuery = $em->createQueryBuilder()
+                            ->select('a.baseValue')
+                            ->from('InitialShippingBundle:ElementDetails', 'a')
+                            ->where('a.id=:elementId')
+                            ->setParameter('elementId', $element[$elementCount])
+                            ->getQuery()
+                            ->getResult();
+                        $baseValue = $baseValueQuery[0]['baseValue'];
+                        if ($baseValue != 0) {
+                            $currentMonth = date('m');
+                            $monthlyCount = $baseValue / 12;
+                            $currentMonthValue = (int)$currentMonth * $monthlyCount;
+                            $elementRulesQuery = $em->createQueryBuilder()
+                                ->select('a.rules,a.id')
+                                ->from('InitialShippingBundle:Rules', 'a')
+                                ->where('a.elementDetailsId=:elementId')
+                                ->setParameter('elementId', $element[$elementCount])
+                                ->getQuery()
+                                ->getResult();
+                            foreach ($elementRulesQuery as $rules) {
+                                $ruleObj = json_decode($rules['rules']);
+                                $ruleObj->conditions->all[0]->value = $currentMonthValue;
+                                $ruleString = json_encode($ruleObj);
+                                $rulesDetailObject = $em->getRepository('InitialShippingBundle:Rules')->find($rules['id']);
+                                $rulesDetailObject->setRules($ruleString);
+                                $em->flush();
+                            }
+                        }
+                    }
                 }
 
             }
