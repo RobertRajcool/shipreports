@@ -60,12 +60,18 @@
                     {
                         var currentdate=new Date($('#datofmonthid').val());
                     }
+                    if(currentdate.getUTCDate()==31)
+                    {
+                        currentdate.setDate(currentdate.getDate() - 1);
+                    }
                     currentdate.setMonth(currentdate.getMonth() - 1);
                     currentdate,locale = "en-us",
                             month = currentdate.toLocaleString(locale, { month: "long" }),
                             year=currentdate.getFullYear();
                     // var data={'dataofmonth':month+'-'+year};
                     var current=month+'-'+year;
+                    var newDateString=currentdate.getFullYear()+'-'+(currentdate.getMonth()-1)+'01';
+
                     var data = {
                         dataofmonth :current
                     };
@@ -313,7 +319,10 @@
                     else {
                         var currentdate = new Date($('#datofmonthid').val());
                     }
-
+                    if(currentdate.getUTCDate()==31)
+                    {
+                        currentdate.setDate(currentdate.getDate() - 1);
+                    }
                     currentdate.setMonth(currentdate.getMonth() + 1);
                     currentdate, locale = "en-us",
                             month = currentdate.toLocaleString(locale, {month: "long"}),
