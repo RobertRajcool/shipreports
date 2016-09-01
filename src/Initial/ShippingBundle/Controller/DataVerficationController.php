@@ -626,7 +626,7 @@ class DataVerficationController extends Controller
     /**
      * Adding Kpi Values.
      *
-     * @Route("/{useridpermission}/{look_status_shipid}/addkpivalues", name="addkpivaluesname")
+     * @Route("/{buttonid}/addkpivalues", name="addkpivaluesname")
      */
     public function addkpivaluesAction(Request $request, $buttonid)
     {
