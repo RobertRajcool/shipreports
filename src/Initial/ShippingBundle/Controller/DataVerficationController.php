@@ -626,9 +626,9 @@ class DataVerficationController extends Controller
     /**
      * Adding Kpi Values.
      *
-     * @Route("/{buttonid}/addkpivalues", name="addkpivaluesname")
+     * @Route("/{useridpermission}/{look_status_shipid}/addkpivalues", name="addkpivaluesname")
      */
-    public function addkpivaluesAction(Request $request, $buttonid)
+    public function addkpivaluesAction(Request $request, $useridpermissionid,$look_status_shipid)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -656,7 +656,7 @@ class DataVerficationController extends Controller
             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             $newlookupstatus = "";
 
-            if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
+            if ($useridpermissionid == 'updatebuttonid' || $useridpermissionid == 'adminbuttonid' || $useridpermissionid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
                     ->select('b.id')
@@ -669,15 +669,15 @@ class DataVerficationController extends Controller
                     ->getResult();
                 for ($kkk = 0; $kkk < count($returnarrayids); $kkk++) {
                     $entityobject = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->find($returnarrayids[$kkk]['id']);
-                    if ($buttonid == 'adminbuttonid') {
+                    if ($useridpermissionid == 'adminbuttonid') {
                         $entityobject->setValue($elementvalues[$kkk]);
                         $entityobject->setStatus(3);
                     }
-                    if ($buttonid == 'verfiybuttonid') {
+                    if ($useridpermissionid == 'verfiybuttonid') {
                         $entityobject->setValue($elementvalues[$kkk]);
                         $entityobject->setStatus(2);
                     }
-                    if ($buttonid == 'updatebuttonid') {
+                    if ($useridpermissionid == 'updatebuttonid') {
                         $entityobject->setValue($elementvalues[$kkk]);
                         $entityobject->setStatus(1);
                     }
@@ -688,7 +688,7 @@ class DataVerficationController extends Controller
                 $returnmsg = ' Data Updated...';
 
 
-                if ($buttonid == 'adminbuttonid') {
+                if ($useridpermissionid == 'adminbuttonid') {
                     $rankinglookuptable = array('shipid' => $shipid, 'dataofmonth' => $tempdate, 'userid' => $userid, 'status' => 3, 'datetime' => date('Y-m-d H:i:s'));
                     // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth' => $new_date));
@@ -727,7 +727,7 @@ class DataVerficationController extends Controller
                     $gearman = $this->get('gearman');
                     $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~addscorecardlookupdataupdate', json_encode($rankinglookuptable));
                 }
-                if ($buttonid == 'verfiybuttonid') {
+                if ($useridpermissionid == 'verfiybuttonid') {
                     //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth' => $new_date));
                     if (count($lookstatus) != 0) {
@@ -762,7 +762,7 @@ class DataVerficationController extends Controller
                     }
 
                 }
-                if ($buttonid == 'updatebuttonid') {
+                if ($useridpermissionid == 'updatebuttonid') {
                     //$lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth' => $new_date));
                     if (count($lookstatus) != 0) {
@@ -798,10 +798,8 @@ class DataVerficationController extends Controller
                 }
 
             }
-            if ($buttonid == 'savebuttonid') {
+            if ($useridpermissionid == 'savebuttonid') {
                 foreach ($kpiandelementids as $kpikey => $kpipvalue) {
-
-
                     $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpikey));
                     foreach ($kpipvalue as $elementkey => $elementvalue) {
                         $newelementid = $em->getRepository('InitialShippingBundle:ElementDetails')->findOneBy(array('id' => $elementvalue));
@@ -815,24 +813,12 @@ class DataVerficationController extends Controller
                         $em->persist($readingkpivalue);
                         $em->flush();
                         $k++;
-
                     }
                 }
                 $returnmsg = ' Data Saved...';
-                $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
-                $domain = $_SERVER['SERVER_NAME'];
-                $url = $protocol . '://' . $domain . '/login';
-                /*$fullurl = "http://shipreports/login";
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom('lawrance@commusoft.co.uk')
-                    ->setTo("doss.cclawranc226@gmail.com")
-                    ->setSubject($newshipid->getShipName() . ' Data Added By V-Ship Team')
-                    ->setBody("This Web Url:" . $url);
-                $mailer->send($message);*/
-
                 $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth' => $new_date));
-                if (count($lookstatus) != 0) {
+                if (count($lookstatus) != 0)
+                {
                     $newlookupstatus = $lookstatus[0];
                     $TotalShipsInserted = $em->createQueryBuilder()
                         ->select('identity(a.shipDetailsId)')
@@ -849,7 +835,9 @@ class DataVerficationController extends Controller
                             array_push($shipids, $TotalShipsInserted[$findshipidcount][1]);
                         }
                         $shipids = implode(',', $shipids);
-                    } else {
+                    }
+                    else
+                    {
                         $shipids = $shipid;
                     }
 
@@ -860,8 +848,7 @@ class DataVerficationController extends Controller
                 else
                 {
                     $lookupstatusobject = new Scorecard_LookupStatus();
-                    echo "Star123".$finalshipid;
-                    $lookupstatusobject->setShipid($newshipid);
+                    $lookupstatusobject->setShipid($look_status_shipid);
                     $lookupstatusobject->setStatus(1);
                     $lookupstatusobject->setDataofmonth($new_date);
                     $lookupstatusobject->setDatetime(new \DateTime());

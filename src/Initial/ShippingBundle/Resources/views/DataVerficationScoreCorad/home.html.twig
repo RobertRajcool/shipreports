@@ -696,11 +696,13 @@
                     var preshipid=$('#shipid').val();
                     var btn= $(this).attr('id');
                     var formid = $('#kpiform');
+                    var shipid=$('#shipid').val();
+                    console.log(shipid)
                     console.log(formid.serialize());
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        'url': Routing.generate('addkpivaluesname', {'buttonid':btn}),
+                        'url': Routing.generate('addkpivaluesname', {'useridpermission':btn,'look_status_shipid':shipid}),
                         data: formid.serialize(),
                         beforeSend: function ()
                         {
