@@ -1670,7 +1670,6 @@ class DataVerficationController extends Controller
                 'elementcount' => $shipid,
                 'elementvalues' => $newshipid));
             return $response;
-
           $em = $this->getDoctrine()->getManager();*/
             $date=date_create($dataofmonth);
             $tempdate = date_format($date,"d-M-Y");
