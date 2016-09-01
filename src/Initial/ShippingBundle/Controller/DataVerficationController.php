@@ -857,8 +857,8 @@ class DataVerficationController extends Controller
                     $lookupstatusobject->setDataofmonth($new_date);
                     $lookupstatusobject->setDatetime(new \DateTime());
                     $lookupstatusobject->setUserid($userid);
-                    $em->persist($lookupstatusobject);
-                    $em->flush();
+                    //$em->persist($lookupstatusobject);
+                   // $em->flush();
                 }
                 foreach ($kpiandelementids as $element) {
                     for ($elementCount = 0; $elementCount < count($element); $elementCount++) {
