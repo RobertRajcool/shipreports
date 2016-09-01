@@ -1625,7 +1625,7 @@ class DataVerficationController extends Controller
                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
                     ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
-                    ->setParameter('kpidetailsid', $kpiid)
+                    ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
                     ->getQuery();
                 $elementids = $query->getResult();
