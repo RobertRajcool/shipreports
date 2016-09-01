@@ -1660,7 +1660,16 @@ class DataVerficationController extends Controller
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
             $dataofmonth = $request->request->get('dataofmonth');
-            $em = $this->getDoctrine()->getManager();
+            $response=new Response();
+            $response->setData(array(
+                'shipname' =>$kpiandelementids,
+                'shipid' => $elementvalues,
+                'kpiNameArray' =>$dataofmonth,
+                'elementcount' => $shipid,
+                'elementvalues' => array()));
+            return $response;
+
+           /* $em = $this->getDoctrine()->getManager();
             $date=date_create($dataofmonth);
             $tempdate = date_format($date,"d-M-Y");
             $newtemp_date=date_format($date,"M-Y");
@@ -1793,22 +1802,6 @@ class DataVerficationController extends Controller
                 $protocol  = empty($_SERVER['HTTPS']) ? 'http' : 'https';
                 $domain    = $_SERVER['SERVER_NAME'];
                 $url=$protocol.'://'.$domain.'/login';
-                /* $query = $em->createQueryBuilder()
-                     ->select('a.shipName', 'a.id')
-                     ->from('InitialShippingBundle:ShipDetails', 'a')
-                     ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                     ->where('b.id = :userId')
-                     ->setParameter('userId', $userId)
-                     ->getQuery();*/
-                /*$fullurl="http://shipreports/login";
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom('lawrance@commusoft.co.uk')
-                    ->setTo("doss.cclawranc226@gmail.com")
-                    ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
-                    ->setBody("This Web Url:".$url);
-
-                $mailer->send($message);*/
                 $lookupstatusobject=new Ranking_LookupStatus();
                 $lookupstatusobject->setShipid($newshipid);
                 $lookupstatusobject->setStatus(1);
@@ -1907,7 +1900,7 @@ class DataVerficationController extends Controller
                     'elementcount' => 0,
                     'elementvalues' => array()));
                 return $response;
-            }
+            }*/
         }
 
     }
