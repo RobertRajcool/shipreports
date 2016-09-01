@@ -1662,7 +1662,7 @@ class DataVerficationController extends Controller
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
             $dataofmonth = $request->request->get('dataofmonth');
-            $response=new JsonResponse();
+            /*$response=new JsonResponse();
             $response->setData(array(
                 'shipname' =>$kpiandelementids,
                 'shipid' => $elementvalues,
@@ -1671,7 +1671,7 @@ class DataVerficationController extends Controller
                 'elementvalues' => $newshipid));
             return $response;
 
-           /* $em = $this->getDoctrine()->getManager();
+          $em = $this->getDoctrine()->getManager();*/
             $date=date_create($dataofmonth);
             $tempdate = date_format($date,"d-M-Y");
             $newtemp_date=date_format($date,"M-Y");
@@ -1681,7 +1681,7 @@ class DataVerficationController extends Controller
             $new_date->modify('last day of this month');
             $k = 0;
             $returnmsg = '';
-            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            //$newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
@@ -1902,7 +1902,7 @@ class DataVerficationController extends Controller
                     'elementcount' => 0,
                     'elementvalues' => array()));
                 return $response;
-            }*/
+            }
         }
 
     }
