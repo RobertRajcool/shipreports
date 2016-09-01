@@ -642,6 +642,7 @@ class DataVerficationController extends Controller
         $date=date_create($dataofmonth);
         $tempdate = date_format($date,"d-M-Y");
         $newtemp_date=date_format($date,"M-Y");
+        $baseValueChangeMonth = date_format($date,"m");
         $time = strtotime($tempdate);
         $newformat = date('Y-m-d', $time);
         $new_date = new \DateTime($newformat);
@@ -702,8 +703,6 @@ class DataVerficationController extends Controller
                         ->setParameter('statusValue', 3)
                         ->getQuery()
                         ->getResult();
-                    //print_r($TotalShipsInserted);
-
 
                     if(count($TotalShipsInserted)!=0)
                     {
@@ -844,7 +843,7 @@ class DataVerficationController extends Controller
                     $baseValue = $baseValueQuery[0]['baseValue'];
                     if($baseValue!=0) {
                         $baseValueForAllShips = $baseValue*count($shipDetails);
-                        $currentMonth = date('m');
+                        $currentMonth = (int)$baseValueChangeMonth;
                         $monthlyCount = $baseValueForAllShips/12;
                         $currentMonthValue = (int)$currentMonth * $monthlyCount;
                         $elementRulesQuery = $em->createQueryBuilder()
