@@ -1660,7 +1660,7 @@ class DataVerficationController extends Controller
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
             $dataofmonth = $request->request->get('dataofmonth');
-            $response=new JsonResponse()
+            $response=new JsonResponse();
             $response->setData(array(
                 'shipname' =>$kpiandelementids,
                 'shipid' => $elementvalues,
