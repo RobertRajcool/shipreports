@@ -634,6 +634,7 @@ class DataVerficationController extends Controller
         $user = $this->getUser();
         $userid=$user->getId();
         $shipid = $request->request->get('shipid');
+        $requestedshipid=$request->request->get('shipid');
         $returnfromcontroller = $this->findelementkpiid($shipid);
         $kpiandelementids = $returnfromcontroller['elementids'];
         $elementvalues = $request->request->get('newelemetvalues');
@@ -647,7 +648,7 @@ class DataVerficationController extends Controller
         $new_date->modify('last day of this month');
         $k = 0;
         $returnmsg = '';
-        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+        $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $requestedshipid));
         $newlookupstatus ="";
 
         if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid')
@@ -913,7 +914,7 @@ class DataVerficationController extends Controller
             else
             {
                 $lookupstatusobject = new Scorecard_LookupStatus();
-                $lookupstatusobject->setShipid($shipid);
+                $lookupstatusobject->setShipid($requestedshipid);
                 $lookupstatusobject->setStatus(1);
                 $lookupstatusobject->setDataofmonth($new_date);
                 $lookupstatusobject->setDatetime(new \DateTime());
@@ -1696,14 +1697,14 @@ class DataVerficationController extends Controller
         }
         else
         {
+            $em = $this->getDoctrine()->getManager();
             $userid=$user->getId();
-
             $shipid = $request->request->get('shipid');
+            $requestedshipid=$request->request->get('shipid');
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
             $dataofmonth = $request->request->get('dataofmonth');
-            $em = $this->getDoctrine()->getManager();
             $date=date_create($dataofmonth);
             $tempdate = date_format($date,"d-M-Y");
             $newtemp_date=date_format($date,"M-Y");
@@ -1713,7 +1714,7 @@ class DataVerficationController extends Controller
             $new_date->modify('last day of this month');
             $k = 0;
             $returnmsg = '';
-            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $requestedshipid));
             if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
@@ -1853,7 +1854,7 @@ class DataVerficationController extends Controller
 
                 $mailer->send($message);*/
                 $lookupstatusobject=new Ranking_LookupStatus();
-                $lookupstatusobject->setShipid($newshipid);
+                $lookupstatusobject->setShipid($requestedshipid);
                 $lookupstatusobject->setStatus(1);
                 $lookupstatusobject->setDataofmonth($new_date);
                 $lookupstatusobject->setDatetime(new \DateTime());
@@ -3268,7 +3269,6 @@ class DataVerficationController extends Controller
                     ));
                 return $response;
             }
-
         }
         else
         {
