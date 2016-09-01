@@ -813,6 +813,25 @@ class DataVerficationController extends Controller
 
         }
         if ($buttonid == 'savebuttonid') {
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                    ->where('c.id = :userId')
+                    ->setParameter('userId', $userid)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userid)
+                    ->getQuery();
+            }
+            $shipDetails = $query->getResult();
             foreach($kpiandelementids as $element) {
                 for($elementCount=0;$elementCount<count($element);$elementCount++) {
                     $baseValueQuery = $em->createQueryBuilder()
@@ -824,8 +843,9 @@ class DataVerficationController extends Controller
                         ->getResult();
                     $baseValue = $baseValueQuery[0]['baseValue'];
                     if($baseValue!=0) {
+                        $baseValueForAllShips = $baseValue*count($shipDetails);
                         $currentMonth = date('m');
-                        $monthlyCount = $baseValue/12;
+                        $monthlyCount = $baseValueForAllShips/12;
                         $currentMonthValue = (int)$currentMonth * $monthlyCount;
                         $elementRulesQuery = $em->createQueryBuilder()
                             ->select('a.rules,a.id')
@@ -835,8 +855,17 @@ class DataVerficationController extends Controller
                             ->getQuery()
                             ->getResult();
                         foreach($elementRulesQuery as $rules) {
+                            $currentMonthValue1=0;
                             $ruleObj = json_decode($rules['rules']);
-                            $ruleObj->conditions->all[0]->value = $currentMonthValue;
+                            $ruleColor = $ruleObj->actions->value;
+                            if($ruleColor=='Green') {
+                                $currentMonthValue1=(int)$currentMonthValue;
+                            } else if($ruleColor=='Yellow') {
+                                $currentMonthValue1=(int)$currentMonthValue+(int)$currentMonthValue/4;
+                            } else if($ruleColor=='Red') {
+                                $currentMonthValue1=(int)$currentMonthValue+(int)$currentMonthValue/4;
+                            }
+                            $ruleObj->conditions->all[0]->value = $currentMonthValue1;
                             $ruleString = json_encode($ruleObj);
                             $rulesDetailObject = $em->getRepository('InitialShippingBundle:Rules')->find($rules['id']);
                             $rulesDetailObject->setRules($ruleString);
@@ -845,8 +874,8 @@ class DataVerficationController extends Controller
                     }
                 }
             }
-            foreach ($kpiandelementids as $kpikey => $kpipvalue) {
 
+            foreach ($kpiandelementids as $kpikey => $kpipvalue) {
 
                 $newkpiid = $em->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpikey));
                 foreach ($kpipvalue as $elementkey => $elementvalue) {
