@@ -698,10 +698,10 @@
                     $('.resetclass').val(' ');
                 });
 
-                $(".addclass").submit(function($e)
+                $(".addclass").live('click',function($e)
                         {
                             var preshipid=$('#shipid').val();
-                            var btn= $(this).find("input[type=submit]:focus").attr('id');
+                            var btn= $(this).attr('id');
                             $e.preventDefault();
                             var formid = $('#kpiform');
                             $.ajaxSetup({
