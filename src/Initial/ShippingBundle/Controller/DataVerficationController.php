@@ -851,7 +851,7 @@ class DataVerficationController extends Controller
                 else
                 {
                     $lookupstatusobject = new Scorecard_LookupStatus();
-                    echo "Star123d".$finalshipid;
+                    echo "shipid".$finalshipid;
                     $lookupstatusobject->setShipid($finalshipid);
                     $lookupstatusobject->setStatus(1);
                     $lookupstatusobject->setDataofmonth($new_date);
