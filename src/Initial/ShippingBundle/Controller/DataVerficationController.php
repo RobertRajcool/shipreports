@@ -892,7 +892,6 @@ class DataVerficationController extends Controller
                         }
                     }
                 }
-
             }
             $shipname = $newshipid->getShipName();
             $nextshipid = 0;
