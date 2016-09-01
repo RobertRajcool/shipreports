@@ -59,10 +59,7 @@
                     {
                         var currentdate=new Date($('#datofmonthid').val());
                     }
-                    if(currentdate.getUTCDate()==31)
-                    {
-                        currentdate.setDate(currentdate.getDate() - 1);
-                    }
+
                     currentdate.setMonth(currentdate.getMonth() - 1);
                     currentdate,locale = "en-us",
                             month = currentdate.toLocaleString(locale, { month: "long" }),
@@ -296,10 +293,6 @@
                     else
                     {
                         var currentdate=new Date($('#datofmonthid').val());
-                    }
-                    if(currentdate.getUTCDate()==31)
-                    {
-                        currentdate.setDate(currentdate.getDate() - 1);
                     }
                     currentdate.setMonth(currentdate.getMonth() + 1);
                     currentdate,locale = "en-us",
@@ -691,13 +684,12 @@
                 /*-------------------------------------Reset form values Ends Here-------------------------------------------- */
                 /*-------------------------------------Insertion Process Starts Here-------------------------------------------- */
 
-                $(".add_data").live('click',function($e){
-                    $e.preventDefault();
+                $(".addclass").submit(function($e){
+
                     var preshipid=$('#shipid').val();
                     var btn= $(this).attr('id');
-                    console.log(btn);
+                    $e.preventDefault();
                     var formid = $('#kpiform');
-                    console.log(formid.serialize());
                     $.ajaxSetup({
                         global: false,
                         type: "post",
@@ -802,14 +794,13 @@
                                 $('#nogroupselected').show();
                                 $('#kpiformforship').hide();
                                 jAlert('',data.returnmsg);
-                                console.log(data.returnmsg);
                             }
 
 
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            //window.location.href = base_url+'/login';
+                           // window.location.href = base_url+'/login';
                         }
                     });
                 });
@@ -905,7 +896,6 @@
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
                                 <span id="currentid" class="item">March-2016</span>
                                 <input type="hidden" name="dataofmonth" id="datofmonthid">
-                                <input type="hidden" name="shipid" id="shipid">
                                 <a id="nextmonth" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
                             </label>
                         </div>
@@ -983,22 +973,22 @@
 
 
                     </div>
-
+                <input type="hidden" name="shipid" id="shipid">
                     <div id="allbuttondiv" class="actions_submit">
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 
-                            <input type="submit" class="submit_btn add_data" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn add_data" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                            <input type="submit" class="submit_btn addclass" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn addclass" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn add_data" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn addclass" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn add_data" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn addclass" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
 
                         {% endif %}
                     </div>
