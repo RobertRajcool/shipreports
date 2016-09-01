@@ -1460,20 +1460,11 @@ class DataVerficationController extends Controller
         $ids = $query->getResult();
         $maxelementcount = 0;
 
-
         $sessionkpielementid = array();
         $k = 0;
         for ($i = 0; $i < count($ids); $i++) {
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
-
-            /* $query = $em->createQueryBuilder()
-                 ->select('b.elementName', 'b.id')
-                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                 ->where('b.kpiDetailsId = :kpidetailsid')
-                 ->setParameter('kpidetailsid', $kpiid)
-                 ->add('orderBy', 'b.id  ASC ')
-                 ->getQuery();*/
             $query = $em->createQueryBuilder()
                 ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
@@ -1496,19 +1487,12 @@ class DataVerficationController extends Controller
                 $ids1 = $query1->getResult();
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
-                /* $query = $em->createQueryBuilder()
-                     ->select('b.elementName', 'b.id')
-                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                     ->where('b.kpiDetailsId = :kpidetailsid')
-                     ->setParameter('kpidetailsid', $newkpiid)
-                     ->add('orderBy', 'b.id  ASC ')
-                     ->getQuery();*/
                 $query = $em->createQueryBuilder()
                     ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                     ->from('InitialShippingBundle:RankingElementDetails', 'b')
                     ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
-                    ->setParameter('kpidetailsid', $kpiid)
+                    ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
                     ->getQuery();
                 $elementids = $query->getResult();
@@ -1700,7 +1684,7 @@ class DataVerficationController extends Controller
             $em = $this->getDoctrine()->getManager();
             $userid=$user->getId();
             $shipid = $request->request->get('shipid');
-            $requestedshipid=$request->request->get('shipid');
+            $requestedshipid=$shipid;
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
@@ -1714,7 +1698,7 @@ class DataVerficationController extends Controller
             $new_date->modify('last day of this month');
             $k = 0;
             $returnmsg = '';
-            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $requestedshipid));
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipid));
             if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
@@ -1755,7 +1739,6 @@ class DataVerficationController extends Controller
                 $newlookupstatus=$lookstatus[0];
                 if($buttonid == 'adminbuttonid')
                 {
-
                     $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$tempdate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
                     // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $newlookupstatus->setStatus(3);
@@ -1837,24 +1820,8 @@ class DataVerficationController extends Controller
                 $protocol  = empty($_SERVER['HTTPS']) ? 'http' : 'https';
                 $domain    = $_SERVER['SERVER_NAME'];
                 $url=$protocol.'://'.$domain.'/login';
-                /* $query = $em->createQueryBuilder()
-                     ->select('a.shipName', 'a.id')
-                     ->from('InitialShippingBundle:ShipDetails', 'a')
-                     ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                     ->where('b.id = :userId')
-                     ->setParameter('userId', $userId)
-                     ->getQuery();*/
-                /*$fullurl="http://shipreports/login";
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom('lawrance@commusoft.co.uk')
-                    ->setTo("doss.cclawranc226@gmail.com")
-                    ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
-                    ->setBody("This Web Url:".$url);
-
-                $mailer->send($message);*/
                 $lookupstatusobject=new Ranking_LookupStatus();
-                $lookupstatusobject->setShipid($requestedshipid);
+                $lookupstatusobject->setShipid($newshipid);
                 $lookupstatusobject->setStatus(1);
                 $lookupstatusobject->setDataofmonth($new_date);
                 $lookupstatusobject->setDatetime(new \DateTime());
@@ -1863,12 +1830,10 @@ class DataVerficationController extends Controller
                 $em->flush();
 
             }
-
-
+            //$requested_shipObject = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $requestedshipid));
             $shipname = $newshipid->getShipName();
             $nextshipid = 0;
             $nextshipname = '';
-            $user = $this->getUser();
             $role = $user->getRoles();
             $kpielementarray = $this->findnumofshipsforrankingAction($request,'nextshipajaxcall');
             $statusforship = $this->findshipstatus_ranking($newtemp_date, $kpielementarray, $role[0]);
