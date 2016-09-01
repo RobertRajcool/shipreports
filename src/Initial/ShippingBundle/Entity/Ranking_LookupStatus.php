@@ -40,7 +40,7 @@ class Ranking_LookupStatus
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="dataofmonth", type="datetime")
+     * @ORM\Column(name="dataofmonth", type="date")
      */
     private $dataofmonth;
     /**

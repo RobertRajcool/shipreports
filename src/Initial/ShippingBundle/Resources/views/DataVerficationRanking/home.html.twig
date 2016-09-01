@@ -18,6 +18,8 @@
                 $('#nogroupselected').hide();
                 $('#kpiformforship').show();
                 var shipid='{{ currentshipid }}';
+               // $('#shipid').val(shipid);
+                console.log(shipid);
                 var shipname='{{ currentshipname }}';
                 var statusofship='{{ statuscount }}';
                 var shipcount='{{ shipcount }}'
@@ -32,21 +34,23 @@
                 {
                     $('#allbuttondiv').show();
                     $('#'+shipid).addClass('active');
+                    console.log(shipid);
                     $('#shipid').val(shipid);
                     $('#shipname').text(shipname);
 
                 }
 
                 $('#updatebuttonid').hide();
+                var currentdatetime='{{ currentdatetime }}';
 
-                var nowdate=new Date(),
+                var nowdate=new Date(currentdatetime),
                         locale = "en-us",
                         month = nowdate.toLocaleString(locale, { month: "long" }),
                         year=nowdate.getFullYear();
                 $('#currentid').text(month+'-'+year);
                 $('#currentid_data').text(month+'-'+year);
-                $('#datofmonthid').val(nowdate);
-                $('#datofmonthid_data').val(nowdate);
+                $('#datofmonthid').val(currentdatetime);
+                $('#datofmonthid_data').val(currentdatetime);
                 $('.prevmonth').live('click',function($e)
                 {
                     $e.preventDefault();
@@ -140,16 +144,16 @@
                                 if (linkid == 'proviousmonth_data')
                                 {
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(currentdate);
-                                    $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(currentdate);
+                                    $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#currentid_data').text(month + '-' + year);
+                                    $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
                                 }
                                 else
                                 {
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(currentdate);
+                                    $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(currentdate);
+                                    $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
                                 }
                                 $('#kpiformforship').hide();
                                 $('#currentmonhthdetails').hide();
@@ -200,7 +204,8 @@
                                 $('#elementformid').text('');
                                 $('#shipname').text(data.currentshipname);
                                 $('#currentid').text(month+'-'+year);
-                                $('#datofmonthid').val(currentdate);
+                                $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
                                 $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
                                 //alert(data.shipstatusstring)
                                 if(data.shipcount !=shipstatus)
@@ -399,16 +404,16 @@
                                     if (linkid == 'proviousmonth_data')
                                     {
                                         $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid_data').val(currentdate);
-                                        $('#currentid').text(month + '-' + year);
-                                        $('#datofmonthid').val(currentdate);
+                                        $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                        $('#currentid_data').text(month + '-' + year);
+                                        $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
                                     }
                                     else
                                     {
                                         $('#currentid').text(month + '-' + year);
-                                        $('#datofmonthid').val(currentdate);
+                                        $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
                                         $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid_data').val(currentdate);
+                                        $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
                                     }
                                     $('#kpiformforship').hide();
                                     $('#currentmonhthdetails').hide();
@@ -455,7 +460,9 @@
                                     $('#elementformid').text('');
                                     $('#shipname').text(data.currentshipname);
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(currentdate);
+                                    $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#currentid_data').text(month + '-' + year);
+                                    $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
                                     $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
                                     //alert(data.shipstatusstring)
                                     if (data.shipcount != shipstatus) {
@@ -698,12 +705,14 @@
                     $('.resetclass').val(' ');
                 });
 
-                $(".addclass").live('click',function($e)
+                $(".addclasskpivalue").live('click',function($e)
                         {
-                            var preshipid=$('#shipid').val();
-                            var btn= $(this).attr('id');
                             $e.preventDefault();
+                            var preshipid=$('#shipid').val();
+                            console.log(preshipid);
+                            var btn= $(this).attr('id');
                             var formid = $('#kpiform');
+                            console.log(formid.serialize());
                             $.ajaxSetup({
                                 global: false,
                                 type: "post",
@@ -721,7 +730,8 @@
                             $.ajax({
                                 success: function(data)
                                 {
-
+                                    $('#datofmonthid').val(data.currentdatetime);
+                                    $('#datofmonthid_data').val(data.currentdatetime);
                                     var valuearray=data.elementvalues;
                                     $('#'+preshipid).after('<img src="/images/tick_icon.png">');
                                     var valuearray=data.elementvalues;
@@ -809,7 +819,7 @@
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown)
                                 {
-                                    //window.location.href = base_url+'/login';
+
                                 }
                             });
 
@@ -922,6 +932,7 @@
                                 <a id="proviousmonth" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
                                 <span id="currentid" class="item">March-2016</span>
                                 <input type="hidden" name="dataofmonth" id="datofmonthid">
+                                <input type="hidden" name="shipid" id="shipid">
                                 <a id="nextmonth" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
                             </label>
                         </div>
@@ -984,26 +995,22 @@
                                 {% endfor %}
                             {% endif %}
                         </div>
-
-
-
                     </div>
-                <input type="hidden" name="shipid" id="shipid">
                     <div id="allbuttondiv" class="actions_submit">
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 
-                            <input type="submit" class="submit_btn addclass" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn addclass" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn addclass" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn addclass" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
 
                         {% endif %}
                     </div>

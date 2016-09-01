@@ -139,6 +139,7 @@ class DataVerficationController extends Controller
                     }
 
                 }
+                $currentdatetime=date('Y-m-d');
                 if(count($finddatawithstatus)==6)
                 {
                     return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
@@ -149,7 +150,7 @@ class DataVerficationController extends Controller
                             'elementweightage'=>$finddatawithstatus['elementweightage'],
                             'indicationValue'=>$finddatawithstatus['indicationValue'],
                             'symbolIndication'=>$finddatawithstatus['symbolIndication'],
-                            'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
+                            'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen,'currentdatetime'=>$currentdatetime
                         ));
                 }
                 else
@@ -159,7 +160,7 @@ class DataVerficationController extends Controller
                             'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                             'elementkpiarray'=>array(),'elementcount'=>0,
                             'elementvalues'=>array(),
-                            'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen
+                            'currentshipid'=>$shipid,'currentshipname'=>$shipname,'templatechoosen'=>$templatechoosen,'currentdatetime'=>$currentdatetime
                         ));
                 }
 
@@ -639,13 +640,10 @@ class DataVerficationController extends Controller
         $kpiandelementids = $returnfromcontroller['elementids'];
         $elementvalues = $request->request->get('newelemetvalues');
         $dataofmonth = $request->request->get('dataofmonth');
-        $date=date_create($dataofmonth);
-        $tempdate = date_format($date,"d-M-Y");
-        $newtemp_date=date_format($date,"M-Y");
-        $time = strtotime($tempdate);
-        $newformat = date('Y-m-d', $time);
-        $new_date = new \DateTime($newformat);
+        $new_date = new \DateTime($dataofmonth);
         $new_date->modify('last day of this month');
+        $newtemp_date=date_format($new_date,"M-Y");
+        $tempdate = date_format($new_date,"d-M-Y");
         $k = 0;
         $returnmsg = '';
         $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $requestedshipid));
@@ -994,13 +992,13 @@ class DataVerficationController extends Controller
                 'elementvalues' => $finddatawithstatus['elementvalues'],
                 'shipcount'=>count($statusforship),
                 'indicationValue'=>$finddatawithstatus['indicationValue'],
-                'symbolIndication'=>$finddatawithstatus['symbolIndication'],
+                'symbolIndication'=>$finddatawithstatus['symbolIndication'],'currentdatetime'=>$dataofmonth,
                 'ship_status_done_count'=>$ship_status_done_count));
             return $response;
         }
         else {
 
-            $response->setData(array('returnmsg' => $shipname . $returnmsg,
+            $response->setData(array('returnmsg' => $shipname . $returnmsg,'currentdatetime'=>$dataofmonth,
                 'shipname' => $nextshipname,
                 'shipid' => $nextshipid,
                 'kpiNameArray' => array(),
@@ -1273,7 +1271,9 @@ class DataVerficationController extends Controller
                     }
 
                 }
+                $currentdatetime=date('Y-m-d');
                 if (count($finddatawithstatus) == 6) {
+                    $currentdatetime=date('Y-m-d');
 
                     return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
                         array('listofships' => $listallshipforcompany,
@@ -1283,7 +1283,7 @@ class DataVerficationController extends Controller
                             'elementweightage' => $finddatawithstatus['elementweightage'],
                             'indicationValue'=>$finddatawithstatus['indicationValue'],
                             'symbolIndication'=>$finddatawithstatus['symbolIndication'],
-                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen,'currentdatetime'=>$currentdatetime
                         ));
                 }
                 else {
@@ -1293,7 +1293,7 @@ class DataVerficationController extends Controller
                             'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                             'elementkpiarray' => array(), 'elementcount' => 0,
                             'elementvalues' => array(),
-                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen,'currentdatetime'=>$currentdatetime
                         ));
                 }
             }
@@ -1679,26 +1679,43 @@ class DataVerficationController extends Controller
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         }
-        else
+       /*else
         {
             $em = $this->getDoctrine()->getManager();
             $userid=$user->getId();
+            $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
+            $kpiandelementids=$returnfromcontroller['elementids'];
+            $shipids=$request->request->get('shipid');
+            $elementvalues = $request->request->get('newelemetvalues');
+            $dataofmonth = $request->request->get('dataofmonth');
+           $new_date = new \DateTime($dataofmonth);
+            $new_date->modify('last day of this month');
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipids));
+            //=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipid));
+            $response = new JsonResponse();
+
+                $response->setData(array(
+                    'shipid'=>$shipid,'elementvalues'=>$elementvalues,'shipids'=>$shipids,'dateobject'=>$new_date,'elementids'=>$kpiandelementids,'dateobject'=>$dataofmonth,'shipobject'=>$newshipid
+                 ));
+                return $response;
+
+        }*/
+        else
+        {
+            $userid=$user->getId();
             $shipid = $request->request->get('shipid');
-            $requestedshipid=$shipid;
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
             $dataofmonth = $request->request->get('dataofmonth');
-            $date=date_create($dataofmonth);
-            $tempdate = date_format($date,"d-M-Y");
-            $newtemp_date=date_format($date,"M-Y");
-            $time = strtotime($tempdate);
-            $newformat = date('Y-m-d', $time);
-            $new_date = new \DateTime($newformat);
+            $em = $this->getDoctrine()->getManager();
+            $new_date = new \DateTime($dataofmonth);
             $new_date->modify('last day of this month');
+            $newtemp_date=date_format($new_date,"M-Y");
+            $tempdate = date_format($new_date,"d-M-Y");
             $k = 0;
             $returnmsg = '';
-            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipid));
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             if ($buttonid == 'updatebuttonid' || $buttonid == 'adminbuttonid' || $buttonid == 'verfiybuttonid') {
 
                 $returnarrayids = $em->createQueryBuilder()
@@ -1739,6 +1756,7 @@ class DataVerficationController extends Controller
                 $newlookupstatus=$lookstatus[0];
                 if($buttonid == 'adminbuttonid')
                 {
+
                     $rankinglookuptable=array('shipid'=>$shipid,'dataofmonth'=>$tempdate,'userid'=>$userid,'status'=>3,'datetime'=>date('Y-m-d H:i:s'));
                     // $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid,'dataofmonth'=>$new_date));
                     $newlookupstatus->setStatus(3);
@@ -1820,6 +1838,22 @@ class DataVerficationController extends Controller
                 $protocol  = empty($_SERVER['HTTPS']) ? 'http' : 'https';
                 $domain    = $_SERVER['SERVER_NAME'];
                 $url=$protocol.'://'.$domain.'/login';
+                /* $query = $em->createQueryBuilder()
+                     ->select('a.shipName', 'a.id')
+                     ->from('InitialShippingBundle:ShipDetails', 'a')
+                     ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                     ->where('b.id = :userId')
+                     ->setParameter('userId', $userId)
+                     ->getQuery();*/
+                /*$fullurl="http://shipreports/login";
+                $mailer = $this->container->get('mailer');
+                $message = \Swift_Message::newInstance()
+                    ->setFrom('lawrance@commusoft.co.uk')
+                    ->setTo("doss.cclawranc226@gmail.com")
+                    ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
+                    ->setBody("This Web Url:".$url);
+
+                $mailer->send($message);*/
                 $lookupstatusobject=new Ranking_LookupStatus();
                 $lookupstatusobject->setShipid($newshipid);
                 $lookupstatusobject->setStatus(1);
@@ -1830,10 +1864,12 @@ class DataVerficationController extends Controller
                 $em->flush();
 
             }
-            //$requested_shipObject = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $requestedshipid));
+
+
             $shipname = $newshipid->getShipName();
             $nextshipid = 0;
             $nextshipname = '';
+            $user = $this->getUser();
             $role = $user->getRoles();
             $kpielementarray = $this->findnumofshipsforrankingAction($request,'nextshipajaxcall');
             $statusforship = $this->findshipstatus_ranking($newtemp_date, $kpielementarray, $role[0]);
@@ -1903,7 +1939,7 @@ class DataVerficationController extends Controller
                     'ship_status_done_count'=>$ship_status_done_count,
                     'indicationValue'=>$finddatawithstatus['indicationValue'],
                     'symbolIndication'=>$finddatawithstatus['symbolIndication'],
-                    'elementvalues' => $finddatawithstatus['elementvalues']));
+                    'elementvalues' => $finddatawithstatus['elementvalues'],'currentdatetime'=>$dataofmonth));
                 return $response;
             }
             else
@@ -1913,11 +1949,12 @@ class DataVerficationController extends Controller
                     'shipname' =>$nextshipname,
                     'shipid' => $nextshipid,
                     'kpiNameArray' =>array(),
-                    'elementcount' => 0,
+                    'elementcount' => 0,'currentdatetime'=>$dataofmonth,
                     'elementvalues' => array()));
                 return $response;
             }
         }
+
 
     }
 
