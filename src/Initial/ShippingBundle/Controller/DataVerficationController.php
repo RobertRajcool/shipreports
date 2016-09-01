@@ -1654,8 +1654,10 @@ class DataVerficationController extends Controller
         }
         else
         {
+            $em = $this->getDoctrine()->getManager();
             $userid=$user->getId();
             $shipid = $request->request->get('shipid');
+            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipid));
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
             $kpiandelementids=$returnfromcontroller['elementids'];
             $elementvalues = $request->request->get('newelemetvalues');
@@ -1666,7 +1668,7 @@ class DataVerficationController extends Controller
                 'shipid' => $elementvalues,
                 'kpiNameArray' =>$dataofmonth,
                 'elementcount' => $shipid,
-                'elementvalues' => array()));
+                'elementvalues' => $newshipid));
             return $response;
 
            /* $em = $this->getDoctrine()->getManager();
