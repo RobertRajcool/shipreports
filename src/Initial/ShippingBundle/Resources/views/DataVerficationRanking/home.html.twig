@@ -817,7 +817,9 @@
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                            window.location.href = base_url+'/login';
+                            var err = eval("(" + xhr.responseText + ")");
+                           // alert(err.Message);
+                            console.log(err.Message)
                         }
                     });
                 });
