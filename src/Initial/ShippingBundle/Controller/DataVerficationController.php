@@ -4165,6 +4165,30 @@ class DataVerficationController extends Controller
             echo $output;
         }
     }
+    /**
+     * List All User Activities(Logs)
+     *
+     * @Route("/log_details", name="log_details")
+     */
+    public function logdetailsAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user == null) {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        else{
+            $log_Details=$em->createQueryBuilder()
+                ->select('b.createdondatetime','b.oldvalue','b.newvalue','b.fieldName','c.username')
+                ->from('InitialShippingBundle:LogDetails', 'b')
+                ->join('InitialShippingBundle:User', 'c', 'WITH', 'c.id = b.createdbyid')
+                ->getQuery()
+                ->getResult();
+            return $this->render('InitialShippingBundle:LogDetails:log_details.html.twig',array('logdetails'=>$log_Details));
+
+        }
+    }
+
 
 
 }

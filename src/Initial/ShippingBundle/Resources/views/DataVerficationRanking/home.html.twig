@@ -18,7 +18,7 @@
                 $('#nogroupselected').hide();
                 $('#kpiformforship').show();
                 var shipid='{{ currentshipid }}';
-               // $('#shipid').val(shipid);
+                // $('#shipid').val(shipid);
                 console.log(shipid);
                 var shipname='{{ currentshipname }}';
                 var statusofship='{{ statuscount }}';
@@ -704,156 +704,176 @@
                     $e.preventDefault();
                     $('.resetclass').val(' ');
                 });
-
                 $(".addclasskpivalue").live('click',function($e)
                         {
                             $e.preventDefault();
-                            var preshipid=$('#shipid').val();
-                            console.log(preshipid);
-                            var btn= $(this).attr('id');
-                            var formid = $('#kpiform');
-                            console.log(formid.serialize());
-                            $.ajaxSetup({
-                                global: false,
-                                type: "post",
-                                'url': Routing.generate('addkpivaluesname_forranking', {'buttonid':btn}),
-                                data: formid.serialize(),
-                                beforeSend: function ()
+                            var validationStatusField=false;
+                            $("input[name='newelemetvalues[]']").each(function(){
+                                var elementvalue=$(this).val();
+                                if(elementvalue=="")
                                 {
-                                    var beforsend=ajaxbefore_send();
-                                },
-                                complete: function () {
-                                    var complete=ajax_complete();
+                                    validationStatusField=false;
+                                    $(this).focus();
+                                    alert("Please fil out this field");
+                                    console.log(validationStatusField);
+                                    return false;
                                 }
-                            });
-
-                            $.ajax({
-                                success: function(data)
+                                else
                                 {
-                                    $('#datofmonthid').val(data.currentdatetime);
-                                    $('#datofmonthid_data').val(data.currentdatetime);
-                                    var valuearray=data.elementvalues;
-                                    $('#'+preshipid).after('<img src="/images/tick_icon.png">');
-                                    var valuearray=data.elementvalues;
-                                    $('#shipid').val('');
-                                    $('#addkpiformid').html('');
-                                    $('#addkpiformid').text('');
-                                    $('#shipname').text(' ');
-                                    $('#verfiybuttonid').show();
+                                    validationStatusField=true;
+                                    console.log(validationStatusField);
+                                    return true;
+                                }
+                                });
+                            if( validationStatusField==true)
+                            {
+                                var preshipid=$('#shipid').val();
+                                console.log(preshipid);
+                                var btn= $(this).attr('id');
+                                var formid = $('#kpiform');
+                                $.ajaxSetup({
+                                    global: false,
+                                    type: "post",
+                                    'url': Routing.generate('addkpivaluesname_forranking', {'buttonid':btn}),
+                                    data: formid.serialize(),
+                                    beforeSend: function ()
+                                    {
+                                        var beforsend=ajaxbefore_send();
+                                    },
+                                    complete: function () {
+                                        var complete=ajax_complete();
+                                    }
+                                });
+
+                                $.ajax({
+                                    success: function(data)
+                                    {
+                                        $('#datofmonthid').val(data.currentdatetime);
+                                        $('#datofmonthid_data').val(data.currentdatetime);
+                                        var valuearray=data.elementvalues;
+                                        $('#'+preshipid).after('<img src="/images/tick_icon.png">');
+                                        var valuearray=data.elementvalues;
+                                        $('#shipid').val('');
+                                        $('#addkpiformid').html('');
+                                        $('#addkpiformid').text('');
+                                        $('#shipname').text(' ');
+                                        $('#verfiybuttonid').show();
 
 
-                                    if(data.shipid!=0) {
-                                        $('#nogroupselected').hide();
-                                        $('#kpiformforship').show();
-                                        if (data.shipcount == data.ship_status_done_count) {
-                                            $('.linkclass').removeClass("active");
-                                            $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
-                                            $('#allbuttondiv').hide();
+                                        if(data.shipid!=0) {
+                                            $('#nogroupselected').hide();
+                                            $('#kpiformforship').show();
+                                            if (data.shipcount == data.ship_status_done_count) {
+                                                $('.linkclass').removeClass("active");
+                                                $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
+                                                $('#allbuttondiv').hide();
+                                            }
+                                            else
+                                            {
+                                                $('#shipid').val(data.shipid);
+                                                $('#shipname').text(data.shipname);
+                                                $('.linkclass').removeClass("active");
+                                                $('#' + data.shipid).addClass('active');
+                                                var j = 1;
+                                                var newtemp = 0;
+                                                $.each(data.kpiNameArray, function (i, listkpi) {
+
+                                                    var k = $.isNumeric(i);
+                                                    if (!k) {
+                                                        var temp = 1
+
+                                                        $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                                        if (newtemp == 0) {
+                                                            $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                                                        }
+                                                        else {
+                                                            $(' <th></th><<th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                                                        }
+                                                        $.each(listkpi, function (mykey, myvalue) {
+                                                            if (valuearray.length > 0) {
+
+                                                                $('#updatebuttonid').show();
+                                                                $('#savebuttonid').hide();
+                                                                $('#adminbuttonid').show();
+                                                                if (temp == 1) {
+                                                                    $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
+                                                                }
+                                                                if (temp > 1) {
+                                                                    $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                                }
+                                                            }
+                                                            else {
+                                                                $('#updatebuttonid').hide();
+                                                                $('#savebuttonid').show();
+                                                                $('#adminbuttonid').show();
+                                                                if (temp == 1) {
+                                                                    $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                                }
+                                                                if (temp > 1) {
+                                                                    $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                                }
+                                                            }
+                                                            newtemp++;
+                                                            temp++;
+
+                                                        });
+                                                        $(' </tbody></table>').appendTo('#addkpiformid');
+
+
+                                                    }
+                                                    j++;
+                                                });
+                                            }
+                                            jAlert('',data.returnmsg);
                                         }
                                         else
                                         {
-                                            $('#shipid').val(data.shipid);
-                                            $('#shipname').text(data.shipname);
-                                            $('.linkclass').removeClass("active");
-                                            $('#' + data.shipid).addClass('active');
-                                            var j = 1;
-                                            var newtemp = 0;
-                                            $.each(data.kpiNameArray, function (i, listkpi) {
-
-                                                var k = $.isNumeric(i);
-                                                if (!k) {
-                                                    var temp = 1
-
-                                                    $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
-                                                    if (newtemp == 0) {
-                                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
-                                                    }
-                                                    else {
-                                                        $(' <th></th><<th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
-                                                    }
-                                                    $.each(listkpi, function (mykey, myvalue) {
-                                                        if (valuearray.length > 0) {
-
-                                                            $('#updatebuttonid').show();
-                                                            $('#savebuttonid').hide();
-                                                            $('#adminbuttonid').show();
-                                                            if (temp == 1) {
-                                                                $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
-                                                            }
-                                                            if (temp > 1) {
-                                                                $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
-                                                            }
-                                                        }
-                                                        else {
-                                                            $('#updatebuttonid').hide();
-                                                            $('#savebuttonid').show();
-                                                            $('#adminbuttonid').show();
-                                                            if (temp == 1) {
-                                                                $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
-                                                            }
-                                                            if (temp > 1) {
-                                                                $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
-                                                            }
-                                                        }
-                                                        newtemp++;
-                                                        temp++;
-
-                                                    });
-                                                    $(' </tbody></table>').appendTo('#addkpiformid');
-
-
-                                                }
-                                                j++;
-                                            });
+                                            $('#shipid').val(' ');
+                                            $('#shipname').text(' ');
+                                            $('#nogroupselected').show();
+                                            $('#kpiformforship').hide();
+                                            jAlert('',data.returnmsg);
                                         }
-                                        jAlert('',data.returnmsg);
-                                    }
-                                    else
+                                    },
+                                    error: function(XMLHttpRequest, textStatus, errorThrown)
                                     {
-                                        $('#shipid').val(' ');
-                                        $('#shipname').text(' ');
-                                        $('#nogroupselected').show();
-                                        $('#kpiformforship').hide();
-                                        jAlert('',data.returnmsg);
+
                                     }
-                                },
-                                error: function(XMLHttpRequest, textStatus, errorThrown)
-                                {
-
-                                }
-                            });
-
-
-
-
-                        }
-                );
-
-                /* $('#datpickerid').datepicker();*/
-                /* $(document.body).delegate('.textbox', 'keypress', function(e)
-                 {
-                 alert('fucntion call')
-                 return isNumber(e, this)
-                 });*/
-
-                // $( "#datepikerid" ).datepicker();
+                                });
+                            }
+                        });
                 $('#kpiformforship').show();
                 $('#currentmonhthdetails').show();
                 $('#previousmonthdata').hide();
+               /*........................... Submit Button Enable and Disable Funtion.............................................................*/
+                $('form > input').keyup(function() {
+                    alert('funtioncall');
+                    var empty = false;
+                    $('form > input').each(function() {
+                        if ($(this).val() == "") {
+                            empty = true;
+                        }
+                    });
 
-
-
+                    if (empty) {
+                        $(".addclasskpivalue").each(function()
+                        {
+                            $(this).attr('disabled', 'disabled');
+                            $(this).addClass('not-allowed');
+                        });
+                    } else {
+                        $(".addclasskpivalue").each(function()
+                        {
+                            $(this).removeAttr('disabled');
+                            $(this).removeClass('not-allowed');
+                        });
+                    }
+                });
             });
 
-
+            /*........................... Allow Only Numeric Values.............................................................*/
             function isNumberKey(e)
             {
-                /* var charCode = (evt.which) ? evt.which : event.keyCode
-                 if (charCode != 46 && charCode > 31
-                 && (charCode < 48 || charCode > 57))
-                 return false;
-
-                 return true;*/
                 if (e.which != 46 && e.which != 45 && e.which != 46 &&
                         !(e.which >= 48 && e.which <= 57)) {
                     return false;
@@ -972,7 +992,7 @@
                                         {% for user in value %}
 
                                             <tr>
-                                                <td class="kpi_lement_name">{{ user }}  </td>
+                                                <td class="kpi_lement_name required_field">{{ user }}  </td>
                                                 <td class="kpi_lement_number">{{ elementweightage[i] }}</td>
                                                 <td class="kpi_lement_inputname">{{ symbolIndication[i] }}</td>
                                                 <td class="kpi_lement_inputname">{{ indicationValue[i] }}</td>
@@ -1000,17 +1020,17 @@
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
 
-                            <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue " id="savebuttonid"   value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue " id="updatebuttonid"    value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 
-                            <input type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"  value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue " id="adminbuttonid"    value="{{ 'dataverification.upload'|trans }}">
                         {% endif %}
 
                         {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue " id="verfiybuttonid"    value="{{ 'dataverification.verfiy'|trans }}">
 
                         {% endif %}
                     </div>

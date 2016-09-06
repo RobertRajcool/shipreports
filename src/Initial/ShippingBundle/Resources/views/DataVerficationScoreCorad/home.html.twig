@@ -689,10 +689,29 @@
                 /*-------------------------------------Insertion Process Starts Here-------------------------------------------- */
 
                 $(".addclasskpivalue").live('click',function($e){
-
+                    $e.preventDefault();
+                    var validationStatusField=false;
+                    $("input[name='newelemetvalues[]']").each(function(){
+                        var elementvalue=$(this).val();
+                        if(elementvalue=="")
+                        {
+                            validationStatusField=false;
+                            $(this).focus();
+                            alert("Please fil out this field");
+                            console.log(validationStatusField);
+                            return false;
+                        }
+                        else
+                        {
+                            validationStatusField=true;
+                            console.log(validationStatusField);
+                            return true;
+                        }
+                    });
+                    if( validationStatusField==true)
+                    {
                     var preshipid=$('#shipid').val();
                     var btn= $(this).attr('id');
-                    $e.preventDefault();
                     var formid = $('#kpiform');
                     $.ajaxSetup({
                         global: false,
@@ -809,6 +828,7 @@
                            // window.location.href = base_url+'/login';
                         }
                     });
+                    }
                 });
                 /*-------------------------------------Insertion Process Ends Here-------------------------------------------- */
 

@@ -24,6 +24,7 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/jquery-ui.js"></script>
     <script src="/js/moment.js"></script>
+    <script src="/js/jquery.validate.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
@@ -39,6 +40,7 @@
     <script src="/js/router.js"></script>
     <script src="/js/fos_js_routes.js"></script>
     <script src="/js/bootstrap-datetimepicker.min.js"></script>
+   {# <script src="/js/highchart/highcharts.js"></script> #}
     {#  <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>#}
 
     {#    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>#}
@@ -57,7 +59,7 @@
     <script type="text/javascript">
         $(window).ready(function()
         {
-            /*Highcharts.theme = {
+           /* Highcharts.theme = {
                 colors: ["#7cb5ec", "#f7a35c", "#90ee7e", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
                     "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
                 chart: {
@@ -116,9 +118,6 @@
                 background2: '#F0F0EA'
 
             };
-
-
-            // Apply the theme
             Highcharts.setOptions(Highcharts.theme);*/
             var base_url = window.location.origin;
             var pathname = window.location.pathname;
@@ -452,6 +451,14 @@
                             <span class="menu-item-text">Reports</span>
                         </a>
                     </li>
+                    {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
+                    <li id="logs">
+                        <a href="{{ path('log_details') }}" target="">
+                            <span class="menu-item-icon ss-barchart">&nbsp;</span>
+                            <span class="menu-item-text">Logs</span>
+                        </a>
+                    </li>
+                    {% endif %}
                     <li id="backuplist">
                         {#<a href="{{ path('database_export') }}" target="">#}
                         <a href ="{{ path('back_up') }}">

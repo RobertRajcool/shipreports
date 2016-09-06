@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    {% block javascripts %}
+        <script>
+            $(document).ready(function() {
+                $('#errortext').hide();
+                var role='{{ app.user.roles[0] }}';
+                var base_url = window.location.origin;
+                $(function () {
+                    $('#datetimepicker10').datetimepicker({
+                        viewMode: 'years',
+                        format: 'MM-YYYY'
+                    });
+                });
+                $('.submit_btn').live('click',function ($e) {
+                    $e.preventDefault();
+                    console.log(this.id)
+                    var idattribute=this.id;
+                    var dataofmonth=$('#datepickervalue').val();
+                    if(idattribute=='removefilter')
+                    {
+                        dataofmonth=1;
+                    }
+                    if(dataofmonth!='')
+                    {
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            'url': Routing.generate('showfileslist_filter', {'dataofmonth': dataofmonth}),
+                            beforeSend: function () {
+                                var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                            },
+                            complete: function () {
+                                var setAjaxComplete = defaultAjaxCompleteFunction();
+                            }
+                        });
+                        $.ajax({
+                            success: function (data) {
+                                $('#listtable').html('');
+                                $('#datepickervalue').val('');
+                                console.log(data.listoffiles.length);
+                                if(!$("#removefilter").length)
+                                {
+                                    $('#applyfilter').after( '<input type="submit" class="submit_btn" id="removefilter"  value="Cancel filter">');
+                                    if(idattribute=='removefilter')
+                                    {
+                                        $('#removefilter').remove();
+                                        $('#removefilter').html('');
+                                    }
+                                }
+                                if(data.listoffiles.length!=0)
+                                {
+                                    $('<table id="tableid" class="table table-striped table_dividere data_import_list_table"></table>').appendTo('#listtable');
+                                    $('<thead><tr id="tableheader_tr"></tr></thead>').appendTo('#tableid');
+                                    $('<tbody id="tablebody"></tbody>').appendTo('#tableid');
+                                    $('<th class="month">Data of Month</th>').appendTo('#tableheader_tr');
+                                    $('<th  class="time">Upload DateTime</th>').appendTo('#tableheader_tr');
+                                    $('<th class="filename">Filename</th>').appendTo('#tableheader_tr');
+                                    if(role=='ROLE_ADMIN') {
+                                        $('<th class="option">Username</th>').appendTo('#tableheader_tr');
+                                        $(' <th class="option">Options</th>').appendTo('#tableheader_tr');
+                                    }
+
+                                    $.each(data.listoffiles, function (i)
+                                    {
+                                        $('<tr id="tablebodytr_'+i+'"></tr>').appendTo('#tablebody');
+                                        var nowdate=new Date(data.listoffiles[i]['dataOfMonth']['date']),
+                                                locale = "en-us",
+                                                month = nowdate.toLocaleString(locale, { month: "long" }),
+                                                year=nowdate.getFullYear();
+                                        $('<td class="">'+month+'-'+year+'</td>').appendTo('#tablebodytr_'+i);
+                                        $('<td class="">'+data.listoffiles[i]['datetime']['date']+'</td>').appendTo('#tablebodytr_'+i);
+                                        $('<td class="">'+data.listoffiles[i]['filename']+'</td>').appendTo('#tablebodytr_'+i);
+
+                                        if(role=='ROLE_ADMIN')
+                                        {
+                                            $('<td class="">'+data.listoffiles[i]['userid']+'</td>').appendTo('#tablebodytr_'+i);
+                                            var filename=data.listoffiles[i]['filename'];
+                                            var path=base_url+'/dataverfication/'+filename+'/downfile_ranking';
+                                            $('<td class=""><a href="'+path+'"><img src="/images/download.png"  alt="Loader Image"/></a></td>').appendTo('#tablebodytr_'+i);
+                                        }
+
+                                    });
+                                }
+                                else
+                                {
+                                    $('<span>No Record Found</span>').appendTo('#listtable');
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown)
+                            {
+                                window.location.href = base_url+'/login';
+                            }
+                        });
+                    }
+                    else
+                    {
+                        $('#errortext').text('Choose Date');
+                        $('#errortext').show();
+                        setTimeout(function() {
+                            $('#errortext').fadeOut('fast');
+                        }, 4000)
+                    }
+
+                });
+                $('.foldername').live('click',function($e)
+                {
+                    $e.preventDefault();
+                    var folderName=$(this).attr('title');
+                    var folderId=$(this).attr('id');
+                    if($('#tableid_'+folderId).hasClass('folder_diplay'))
+                    {
+                        $('#tableid_'+folderId).removeClass('folder_diplay');
+                    }
+                    else
+                    {
+                        $('#tableid_'+folderId).addClass('folder_diplay');
+                    }
+                });
+
+            });
+        </script>
+
+    {% endblock %}
+<div class="col-md-12 users_advanced_list_views_screen">
+    <div class="table-responsive">
+        <table class="table table-striped-4 element_ranking_main_title_row">
+            <thead>
+            <tr>
+                <th colspan="4">Log Details</th>
+
+            </tr>
+            </thead>
+
+        </table>
+        <table class="table table-striped-2 kpi_ranking_row">
+            <thead>
+            <tr>
+
+                <th class="kpi_name kpi_name_thtd">Field name</th>
+                <th class="weightage">Date time</th>
+                <th class="weightage">Username</th>
+                <th class="weightage">Old value</th>
+                <th class="weightage">New value</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for logobject in logdetails %}
+                <tr>
+                    <td class="kpi_name_thtd"><a
+
+                                title="{{ logobject.fieldName }}">
+                            {{ logobject.fieldName }}
+                        </a></td>
+                    <td>{{ logobject.createdondatetime.date }}</td>
+                    <td>{{ logobject.username }}</td>
+                    <td>{{ logobject.oldvalue }}</td>
+                    <td>{{ logobject.newvalue }}</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+            </tbody>
+        </table>
+        </div>
+    </div>
+
+{% endblock %}

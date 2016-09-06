@@ -2,13 +2,13 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
 #    parameter_name: value
-
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
-      fos_user.doctrine_registry:
-          alias: doctrine
-services:
+     fos_user.doctrine_registry:
+               alias: doctrine
      readexcel.worker:
           class: Initial\ShippingBundle\service\ReadExcelWorker
+     log.update.listener:
+               class: Initial\ShippingBundle\service\LogDetailsListeners
+               arguments: ["@service_container", "@session", "%database_host%", "%database_user%", "%database_password%","%database_name%"]
+               tags:
+                         - { name: doctrine.event_listener, event: preUpdate }
