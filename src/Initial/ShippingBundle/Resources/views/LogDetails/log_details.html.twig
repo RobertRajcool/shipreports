@@ -154,7 +154,7 @@
             {% for logobject in logdetails %}
                 <tr>
 
-                    <td ><a title="{{ logobject.fieldName }}">{{ logobject.fieldName }} </a></td>
+                    <td ><a title="{{ logobject.fieldName }}">{{ logobject.fieldName|capitalize }} </a></td>
                     <td>{% set entityarray =logobject.tablename|split('\\') %}
                         {% set sizeofentityarray = entityarray | length %}
                         {{ entityarray[sizeofentityarray-1] }}
