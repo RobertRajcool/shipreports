@@ -4168,9 +4168,9 @@ class DataVerficationController extends Controller
     /**
      * List All User Activities(Logs)
      *
-     * @Route("/log_details", name="log_details")
+     * @Route("/log_details/{page}", name="log_details")
      */
-    public function logdetailsAction(Request $request)
+    public function logdetailsAction(Request $request,$page)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -4184,7 +4184,27 @@ class DataVerficationController extends Controller
                 ->join('InitialShippingBundle:User', 'c', 'WITH', 'c.id = b.createdbyid')
                 ->getQuery()
                 ->getResult();
-            return $this->render('InitialShippingBundle:LogDetails:log_details.html.twig',array('logdetails'=>$log_Details));
+            $total_records =count($log_Details);
+            $records_per_page = $this->container->getParameter('maxrecords_per_page');
+            $last_page = ceil($total_records / $records_per_page);
+            $previous_page = $page > 1 ? $page - 1 : 1;
+            $next_page = $page < $last_page ? $page + 1 : $last_page;
+            $listActiveRecords=$em->createQueryBuilder()
+                ->select('b.createdondatetime','b.oldvalue','b.newvalue','b.fieldName','c.username')
+                ->from('InitialShippingBundle:LogDetails', 'b')
+                ->join('InitialShippingBundle:User', 'c', 'WITH', 'c.id = b.createdbyid')
+                ->setMaxResults($records_per_page)
+                ->setFirstResult(($page - 1) * $records_per_page)
+                ->getQuery()
+                ->getResult();
+            return $this->render('InitialShippingBundle:LogDetails:log_details.html.twig',
+                array('logdetails'=>$listActiveRecords,
+                    'last_page' => $last_page,
+                    'previous_page' => $previous_page,
+                    'current_page' => (int)$page,
+                    'next_page' => $next_page,
+                    'total_records' => $total_records
+                    ));
 
         }
     }

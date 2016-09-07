@@ -164,6 +164,26 @@
             </tbody>
         </table>
         </div>
+    {% if last_page > 1 %}
+    <div class="bs-example">
+        <ul class="pagination">
+            {% if  current_page > 1%}
+                <li><a href="{{ path('log_details', { 'page':  current_page-1}) }}" target="">Prev</a></li>
+            {% endif %}
+
+            {% for page in 1..last_page %}
+                {% if page == current_page %}
+                  <li class="active"> <a href="">{{ page }}</a></li>
+                {% else %}
+                   <li><a href="{{ path('log_details', { 'page':  page}) }}" target="">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if  current_page !=last_page %}
+                <li><a href="{{ path('log_details', { 'page':  current_page+1}) }}" target="">Next</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
     </div>
 
 {% endblock %}
