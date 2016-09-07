@@ -19,7 +19,8 @@ class ScorecardDataImportType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder
             ->add('fileName', FileType::class)
-            ->add('monthDetail', DateType::class, array('data' => new \DateTime()));
+            ->add('monthDetail', DateType::class, array('data' => new \DateTime()))
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver) {

@@ -64,6 +64,7 @@ class ReadExcelSheetController extends Controller
             ));
         }
     }
+
     public function newuploadAction(Request $request)
     {
         $excelobj = new Excel_file_details();

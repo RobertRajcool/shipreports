@@ -33,14 +33,80 @@ class ScorecardDataImportController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $userId = $user->getId();
+        if ($user != null) {
+            $em = $this->getDoctrine()->getManager();
 
-        $scorecardDataImports = $em->getRepository('InitialShippingBundle:ScorecardDataImport')->findAll();
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:KpiDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:ShipDetails', 'd', 'WITH', 'd.id = a.shipDetailsId')
+                    ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = d.companyDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                    ->where('c.id = :userId')
+                    ->groupby('a.kpiName')
+                    ->orderby('a.id')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:KpiDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:ShipDetails', 'c', 'WITH', 'c.id = a.shipDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = c.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->groupby('a.kpiName')
+                    ->orderby('a.id')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
 
-        return $this->render('scorecarddataimport/index.html.twig', array(
-            'scorecardDataImports' => $scorecardDataImports,
-        ));
+            $kpiDetails = $query->getResult();
+
+            $scorecardDataImports = $em->getRepository('InitialShippingBundle:ScorecardDataImport')->findAll();
+
+            return $this->render('scorecarddataimport/index.html.twig', array(
+                'scorecardDataImports' => $scorecardDataImports,
+                'kpiDetails' => $kpiDetails
+            ));
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
     }
+
+    /**
+     * Lists all ScorecardDataImport entities.
+     *
+     * @Route("/scorecard_data_import_find_element", name="scorecard_data_import_find_element")
+     */
+    public function findElementAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $kpiId = $request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+            $query = $em->createQueryBuilder()
+                ->select('a.id,a.elementName')
+                ->from('InitialShippingBundle:ElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiId')
+                ->setParameter('kpiId', $kpiId)
+                ->getQuery();
+
+            $elementDetails = $query->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementDetails' => $elementDetails
+            ));
+
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
 
     /**
      * Lists all ScorecardDataImport entities.
@@ -50,9 +116,11 @@ class ScorecardDataImportController extends Controller
     public function dataImportAction(Request $request)
     {
         $user = $this->getUser();
+        $userId = $user->getId();
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         } else {
+            $em = $this->getDoctrine()->getManager();
             $role = $user->getRoles();
             if ($role[0] != 'ROLE_KPI_INFO_PROVIDER') {
                 return $this->redirectToRoute('scorecarddataimport_files_show');
@@ -63,9 +131,37 @@ class ScorecardDataImportController extends Controller
                 if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                     $template = 'v-ships_layout.html.twig';
                 }
+                if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                    $query = $em->createQueryBuilder()
+                        ->select('a')
+                        ->from('InitialShippingBundle:KpiDetails', 'a')
+                        ->leftjoin('InitialShippingBundle:ShipDetails', 'd', 'WITH', 'd.id = a.shipDetailsId')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = d.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                        ->where('c.id = :userId')
+                        ->groupby('a.kpiName')
+                        ->orderby('a.id')
+                        ->setParameter('userId', $userId)
+                        ->getQuery();
+                } else {
+                    $query = $em->createQueryBuilder()
+                        ->select('a')
+                        ->from('InitialShippingBundle:KpiDetails', 'a')
+                        ->leftjoin('InitialShippingBundle:ShipDetails', 'c', 'WITH', 'c.id = a.shipDetailsId')
+                        ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = c.companyDetailsId')
+                        ->where('b.id = :userId')
+                        ->groupby('a.kpiName')
+                        ->orderby('a.id')
+                        ->setParameter('userId', $userId)
+                        ->getQuery();
+                }
+
+                $kpiDetails = $query->getResult();
 
                 return $this->render('scorecarddataimport/index.html.twig', array(
-                    'form' => $form->createView(),'template'=>$template
+                    'form' => $form->createView(),
+                    'template'=>$template,
+                    'kpiDetails' => $kpiDetails
                 ));
             }
         }

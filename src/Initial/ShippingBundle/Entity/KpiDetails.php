@@ -80,6 +80,22 @@ class KpiDetails
     private $weightage;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateTime", type="datetime")
+     */
+    private $dateTime;
+
+    /**
+     * @var string
+     * @ORM\ManyToOne(targetEntity="Initial\ShippingBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="userId", referencedColumnName="id")
+     * })
+     */
+    private $userId;
+
+    /**
      * Get id
      *
      * @return integer
@@ -267,6 +283,38 @@ class KpiDetails
     public function setWeightage($weightage)
     {
         $this->weightage = $weightage;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateTime()
+    {
+        return $this->dateTime;
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     */
+    public function setDateTime($dateTime)
+    {
+        $this->dateTime = $dateTime;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param string $userId
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
     }
 
 

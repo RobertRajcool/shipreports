@@ -592,7 +592,7 @@ class ElementDetailsController extends Controller
                 ->getResult();
 
             $query1 = $em->createQueryBuilder()
-                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus', 'a.baseValue')
+                ->select('a.id', 'a.elementName', 'a.weightage', 'a.activatedDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'a.description', 'a.vesselWiseTotal', 'a.indicationValue', 'identity(a.symbolId)', 'a.comparisonStatus', 'a.baseValue', 'identity(a.userId)', 'a.dateTime')
                 ->from('InitialShippingBundle:ElementDetails', 'a')
                 ->where('a.id = :element_id')
                 ->setParameter('element_id', $id)
@@ -609,6 +609,18 @@ class ElementDetailsController extends Controller
                     ->getQuery();
                 $symbolDetail = $symbolQuery->getResult();
             }
+
+            $userDetail= "";
+            if($elementDetail[0][2]!="") {
+                $userDetailQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.username')
+                    ->from('InitialShippingBundle:User', 'a')
+                    ->where('a.id = :id')
+                    ->setParameter('id', $elementDetail[0][2])
+                    ->getQuery();
+                $userDetail = $userDetailQuery->getResult();
+            }
+
             $symbolAllQuery = $em->createQueryBuilder()
                 ->select('a.id','a.symbolName')
                 ->from('InitialShippingBundle:ElementSymbols', 'a')
@@ -665,7 +677,8 @@ class ElementDetailsController extends Controller
                 'symbolDetail' => $symbolDetail,
                 'symbolAllDetail' => $symbolAllQuery->getResult(),
                 'comparisonRule' => $comparisonRuleArray,
-                'elementDetailAll' => $elementDetailQuery->getResult()
+                'elementDetailAll' => $elementDetailQuery->getResult(),
+                'userDetail' => $userDetail
             ));
 
             if ($hi == 'hi') {
