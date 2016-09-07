@@ -133,6 +133,10 @@
             </thead>
 
         </table>
+        {% if logdetails|length <= 0 %}
+            <span style="margin-left: 50%">No Record Found</span>
+        {% endif %}
+        {% if logdetails|length > 0 %}
         <table class="table table-striped-2 kpi_ranking_row">
             <thead>
             <tr>
@@ -159,10 +163,9 @@
                     <td>{{ logobject.newvalue }}</td>
                 </tr>
             {% endfor %}
-
-            </tbody>
             </tbody>
         </table>
+        {% endif %}
         </div>
     {% if last_page > 1 %}
     <div class="bs-example">
@@ -173,7 +176,7 @@
 
             {% for page in 1..last_page %}
                 {% if page == current_page %}
-                  <li class="active"> <a href="">{{ page }}</a></li>
+                  <li> <a class="active_new" href="">{{ page }}</a></li>
                 {% else %}
                    <li><a href="{{ path('log_details', { 'page':  page}) }}" target="">{{ page }}</a></li>
                 {% endif %}
