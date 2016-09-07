@@ -137,11 +137,12 @@
             <span style="margin-left: 50%">No Record Found</span>
         {% endif %}
         {% if logdetails|length > 0 %}
-        <table class="table table-striped-2 kpi_ranking_row">
+        <table class="table table-striped-2 kpi_ranking_row_new">
             <thead>
             <tr>
 
-                <th class="kpi_name kpi_name_thtd">Field name</th>
+                <th class="weightage">Field name</th>
+                <th class="weightage">Table name</th>
                 <th class="weightage">Date time</th>
                 <th class="weightage">Username</th>
                 <th class="weightage">Old value</th>
@@ -152,12 +153,14 @@
 
             {% for logobject in logdetails %}
                 <tr>
-                    <td class="kpi_name_thtd"><a
 
-                                title="{{ logobject.fieldName }}">
-                            {{ logobject.fieldName }}
-                        </a></td>
-                    <td>{{ logobject.createdondatetime.date }}</td>
+                    <td ><a title="{{ logobject.fieldName }}">{{ logobject.fieldName|capitalize }} </a></td>
+                    <td>{% set entityarray =logobject.tablename|split('\\') %}
+                        {% set sizeofentityarray = entityarray | length %}
+                        {{ entityarray[sizeofentityarray-1] }}
+
+                    </td>
+                    <td>{{ logobject.createdondatetime|date("M jS \\a\\t g:ia") }}</td>
                     <td>{{ logobject.username }}</td>
                     <td>{{ logobject.oldvalue }}</td>
                     <td>{{ logobject.newvalue }}</td>

@@ -24,7 +24,6 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/jquery-ui.js"></script>
     <script src="/js/moment.js"></script>
-    <script src="/js/jquery.validate.min.js"></script>
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
@@ -454,7 +453,7 @@
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                     <li id="logs">
                         <a href="{{ path('log_details', { 'page':  1}) }}" target="">
-                            <span class="menu-item-icon ss-barchart">&nbsp;</span>
+                            <span class="menu-item-icon ss-view">&nbsp;</span>
                             <span class="menu-item-text">Logs</span>
                         </a>
                     </li>
