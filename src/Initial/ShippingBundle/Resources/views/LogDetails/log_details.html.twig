@@ -155,32 +155,12 @@
                 <tr>
 
                     <td ><a title="{{ logobject.fieldName }}">{{ logobject.fieldName }} </a></td>
-                    <td>
-                        {% if logobject.tablename == 'Initial\ShippingBundle\Entity\ShipDetails	' %}
-                        Ship details
-                        {% elseif logobject.tablename == "Initial\ShippingBundle\Entity\KpiDetails" %}
-                            Scorecard kpidetails
-                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\ElementDetails' %}
-                            Scorecard elementdetails
-                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\RankingKpiDetails' %}
-                            Ranking kpidetails
-                        {% elseif logobject.tablename == "Initial\ShippingBundle\Entity\RankingElementDetails" %}
-                            Ranking elementdetails
-                        {% elseif logobject.tablename == 'Initial\ShippingBundle\Entity\Excel_file_details' %}
-                            Ranking Attached Files
-                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\EmailGroup' %}
-                            Email group
-                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\EmailUsers' %}
-                            Email Users
-                        {% elseif  logobject.tablename=='Initial\ShippingBundle\Entity\SendCommand' %}
-                            Scorecard  logobject.tablename
-                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\SendCommandRanking' %}
-                            Ranking comments
-                        {% else %}
-                            {{ logobject.tablename }}
-                        {% endif %}
+                    <td>{% set entityarray =logobject.tablename|split('\\') %}
+                        {% set sizeofentityarray = entityarray | length %}
+                        {{ entityarray[sizeofentityarray-1] }}
+
                     </td>
-                    <td>{{ logobject.createdondatetime.date }}</td>
+                    <td>{{ logobject.createdondatetime|date("M jS \\a\\t g:ia") }}</td>
                     <td>{{ logobject.username }}</td>
                     <td>{{ logobject.oldvalue }}</td>
                     <td>{{ logobject.newvalue }}</td>
