@@ -453,7 +453,7 @@
                     </li>
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
                     <li id="logs">
-                        <a href="{{ path('log_details') }}" target="">
+                        <a href="{{ path('log_details', { 'page':  1}) }}" target="">
                             <span class="menu-item-icon ss-barchart">&nbsp;</span>
                             <span class="menu-item-text">Logs</span>
                         </a>
