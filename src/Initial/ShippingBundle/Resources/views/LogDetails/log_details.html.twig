@@ -141,7 +141,8 @@
             <thead>
             <tr>
 
-                <th class="kpi_name kpi_name_thtd">Field name</th>
+                <th class="weightage">Field name</th>
+                <th class="weightage">Table name</th>
                 <th class="weightage">Date time</th>
                 <th class="weightage">Username</th>
                 <th class="weightage">Old value</th>
@@ -152,11 +153,33 @@
 
             {% for logobject in logdetails %}
                 <tr>
-                    <td class="kpi_name_thtd"><a
 
-                                title="{{ logobject.fieldName }}">
-                            {{ logobject.fieldName }}
-                        </a></td>
+                    <td ><a title="{{ logobject.fieldName }}">{{ logobject.fieldName }} </a></td>
+                    <td>
+                        {% if logobject.tablename == 'Initial\ShippingBundle\Entity\ShipDetails	' %}
+                        Ship details
+                        {% elseif logobject.tablename == "Initial\ShippingBundle\Entity\KpiDetails" %}
+                            Scorecard kpidetails
+                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\ElementDetails' %}
+                            Scorecard elementdetails
+                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\RankingKpiDetails' %}
+                            Ranking kpidetails
+                        {% elseif logobject.tablename == "Initial\ShippingBundle\Entity\RankingElementDetails" %}
+                            Ranking elementdetails
+                        {% elseif logobject.tablename == 'Initial\ShippingBundle\Entity\Excel_file_details' %}
+                            Ranking Attached Files
+                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\EmailGroup' %}
+                            Email group
+                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\EmailUsers' %}
+                            Email Users
+                        {% elseif  logobject.tablename=='Initial\ShippingBundle\Entity\SendCommand' %}
+                            Scorecard  logobject.tablename
+                        {% elseif logobject.tablename=='Initial\ShippingBundle\Entity\SendCommandRanking' %}
+                            Ranking comments
+                        {% else %}
+                            {{ logobject.tablename }}
+                        {% endif %}
+                    </td>
                     <td>{{ logobject.createdondatetime.date }}</td>
                     <td>{{ logobject.username }}</td>
                     <td>{{ logobject.oldvalue }}</td>

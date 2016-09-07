@@ -4190,7 +4190,7 @@ class DataVerficationController extends Controller
             $previous_page = $page > 1 ? $page - 1 : 1;
             $next_page = $page < $last_page ? $page + 1 : $last_page;
             $listActiveRecords=$em->createQueryBuilder()
-                ->select('b.createdondatetime','b.oldvalue','b.newvalue','b.fieldName','c.username')
+                ->select('b.createdondatetime','b.oldvalue','b.newvalue','b.fieldName','c.username','b.tablename')
                 ->from('InitialShippingBundle:LogDetails', 'b')
                 ->join('InitialShippingBundle:User', 'c', 'WITH', 'c.id = b.createdbyid')
                 ->setMaxResults($records_per_page)
