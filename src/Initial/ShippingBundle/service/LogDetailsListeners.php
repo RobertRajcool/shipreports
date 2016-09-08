@@ -43,6 +43,30 @@ class LogDetailsListeners
         $classAnnotations = $reader->getClassAnnotations($entityReflected);
         $changeSets = $eventArgs->getEntityChangeSet();
         $table = get_class($entity);
+        $needMaintainLogs=array(
+            'Initial\ShippingBundle\Entity\ShipDetails',
+            'Initial\ShippingBundle\Entity\KpiDetails',
+            'Initial\ShippingBundle\Entity\ElementDetails',
+            'Initial\ShippingBundle\Entity\RankingKpiDetails',
+            'Initial\ShippingBundle\Entity\RankingElementDetails',
+            'Initial\ShippingBundle\Entity\Excel_file_details',
+            'Initial\ShippingBundle\Entity\EmailGroup',
+            'Initial\ShippingBundle\Entity\EmailUsers',
+            'Initial\ShippingBundle\Entity\SendCommand',
+            'Initial\ShippingBundle\Entity\SendCommandRanking',
+
+        );
+        $needTologMaintain = false;
+       /* foreach ($classAnnotations as $annot) {
+            if (get_class($annot) == 'Frontend\CommonBundle\Util\AuditUpdates') {
+                $needTologMaintain = true;
+            }
+        }*/
+        if (in_array($table, $needMaintainLogs)) {
+            $needTologMaintain = true;
+        }
+        if ($needTologMaintain) {
+
         $tablePK = $entity->getId();
         $securityContext = $this->container->get('security.context');
         $token = $securityContext->getToken();
@@ -50,11 +74,12 @@ class LogDetailsListeners
         $userId = $user->getId();
         $this->logFieldUpdate($changeSets, $table, $tablePK, $userId);
 
+        }
+
     }
     private function logFieldUpdate($changeSets, $table, $tablePK, $userId)
     {
         $config = new Configuration();
-
         $pdo = new PDO("mysql:host=" . $this->dbHost . ";dbname=". $this->dbName, $this->dbUser, $this->dbPassword);
         $params = array('pdo_mysql', $this->dbUser, $this->dbPassword);
         $params['pdo'] = $pdo;
