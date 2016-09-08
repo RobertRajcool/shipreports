@@ -390,6 +390,7 @@ class ElementDetailsController extends Controller
     {
         $user = $this->getUser();
         if ($user != null) {
+            $userId = $user->getId();
             $params = $request->request->get('element_details');
             $kpiDetailsId = $params['kpiDetailsId'];
             $elementName = $params['elementName'];
@@ -417,6 +418,7 @@ class ElementDetailsController extends Controller
             $weightage = $params['weightage'];
             $baseValue = $params['baseValue'];
             //$rules         = $request->request->get('value');
+            $today = new \DateTime();
 
             $elementDetail = new ElementDetails();
             $elementDetail->setkpiDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:KpiDetails')->findOneBy(array('id' => $kpiDetailsId)));
@@ -432,6 +434,8 @@ class ElementDetailsController extends Controller
             $elementDetail->setIndicationValue($indicationValue);
             $elementDetail->setSymbolId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ElementSymbols')->findOneBy(array('id' => $symbolId)));
             $elementDetail->setBaseValue($baseValue);
+            $elementDetail->setDateTime($today);
+            $elementDetail->setUserId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:User')->findOneBy(array('id' => $userId)));
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($elementDetail);
