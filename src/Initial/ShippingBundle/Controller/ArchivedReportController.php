@@ -55,7 +55,7 @@ class ArchivedReportController extends Controller
                 $listAllShipForCompany = $query->getResult();
             }
             $series = array(
-                array("name" => "", 'color' => '#103a71', "data" => ""),
+                array("name" => "Management Performance", 'showInLegend' => false, 'color' => '#103a71', "data" => ""),
             );
             $ob = new Highchart();
             $ob->chart->renderTo('area');
@@ -228,7 +228,7 @@ class ArchivedReportController extends Controller
                     array_push($monthlyScorecardElementColorArray, $scorecardElementColorArray);
                 }
                 array_push($monthlyScorecardKpiColorArray, $scorecardKpiColorArray);
-                array_push($monthlyKpiAverageValueTotal, $monthlyScorecardKpiWeightAverageValueTotal);
+                array_push($monthlyKpiAverageValueTotal, (float)bcdiv($monthlyScorecardKpiWeightAverageValueTotal,1,3));
                 array_push($overallMonthlyElementColorArray, $monthlyScorecardElementColorArray);
                 array_push($overallMonthlyKpiSumValue, $monthlyKpiSumValue);
             }

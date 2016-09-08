@@ -13,6 +13,7 @@ use Initial\ShippingBundle\Form\ShipStatusDetailsType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * ShipDetails controller.

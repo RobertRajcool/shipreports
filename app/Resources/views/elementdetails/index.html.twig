@@ -254,6 +254,8 @@
                 var showComparisonTableBody = $('.show-comparison-table-body');
                 var comparisonTableShowClass = $('.comparison-table-show-class');
                 var baseValue = $('.base-value-show');
+                var elementCreatedBy = $('.element_created_by');
+                var elementCreatedOn = $('.element_created_on');
 
                 function emptyDetailsFunction(data) {
                     kpiName.empty();
@@ -276,11 +278,16 @@
                     editFirstSubElement.empty();
                     editSecondSubElement.empty();
                     baseValue.empty();
+                    elementCreatedBy.empty();
+                    elementCreatedOn.empty();
+
                 }
 
                 function setShowValueFunction(data, monthNames, active_date, end_date) {
                     kpiName.append(data.kpi_name[0].kpiName);
                     elementName.append(data.element_detail[0].elementName);
+                    elementCreatedBy.append(data.userDetail[0].username);
+                    elementCreatedOn.append(data.element_detail[0].dateTime.date);
                     elementDescription.append(data.element_detail[0].description);
                     elementWeight.append(data.element_detail[0].weightage);
                     elementCellName.append(data.element_detail[0].cellName);
@@ -1532,6 +1539,14 @@
                                     <sapn class=" element_activeDate_year"></sapn>
                                     <strong> {{ 'kpi.to'|trans }} </strong> <span class=" element_endDate_month "></span>-<span class="  element_endDate_year"></span></label>
                             </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Created by :</strong></label>
+                            <label class="form_input element_created_by"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Created on :</strong></label>
+                            <label class="form_input element_created_on"> </label>
                         </div>
                         <div class="form_view">
                             <label class="form_labell"><strong>{{ 'vessel.description'|trans }} :</strong></label>

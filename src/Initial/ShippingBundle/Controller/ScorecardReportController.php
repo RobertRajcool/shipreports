@@ -194,7 +194,7 @@ class ScorecardReportController extends Controller
                     array_push($monthlyScorecardElementColorArray, $scorecardElementColorArray);
                 }
                 array_push($monthlyScorecardKpiColorArray, $scorecardKpiColorArray);
-                array_push($monthlyKpiAverageValueTotal, $monthlyScorecardKpiWeightAverageValueTotal);
+                array_push($monthlyKpiAverageValueTotal, (float)bcdiv($monthlyScorecardKpiWeightAverageValueTotal,1,3));
                 array_push($overallMonthlyElementColorArray, $monthlyScorecardElementColorArray);
                 array_push($overallMonthlyKpiSumValue, $monthlyKpiSumValue);
             }
@@ -291,8 +291,17 @@ class ScorecardReportController extends Controller
             $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 2.5 -width 1024';
             $fileHandle = popen($imageGeneration, 'r');
             $result = fread($fileHandle, 2096);
+            return $this->render('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
+                array(
+                    'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
+                    'kpiAvgScore' => $returnObject['kpiAvgScore'],
+                    'monthName' => $returnObject['monthName'],
+                    'kpiNameList' => $returnObject['kpiNameList'],
+                    'imageSource' => 'graphImage' . $todayDate . $todayTime . '.png',
+                    'headerTitle' => 'Pioneer Scorecard Report'
+                ));
 
-            $customerListDesign = $this->renderView('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
+            /*$customerListDesign = $this->renderView('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
                 array(
                     'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
                     'kpiAvgScore' => $returnObject['kpiAvgScore'],
@@ -366,7 +375,7 @@ class ScorecardReportController extends Controller
             $content = $pdfObject->Output('', 'S');
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
-            return $response;
+            return $response;*/
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }

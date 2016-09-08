@@ -59,6 +59,20 @@ class ScorecardDataImport
      */
     private $folderId;
 
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="kpiDetailsId", type="integer",  nullable=true)
+     */
+    private $kpiDetailsId;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="elementDetailsId", type="integer",  nullable=true)
+     */
+    private $elementDetailsId;
+
 
     /**
      * Get id
@@ -181,6 +195,39 @@ class ScorecardDataImport
     {
         $this->folderId = $folderId;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getKpiDetailsId()
+    {
+        return $this->kpiDetailsId;
+    }
+
+    /**
+     * @param \DateTime $kpiDetailsId
+     */
+    public function setKpiDetailsId($kpiDetailsId)
+    {
+        $this->kpiDetailsId = $kpiDetailsId;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getElementDetailsId()
+    {
+        return $this->elementDetailsId;
+    }
+
+    /**
+     * @param \DateTime $elementDetailsId
+     */
+    public function setElementDetailsId($elementDetailsId)
+    {
+        $this->elementDetailsId = $elementDetailsId;
+    }
+
 
 }
 

@@ -1372,6 +1372,8 @@ class DashboradController extends Controller
                 ->groupby('a.kpiName')
                 ->getQuery()
                 ->getResult();
+            $kpiLevelExcelArray = array();
+            $elementLevelExcelArray = array();
             $monthLetterArray = array();
             $monthlyScorecardKpiColorArray = array();
             $monthlyKpiAverageValueTotal = array();
@@ -1395,6 +1397,13 @@ class DashboradController extends Controller
                         $scorecardKpiWeight = $scorecardKpiList[$kpiCount]['weightage'];
                         $scorecardKpiName = $scorecardKpiList[$kpiCount]['kpiName'];
                         $queryBuilder_obj = $em->createQueryBuilder();
+                        $kpiLevelExcelQuery = $queryBuilder_obj
+                            ->select('a.id, a.fileName')
+                            ->from('InitialShippingBundle:ScorecardDataImport', 'a')
+                            ->where('a.kpiDetailsId = :kpiId')
+                            ->setParameter('kpiId', $scorecardKpiId)
+                            ->getQuery()
+                            ->getResult();
                         $scorecardElementArray = $queryBuilder_obj ->select('c.id, c.weightage, c.elementName')
                             ->from('InitialShippingBundle:ElementDetails', 'c')
                             ->where('c.kpiDetailsId = :kpiId')
