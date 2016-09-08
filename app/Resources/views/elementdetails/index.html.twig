@@ -278,12 +278,16 @@
                     editFirstSubElement.empty();
                     editSecondSubElement.empty();
                     baseValue.empty();
+                    elementCreatedBy.empty();
+                    elementCreatedOn.empty();
+
                 }
 
                 function setShowValueFunction(data, monthNames, active_date, end_date) {
                     kpiName.append(data.kpi_name[0].kpiName);
                     elementName.append(data.element_detail[0].elementName);
-                    elementCreatedBy.append(data.element_detail[0].userDetail);
+                    elementCreatedBy.append(data.userDetail[0].username);
+                    elementCreatedOn.append(data.element_detail[0].dateTime.date);
                     elementDescription.append(data.element_detail[0].description);
                     elementWeight.append(data.element_detail[0].weightage);
                     elementCellName.append(data.element_detail[0].cellName);
