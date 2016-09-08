@@ -264,6 +264,7 @@ class KpiDetailsController extends Controller
     {
         $user = $this->getUser();
         if ($user != null) {
+            $userId = $user->getId();
             $params = $request->request->get('kpi_details');
             $kpiName = $params['kpiName'];
             $shipDetailsId = $params['shipDetailsId'];
@@ -277,6 +278,7 @@ class KpiDetailsController extends Controller
             $cellDetails = $params['cellDetails'];
             $weightage = $params['weightage'];
             $day = 1;
+            $today = new \DateTime();
 
             $monthtostring = $activeYear . '-' . $activeMonth . '-' . $day;
             $new_date = new \DateTime($monthtostring);
@@ -296,6 +298,8 @@ class KpiDetailsController extends Controller
                 $kpidetails->setCellName($cellName);
                 $kpidetails->setCellDetails($cellDetails);
                 $kpidetails->setWeightage($weightage);
+                $kpidetails->setDateTime($today);
+                $kpidetails->setUserId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:User')->findOneBy(array('id' => $userId)));
                 $em->persist($kpidetails);
                 $em->flush();
 
@@ -390,7 +394,7 @@ class KpiDetailsController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $query = $em->createQueryBuilder()
-                ->select('a.id', 'a.kpiName', 'a.weightage', 'a.description', 'a.activeDate', 'a.endDate', 'a.cellName', 'a.cellDetails')
+                ->select('a.id', 'a.kpiName', 'a.weightage', 'a.description', 'a.activeDate', 'a.endDate', 'a.cellName', 'a.cellDetails', 'identity(a.userId)', 'a.dateTime')
                 ->from('InitialShippingBundle:KpiDetails', 'a')
                 ->where('a.id = :kpi_id')
                 ->setParameter('kpi_id', $id)
@@ -447,13 +451,25 @@ class KpiDetailsController extends Controller
             }
             $shipDetails = $ship_query->getResult();
 
+            $userDetail= "";
+            if($kpiDetail[0][1]!="") {
+                $userDetailQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.username')
+                    ->from('InitialShippingBundle:User', 'a')
+                    ->where('a.id = :id')
+                    ->setParameter('id', $kpiDetail[0][1])
+                    ->getQuery();
+                $userDetail = $userDetailQuery->getResult();
+            }
+
             $response = new JsonResponse();
             $response->setData(array(
                 'kpi_detail' => $kpiDetail,
                 'ship_id' => $ship_id_array,
                 'ship_name' => $ship_name_array,
                 'kpi_rules' => $rules,
-                'ship_array' => $shipDetails
+                'ship_array' => $shipDetails,
+                'userDetail' => $userDetail
             ));
 
             if ($hi == 'hi') {

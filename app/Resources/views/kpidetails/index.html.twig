@@ -204,6 +204,8 @@
                 var endMonth = $('.kpi_endDate_month');
                 var endYear = $('.kpi_endDate_year');
                 var editShipName = $('.ship_name_edit');
+                var kpiCreatedBy = $('.kpi_created_by');
+                var kpiCreatedOn = $('.kpi_created_on');
 
                 var condition_text = "";
                 var count = 0;
@@ -262,6 +264,8 @@
                     validDate.empty();
                     editWeightError.empty();
                     createKpiErrorMsg.empty();
+                    kpiCreatedBy.empty();
+                    kpiCreatedOn.empty();
                 }
 
                 function successFunction(data) {
@@ -269,6 +273,8 @@
                     var active_date = new Date(data.kpi_detail[0].activeDate.date);
                     var end_date = new Date(data.kpi_detail[0].endDate.date);
                     kpiName.append(data.kpi_detail[0].kpiName);
+                    kpiCreatedBy.append(data.userDetail[0].username);
+                    kpiCreatedOn.append(data.kpi_detail[0].dateTime.date);
                     kpiDescription.append(data.kpi_detail[0].description);
                     kpiWeight.append(data.kpi_detail[0].weightage);
                     kpiCellName.append(data.kpi_detail[0].cellName);
@@ -1136,6 +1142,14 @@
                         <div class="form_view">
                             <label class="form_labell"><strong>{{ 'vessel.description'|trans }} :</strong></label>
                             <label class="form_input kpi_description"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Created by :</strong></label>
+                            <label class="form_input kpi_created_by"> </label>
+                        </div>
+                        <div class="form_view">
+                            <label class="form_labell"><strong>Created on :</strong></label>
+                            <label class="form_input kpi_created_on"> </label>
                         </div>
                         <div class="form_view">
                             <label class="form_labell"><strong>{{ 'kpi.valid'|trans }} :</strong></label>
