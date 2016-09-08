@@ -22,6 +22,12 @@
                 $('#initial_shipping_scorecard_data_import_monthDetail_day').hide();
                 var kpiSelectClass = $('.data-import-kpi-select-class');
                 var elementSelectClass = $('.data-import-element-select-class');
+                var vesselSelectClass = $('.data-import-vessel-select-class');
+                var importOptionClass = $('.import-option-class');
+                var checkBoxId = $('#check');
+                /*var checkOptionYesClass = $('.check-option-yes-class');
+                var checkOptionNoClass = $('.check-option-no-class');
+                importOptionClass.hide();*/
                 kpiSelectClass.change(function($e) {
                     $e.preventDefault();
                     var data = {
@@ -54,10 +60,37 @@
                         }
                     });
                 });
-//                elementSelectClass.live('click',function($e) {
-//                    $e.preventDefault();
-//                    console.log(kpiSelectClass.val());
-//                });
+                /*checkOptionNoClass.live('click',function($e) {
+                    if (checkOptionYesClass.is(':checked') == true) {
+                        checkOptionYesClass.not('.check-option-no-class').removeAttr('selected');
+                    }
+                    if (checkOptionNoClass.is(':checked') == true) {
+                        checkOptionNoClass.removeAttr('selected');
+                        importOptionClass.show();
+                    } else {
+                        importOptionClass.hide();
+                    }
+                });
+                checkOptionYesClass.live('click',function($e) {
+                    if (checkOptionNoClass.is(':checked') == true) {
+                        checkOptionNoClass.not('.check-option-yes-class').attr('selected', false);
+                    }
+                    if (checkOptionYesClass.is(':checked') == true) {
+                        checkOptionNoClass.attr('selected', 'selected');
+                        importOptionClass.hide();
+                    } else {
+                        importOptionClass.hide();
+                    }
+                });*/
+                checkBoxId.live('click',function(){
+                    var shipNameOptions = $('.data-import-vessel-select-class option');
+                    if (checkBoxId.is(':checked') == true) {
+                        shipNameOptions.attr('selected', true);
+                    }
+                    else {
+                        shipNameOptions.attr('selected', false);
+                    }
+                });
             });
         </script>
     {% endblock %}
@@ -70,27 +103,44 @@
                     <fieldset class="fieldset_box add_rule_form">
                         <legend class="legend_name">Data Import</legend>
                         <div class="form-group">
-                            <label class="control-label col-xs-4">Select File</label>
+                            <label class="control-label required_field col-xs-4"><strong>Select File</strong></label>
                             <div class="col-xs-8">
                                 {{ form_widget(form.fileName) }}
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-xs-4">Select Month</label>
+                            <label class="control-label required_field col-xs-4"><strong>Select Month</strong></label>
                             <div class="col-xs-8">
                                 {{ form_widget(form.monthDetail) }}
                             </div>
                         </div>
                         {#<div class="form-group">
-                            <label class="control-label col-xs-4">Import options ?</label>
+                            <label class="control-label col-xs-4">Common for all ?</label>
                             <div class="col-xs-8">
-                                <input type="checkbox"><label class="checkbox_text">Yes</label>
+                                <div class="select_all">
+                                    <label class="checkbox">
+                                        <input type="checkbox" class="check-option-yes-class" value="yes" name="option-detail">
+                                    </label>
+                                    <label class="checkbox_text">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div class="select_all">
+                                    <label class="checkbox"  style="margin-left: 25px">
+                                        <input type="checkbox" class="check-option-no-class" value="no" name="option-detail">
+                                    </label>
+                                    <label class="checkbox_text">
+                                        No
+                                    </label>
+                                </div>
+                                #}{#<input type="radio" class="check-option-class" value="yes" name="option-detail"><label>Yes</label>
+                                <input type="radio" class="check-option-class" value="no" name="option-detail"><label>No</label>#}{#
                             </div>
                         </div>#}
-                        <div class="form-group">
-                            <label class="control-label col-xs-4">Select KPI</label>
+                        <div class="form-group import-option-class">
+                            <label class="control-label required_field col-xs-4"><strong>Select KPI</strong></label>
                             <div class="col-xs-8">
-                                <select class="data-import-kpi-select-class">
+                                <select class="data-import-kpi-select-class" name="kpis" required>
                                     <option value="0">--select--</option>
                                     {% for kpiDetail in kpiDetails %}
                                         <option value={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</option>
@@ -98,12 +148,30 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label col-xs-4">Select Element</label>
+                        <div class="form-group import-option-class">
+                            <label class="control-label col-xs-4"><strong>Select Element</strong></label>
                             <div class="col-xs-8">
-                                <select class="data-import-element-select-class">
+                                <select class="data-import-element-select-class" name="elements">
                                     <option value="0">--select--</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="form-group import-option-class">
+                            <label class="control-label col-xs-4"><strong>Select Vessels</strong></label>
+                            <div class="col-xs-8">
+                                <select class="data-import-vessel-select-class" multiple="multiple" name="vessels[]">
+                                    {% for shipDetail in shipDetails %}
+                                        <option value={{ shipDetail.id }}>{{ shipDetail.shipName }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="select_all">
+                                    <label class="checkbox">
+                                        <input type="checkbox" class="check" id="check">
+                                    </label>
+                                    <label class="checkbox_text">
+                                        Select all
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </fieldset>

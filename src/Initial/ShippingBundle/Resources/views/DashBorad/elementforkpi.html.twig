@@ -484,7 +484,9 @@
                         success: function(data) {
                             monthNumber = data.monthNumber;
                             originalDataTableClass.empty();
-                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"><th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th></tr></thead>').appendTo(originalDataTableClass);
+                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"></tr></thead>').appendTo(originalDataTableClass);
+                            $('<th class="kpi_lement_name"><a data-toggle="modal" data-target="#myModal" class="supported-files-show-btn" style="cursor:pointer;">Supported Files</a></th>').appendTo($('#original-data-head-row'));
+                            $('<th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo($('#original-data-head-row'));
                             $.each(data.shipDetail, function(i,ship) {
                                 $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">'+ship.shipName+'</div></th>').appendTo($('#original-data-head-row'));
                             });
@@ -515,6 +517,76 @@
                         }
                     });
                 });
+
+                var supportedFilesShowBtn = $('.supported-files-show-btn');
+                var supportedFilesModalHeader = $('.supported-files-modal-header');
+                var fileContents = $('.file-content');
+                supportedFilesShowBtn.live('click', function() {
+                    supportedFilesModalHeader.empty();
+                    supportedFilesModalHeader.append('Supported files for May month');
+                    var data = {
+                        monthNumber:monthNumber,
+                        kpiDetailsId:{{ kpiid }}
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"findfilesforkpi",/*Routing.generate('findfilesforkpi'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            fileContents.empty();
+                            if(data.fileDetails.length>0) {
+                                $('<ul></ul>').appendTo(fileContents);
+                                $.each(data.fileDetails, function (i, filelistobject) {
+                                    var pathInTwigFormat = "{{ path('file_download', { 'id': 'value'}) }}";
+                                    var pathName = pathInTwigFormat.replace("value",filelistobject.id);
+                                    $('<li>'+filelistobject.fileName+'<a href="'+pathName+'" id="'+filelistobject.id+'" class="file-download-class" style="float: right;cursor: pointer">Download</a></li>').appendTo(fileContents);
+                                })
+                            } else {
+                                fileContents.append("No files or available");
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                /*var fileDownloadClass = $('.file-download-class');
+                fileDownloadClass.live('click',function() {
+                    var data = {
+                        fileId : $(this).attr('id')
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:/!*"file_download",*!/Routing.generate('file_download'),
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });*/
+
 
                 var previousMonth = $('.previous-month');
                 var nextMonth = $('.next-month');
@@ -885,6 +957,40 @@
             </fieldset>
             {# <a href="{{ path('scorecard_report_pdfReport_mail',{ 'activeMonth': appsCountry.id }) }}">link-check</a>#}
             <!--Form for Send Reports Ends Here  -->
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog model_content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title supported-files-modal-header"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="file-content">
+
+                        </div>
+                    </div>
+                    {#<div class="modal-body">
+                        <form class="form-horizontal no-style" method="post">
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">Symbol Name</label>
+                                <div class="col-xs-9">
+                                    <input type="text" class="send_reports_to_input symbol_name" name="symbol-name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required_field col-xs-3">Symbol Indication</label>
+                                <div class="col-xs-9">
+                                    <input type="text" class="send_reports_to_input symbol_indication" name="symbol-name" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="symbol-add-id" class="actions_report_btn">Add</button>fileDetails
+                    </div>#}
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
         </div>
     </div>
 {% endblock %}

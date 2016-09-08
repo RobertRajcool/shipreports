@@ -60,18 +60,25 @@ class ScorecardDataImport
     private $folderId;
 
     /**
-     * @var \DateTime
+     * @var integer
      *
      * @ORM\Column(name="kpiDetailsId", type="integer",  nullable=true)
      */
     private $kpiDetailsId;
 
     /**
-     * @var \DateTime
+     * @var integer
      *
      * @ORM\Column(name="elementDetailsId", type="integer",  nullable=true)
      */
     private $elementDetailsId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="vesselId", type="string",  nullable=true)
+     */
+    private $vesselId;
 
 
     /**
@@ -197,7 +204,7 @@ class ScorecardDataImport
     }
 
     /**
-     * @return \DateTime
+     * @return int
      */
     public function getKpiDetailsId()
     {
@@ -205,7 +212,7 @@ class ScorecardDataImport
     }
 
     /**
-     * @param \DateTime $kpiDetailsId
+     * @param int $kpiDetailsId
      */
     public function setKpiDetailsId($kpiDetailsId)
     {
@@ -213,7 +220,7 @@ class ScorecardDataImport
     }
 
     /**
-     * @return \DateTime
+     * @return int
      */
     public function getElementDetailsId()
     {
@@ -221,11 +228,28 @@ class ScorecardDataImport
     }
 
     /**
-     * @param \DateTime $elementDetailsId
+     * @param int $elementDetailsId
      */
     public function setElementDetailsId($elementDetailsId)
     {
         $this->elementDetailsId = $elementDetailsId;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getVesselId()
+    {
+        return $this->vesselId;
+    }
+
+    /**
+     * @param string $vesselId
+     */
+    public function setVesselId($vesselId)
+    {
+        $this->vesselId = $vesselId;
     }
 
 

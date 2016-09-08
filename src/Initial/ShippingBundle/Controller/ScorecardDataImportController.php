@@ -143,6 +143,14 @@ class ScorecardDataImportController extends Controller
                         ->orderby('a.id')
                         ->setParameter('userId', $userId)
                         ->getQuery();
+                    $vesselQuery = $em->createQueryBuilder()
+                        ->select('a.id','a.shipName')
+                        ->from('InitialShippingBundle:ShipDetails', 'a')
+                        ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                        ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                        ->where('c.id = :userId')
+                        ->setParameter('userId', $userId)
+                        ->getQuery();
                 } else {
                     $query = $em->createQueryBuilder()
                         ->select('a')
@@ -154,14 +162,23 @@ class ScorecardDataImportController extends Controller
                         ->orderby('a.id')
                         ->setParameter('userId', $userId)
                         ->getQuery();
+                    $vesselQuery = $em->createQueryBuilder()
+                        ->select('a.id','a.shipName')
+                        ->from('InitialShippingBundle:ShipDetails', 'a')
+                        ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                        ->where('b.id = :userId')
+                        ->setParameter('userId', $userId)
+                        ->getQuery();
                 }
 
                 $kpiDetails = $query->getResult();
+                $shipDetails = $vesselQuery->getResult();
 
                 return $this->render('scorecarddataimport/index.html.twig', array(
                     'form' => $form->createView(),
                     'template'=>$template,
-                    'kpiDetails' => $kpiDetails
+                    'kpiDetails' => $kpiDetails,
+                    'shipDetails' => $shipDetails
                 ));
             }
         }
@@ -193,6 +210,10 @@ class ScorecardDataImportController extends Controller
             $em = $this->getDoctrine()->getManager();
             $userId=$user->getId();
             $dataImportObj = new ScorecardDataImport();
+            $vesselArray = $request->request->get('vessels');
+            $vesselString = implode(',',$vesselArray);
+            $kpiId = $request->request->get('kpis');
+            $elementId = $request->request->get('elements');
             $excelobj = new Excel_file_details();
             $form = $this->createCreateForm($dataImportObj);
             $form->handleRequest($request);
@@ -228,6 +249,9 @@ class ScorecardDataImportController extends Controller
                     $dataImportObj->setMonthDetail($lastDayOfMonth);
                     $dataImportObj->setDateTime($dateTimeObj);
                     $dataImportObj->setFolderId($folderId[0]);
+                    $dataImportObj->setVesselId($vesselString);
+                    $dataImportObj->setKpiDetailsId($kpiId);
+                    $dataImportObj->setElementDetailsId($elementId);
                     $username = $user->getUsername();
                     $role = $user->getRoles();
                     if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
