@@ -6,13 +6,58 @@
           {% javascripts '@InitialShippingBundle/Resources/public/js/*' %}
           <script src="{{ asset_url }}"></script>
           {% endjavascripts %}
-     {#  {% javascripts '@InitialShippingBundle/Resources/public/js/rules/*' %}
-         <script src="{{ asset_url }}"></script>
-         {% endjavascripts %}#}
 
+         <script>
+             $(document).ready(function() {
+                 $('#initial_shipping_scorecard_data_import_monthDetail_day').hide();
+                 var kpiSelectClass = $('.data-import-kpi-select-class');
+                 var elementSelectClass = $('.data-import-element-select-class');
+                 var checkBoxId = $('#check');
+                 kpiSelectClass.change(function($e) {
+                     $e.preventDefault();
+                     var data = {
+                         kpiDetailsId: kpiSelectClass.val()
+                     };
+                     $.ajaxSetup({
+                         global: false,
+                         type: "post",
+                         url: /*Routing.generate('ranking_data_import_find_element'),*/"ranking_data_import_find_element",
+                         beforeSend: function () {
+                             var setAjaxBeforeSend = ajaxbefore_send();
+                         },
+                         complete: function () {
+                             var setAjaxComplete = ajax_complete();
+                         }
+                     });
+                     $.ajax({
+                         data: data,
+                         success: function (data) {
+                             console.log(data);
+                             $('#data-import-element-select-class option:gt(0)').remove();
+                             $.each(data.elementDetails, function (i, elementList) {
+                                 elementSelectClass.append($('<option>', {
+                                     value: elementList.id, text: elementList.elementName
+                                 }));
+                             });
+                         },
+                         error: function (XMLHttpRequest, textStatus, errorThrown) {
+                             alert('Error : ' + errorThrown);
+                         }
+                     });
+                 });
+                 checkBoxId.live('click',function(){
+                     var shipNameOptions = $('.data-import-vessel-select-class option');
+                     if (checkBoxId.is(':checked') == true) {
+                         shipNameOptions.attr('selected', true);
+                     }
+                     else {
+                         shipNameOptions.attr('selected', false);
+                     }
+                 });
+             });
+         </script>
 
-
-      {% endblock %}
+     {% endblock %}
 
             <section>
                 <div class="col-sm-12">
@@ -23,15 +68,52 @@
                                 <fieldset class="fieldset_box add_rule_form">
                                     <legend class="legend_name">Data import</legend>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-4">Select file</label>
+                                        <label class="control-label required_field col-xs-4"><strong>Select file</strong></label>
                                         <div class="col-xs-8">
                                             {{ form_widget(form.filename,{'id' :'fileid'},{'label' :'Choose File'}, { 'attr': {'class': 'fileid1'} }) }}
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-xs-4">Date of month</label>
+                                        <label class="control-label required_field col-xs-4"><strong>Date of month</strong></label>
                                         <div class="col-xs-8">
                                             {{ form_widget(form.dataofmonth) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group import-option-class">
+                                        <label class="control-label required_field col-xs-4"><strong>Select KPI</strong></label>
+                                        <div class="col-xs-8">
+                                            <select class="data-import-kpi-select-class" name="kpis" required>
+                                                <option value="0">--select--</option>
+                                                {% for kpiDetail in kpiDetails %}
+                                                    <option value={{ kpiDetail.id }}>{{ kpiDetail.kpiName }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group import-option-class">
+                                        <label class="control-label col-xs-4"><strong>Select Element</strong></label>
+                                        <div class="col-xs-8">
+                                            <select class="data-import-element-select-class" name="elements">
+                                                <option value="0">--select--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group import-option-class">
+                                        <label class="control-label col-xs-4"><strong>Select Vessels</strong></label>
+                                        <div class="col-xs-8">
+                                            <select class="data-import-vessel-select-class" multiple="multiple" name="vessels[]">
+                                                {% for shipDetail in shipDetails %}
+                                                    <option value={{ shipDetail.id }}>{{ shipDetail.shipName }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="select_all">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" class="check" id="check">
+                                                </label>
+                                                <label class="checkbox_text">
+                                                    Select all
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </fieldset>

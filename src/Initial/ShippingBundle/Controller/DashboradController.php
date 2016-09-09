@@ -1080,7 +1080,11 @@ class DashboradController extends Controller
                         ->setParameter('shipId',$shipDetails[$i]['id'])
                         ->getQuery()
                         ->getResult();
-                    $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                    if(count($elementOriginalValues)>0) {
+                        $elementOriginalValuesArray[$i][$j]=$elementOriginalValues[0]['value'];
+                    } else {
+                        $elementOriginalValuesArray[$i][$j]='';
+                    }
                 }
             }
             $response = new JsonResponse();
@@ -1559,6 +1563,57 @@ class DashboradController extends Controller
                 ->from('InitialShippingBundle:ScorecardDataImport', 'a')
                 ->where('a.kpiDetailsId = :kpiId and a.monthDetail = :monthdetail')
                 ->setParameter('kpiId', $kpiDetailsId)
+                ->setParameter('monthdetail', $da)
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'fileDetails' => $fileDetails,
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
+     * List all element for kpi
+     *
+     * @Route("/{id}/findfilesforkpiranking", name="findfilesforkpiranking")
+     */
+    public function findFilesForKpiRankingAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $monthInNumber = $request->request->get('monthNumber');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $da = new \DateTime(date('01-'.$monthInNumber.'-Y'));
+            $da->modify('last day of this month');
+
+            $kpiNameQuery = $em->createQueryBuilder()
+                ->select('a.kpiName')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.id = :kpiId ')
+                ->setParameter('kpiId', $kpiDetailsId)
+                ->getQuery()
+                ->getResult();
+
+            $kpiIdQuery = $em->createQueryBuilder()
+                ->select('a.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.kpiName = :kpiName ')
+                ->setParameter('kpiName', $kpiNameQuery[0]['kpiName'])
+                ->orderby('a.id')
+                ->getQuery()
+                ->getResult();
+
+            $fileDetails = $em->createQueryBuilder()
+                ->select('a.filename, a.id')
+                ->from('InitialShippingBundle:Excel_file_details', 'a')
+                ->where('a.kpiDetailsId = :kpiId and a.dataOfMonth = :monthdetail')
+                ->setParameter('kpiId', $kpiIdQuery[0]['id'])
                 ->setParameter('monthdetail', $da)
                 ->getQuery()
                 ->getResult();

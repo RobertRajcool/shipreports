@@ -2198,6 +2198,7 @@ class DataVerficationController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         }
         else {
+            $em = $this->getDoctrine()->getManager();
             $userId = $user->getId();
             $username = $user->getUsername();
             $role = $user->getRoles();
@@ -2209,10 +2210,85 @@ class DataVerficationController extends Controller
                 $templatechoosen = 'v-ships_layout.html.twig';
             }
 
+            if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:ShipDetails', 'd', 'WITH', 'd.id = a.shipDetailsId')
+                    ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = d.companyDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                    ->where('c.id = :userId')
+                    ->groupby('a.kpiName')
+                    ->orderby('a.id')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+                $vesselQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.shipName')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'c', 'WITH', 'c.username = b.adminName')
+                    ->where('c.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            } else {
+                $query = $em->createQueryBuilder()
+                    ->select('a')
+                    ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:ShipDetails', 'c', 'WITH', 'c.id = a.shipDetailsId')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = c.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->groupby('a.kpiName')
+                    ->orderby('a.id')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+                $vesselQuery = $em->createQueryBuilder()
+                    ->select('a.id','a.shipName')
+                    ->from('InitialShippingBundle:ShipDetails', 'a')
+                    ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                    ->where('b.id = :userId')
+                    ->setParameter('userId', $userId)
+                    ->getQuery();
+            }
+
+            $kpiDetails = $query->getResult();
+            $shipDetails = $vesselQuery->getResult();
 
             return $this->render('InitialShippingBundle:DataImportRanking:excelfile.html.twig', array(
-                'form' => $form->createView(),'template'=>$templatechoosen
+                'form' => $form->createView(),'template'=>$templatechoosen,
+                'kpiDetails' => $kpiDetails,
+                'shipDetails' => $shipDetails
             ));
+        }
+    }
+
+    /**
+     * Lists all RankingDataImport entities.
+     *
+     * @Route("/ranking_data_import_find_element", name="ranking_data_import_find_element")
+     */
+    public function findElementAction(Request $request)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $kpiId = $request->get('kpiDetailsId');
+            $em = $this->getDoctrine()->getManager();
+            $query = $em->createQueryBuilder()
+                ->select('a.id,a.elementName')
+                ->from('InitialShippingBundle:RankingElementDetails', 'a')
+                ->where('a.kpiDetailsId = :kpiId')
+                ->setParameter('kpiId', $kpiId)
+                ->getQuery();
+
+            $elementDetails = $query->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'elementDetails' => $elementDetails
+            ));
+
+            return $response;
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
         }
     }
 
@@ -2229,6 +2305,10 @@ class DataVerficationController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         } else {
             $userid=$user->getId();
+            $vesselArray = $request->request->get('vessels');
+            $vesselString = implode(',',$vesselArray);
+            $kpiId = $request->request->get('kpis');
+            $elementId = $request->request->get('elements');
             $excelobj = new Excel_file_details();
             //$uploadsucess=false;
             $form = $this->createCreateForm($excelobj);
@@ -2273,77 +2353,12 @@ class DataVerficationController extends Controller
                     $nowdatetime = new \DateTime($nowdate1);
                     $excelobj->setDatetime($nowdatetime);
                     $excelobj->setDataOfMonth($myexcelnewdatevalue);
+                    $excelobj->setElementDetailsId($elementId);
+                    $excelobj->setKpiDetailsId($kpiId);
+                    $excelobj->setVesselId($vesselString);
                     $em->persist($excelobj);
                     $em->flush();
                 }
-
-
-                /*   $inputFileType = "";
-
-                 switch ($ext) {
-                     case "xls":
-                         $inputFileType = 'Excel5';
-                         break;
-                     case "xlsx":
-                         $inputFileType = 'Excel2007';
-                         break;
-
-                 }
-
-
-               // Creating Excel Sheet Objects....//
-
-                 $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-                 $objReader->setLoadAllSheets();
-                 $objPHPExcel = $objReader->load($input);
-
-                 $objWorksheet = $objPHPExcel->getActiveSheet();
-                 $sheetCount = $objPHPExcel->getSheetCount();
-                 $cre = "";
-
-
-                 if ($sheetCount == 1) {
-                     $user = $this->getUser();
-                     $userId = $user->getId();
-                     $dataofmonthstring = $mydatevalue->format('Y-m-d');
-                     $gearmandataarray = array('filename' => $fileName, 'dataofmonth' => $dataofmonthstring, 'userid' => $userId, 'filetype' => $inputFileType);
-                     $gearman = $this->get('gearman');       //$datafromuser=array();
-                     $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~readexcelsheet', json_encode($gearmandataarray));
-                     $msg = "Your Document Has Been verfication.After Verfication Your File Data Has been Reading.";
-
-
-                     return $this->render(
-                         'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                         array('creator' => $cre, 'msg' => $msg)
-                     );
-
-                 }
-                 if ($sheetCount > 1) {
-
-                     $message = \Swift_Message::newInstance()
-                         ->setFrom('lawrance@commusoft.co.uk')
-                         ->setTo($useremailid)
-                         ->setSubject("Your Document having more than One Sheets!!!!")
-                         ->setBody("Your Document having more than One Sheets!!!!");
-                     $message->attach(\Swift_Attachment::fromPath($input)->setFilename($excelobj->getFilename()));
-                     $mailer->send($message);
-                     $loadedSheetNames = $objPHPExcel->getSheetNames();
-                     $excelobj->removeUpload($input);
-
-                     $this->addFlash(
-                         'notice',
-                         'Your Document having more than One Sheets.so document resend to Your Mail. Check Your Mail!!!'
-                     );
-
-                     return $this->render(
-                         'InitialShippingBundle:DataImportRanking:showmessage.html.twig',
-                         array('creator' => $cre, 'msg' => 'Number of Sheets: ' . $sheetCount)
-                     );
-                 }
-
-             }*/
-
-
             }
 
             $cre = "File upload!!!!!!!!!";
