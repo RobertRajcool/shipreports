@@ -1,6 +1,6 @@
 /web/bundles/
 /app/bootstrap.php.cache
-/app/cache/*
+/app/cache/* /*.php
 /app/config/parameters.yml
 /app/logs/*
 !app/cache/.gitkeep
@@ -13,3 +13,35 @@
 .idea
 composer.lock
 /web/uploads
+web/phantomjs/afc.png
+web/phantomjs/af.png
+web/phantomjs/afterimage.png
+web/phantomjs/bin
+web/phantomjs/chart.json
+web/phantomjs/eslint-default-config.yml
+web/phantomjs/ffff.png
+web/phantomjs/finalimage.png
+web/phantomjs/first.png
+web/phantomjs/highcharts-convert.js
+web/phantomjs/highcharts.js
+web/phantomjs/install.js
+web/phantomjs/jquery.1.9.1.min.js
+web/phantomjs/lib
+web/phantomjs/LICENSE.txt
+web/phantomjs/listofgraph
+web/phantomjs/listofjsonfiles
+web/phantomjs/newtestnewchart.png
+web/phantomjs/node_modules
+web/phantomjs/open
+web/phantomjs/package.json
+web/phantomjs/phantomjs
+web/phantomjs/pioneer_logo.png
+web/phantomjs/readme.md
+web/phantomjs/README.md
+web/phantomjs/scorecard
+web/phantomjs/test
+web/phantomjs/testjsonnew.json
+web/phantomjs/testnewchart.png
+/root/* /*.php
+root/m4t1t0
+root/mmoreram

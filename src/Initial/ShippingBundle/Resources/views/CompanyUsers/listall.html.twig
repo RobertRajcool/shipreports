@@ -22,9 +22,7 @@
             color:white;
         }
     </style>
-
     {% block javascripts %}
-
         {% javascripts
         '@AppBundle/Resources/public/js/AAA.js'
         '@AppBundle/Resources/public/js/demo.js'
@@ -33,8 +31,6 @@
         '@AppBundle/Resources/public/js/sample.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-
-
         <script type="text/javascript">
             $(document).ready(function () {
                 var createView= $('.create_view');
@@ -46,16 +42,11 @@
                 var gridView= $('#grid_view');
                 var editEmailName;
                 var editMobileName;
-
-
-
                 createView.show();
                 listView.hide();
                 showView.hide();
                 editView.hide();
                 boxIcon.hide();
-
-
                 boxIcon.click(function ($e) {
                     $e.preventDefault();
                     listView.hide();
@@ -125,22 +116,14 @@
                     count++;
                     var currentId = $(this).attr('id');
                     var data = {Id: currentId};
-                    /*if (count > 1) {
-
-                     }*/
-
-
-
                     var userName= $('.user_name');
                     var userEmail=$('.user_email');
                     var userMobile=$('.user_mobile');
                     var userRoles= $('.user_roles');
-
                     userName.empty();
                     userEmail.empty();
                     userMobile.empty();
                     userRoles.empty();
-
                     $.ajaxSetup({
                         global: false,
                         type: "POST",
@@ -160,9 +143,6 @@
                             editView.hide();
                             createView.hide();
                             showView.show();
-
-
-
                             userName.append(data.User_detail[0].username);
                             userEmail.append(data.User_detail[0].email);
                             userMobile.append(data.User_detail[0].mobile);
@@ -182,18 +162,11 @@
                             {
                                 $("#tempimageid").attr('src', '/images/nouser.png');
                             }
-
-
-
-
-
-
                             $('.edit_user_id').val(data.User_detail[0].id);
                             $('.edit_username').val(data.User_detail[0].username);
                             $('.edit_email').val(data.User_detail[0].email);
                             $('.edit_mobile').val(data.User_detail[0].mobile);
                             $('.edit_fullname').val(data.User_detail[0].fullname);
-
                             var rolesvalue=data.User_detail[0].roles[0];
                             if(rolesvalue=='ROLE_KPI_INFO_PROVIDER')
                             {
@@ -258,7 +231,6 @@
                         }
                     });
                 });
-
                 var editEmail = $('#mail');
                 var  editEmailError = ('#edit-mail');
                 editEmail.change(function($e) {
@@ -380,12 +352,7 @@
                             alert('Error : ' + errorThrown);
                         }
                     });
-
                 });
-
-
-
-
                 var editSubmitButton= $('.edit_submit_btn');
                 editSubmitButton.live("click", function ($e) {
                     $e.preventDefault();
@@ -393,8 +360,6 @@
                     var email = $('.edit_email').val();
                     var mobile = $('.edit_mobile').val();
                     var fullname = $('.edit_fullname').val();
-
-
                     if (fullname == "") {
                         jAlert('', 'fullname required');
                         $('.edit_fullname').focus();
@@ -421,9 +386,6 @@
                         $('.edit_mobile').focus();
                         return false;
                     }
-
-
-
                     var data = {
                         Id: $('.edit_user_id').val(),
                         name: $('.edit_username').val(),
@@ -444,17 +406,12 @@
                             var setAjaxComplete = ajax_complete();
                         }
                     });
-
                     $.ajax({
-
                         success: function (data) {
-
                             var editUserName = $('#edit_username');
                             var editUserEmail = $('#user_email');
                             var editUserRoles = $('#user_roles');
                             var editUserMobile = $('#user_mobile');
-
-
                             editUserName.text('');
                             editUserName.text(data.User_detail[0].username);
                             editUserEmail.text('');
@@ -463,7 +420,6 @@
                             editUserRoles.text(data.User_detail[0].roles[0]);
                             editUserMobile.text('');
                             editUserMobile.text(data.User_detail[0].mobile);
-
                             gridView.show();
                             listView.hide();
                             editView.hide();
@@ -580,9 +536,6 @@
             });
         </script>
     {% endblock %}
-
-
-
     <div id="grid_view">
         <section>
             <div class="col-sm-3 users_views">
@@ -614,8 +567,6 @@
             </div>
         </section>
     </div>
-
-
     <div id="list_view">
         <section>
             <div class=" users_advanced_list_views_screen">
@@ -665,7 +616,6 @@
             </div>
         </section>
     </div>
-
     <div class="create_view">
         <section>
             <div class="col-sm-11">
@@ -680,14 +630,12 @@
                                     {{ form_widget(form.fullname,{'label': ' ','required':'true','id':'full_name'}) }}
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.user_name'|trans }}</label>
                                 <div class="col-xs-8">
                                     {{ form_widget(form.username,{'label': ' ' ,'id':'val_name'}) }}
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.email'|trans }}</label>
                                 <div class="col-xs-8">
@@ -695,7 +643,6 @@
                                 </div>
                                 <div class="col-xs-8 weight-error-message" id="create-val-email"></div>
                             </div>
-
                             <div class="form-group">
                                 <label class="control-label required_field col-xs-4">{{ 'user.mobile_no'|trans }}</label>
                                 <div class="col-xs-8">
@@ -704,7 +651,6 @@
                                 <div class="col-xs-8 weight-error-message" id="create-val-mobile"></div>
                             </div>
                         </fieldset>
-
                         <fieldset class="fieldset_box">
                             <legend class="legend_name">{{ 'user.privileges'|trans }}</legend>
                             {% if is_granted("ROLE_SUPER_ADMIN") %}
@@ -721,7 +667,6 @@
                                     <label><input type="radio" name="privileges" class="inline-checkbox" value="ROLE_KPI_INFO_PROVIDER"> {{ 'user.vship'|trans }}</label>
                                 </div>
                             </div>
-
                             <div class="form-group">
                                 <label class="control-label col-xs-4">&nbsp;</label>
                                 <div class="col-xs-8">
@@ -738,22 +683,18 @@
                                 <div class="col-xs-8">
                                     {{ form_row(form.plainPassword) }}<span class="error" id="errormsg"> </span>
                                 </div>
-
                             </div>
                         </fieldset>
                     </div>
                     <div class="actions_submit">
                         <button class="submit_btn" type="submit" value="Submit" onclick="return validate()">{{ 'user.add'|trans }}</button>
                         <button class="cancel_btn" type="submit" value="Submit">{{ 'user.reset'|trans }}</button>
-
                     </div>
                     {{ form_end(form) }}
-
                 </div>
             </div>
         </section>
     </div>
-
     <div class="show_view">
         <section>
             <div class="col-sm-11">
@@ -766,8 +707,6 @@
                             <img id="tempimageid" src="/uploads/userimages/">
                         </div>
                     </div>
-
-
                     <div class="user_view_section">
                         <div class="user_text">
                             <p class="user_name"><label id="edit_username" class="form_input user_name"></label></p>
@@ -776,7 +715,6 @@
                         </div>
                     </div>
                     <div class="user_view_privileges">
-
                         <p class="title">Privileges</p>
                         <p><label id="user_roles" class="form_input user_roles"></label></p>
                     </div>
@@ -784,7 +722,6 @@
             </div>
         </section>
     </div>
-
     <div class="edit_view">
         <section>
             <div class="col-sm-11">
@@ -858,5 +795,4 @@
             </div>
         </section>
     </div>
-
 {% endblock %}

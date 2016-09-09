@@ -9,6 +9,7 @@
             sortable: false,
             selectable: false
         };
+        var i=0;
 
         function initTreeBuilder(elements){
             options = $.extend(defaults, options);
@@ -16,17 +17,22 @@
             return elements.each(function() {
                 var o = options;
                 var obj = $(this);
+                var title='<p>This is Header</p>';
                 var list = '<ol class="tree">';
 
                 o.data.forEach(function(rootItem){
                     if(rootItem.type === 'dir'){
                         list = list + _renderDir(rootItem);
+                        i++;
                     }else{
                         list = list + _renderFile(rootItem);
+                        i++;
                     }
                 });
 
                 list = list + '</ol>';
+                //obj.before(title);
+                //title.before('<ol>');
                 obj.append(list);
                 obj.addClass('file-tree');
 
@@ -71,7 +77,7 @@
         }
 
         function _bindListeners(obj){
-            console.log(obj);            $(obj).find('.tree li.folder > div').on('click', function() {
+             $(obj).find('.tree li.folder > div').on('click', function() {
                 $(this).closest('li').toggleClass('mjs-nestedSortable-collapsed').toggleClass('mjs-nestedSortable-expanded');
             });
         }
@@ -117,25 +123,29 @@
             parent.children.forEach(function(child){
                 if(child.type === 'dir'){
                     list = list + _renderDir(child);
+                    i++;
                 }else{
                     list = list + _renderFile(child);
+                    i++;
                 }
             });
             return list;
         }
+
         function _renderFile(file){
             var listItem = '';
 
             if(file.id !== undefined){
-                listItem = '<li class="file mjs-nestedSortable-no-nesting" data-id="' + file.id + '" data-type="file" data-name="' + file.name + '"><div>';
+                listItem = '<li id="listid_'+i+'" class="file mjs-nestedSortable-no-nesting" data-id="' + file.id + '" data-type="file" data-name="' + file.name + '"><div>';
             }else{
-                listItem = '<li class="file mjs-nestedSortable-no-nesting"><div>';
+                listItem = '<li id="listid_'+i+'" class="file mjs-nestedSortable-no-nesting"><div>';
             }
 
             if(file.url !== undefined && options.selectable !== true){
-                listItem = listItem + '<a href="' + file.url + '"><span></span>' + file.name + '</a></div></li>';
+                console.log('count');
+                listItem = listItem + '' + file.name + '' + file.datetime + '' + file.username + '<a href="' + file.url + '"> <span></span></a></div></li>';
             }else{
-                listItem = listItem + '<span></span>' + file.name + '</div></li>';
+                listItem = listItem + '' + file.name + '<span></span></div></li>';
             }
 
             return listItem;

@@ -691,7 +691,6 @@ class DataVerficationController extends Controller
                 if(count($lookstatus)!=0)
                 {
                     $newlookupstatus=$lookstatus[0];
-
                     $TotalShipsInserted=$em->createQueryBuilder()
                         ->select('identity(a.shipDetailsId)')
                         ->from('InitialShippingBundle:ReadingKpiValues', 'a')
@@ -701,9 +700,6 @@ class DataVerficationController extends Controller
                         ->setParameter('statusValue', 3)
                         ->getQuery()
                         ->getResult();
-                    //print_r($TotalShipsInserted);
-
-
                     if(count($TotalShipsInserted)!=0)
                     {
                         $shipids=array();
@@ -1709,27 +1705,27 @@ class DataVerficationController extends Controller
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         }
-       /*else
-        {
-            $em = $this->getDoctrine()->getManager();
-            $userid=$user->getId();
-            $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
-            $kpiandelementids=$returnfromcontroller['elementids'];
-            $shipids=$request->request->get('shipid');
-            $elementvalues = $request->request->get('newelemetvalues');
-            $dataofmonth = $request->request->get('dataofmonth');
-           $new_date = new \DateTime($dataofmonth);
-            $new_date->modify('last day of this month');
-            $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipids));
-            //=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipid));
-            $response = new JsonResponse();
+        /*else
+         {
+             $em = $this->getDoctrine()->getManager();
+             $userid=$user->getId();
+             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
+             $kpiandelementids=$returnfromcontroller['elementids'];
+             $shipids=$request->request->get('shipid');
+             $elementvalues = $request->request->get('newelemetvalues');
+             $dataofmonth = $request->request->get('dataofmonth');
+            $new_date = new \DateTime($dataofmonth);
+             $new_date->modify('last day of this month');
+             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipids));
+             //=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipid));
+             $response = new JsonResponse();
 
-                $response->setData(array(
-                    'shipid'=>$shipid,'elementvalues'=>$elementvalues,'shipids'=>$shipids,'dateobject'=>$new_date,'elementids'=>$kpiandelementids,'dateobject'=>$dataofmonth,'shipobject'=>$newshipid
-                 ));
-                return $response;
+                 $response->setData(array(
+                     'shipid'=>$shipid,'elementvalues'=>$elementvalues,'shipids'=>$shipids,'dateobject'=>$new_date,'elementids'=>$kpiandelementids,'dateobject'=>$dataofmonth,'shipobject'=>$newshipid
+                  ));
+                 return $response;
 
-        }*/
+         }*/
         else
         {
             $userid=$user->getId();
@@ -4204,7 +4200,7 @@ class DataVerficationController extends Controller
                     'current_page' => (int)$page,
                     'next_page' => $next_page,
                     'total_records' => $total_records
-                    ));
+                ));
 
         }
     }

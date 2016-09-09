@@ -31,7 +31,8 @@
         "mmoreram/gearman-bundle": "dev-master",
         "m4t1t0/fop-pdf-bundle": "dev-master",
         "friendsofsymfony/jsrouting-bundle": "dev-master",
-        "luxifer/doctrine-functions": "dev-master"
+        "luxifer/doctrine-functions": "dev-master",
+        "jms/serializer-bundle": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~3.0",

@@ -758,8 +758,6 @@
                                         $('#addkpiformid').text('');
                                         $('#shipname').text(' ');
                                         $('#verfiybuttonid').show();
-
-
                                         if(data.shipid!=0) {
                                             $('#nogroupselected').hide();
                                             $('#kpiformforship').show();
@@ -781,7 +779,6 @@
                                                     var k = $.isNumeric(i);
                                                     if (!k) {
                                                         var temp = 1
-
                                                         $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                                         if (newtemp == 0) {
                                                             $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
@@ -791,7 +788,6 @@
                                                         }
                                                         $.each(listkpi, function (mykey, myvalue) {
                                                             if (valuearray.length > 0) {
-
                                                                 $('#updatebuttonid').show();
                                                                 $('#savebuttonid').hide();
                                                                 $('#adminbuttonid').show();

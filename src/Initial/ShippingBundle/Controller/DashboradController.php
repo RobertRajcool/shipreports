@@ -4187,7 +4187,6 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
-
             //assign file attachement for mail and Mailing Starts Here...u
             for ($ma = 0; $ma < count($findsemail); $ma++) {
                 /* $mailer = $this->container->get('mailer');
