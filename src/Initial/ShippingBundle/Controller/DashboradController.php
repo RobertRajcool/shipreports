@@ -4,6 +4,7 @@ namespace Initial\ShippingBundle\Controller;
 
 use Initial\ShippingBundle\Entity\Excel_file_details;
 use Initial\ShippingBundle\Entity\RankingKpiDetails;
+use Initial\ShippingBundle\Entity\ScorecardDataImport;
 use Initial\ShippingBundle\Entity\ShipDetails;
 use Initial\ShippingBundle\Entity\SendCommandRanking;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -1534,6 +1535,76 @@ class DashboradController extends Controller
                     'elementRule' => $scorecardElementRules
                 )
             );
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
+     * List all element for kpi
+     *
+     * @Route("/{id}/findfilesforkpi", name="findfilesforkpi")
+     */
+    public function findFilesForKpiAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        if ($user != null) {
+            $monthInNumber = $request->request->get('monthNumber');
+            $kpiDetailsId = $request->request->get('kpiDetailsId');
+            $da = new \DateTime(date('01-'.$monthInNumber.'-Y'));
+            $da->modify('last day of this month');
+
+            $fileDetails = $em->createQueryBuilder()
+                ->select('a.fileName, a.id')
+                ->from('InitialShippingBundle:ScorecardDataImport', 'a')
+                ->where('a.kpiDetailsId = :kpiId and a.monthDetail = :monthdetail')
+                ->setParameter('kpiId', $kpiDetailsId)
+                ->setParameter('monthdetail', $da)
+                ->getQuery()
+                ->getResult();
+
+            $response = new JsonResponse();
+            $response->setData(array(
+                'fileDetails' => $fileDetails,
+            ));
+            return $response;
+
+        } else {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+    }
+
+    /**
+     * Lists all ArchivedReport entities.
+     *
+     * @Route("/file_download/{id}", name="file_download")
+     */
+    public function fileDownloadAction(Request $request, $id)
+    {
+        $user = $this->getUser();
+        if ($user != null) {
+            $em = $this->getDoctrine()->getManager();
+            $fileDetails = $em->createQueryBuilder()
+                ->select('a.fileName, b.folderName')
+                ->from('InitialShippingBundle:ScorecardDataImport', 'a')
+                ->join('InitialShippingBundle:ScorecardFolder','b', 'WITH','b.id=a.folderId')
+                ->where('a.id= :fileId')
+                ->setParameter('fileId', $id)
+                ->getQuery()
+                ->getResult();
+
+            $fileName_fromDb = $fileDetails[0]['fileName'];
+            $folderName = $fileDetails[0]['folderName'];
+            $directoryLocation = $this->container->getParameter('kernel.root_dir') . '/../web/uploads/excelfiles/scorecard';
+            $filePath = $directoryLocation . '/'.$folderName.'/' . $fileName_fromDb;
+            $content = file_get_contents($filePath);
+            $response = new Response();
+            $response->setContent($content);
+            header('Content-Type: application/octet-stream');
+            header("Content-Transfer-Encoding: Binary");
+            header("Content-disposition: attachment; filename=\"" . $fileName_fromDb . "\"");
+            return $response;
+
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }
