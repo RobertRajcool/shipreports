@@ -2716,7 +2716,7 @@ input[type="color"],
 .kpi_ranking_row_new tbody tr td {
     border-right:1px solid #f0f0f0;
     border-top: 1px solid #f0f0f0;
-    padding: 8px 10px !important;
+    padding: 6px 10px !important;
 }
 .kpi_ranking_row_new .kpi_name {
     width: 22%;
