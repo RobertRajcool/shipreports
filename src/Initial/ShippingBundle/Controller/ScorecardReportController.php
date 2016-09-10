@@ -291,7 +291,7 @@ class ScorecardReportController extends Controller
             $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 2.5 -width 1024';
             $fileHandle = popen($imageGeneration, 'r');
             $result = fread($fileHandle, 2096);
-            return $this->render('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
+            /*return $this->render('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
                 array(
                     'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
                     'kpiAvgScore' => $returnObject['kpiAvgScore'],
@@ -299,9 +299,9 @@ class ScorecardReportController extends Controller
                     'kpiNameList' => $returnObject['kpiNameList'],
                     'imageSource' => 'graphImage' . $todayDate . $todayTime . '.png',
                     'headerTitle' => 'Pioneer Scorecard Report'
-                ));
+                ));*/
 
-            /*$customerListDesign = $this->renderView('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
+            $customerListDesign = $this->renderView('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
                 array(
                     'yearKpiColorArray' => $returnObject['yearKpiColorArray'],
                     'kpiAvgScore' => $returnObject['kpiAvgScore'],
@@ -375,7 +375,7 @@ class ScorecardReportController extends Controller
             $content = $pdfObject->Output('', 'S');
             $response->setContent($content);
             $response->headers->set('Content-Type', 'application/pdf');
-            return $response;*/
+            return $response;
         } else {
             return $this->redirectToRoute('fos_user_security_login');
         }

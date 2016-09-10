@@ -481,7 +481,9 @@
                         success: function(data) {
                             monthNumber = data.monthNumber;
                             originalDataTableClass.empty();
-                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"><th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th></tr></thead>').appendTo(originalDataTableClass);
+                            $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"></tr></thead>').appendTo(originalDataTableClass);
+                            $('<th class="kpi_lement_name"><a data-toggle="modal" data-target="#myModal" class="supported-files-show-btn" style="cursor:pointer;color: black">Supported Files</a></th>').appendTo($('#original-data-head-row'));
+                            $('<th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo($('#original-data-head-row'));
                             $.each(data.shipDetail, function(i,ship) {
                                 $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">'+ship.shipName+'</div></th>').appendTo($('#original-data-head-row'));
                             });
@@ -505,6 +507,48 @@
                             } else {
                                 originalDataTableClass.toggle();
                                 toggleOriginalDataStatus=0;
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            alert('Error : ' + errorThrown);
+                        }
+                    });
+                });
+
+                var supportedFilesShowBtn = $('.supported-files-show-btn');
+                var supportedFilesModalHeader = $('.supported-files-modal-header');
+                var fileContents = $('.file-content');
+                supportedFilesShowBtn.live('click', function() {
+                    supportedFilesModalHeader.empty();
+                    supportedFilesModalHeader.append('Supported files');
+                    var data = {
+                        monthNumber:monthNumber,
+                        kpiDetailsId:{{ kpiid }}
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type:"POST",
+                        url:"findfilesforkpiranking",/*Routing.generate('findfilesforkpiranking'),*/
+                        data:data,
+                        beforeSend: function () {
+                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
+                        },
+                        complete: function () {
+                            var setAjaxComplete = defaultAjaxCompleteFunction();
+                        }
+                    });
+                    $.ajax({
+                        success: function(data) {
+                            fileContents.empty();
+                            if(data.fileDetails.length>0) {
+                                $('<ul></ul>').appendTo(fileContents);
+                                $.each(data.fileDetails, function (i, filelistobject) {
+                                    var pathInTwigFormat = "{{ path('file_download', { 'id': 'value'}) }}";
+                                    var pathName = pathInTwigFormat.replace("value",filelistobject.id);
+                                    $('<li>'+filelistobject.filename+'<a href="'+pathName+'" id="'+filelistobject.id+'" class="file-download-class" style="float: right;cursor: pointer">Download</a></li>').appendTo(fileContents);
+                                })
+                            } else {
+                                fileContents.append("No files or available");
                             }
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -603,13 +647,13 @@
                         alert('This is current month value');
                     }
                 });
-                $('#weigahte_button').click(function ($e)
-                {
-                    $e.preventDefault();
-                    $('#elementweightage').toggle();
+              $('#weigahte_button').click(function ($e)
+              {
+                  $e.preventDefault();
+                  $('#elementweightage').toggle();
 
 
-                });
+              });
 
             });
         </script>
@@ -647,21 +691,21 @@
                     <tr>
                         <td  class="element_name_title">{{ element.elementName }}
 
-                            {% for j in 0..countmonth1 %}
-                        <td>
+                        {% for j in 0..countmonth1 %}
+                            <td>
 
-                            {{ monthlydata[j][i]  }}
-                        </td>
+                                {{ monthlydata[j][i]  }}
+                            </td>
 
-                        <td>
-                            {% if elementcolorarray[j][i]=="Green" %}
-                                <img class="img-icon" src="/images/02.large.png" alt="Loader Image"/>
-                            {% elseif elementcolorarray[j][i]=="Red" %}
-                                <img class="img-icon" src="/images/03.large.png" alt="Loader Image"/>
-                            {% elseif elementcolorarray[j][i]=="Yellow" %}
-                                <img class="img-icon" src="/images/01.large.png" alt="Loader Image"/>
-                            {% endif %}
-                        </td>
+                            <td>
+                                {% if elementcolorarray[j][i]=="Green" %}
+                                    <img class="img-icon" src="/images/02.large.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Red" %}
+                                    <img class="img-icon" src="/images/03.large.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                    <img class="img-icon" src="/images/01.large.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
 
                         {% endfor %}
 
@@ -689,10 +733,7 @@
             <div class="rules_ranking">
                 <a class="rules_show_btn"  id="element_btn_rules" href="">{{ 'elementranking.ruleshow'|trans }}</a>
                 <a class="rules_show_btn element-original-values-class" style="cursor: pointer">Original values</a>
-
             </div>
-
-
             <table class="table table-striped-4 kpi_ranking_rules_show_row" id="ranking_elementrules">
                 <thead>
                 <tr>
@@ -723,56 +764,58 @@
                 </tr>
                 </tbody>
             </table>
-            <div id="">
-                {% set newcommandarray = {} %}
-                {% set jk=0 %}
-                {% set ik=0 %}
-                {% for kpiRules in elementRule %}
-                    {% for kpi_rules in kpiRules %}
-                        {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
-                        {% set jk=jk+1 %}
-                    {% endfor %}
-                    {% if elementRule[ik] != NULL %}
-                        {% if elementRule[ik][0].rules  != NULL %}
-                            <input type="hidden" name="listofcomments" id={{ listofelement[ik]['id'] }} value="{{ newcommandarray|join('*') }}">
-                        {% else %}
-                            <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
-                        {% endif %}
-                    {% endif %}
-
-                    {% set ik=ik+1 %}
-                    {% set newcommandarray = {} %}
+        <div id="">
+            {% set newcommandarray = {} %}
+            {% set jk=0 %}
+            {% set ik=0 %}
+            {% for kpiRules in elementRule %}
+                {% for kpi_rules in kpiRules %}
+                    {% set newcommandarray = newcommandarray|merge({('_'~jk):(kpi_rules.rules)}) %}
+                    {% set jk=jk+1 %}
                 {% endfor %}
-            </div>
-            <table class="table table-striped normal_table graph_comment">
-                <tbody>
-                <tr>
-                    <td id="viewcommentdiv" >
-                        {% if commentarray|length <= 0 %}
+                {% if elementRule[ik] != NULL %}
+                    {% if elementRule[ik][0].rules  != NULL %}
+                        <input type="hidden" name="listofcomments" id={{ listofelement[ik]['id'] }} value="{{ newcommandarray|join('*') }}">
+                    {% else %}
+                        <input type="hidden" name="listofcomments" id="" value="{{ newcommandarray|join('*') }}">
+                    {% endif %}
+                {% endif %}
 
-                            {{ 'elementranking.nocommands'|trans }}
-                        {% endif %}
-                        {% if commentarray|length > 0 %}
-                            {% for comobject in commentarray %}
-                                <p><strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
+                {% set ik=ik+1 %}
+                {% set newcommandarray = {} %}
+            {% endfor %}
+        </div>
 
 
-                            {% endfor %}
-                        {% endif %}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <table class="table table-striped normal_table graph_comment">
+            <tbody>
+            <tr>
+                <td id="viewcommentdiv" >
+                    {% if commentarray|length <= 0 %}
+
+                        {{ 'elementranking.nocommands'|trans }}
+                    {% endif %}
+                    {% if commentarray|length > 0 %}
+                        {% for comobject in commentarray %}
+                            <p><strong>{{ comobject.username }}-{{ comobject.datetime|date('m-d-Y H:i:s') }} :</strong> {{ comobject.comment }}</p>
+
+
+                        {% endfor %}
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
         </div>
         <div class="clear_fix"></div><span class="notification_msg" id="notifcation_message"></span>
         <div class="graph_send_comment">
-            <div id="buttonid">
+        <div id="buttonid">
 
-                <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
-                <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
-                <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
-                <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
-            </div>
+            <button value="Submit" id="showcommentform"  class="submit_btn_add">{{ 'kpiranking.addcomment'|trans }}</button>
+            <button value="Submit" id="sendreports"  class="submit_btn_add">{{ 'kpiranking.sendreport'|trans }}</button>
+            <button value="Submit" id="viewcomment"  class="submit_btn_add">{{ 'kpiranking.viewcomment'|trans }}</button>
+            <button value="Submit" id="hidecomment"  class="submit_btn_add">{{ 'kpiranking.hidecomment'|trans }}</button>
+        </div>
         </div>
         <div id="commentandreportdiv" class="graph_send_comment">
             <div class="add_new_users_form">
@@ -844,6 +887,20 @@
 
             </div>
         </div>
-    </div>
-    </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog model_content">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="close_button" type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title supported-files-modal-header"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="file-content">
+
+                        </div>
+                    </div>
+                </div> <!-- /.modal-content -->
+            </div> <!-- /.modal-dialog -->
+        </div>
+        </div>
 {% endblock %}

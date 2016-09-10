@@ -62,11 +62,26 @@ class Excel_file_details
      * })
      */
     private $folderId;
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="kpiDetailsId", type="integer",  nullable=true)
+     */
+    private $kpiDetailsId;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="elementDetailsId", type="integer",  nullable=true)
+     */
+    private $elementDetailsId;
 
-
-
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="vesselId", type="string",  nullable=true)
+     */
+    private $vesselId;
     /**
      * Get id
      *
@@ -194,6 +209,54 @@ class Excel_file_details
     public function setFolderId($folderId)
     {
         $this->folderId = $folderId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getKpiDetailsId()
+    {
+        return $this->kpiDetailsId;
+    }
+
+    /**
+     * @param int $kpiDetailsId
+     */
+    public function setKpiDetailsId($kpiDetailsId)
+    {
+        $this->kpiDetailsId = $kpiDetailsId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVesselId()
+    {
+        return $this->vesselId;
+    }
+
+    /**
+     * @param string $vesselId
+     */
+    public function setVesselId($vesselId)
+    {
+        $this->vesselId = $vesselId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getElementDetailsId()
+    {
+        return $this->elementDetailsId;
+    }
+
+    /**
+     * @param int $elementDetailsId
+     */
+    public function setElementDetailsId($elementDetailsId)
+    {
+        $this->elementDetailsId = $elementDetailsId;
     }
 
 

@@ -485,7 +485,7 @@
                             monthNumber = data.monthNumber;
                             originalDataTableClass.empty();
                             $('<thead><tr><th>{{ kpiname }}</th><th id="month-name-head" style="text-align: right" colspan="16"><a style="cursor: pointer" class="previous-month left-arrow ss-navigateleft">&nbsp;</a>'+data.monthName+'<a style="cursor: pointer" class="next-month right-arrow ss-navigateright">&nbsp;</a></th></tr><tr id="original-data-head-row" class="v_r_min_height"></tr></thead>').appendTo(originalDataTableClass);
-                            $('<th class="kpi_lement_name"><a data-toggle="modal" data-target="#myModal" class="supported-files-show-btn" style="cursor:pointer;">Supported Files</a></th>').appendTo($('#original-data-head-row'));
+                            $('<th class="kpi_lement_name"><a data-toggle="modal" data-target="#myModal" class="supported-files-show-btn" style="cursor:pointer;color: black">Supported Files</a></th>').appendTo($('#original-data-head-row'));
                             $('<th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo($('#original-data-head-row'));
                             $.each(data.shipDetail, function(i,ship) {
                                 $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">'+ship.shipName+'</div></th>').appendTo($('#original-data-head-row'));
@@ -559,34 +559,6 @@
                         }
                     });
                 });
-
-                /*var fileDownloadClass = $('.file-download-class');
-                fileDownloadClass.live('click',function() {
-                    var data = {
-                        fileId : $(this).attr('id')
-                    };
-                    $.ajaxSetup({
-                        global: false,
-                        type:"POST",
-                        url:/!*"file_download",*!/Routing.generate('file_download'),
-                        data:data,
-                        beforeSend: function () {
-                            var setAjaxBeforeSend = defaultAjaxBeforeSendFunction();
-                        },
-                        complete: function () {
-                            var setAjaxComplete = defaultAjaxCompleteFunction();
-                        }
-                    });
-                    $.ajax({
-                        success: function(data) {
-
-                        },
-                        error: function(XMLHttpRequest, textStatus, errorThrown) {
-                            alert('Error : ' + errorThrown);
-                        }
-                    });
-                });*/
-
 
                 var previousMonth = $('.previous-month');
                 var nextMonth = $('.next-month');
@@ -970,25 +942,6 @@
 
                         </div>
                     </div>
-                    {#<div class="modal-body">
-                        <form class="form-horizontal no-style" method="post">
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">Symbol Name</label>
-                                <div class="col-xs-9">
-                                    <input type="text" class="send_reports_to_input symbol_name" name="symbol-name" required>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label required_field col-xs-3">Symbol Indication</label>
-                                <div class="col-xs-9">
-                                    <input type="text" class="send_reports_to_input symbol_indication" name="symbol-name" required>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="symbol-add-id" class="actions_report_btn">Add</button>fileDetails
-                    </div>#}
                 </div> <!-- /.modal-content -->
             </div> <!-- /.modal-dialog -->
         </div>
