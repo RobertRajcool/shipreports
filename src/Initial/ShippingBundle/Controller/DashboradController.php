@@ -3808,6 +3808,7 @@ class DashboradController extends Controller
             }
             $content = $mpdf->Output('', 'S');
             $fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
+            $attachementfile_Name=$this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures';
             if (!file_exists($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures')) {
                 mkdir($this->container->getParameter('kernel.root_dir') . '/../web/uploads/brochures', 0777, true);
             }
@@ -3833,21 +3834,21 @@ class DashboradController extends Controller
 
                 //assign file attachement for mail and Mailing Starts Here...u
                 for ($ma = 0; $ma < count($findsemail); $ma++) {
-                    /* $mailer = $this->container->get('mailer');
+                     $mailer = $this->container->get('mailer');
                      $message = \Swift_Message::newInstance()
-                         ->setFrom($clientemailid)
+                         ->setFrom($email)
                          ->setTo($findsemail[$ma]['emailid'])
-                         ->setSubject($kpiname)
-                         ->setBody($comment);
-                     $message->attach(\Swift_Attachment::fromPath($pdffilenamefullpath)->setFilename($pdffilenamearray[0] . '.pdf'));
-                     $mailer->send($message);*/
-                    array_push($mailidarray, $findsemail[$ma]['emailid']);
+                         ->setSubject($reportObject['shipname'])
+                         ->setBody($mailbox);
+                     $message->attach(\Swift_Attachment::fromPath($attachementfile_Name)->setFilename($fileName));
+                     $mailer->send($message);
+                    //array_push($mailidarray, $findsemail[$ma]['emailid']);
                 }
             }
             //Mailing Ends....
-            $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
-            $gearman = $this->get('gearman');
-            $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+           // $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
+            //$gearman = $this->get('gearman');
+            //$gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
             $response = new JsonResponse();
             $response->setData(array('updatemsg' => "Report has been send"));
             return $response;

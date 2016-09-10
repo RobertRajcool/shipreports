@@ -174,11 +174,8 @@ class DataVerficationController extends Controller
                         'elementvalues'=>array(),
                         'currentshipid'=>'','currentshipname'=>'','templatechoosen'=>$templatechoosen,'statuscount'=>''
                     ));
-
             }
-
         }
-
     }
     //Finding Status For monthdata
 
