@@ -7,6 +7,7 @@ services:
                alias: doctrine
      readexcel.worker:
           class: Initial\ShippingBundle\service\ReadExcelWorker
+          arguments: ["@doctrine","@service_container"]
      log.update.listener:
                class: Initial\ShippingBundle\service\LogDetailsListeners
                arguments: ["@service_container", "@session", "%database_host%", "%database_user%", "%database_password%","%database_name%"]

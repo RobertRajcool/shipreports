@@ -538,7 +538,6 @@ class CompanyUsersController extends Controller
             $refParams = $refConn->getProperty('_params');
             $refParams->setAccessible('public');
             $params = $refParams->getValue($connection);
-
             $filelocation = $this->container->getParameter('kernel.root_dir') . '/../web/sqlfiles';
             if (!is_dir($filelocation)) {
                 mkdir($filelocation);
@@ -560,24 +559,38 @@ class CompanyUsersController extends Controller
                     if ($tablename == 'reading_kpi_values' || $tablename == 'scorecard__lookup_data' || $tablename == 'scorecard__lookup_status' || $tablename == 'scorecard_data_import' || $tablename == 'ranking_monthly_data' || $tablename == 'ranking__lookup_status' || $tablename == 'ranking__lookup_data' || $tablename == 'excel_file_details') {
                         $newstart_date = $start_Dateformat->format('Y-m-d');
                         $newend_date = $end_Dateformat->format('Y-m-d');
-                        $whereconditon = "--where=\"monthdetail between '" . $newstart_date . "' and '" . $newend_date . "'\"";
+                        if($tablename=='scorecard__lookup_status' ||$tablename=='ranking__lookup_status')
+                        {
+                            $whereconditon = "--where=\"dataofmonth between '" . $newstart_date . "' and '" . $newend_date . "'\"";
+                        }
+                        elseif($tablename=='scorecard_data_import')
+                        {
+                            $whereconditon = "--where=\"monthDetail between '" . $newstart_date . "' and '" . $newend_date . "'\"";
+                        }
+                        elseif($tablename=='excel_file_details')
+                        {
+                            $whereconditon = "--where=\"data_of_month between '" . $newstart_date . "' and '" . $newend_date . "'\"";
+                        }
+                        else
+                        {
+                            $whereconditon = "--where=\"monthdetail between '" . $newstart_date . "' and '" . $newend_date . "'\"";
+                        }
                         $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . ' ' . $tablename . ' ' . $whereconditon . '  >> ' . $outfile_filepath;
-
-                    } else {
+                    }
+                    else
+                    {
                         $command = 'mysqldump -u' . $params['user'] . ' -p' . $params['password'] . ' ' . $params['dbname'] . ' ' . $tablename . '  >> ' . $outfile_filepath;
                     }
 
                 }
                 system($command);
             }
-
             $content = file_get_contents($outfile_filepath);
             $response = new Response();
             $response->setContent($content);
             header('Content-Type: application/octet-stream');
             header("Content-Transfer-Encoding: Binary");
             header("Content-disposition: attachment; filename=\"" . $params['dbname'] . ".sql\"");
-
             $backup = new Backupreport();
             $backup->setfileName($outfile_filepath);
             $backup->setusername($user);
