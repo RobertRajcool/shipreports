@@ -1,3 +1,5 @@
+
+
 initial_shipping_archived_report:
     resource: "@InitialShippingBundle/Controller/ArchivedReportController.php"
     type:     annotation

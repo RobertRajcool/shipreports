@@ -23,14 +23,11 @@
             font-size: 15px;
         }
     </style>
-
     <script type="text/javascript">
         $(document).ready(function () {
             var archiveAjaxStatus = 0;
             var reportTableBodyId = $('#report-table-body-id');
             var scorecardCheckbox =$('.scorecard_checkbox');
-
-
             function setReportTableContentsFunction(data) {
                 if (data.length != 0) {
                     $.each(data.archivedReports, function (i) {
@@ -43,8 +40,6 @@
                     });
                 }
             }
-
-
             var archiveReportView = $('#archived-report-view');
             var archiveButtonId = $('#archive-btn-id');
             archiveReportView.hide();
@@ -79,7 +74,6 @@
                 }
             });
         });
-
         $(document).ready(function () {
             var archiveAjaxStatus = 0;
             var reportTableBodyId = $('#report-table-body-id');
@@ -92,22 +86,16 @@
                 var aY = $('.activeYear').val();
                 var eM = $('.endMonth').val();
                 var eY = $('.endYear').val();
-
-
                 if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '--' || aY == '--' || eM == '--' || eY == '--') {
                     jAlert('Choose the valid date');
                     return false;
                 }
                 archiveAjaxStatus = 1;
-
-
                 var data = {
                     activeMonth: aM,
                     activeYear: aY,
                     endMonth: eM,
                     endYear: eY,
-
-
                 };
                 $.ajaxSetup({
                     global: false,
@@ -130,17 +118,9 @@
                         alert('Error : ' + errorThrown);
                     }
                 });
-
-
             });
-
         });
-
-
-
         </script>
-
-
     <section class="scorecard_report">
         <div class="col-sm-12">
             <div class="add_kpi_views_screen">
@@ -223,11 +203,8 @@
                     <div class="ranking_report"></div>
                 </form>
             </div>
-
             </div>
         <button class="submit_btn" id="archive-btn-id"  style="margin-bottom: 10px;">Archived Backups</button>
-
-
             <div id="archived-report-view">
                 <div class="table-responsive">
                     <table class="table table-striped table_dividere data_import_list_table">
@@ -245,5 +222,4 @@
             </div>
         </div>
     </section>
-
 {% endblock %}
