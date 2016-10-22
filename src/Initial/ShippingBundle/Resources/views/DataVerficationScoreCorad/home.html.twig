@@ -24,6 +24,7 @@
                 if(statusofship==shipcount)
                 {
                     $('#allbuttondiv').hide();
+                    $('#upload_btn_id').show();
                     $('#shipid').val('');
                     $('#shipname').text('');
                 }
@@ -33,6 +34,7 @@
                     $('#shipid').val(shipid);
                     $('#shipname').text(shipname);
                     $('#allbuttondiv').show();
+                    $('#upload_btn_id').hide();
                 }
 
 
@@ -338,6 +340,7 @@
                                     $.each(data.listofships, function (j) {
                                         $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_');
                                     });
+                                    console.log(data.rankingKpiList);
                                     $.each(data.rankingKpiList, function (i)
                                     {
 
@@ -348,7 +351,6 @@
                                         $('<th colspan="' + colspan + '" class="kpi_lement_name">' + data.rankingKpiList[i]['kpiName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
                                         var kpiid = data.rankingKpiList[i]['id'];
                                         var elementnamearray = data.elementname[kpiid];
-                                        console.log(elementnamearray.length)
                                         var forloopcount = 0;
                                         for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
                                             $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
@@ -688,9 +690,13 @@
                 /*-------------------------------------Reset form values Ends Here-------------------------------------------- */
                 /*-------------------------------------Insertion Process Starts Here-------------------------------------------- */
 
+
                 $(".addclasskpivalue").live('click',function($e){
                     $e.preventDefault();
                     var validationStatusField=false;
+                    if($(this).attr('id') == 'upload_btn_id') {
+                        validationStatusField=true;
+                    }
                     $("input[name='newelemetvalues[]']").each(function(){
                         var elementvalue=$(this).val();
                         if(elementvalue=="")
@@ -744,15 +750,15 @@
                             if(data.shipid!=0) {
                                 $('#nogroupselected').hide();
                                 $('#kpiformforship').show();
-                                if (data.shipcount == data.ship_status_done_count)
-                                {
-                                    $('.linkclass').removeClass("active");
-                                    $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
-                                    $('#allbuttondiv').hide();
-                                }
-                                else
-                                {
+                                if (data.shipcount == data.ship_status_done_count) {
 
+                                    $('#upload_btn_id').show();
+                                } else if(data.ship_status_done_count == -1) {
+
+                                    $('.linkclass').removeClass("active");
+                                    $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
+                                    /*$('#allbuttondiv').hide();*/
+                                } else {
 
                                     $('#shipid').val(data.shipid);
                                     $('#shipname').text(data.shipname);
@@ -765,7 +771,7 @@
 
                                         var k = $.isNumeric(i);
                                         if (!k) {
-                                            var temp = 1
+                                            var temp = 1;
 
                                             $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                             if (newtemp == 0) {
@@ -806,8 +812,6 @@
 
                                         }
                                         j++;
-
-
                                     });
                                 }
                                 jAlert('',data.returnmsg);
@@ -937,6 +941,11 @@
                             {% if j==shipcount %}
 
                                 <span>All Ship Data Upload!</span>
+                                <div class="actions_submit">
+                                    {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id"  value="Submit">{{ 'dataverification.upload'|trans }}</button>
+                                    {% endif %}
+                                </div>
                             {% else %}
 
                                 {% set i=0 %}
@@ -995,18 +1004,15 @@
                                 {% endfor %}
                             {% endif %}
                         </div>
-
-
-
                     </div>
-                <input type="hidden" name="shipid" id="shipid">
+                    <input type="hidden" name="shipid" id="shipid">
                     <div id="allbuttondiv" class="actions_submit">
 
                         {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-
                             <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"  value="{{ 'dataverification.save'|trans }}">
                             <input type="submit" class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">
                             <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                            {#<button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id"  value="Submit">{{ 'dataverification.upload'|trans }}</button>#}
                         {% endif %}
                         {%  if  is_granted("ROLE_ADMIN") %}
 

@@ -107,7 +107,7 @@ class DataVerficationController extends Controller
                 }
                 if ($role[0] == 'ROLE_MANAGER')
                 {
-                    $status=1;
+                    $status=5;
                     $index = array_search(0, $statusforship);
                     $shipid=$listallshipforcompany[$index]['id'];
                     $shipname=$listallshipforcompany[$index]['shipName'];
@@ -280,7 +280,7 @@ class DataVerficationController extends Controller
                     ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                     ->where('b.shipDetailsId = :shipdetailsid')
                     ->andWhere('b.monthdetail =:dataofmonth')
-                    ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3')
+                    ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                     ->setParameter('shipdetailsid', $shipdetialsarray[$ship]['id'])
                     ->setParameter('dataofmonth', $new_date)
                     ->getQuery()
@@ -518,6 +518,7 @@ class DataVerficationController extends Controller
 
         return array('elementvalues'=>$elementvalues,'symbolIndication'=>$symbolIndication,'indicationValue'=>$elementindicationValue,'elementweightage'=>$elementweightage,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
     }
+
     private function finddatawithstatus_MonthChange($status,$status1,$shipid,$dataofmonth = '')
     {
 
@@ -619,8 +620,6 @@ class DataVerficationController extends Controller
 
         return array('elementvalues'=>$elementvalues,'elementweightage'=>$elementweightage,'elementnamekpiname'=>$returnarray,'maxelementcount'=>$maxelementcount);
     }
-
-
 
 
 
@@ -952,7 +951,33 @@ class DataVerficationController extends Controller
             }
 
         }
-        $shipname = $newshipid->getShipName();
+        if ($buttonid == 'upload_btn_id') {
+            $lookstatus = $em->getRepository('InitialShippingBundle:Scorecard_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
+            if(count($lookstatus)!=0) {
+                $newlookupstatus=$lookstatus[0];
+
+                $newlookupstatus->setStatus(5);
+                $newlookupstatus->setDatetime(new \DateTime());
+                $em->flush();
+            }
+
+            $reading_kpi_values_status = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findBy(array('monthdetail'=>$new_date));
+            if(count($reading_kpi_values_status)!=0) {
+                foreach ($reading_kpi_values_status as $reading_kpi_values_status_obj) {
+                    $reading_kpi_values_status_obj->setStatus(5);
+                    $em->flush();
+                }
+            }
+
+            $ship_status_done_count = -1;
+            $returnmsg = ' Data Uploaded...';
+
+        }
+        if ($buttonid != 'upload_btn_id') {
+            $shipname = $newshipid->getShipName();
+        } else {
+            $shipname = 'All ships';
+        }
         $nextshipid = 0;
         $nextshipname = '';
         $user = $this->getUser();
@@ -1064,7 +1089,7 @@ class DataVerficationController extends Controller
                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                 ->where('b.shipDetailsId = :shipdetailsid')
                 ->andWhere('b.monthdetail =:dataofmonth')
-                ->andWhere('b.status = 2 OR b.status  = 3')
+                ->andWhere('b.status = 2 OR b.status  = 3 ')
                 ->setParameter('shipdetailsid', $shipid)
                 ->setParameter('dataofmonth', $new_date)
                 ->getQuery();
@@ -1076,7 +1101,7 @@ class DataVerficationController extends Controller
                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                 ->where('b.shipDetailsId = :shipdetailsid')
                 ->andWhere('b.monthdetail =:dataofmonth')
-                ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3')
+                ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                 ->setParameter('shipdetailsid', $shipid)
                 ->setParameter('dataofmonth', $new_date)
                 ->getQuery();
@@ -1087,7 +1112,7 @@ class DataVerficationController extends Controller
                 ->select('b.value')
                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                 ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.status = 0 OR b.status  = 1 OR b.status  = 2 OR b.status  = 3 ')
+                ->andWhere('b.status = 0 OR b.status  = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                 ->andWhere('b.monthdetail =:dataofmonth')
                 ->setParameter('shipdetailsid', $shipid)
                 ->setParameter('dataofmonth', $new_date)
