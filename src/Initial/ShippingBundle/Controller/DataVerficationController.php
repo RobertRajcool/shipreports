@@ -1424,7 +1424,7 @@ class DataVerficationController extends Controller
                     ->select('b.status')
                     ->from('InitialShippingBundle:RankingMonthlyData', 'b')
                     ->where('b.shipDetailsId = :shipdetailsid')
-                    ->andWhere('b.status  = 2 OR b.status  = 3 OR b.status  = 5')
+                    ->andWhere('b.status  = 2 OR b.status  = 3')
                     ->andWhere('b.monthdetail =:dataofmonth')
                     ->setParameter('shipdetailsid', $shipdetialsarray[$ship]['id'])
                     ->setParameter('dataofmonth', $new_date)
@@ -1927,7 +1927,7 @@ class DataVerficationController extends Controller
             }
             if ($role[0] == 'ROLE_MANAGER')
             {
-                $status=1;
+                $status=5;
                 $index = array_search(0, $statusforship);
                 $nextshipid=$kpielementarray[$index]['id'];
                 $nextshipname=$kpielementarray[$index]['shipName'];
