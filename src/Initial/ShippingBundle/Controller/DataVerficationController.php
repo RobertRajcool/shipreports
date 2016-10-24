@@ -969,7 +969,7 @@ class DataVerficationController extends Controller
         if ($buttonid != 'upload_btn_id') {
             $shipname = $newshipid->getShipName();
         } else {
-            $shipname = 'All ships';
+            $shipname = 'All vessels';
         }
         $nextshipid = 0;
         $nextshipname = '';
@@ -998,7 +998,7 @@ class DataVerficationController extends Controller
 
         }
         if ($role[0] == 'ROLE_MANAGER') {
-            $status = 1;
+            $status = 5;
             $index = array_search(0, $statusforship);
             $nextshipid = $kpielementarray[$index]['id'];
             $nextshipname = $kpielementarray[$index]['shipName'];
@@ -1288,7 +1288,7 @@ class DataVerficationController extends Controller
                     }
                 }
                 if ($role[0] == 'ROLE_MANAGER') {
-                    $status = 1;
+                    $status = 5;
                     $index = array_search(0, $statusforship);
                     $shipid = $listallshipforcompany[$index]['id'];
                     $shipname = $listallshipforcompany[$index]['shipName'];
@@ -1303,7 +1303,7 @@ class DataVerficationController extends Controller
                     }
                 }
                 if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                    $status = 0;
+                    $status = 5;
                     $templatechoosen = 'v-ships_layout.html.twig';
                     $index = array_search(0, $statusforship);
                     $shipid = $listallshipforcompany[$index]['id'];
@@ -1424,7 +1424,7 @@ class DataVerficationController extends Controller
                     ->select('b.status')
                     ->from('InitialShippingBundle:RankingMonthlyData', 'b')
                     ->where('b.shipDetailsId = :shipdetailsid')
-                    ->andWhere('b.status  = 2 OR b.status  = 3')
+                    ->andWhere('b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                     ->andWhere('b.monthdetail =:dataofmonth')
                     ->setParameter('shipdetailsid', $shipdetialsarray[$ship]['id'])
                     ->setParameter('dataofmonth', $new_date)
@@ -1459,7 +1459,7 @@ class DataVerficationController extends Controller
                     ->select('b.status')
                     ->from('InitialShippingBundle:RankingMonthlyData', 'b')
                     ->where('b.shipDetailsId = :shipdetailsid')
-                    ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3')
+                    ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                     ->andWhere('b.monthdetail =:dataofmonth')
                     ->setParameter('shipdetailsid', $shipdetialsarray[$ship]['id'])
                     ->setParameter('dataofmonth', $new_date)
@@ -1622,13 +1622,7 @@ class DataVerficationController extends Controller
         {
             $kpiid = $ids[$i]['id'];
             $kpiname = $ids[$i]['kpiName'];
-            /* $query = $em->createQueryBuilder()
-                 ->select('b.elementName', 'b.id','b.weightage')
-                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
-                 ->where('b.kpiDetailsId = :kpidetailsid')
-                 ->setParameter('kpidetailsid', $kpiid)
-                 ->add('orderBy', 'b.id  ASC ')
-                 ->getQuery();*/
+
             $query = $em->createQueryBuilder()
                 ->select('b.elementName', 'b.id','b.indicationValue','b.weightage','c.symbolIndication')
                 ->from('InitialShippingBundle:RankingElementDetails', 'b')
@@ -1727,27 +1721,6 @@ class DataVerficationController extends Controller
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         }
-        /*else
-         {
-             $em = $this->getDoctrine()->getManager();
-             $userid=$user->getId();
-             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
-             $kpiandelementids=$returnfromcontroller['elementids'];
-             $shipids=$request->request->get('shipid');
-             $elementvalues = $request->request->get('newelemetvalues');
-             $dataofmonth = $request->request->get('dataofmonth');
-            $new_date = new \DateTime($dataofmonth);
-             $new_date->modify('last day of this month');
-             $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipids));
-             //=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => (int)$shipid));
-             $response = new JsonResponse();
-
-                 $response->setData(array(
-                     'shipid'=>$shipid,'elementvalues'=>$elementvalues,'shipids'=>$shipids,'dateobject'=>$new_date,'elementids'=>$kpiandelementids,'dateobject'=>$dataofmonth,'shipobject'=>$newshipid
-                  ));
-                 return $response;
-
-         }*/
         else
         {
             $userid=$user->getId();
@@ -1886,22 +1859,7 @@ class DataVerficationController extends Controller
                 $protocol  = empty($_SERVER['HTTPS']) ? 'http' : 'https';
                 $domain    = $_SERVER['SERVER_NAME'];
                 $url=$protocol.'://'.$domain.'/login';
-                /* $query = $em->createQueryBuilder()
-                     ->select('a.shipName', 'a.id')
-                     ->from('InitialShippingBundle:ShipDetails', 'a')
-                     ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                     ->where('b.id = :userId')
-                     ->setParameter('userId', $userId)
-                     ->getQuery();*/
-                /*$fullurl="http://shipreports/login";
-                $mailer = $this->container->get('mailer');
-                $message = \Swift_Message::newInstance()
-                    ->setFrom('lawrance@commusoft.co.uk')
-                    ->setTo("doss.cclawranc226@gmail.com")
-                    ->setSubject($newshipid->getShipName().' Data Added By V-Ship Team')
-                    ->setBody("This Web Url:".$url);
 
-                $mailer->send($message);*/
                 $lookupstatusobject=new Ranking_LookupStatus();
                 $lookupstatusobject->setShipid($newshipid);
                 $lookupstatusobject->setStatus(1);
@@ -1913,8 +1871,34 @@ class DataVerficationController extends Controller
 
             }
 
+            if ($buttonid == 'upload_btn_id') {
+                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('dataofmonth'=>$new_date));
+                if(count($lookstatus)!=0) {
+                    $newlookupstatus=$lookstatus[0];
 
-            $shipname = $newshipid->getShipName();
+                    $newlookupstatus->setStatus(5);
+                    $newlookupstatus->setDatetime(new \DateTime());
+                    $em->flush();
+                }
+
+                $reading_kpi_values_status = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->findBy(array('monthdetail'=>$new_date));
+                if(count($reading_kpi_values_status)!=0) {
+                    foreach ($reading_kpi_values_status as $reading_kpi_values_status_obj) {
+                        $reading_kpi_values_status_obj->setStatus(5);
+                        $em->flush();
+                    }
+                }
+
+                $ship_status_done_count = -1;
+                $returnmsg = ' Data Uploaded...';
+
+            }
+            if ($buttonid != 'upload_btn_id') {
+                $shipname = $newshipid->getShipName();
+            } else {
+                $shipname = 'All vessels';
+            }
+
             $nextshipid = 0;
             $nextshipname = '';
             $user = $this->getUser();
@@ -2050,7 +2034,7 @@ class DataVerficationController extends Controller
                     ->from('InitialShippingBundle:RankingMonthlyData', 'b')
                     ->where('b.shipDetailsId = :shipdetailsid')
                     ->andWhere('b.monthdetail =:dataofmonth')
-                    ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3')
+                    ->andWhere('b.status = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                     ->setParameter('shipdetailsid', $shipid)
                     ->setParameter('dataofmonth', $new_date)
                     ->getQuery();
@@ -2061,24 +2045,13 @@ class DataVerficationController extends Controller
                     ->select('b.value')
                     ->from('InitialShippingBundle:RankingMonthlyData', 'b')
                     ->where('b.shipDetailsId = :shipdetailsid')
-                    ->andWhere('b.status = 0 OR b.status  = 1 OR b.status  = 2 OR b.status  = 3')
+                    ->andWhere('b.status = 0 OR b.status  = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                     ->andWhere('b.monthdetail =:dataofmonth')
                     ->setParameter('shipdetailsid', $shipid)
                     ->setParameter('dataofmonth', $new_date)
                     ->getQuery();
             }
             $resularray = $query->getResult();
-
-            /* $resularray = $em->createQueryBuilder()
-                 ->select('b.value')
-                 ->from('InitialShippingBundle:RankingMonthlyData', 'b')
-                 ->where('b.shipDetailsId = :shipdetailsid')
-                 ->andWhere('b.monthdetail =:dataofmonth')
-                 ->setParameter('shipdetailsid', $shipid)
-                 ->setParameter('dataofmonth', $new_date)
-                 ->getQuery()
-                 ->getResult();*/
-
 
             $query = $em->createQueryBuilder()
                 ->select('b.kpiName', 'b.id')
@@ -2186,8 +2159,6 @@ class DataVerficationController extends Controller
 
                     }
                 }
-
-
             }
             $elementvalues = array();
             for ($kkk = 0; $kkk < count($resularray); $kkk++)

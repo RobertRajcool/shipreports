@@ -19,12 +19,12 @@
                 $('#kpiformforship').show();
                 var shipid='{{ currentshipid }}';
                 // $('#shipid').val(shipid);
-                console.log(shipid);
                 var shipname='{{ currentshipname }}';
                 var statusofship='{{ statuscount }}';
                 var shipcount='{{ shipcount }}'
                 if(statusofship==shipcount)
                 {
+                    $('#upload_btn_id').show();
                     $('#allbuttondiv').hide();
                     //$('#'+shipid).addClass('active');
                     $('#shipid').val();
@@ -32,9 +32,9 @@
                 }
                 else
                 {
+                    $('#upload_btn_id').hide();
                     $('#allbuttondiv').show();
                     $('#'+shipid).addClass('active');
-                    console.log(shipid);
                     $('#shipid').val(shipid);
                     $('#shipname').text(shipname);
 
@@ -290,12 +290,7 @@
                                     $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
                                     $('#allbuttondiv').hide();
                                 }
-
-
-
-
                             }
-                            console.log(currentdate);
 
                         },
                         error: function(XMLHttpRequest, textStatus, errorThrown)
@@ -324,7 +319,6 @@
                     currentdate, locale = "en-us",
                             month = currentdate.toLocaleString(locale, {month: "long"}),
                             year = currentdate.getFullYear();
-                    // var data={'dataofmonth':month+'-'+year};
                     var nowdate=new Date();
                     if(currentdate<=nowdate)
                     {
@@ -708,6 +702,9 @@
                         {
                             $e.preventDefault();
                             var validationStatusField=false;
+                            if($(this).attr('id') == 'upload_btn_id') {
+                                validationStatusField=true;
+                            }
                             $("input[name='newelemetvalues[]']").each(function(){
                                 var elementvalue=$(this).val();
                                 if(elementvalue=="")
@@ -715,20 +712,17 @@
                                     validationStatusField=false;
                                     $(this).focus();
                                     alert("Please fil out this field");
-                                    console.log(validationStatusField);
                                     return false;
                                 }
                                 else
                                 {
                                     validationStatusField=true;
-                                    console.log(validationStatusField);
                                     return true;
                                 }
                                 });
                             if( validationStatusField==true)
                             {
                                 var preshipid=$('#shipid').val();
-                                console.log(preshipid);
                                 var btn= $(this).attr('id');
                                 var formid = $('#kpiform');
                                 $.ajaxSetup({
@@ -762,9 +756,15 @@
                                             $('#nogroupselected').hide();
                                             $('#kpiformforship').show();
                                             if (data.shipcount == data.ship_status_done_count) {
+//                                                $('.linkclass').removeClass("active");
+//                                                $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
+//                                                $('#allbuttondiv').hide();
+                                                $('#upload_btn_id').show();
+                                            } else if(data.ship_status_done_count == -1) {
+
                                                 $('.linkclass').removeClass("active");
-                                                $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
-                                                $('#allbuttondiv').hide();
+                                                $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
+                                                /*$('#allbuttondiv').hide();*/
                                             }
                                             else
                                             {
@@ -962,6 +962,11 @@
                         <div id="addkpiformid" class="table-responsive">
                             {% if j==shipcount %}
                                 <span>All Ship Data Upload!</span>
+                                <div class="actions_submit">
+                                    {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id"  value="Submit">{{ 'dataverification.upload'|trans }}</button>
+                                    {% endif %}
+                                </div>
                             {% else %}
 
                                 {% set i=0 %}
