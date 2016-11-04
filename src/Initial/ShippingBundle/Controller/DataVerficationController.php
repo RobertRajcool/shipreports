@@ -131,15 +131,21 @@ class DataVerficationController extends Controller
                     ->setParameter('dataofmonth', $last_date)
                     ->getQuery()
                     ->getResult();
-                if($lookup_status[0]['rejections']!=null) {
-                    $rejection_string = $lookup_status[0]['rejections'];
-                    $rejection_obj = json_decode($rejection_string);
-                    $rejection_obj = json_decode($rejection_string, true);
-                    $reject_status = 'yes';
+                if(count($lookup_status)>0) {
+                    if($lookup_status[0]['rejections']!=null) {
+                        $rejection_string = $lookup_status[0]['rejections'];
+                        $rejection_obj = json_decode($rejection_string);
+                        $rejection_obj = json_decode($rejection_string, true);
+                        $reject_status = 'yes';
+                    } else {
+                        $rejection_obj = null;
+                        $reject_status = 'empty';
+                    }
                 } else {
                     $rejection_obj = null;
                     $reject_status = 'empty';
                 }
+
 
                 if (count($finddatawithstatus) == 7) {
                     return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
