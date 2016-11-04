@@ -813,14 +813,17 @@
                                 {% if rejection_status == 'yes' %}
                                     {% if shipobject.id in rejections|keys %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
+                                        {% set j=j+1 %}
                                     {% else %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
+                                        {% set j=j+1 %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if status_ship[j]==1 and rejection_status == 'empty'  %}
+                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
+                                        {% set j=j+1 %}
                                     {% endif %}
                                 {% endif %}
-                                {% if status_ship[j]==1 and rejection_status == 'empty' %}
-                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                {% endif %}
-                                {% set j=j+1 %}
                             {% endif %}
                             {% if  is_granted("ROLE_ADMIN") %}
                                 {% if status_ship[j]==3 %}

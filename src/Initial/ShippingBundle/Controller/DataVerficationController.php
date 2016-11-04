@@ -1192,18 +1192,23 @@ class DataVerficationController extends Controller
             ->setParameter('dataofmonth', $new_date)
             ->getQuery()
             ->getResult();
-        if($lookup_status[0]['rejections']!=null && $lookup_status[0]['rejections']!="null") {
-            $rejection_string = $lookup_status[0]['rejections'];
-            $rejection_obj = json_decode($rejection_string);
-            $rejection_obj = json_decode($rejection_string, true);
-            if(array_key_exists($shipid,$rejection_obj)) {
-                $reject_status = 'yes';
-                $rejection_obj = $rejection_obj[$shipid];
+        if(count($lookup_status) > 0) {
+            if($lookup_status[0]['rejections']!=null && $lookup_status[0]['rejections']!="null") {
+                $rejection_string = $lookup_status[0]['rejections'];
+                $rejection_obj = json_decode($rejection_string);
+                $rejection_obj = json_decode($rejection_string, true);
+                if(array_key_exists($shipid,$rejection_obj)) {
+                    $reject_status = 'yes';
+                    $rejection_obj = $rejection_obj[$shipid];
+                } else {
+                    $rejection_obj = null;
+                    $reject_status = 'empty';
+                }
+
             } else {
                 $rejection_obj = null;
                 $reject_status = 'empty';
             }
-
         } else {
             $rejection_obj = null;
             $reject_status = 'empty';
@@ -3755,7 +3760,7 @@ class DataVerficationController extends Controller
                 $finddatawithstatus = $this->finddatawithstatus($status, $shipid, $dataofmonth);
             }
             if ($role[0] == 'ROLE_MANAGER') {
-                $status = 1;
+                $status = 5;
                 $index = array_search(0, $statusforship);
                 $shipid = $listallshipforcompany[$index]['id'];
                 $shipname = $listallshipforcompany[$index]['shipName'];
