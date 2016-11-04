@@ -210,5 +210,4 @@ class ReadingKpiValues
         $this->status = $status;
     }
 
-
 }

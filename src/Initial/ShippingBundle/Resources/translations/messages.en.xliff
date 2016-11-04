@@ -390,6 +390,10 @@
                 <source>mail.archive</source>
                 <target>Archive</target>
             </trans-unit>
+            <trans-unit id="99">
+                <source>dataverification.reject</source>
+                <target>Reject</target>
+            </trans-unit>
 
 
             <trans-unit id="vessel-0">
