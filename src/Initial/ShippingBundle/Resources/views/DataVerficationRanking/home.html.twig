@@ -6,93 +6,80 @@
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
-        {#{% javascripts '@InitialShippingBundle/Resources/public/js/emailgroup.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}#}
 
         <script>
-            $(document).ready(function()
-            {
+            $(document).ready(function () {
+                $('#updatebuttonid').hide();
                 var base_url = window.location.origin;
-                var role='{{ app.user.roles[0] }}';
                 $('#nogroupselected').hide();
                 $('#kpiformforship').show();
-                var shipid='{{ currentshipid }}';
-                // $('#shipid').val(shipid);
-                var shipname='{{ currentshipname }}';
-                var statusofship='{{ statuscount }}';
-                var shipcount='{{ shipcount }}'
-                if(statusofship==shipcount)
-                {
-                    $('#upload_btn_id').show();
+                var shipid = '{{ currentshipid }}';
+                var shipname = '{{ currentshipname }}';
+                var statusofship = '{{ statuscount }}';
+                var shipcount = '{{ shipcount }}';
+                var role = '{{ app.user.roles[0] }}';
+                var currentdatetime = '{{ currentdatetime }}';
+
+                if (statusofship == shipcount) {
                     $('#allbuttondiv').hide();
-                    //$('#'+shipid).addClass('active');
-                    $('#shipid').val();
-                    $('#shipname').text();
-                }
-                else
-                {
-                    $('#upload_btn_id').hide();
-                    $('#allbuttondiv').show();
-                    $('#'+shipid).addClass('active');
+                    $('#upload_btn_id').show();
+                    $('#shipid').val('');
+                    $('#shipname').text('');
+                } else {
+                    $('#' + shipid).addClass('active');
                     $('#shipid').val(shipid);
                     $('#shipname').text(shipname);
-
+                    $('#allbuttondiv').show();
+                    $('#upload_btn_id').hide();
                 }
 
-                $('#updatebuttonid').hide();
-                var currentdatetime='{{ currentdatetime }}';
-
-                var nowdate=new Date(currentdatetime),
+                var nowdate = new Date(currentdatetime),
                         locale = "en-us",
-                        month = nowdate.toLocaleString(locale, { month: "long" }),
-                        year=nowdate.getFullYear();
-                $('#currentid').text(month+'-'+year);
-                $('#currentid_data').text(month+'-'+year);
+                        month = nowdate.toLocaleString(locale, {month: "long"}),
+                        year = nowdate.getFullYear();
+
+                $('#currentid').text(month + '-' + year);
+                $('#currentid_data').text(month + '-' + year);
                 $('#datofmonthid').val(currentdatetime);
                 $('#datofmonthid_data').val(currentdatetime);
-                $('.prevmonth').live('click',function($e)
-                {
+
+                $('.prevmonth').live('click', function ($e) {
                     $e.preventDefault();
                     $('#allbuttondiv').show();
                     var linkid = $(this).attr('id');
-                    if(linkid=='proviousmonth_data')
-                    {
+                    if (linkid == 'proviousmonth_data') {
 
-                        var currentdate=new Date($('#datofmonthid_data').val());
+                        var currentdate = new Date($('#datofmonthid_data').val());
                     }
-                    else
-                    {
-                        var currentdate=new Date($('#datofmonthid').val());
+                    else {
+                        var currentdate = new Date($('#datofmonthid').val());
                     }
                     currentdate.setMonth(currentdate.getMonth() - 1);
-                    currentdate,locale = "en-us",
-                            month = currentdate.toLocaleString(locale, { month: "long" }),
-                            year=currentdate.getFullYear();
-                    var current=month+'-'+year;
-                    var data = {
-                        dataofmonth :current
-                    };
-                    var newdateString=
+                    currentdate, locale = "en-us",
+                            month = currentdate.toLocaleString(locale, {month: "long"}),
+                            year = currentdate.getFullYear();
 
-                            $.ajaxSetup({
-                                global: false,
-                                type: "post",
-                                'url': Routing.generate('ranking_previousmonth'),
-                                beforeSend: function ()
-                                {
-                                    var beforsend=ajaxbefore_send();
-                                },
-                                complete: function () {
-                                    var complete=ajax_complete();
-                                }
-                            });
+                    var current = month + '-' + year;
+                    var data = {
+                        dataofmonth: current
+                    };
+
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        'url': Routing.generate('ranking_previousmonth'),
+                        beforeSend: function () {
+                            var beforsend = ajaxbefore_send();
+                        },
+                        complete: function () {
+                            var complete = ajax_complete();
+                        }
+                    });
+
                     $.ajax({
-                        data:data,
-                        success: function(data)
-                        {
-                            if (data.commontext == true)
-                            {
+                        data: data,
+                        success: function (data) {
+                            if (data.commontext == true) {
                                 $('#prvieoustablecontent').html(' ');
                                 $('#prvieoustablecontent').text(' ');
                                 var addcolumn = 0;
@@ -106,8 +93,7 @@
                                 });
 
                                 $.each(data.rankingKpiList, function (i) {
-                                    if (data.rankingKpiList[i]['kpiName'] == 'Vessel age')
-                                    {
+                                    if (data.rankingKpiList[i]['kpiName'] == 'Vessel age') {
 
                                     }
                                     else {
@@ -141,26 +127,23 @@
                                 });
 
 
-                                if (linkid == 'proviousmonth_data')
-                                {
+                                if (linkid == 'proviousmonth_data') {
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
                                 }
-                                else
-                                {
+                                else {
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
                                 }
                                 $('#kpiformforship').hide();
                                 $('#currentmonhthdetails').hide();
                                 $('#previousmonthdata').show();
                             }
-                            else
-                            {
+                            else {
                                 $('#elementformid1').hide();
                                 $('#elementformid').show();
                                 $('#allbuttondiv').show();
@@ -169,31 +152,27 @@
                                 $('#previousmonthdata').hide();
                                 $('#kpiformforship').show();
                                 $('#currentmonhthdetails').show();
-                                $('<div class="views_kpi_name_total"><span>Vessels ('+data.shipcount+')</span></div>').appendTo('#overallshids');
+                                $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
                                 $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
-                                var shipstatus=0
-                                $.each(data.listofships, function(i)
-                                {
-                                    var status=data.status_ship[i];
+                                var shipstatus = 0
+                                $.each(data.listofships, function (i) {
+                                    var status = data.status_ship[i];
 
 
-                                    $('<li><a class="linkclass" title="'+data.listofships[i]['shipName']+'" id="'+data.listofships[i]['id']+'" >'+data.listofships[i]['shipName']+'</a></li>').appendTo('#addshipids');
-                                    if(role=='ROLE_ADMIN')
-                                    {
+                                    $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
+                                    if (role == 'ROLE_ADMIN') {
                                         if (status == 3) {
                                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                             shipstatus++;
                                         }
                                     }
-                                    else if(role=='ROLE_MANAGER')
-                                    {
+                                    else if (role == 'ROLE_MANAGER') {
                                         if (status == 2) {
                                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                             shipstatus++;
                                         }
                                     }
-                                    else if(role=='ROLE_KPI_INFO_PROVIDER')
-                                    {
+                                    else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                                         if (status == 1) {
                                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                             shipstatus++;
@@ -203,108 +182,92 @@
                                 $('#elementformid').html('');
                                 $('#elementformid').text('');
                                 $('#shipname').text(data.currentshipname);
-                                $('#currentid').text(month+'-'+year);
-                                $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
-                                $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
+                                $('#currentid').text(month + '-' + year);
+                                $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
+                                $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
                                 $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
-                                //alert(data.shipstatusstring)
-                                if(data.shipcount !=shipstatus)
-                                {
+
+                                if (data.shipcount != shipstatus) {
                                     $('#shipid').val(data.currentshipid);
                                     $('.linkclass').removeClass("active");
-                                    $('#'+data.currentshipid).addClass('active');
-                                    var j=1;
-                                    var newtemp=0;
-                                    $.each(data.elementkpiarray, function(i, listkpi)
-                                    {
+                                    $('#' + data.currentshipid).addClass('active');
+                                    var j = 1;
+                                    var newtemp = 0;
 
-                                        var k=$.isNumeric(i);
-                                        if(!k)
-                                        {
-                                            var temp=1
+                                    $.each(data.elementkpiarray, function (i, listkpi) {
 
-                                            $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                        var k = $.isNumeric(i);
+                                        if (!k) {
+                                            var temp = 1;
 
-                                            if(newtemp==0)
-                                            {
-                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                            $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                            {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                            $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                            {% endif %}
+                                            $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+
+                                            if (newtemp == 0) {
+                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
                                             }
-                                            else
-                                            {
-                                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                            else {
+                                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
                                             }
-                                            $.each(listkpi,function(mykey,myvalue)
-                                            {
-                                                if(data.elementvalues.length>0)
-                                                {
+
+                                            $.each(listkpi, function (mykey, myvalue) {
+                                                $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
+                                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                                {% endif %}
+
+                                                if (data.elementvalues.length > 0) {
 
                                                     $('#updatebuttonid').show();
                                                     $('#savebuttonid').hide();
                                                     $('#adminbuttonid').show();
 
-                                                    if(temp==1)
-                                                    {
-                                                        $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                    if (temp == 1) {
+                                                        $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                     }
-                                                    if(temp>1)
-                                                    {
-                                                        $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                                    if (temp > 1) {
+                                                        $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                     }
-
-
                                                 }
-                                                else
-                                                {
+                                                else {
                                                     $('#adminbuttonid').show();
                                                     $('#updatebuttonid').hide();
                                                     $('#savebuttonid').show();
 
-                                                    if(temp==1)
-                                                    {
-                                                        $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                                    if (temp == 1) {
+                                                        $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                     }
-                                                    if(temp>1)
-                                                    {
-                                                        $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                                    if (temp > 1) {
+                                                        $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                     }
-
-
                                                 }
                                                 temp++;
                                                 newtemp++;
-
-
                                             });
                                             $(' </tr></tbody></table>').appendTo('#addkpiformid');
-
-
                                         }
                                         j++;
-
-
                                     });
-
                                 }
-                                else
-                                {
+                                else {
                                     $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
                                     $('#allbuttondiv').hide();
                                 }
                             }
-
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
                             $('#resultLoading .bg').height('100%');
                             $('#resultLoading').fadeOut(300);
                             $('body').css('cursor', 'default');
-                            window.location.href = base_url+'/login';
+                            window.location.href = base_url + '/login';
                         }
                     });
-
-
                 });
-                $('.nextmonth').live('click',function($e) {
+
+                $('.nextmonth').live('click', function ($e) {
                     $e.preventDefault();
                     var linkid = $(this).attr('id');
                     if (linkid == 'proviousmonth_data') {
@@ -319,9 +282,8 @@
                     currentdate, locale = "en-us",
                             month = currentdate.toLocaleString(locale, {month: "long"}),
                             year = currentdate.getFullYear();
-                    var nowdate=new Date();
-                    if(currentdate<=nowdate)
-                    {
+                    var nowdate = new Date();
+                    if (currentdate <= nowdate) {
                         $('#allbuttondiv').show();
                         var current = month + '-' + year;
                         var data = {
@@ -332,20 +294,17 @@
                             global: false,
                             type: "post",
                             'url': Routing.generate('ranking_previousmonth'),
-                            beforeSend: function ()
-                            {
-                                var beforsend=ajaxbefore_send();
+                            beforeSend: function () {
+                                var beforsend = ajaxbefore_send();
                             },
                             complete: function () {
-                                var complete=ajax_complete();
+                                var complete = ajax_complete();
                             }
                         });
                         $.ajax({
                             data: data,
                             success: function (data) {
-                                console.log(data.commontext);
-                                if (data.commontext == true)
-                                {
+                                if (data.commontext == true) {
                                     $('#prvieoustablecontent').html(' ');
                                     $('#prvieoustablecontent').text(' ');
                                     var addcolumn = 0;
@@ -359,12 +318,10 @@
                                     });
 
                                     $.each(data.rankingKpiList, function (i) {
-                                        if (data.rankingKpiList[i]['kpiName'] == 'Vessel age')
-                                        {
+                                        if (data.rankingKpiList[i]['kpiName'] == 'Vessel age') {
 
                                         }
-                                        else
-                                        {
+                                        else {
                                             var colspan = data.shipcount + 2;
                                             $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
                                             $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
@@ -391,30 +348,25 @@
                                                 valuecount++;
                                             }
                                         }
-
                                     });
 
-
-                                    if (linkid == 'proviousmonth_data')
-                                    {
+                                    if (linkid == 'proviousmonth_data') {
                                         $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                        $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
                                         $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
+                                        $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
                                     }
-                                    else
-                                    {
+                                    else {
                                         $('#currentid').text(month + '-' + year);
-                                        $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                        $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
                                         $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
+                                        $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
                                     }
                                     $('#kpiformforship').hide();
                                     $('#currentmonhthdetails').hide();
                                     $('#previousmonthdata').show();
                                 }
-                                else
-                                {
+                                else {
                                     $('#previousmonthdata').hide();
                                     $('#kpiformforship').show();
                                     $('#currentmonhthdetails').show();
@@ -428,22 +380,19 @@
 
 
                                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
-                                        if(role=='ROLE_ADMIN')
-                                        {
+                                        if (role == 'ROLE_ADMIN') {
                                             if (status == 3) {
                                                 $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                                 shipstatus++;
                                             }
                                         }
-                                        else if(role=='ROLE_MANAGER')
-                                        {
+                                        else if (role == 'ROLE_MANAGER') {
                                             if (status == 2) {
                                                 $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                                 shipstatus++;
                                             }
                                         }
-                                        else if(role=='ROLE_KPI_INFO_PROVIDER')
-                                        {
+                                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                                             if (status == 1) {
                                                 $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                                 shipstatus++;
@@ -454,9 +403,9 @@
                                     $('#elementformid').text('');
                                     $('#shipname').text(data.currentshipname);
                                     $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
                                     $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(year+'-'+month+'-'+currentdate.getDate());
+                                    $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
                                     $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
                                     //alert(data.shipstatusstring)
                                     if (data.shipcount != shipstatus) {
@@ -469,19 +418,25 @@
 
                                             var k = $.isNumeric(i);
                                             if (!k) {
-                                                var temp = 1
+                                                var temp = 1;
 
-                                                $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                                $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                                {% endif %}
+                                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
 
-                                                if(newtemp==0)
-                                                {
-                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                                if (newtemp == 0) {
+                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
                                                 }
-                                                else
-                                                {
-                                                    $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
+                                                else {
+                                                    $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
                                                 }
                                                 $.each(listkpi, function (mykey, myvalue) {
+                                                    $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
+                                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                    $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                                    {% endif %}
                                                     if (data.elementvalues.length > 0) {
 
                                                         $('#updatebuttonid').show();
@@ -489,73 +444,57 @@
                                                         $('#adminbuttonid').show();
 
                                                         if (temp == 1) {
-                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                         }
                                                         if (temp > 1) {
-                                                            $('<tr ><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                         }
-
-
                                                     }
                                                     else {
                                                         $('#updatebuttonid').hide();
                                                         $('#savebuttonid').show();
                                                         $('#adminbuttonid').show();
                                                         if (temp == 1) {
-                                                            $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                         }
                                                         if (temp > 1) {
-                                                            $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
+                                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                         }
-
-
                                                     }
                                                     temp++;
                                                     newtemp++;
-
-
                                                 });
                                                 $(' </tr></tbody></table>').appendTo('#addkpiformid');
-
-
                                             }
                                             j++;
-
-
                                         });
-
                                     }
                                     else {
                                         $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
                                         $('#allbuttondiv').hide();
                                     }
-
-
                                 }
-
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
-                                window.location.href = base_url+'/login';
+                                window.location.href = base_url + '/login';
                             }
                         });
                     }
-                    else
-                    {
+                    else {
                         $('#spantext').text('Date Exceed...');
                         $('#spantext').show();
-                        setTimeout(function() {
+                        setTimeout(function () {
                             $('#spantext').fadeOut('fast');
                         }, 4000)
-
                     }
                 });
+
                 $('#spantext').hide();
 
-                $('.linkclass').live('click',function()
-                {
+                $('.linkclass').live('click', function () {
 
                     var linkid = $(this).attr('id');
                     var shipname = $(this).attr('title');
@@ -564,118 +503,123 @@
                     $('#addkpiformid').html('');
                     $('#addkpiformid').text('');
                     $('#shipname').text(' ');
-                    var dataofmonth=$('#currentid').text();
+                    var dataofmonth = $('#currentid').text();
                     $.ajaxSetup({
                         global: false,
                         type: "post",
-                        'url': Routing.generate('shipskpielment_forranking', {'shipid':linkid,'monthdetail':dataofmonth}),
-                        beforeSend: function ()
-                        {
-                            var beforsend=ajaxbefore_send();
+                        'url': Routing.generate('shipskpielment_forranking', {
+                            'shipid': linkid,
+                            'monthdetail': dataofmonth
+                        }),
+                        beforeSend: function () {
+                            var beforsend = ajaxbefore_send();
                         },
                         complete: function () {
-                            var complete=ajax_complete();
+                            var complete = ajax_complete();
                         }
                     });
                     $.ajax({
 
-                        success: function(data)
-                        {
+                        success: function (data) {
 
-                            var valuearray=data.elementvalues;
+                            var valuearray = data.elementvalues;
                             $('#spanallid').hide();
                             $('#shipid').val(linkid);
                             $('#shipname').text(shipname);
                             $('#nogroupselected').hide();
                             $('#kpiformforship').show();
                             $('.linkclass').removeClass("active");
-                            $('#'+linkid).addClass('active');
-                            var j=1;
-                            var newtemp=0;
-                            $.each(data.kpiNameArray, function(i, listkpi)
-                            {
+                            $('#' + linkid).addClass('active');
+                            var j = 1;
+                            var newtemp = 0;
 
-                                var k=$.isNumeric(i);
-                                if(!k)
-                                {
-                                    var temp=1
+                            $.each(data.kpiNameArray, function (i, listkpi) {
 
-                                    $('<table class="table kpi_table_form_section"><thead id="firstheader_'+i+'"><tr id="firstheader_tr_'+newtemp+'"><th>'+i+'</th></tr></thead> <tbody id="tablebody'+j+'">').appendTo('#addkpiformid');
+                                var k = $.isNumeric(i);
+                                if (!k) {
+                                    var temp = 1;
 
-                                    if(newtemp==0)
-                                    {
-                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_'+newtemp)
+                                    $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                    {% endif %}
+                                    var rejection_status = 0;
+                                    if(data.rejection_status == 'yes') {
+                                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        if(data.rejections == 'ALL') {
+                                            rejection_status = 1;
+                                        } else {
+                                            $.each(data.rejections, function(i) {
+                                                if(data.rejections[i]==data.kpi_details[j-1]['id']) {
+                                                    rejection_status = 1;
+                                                }
+                                            });
+                                        }
+                                        if(rejection_status == 1) {
+                                            $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        } else {
+                                            $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        }
+                                        {% else %}
+                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        {% endif %}
+                                    } else {
+                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                     }
-                                    else
-                                    {
-                                        $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_'+newtemp)
-                                    }
-                                    $.each(listkpi,function(mykey,myvalue)
-                                    {
-                                        if(valuearray.length>0)
-                                        {
 
+                                    if (newtemp == 0) {
+                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                                    }
+                                    else {
+                                        $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                                    }
+                                    $.each(listkpi, function (mykey, myvalue) {
+                                        $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
+                                        {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                        $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                        {% endif %}
+                                        if (valuearray.length > 0) {
                                             $('#updatebuttonid').show();
                                             $('#savebuttonid').hide();
                                             $('#adminbuttonid').show();
 
-
-                                            if(temp==1)
-                                            {
-                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="'+data.elementvalues[newtemp]+'" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                            if (temp == 1) {
+                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                             }
-                                            if(temp>1)
-                                            {
-                                                $('<tr ><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="'+data.elementvalues[newtemp]+'" required ></td></tr>').appendTo("#tablebody"+j);
+                                            if (temp > 1) {
+                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                             }
-
-
                                         }
-                                        else
-                                        {
+                                        else {
                                             $('#updatebuttonid').hide();
                                             $('#savebuttonid').show();
                                             $('#adminbuttonid').show();
 
-                                            if(temp==1)
-                                            {
-                                                $('<tr><td  class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td> <td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td></tr>').appendTo("#tablebody"+j);
+                                            if (temp == 1) {
+                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                             }
-                                            if(temp>1)
-                                            {
-                                                $('<tr><td class="kpi_lement_name">'+myvalue+'</td><td class="kpi_lement_number">'+data.elementweightage[newtemp]+'</td><td class="kpi_lement_inputname">'+data.symbolIndication[newtemp]+'</td><td class="kpi_lement_inputname">'+data.indicationValue[newtemp]+'</td>   <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody"+j);
+                                            if (temp > 1) {
+                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                             }
-
-
                                         }
                                         temp++;
                                         newtemp++;
-
-
                                     });
                                     $(' </tr></tbody></table>').appendTo('#addkpiformid');
-
-
                                 }
                                 j++;
                             });
-
+                            $('#allbuttondiv').show();
                         },
-                        error: function(XMLHttpRequest, textStatus, errorThrown)
-                        {
-                            window.location.href = base_url+'/login';
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            window.location.href = base_url + '/login';
                         }
                     });
 
                 });
 
-                /*$('.textbox').live('keypress',function (event) {
-                 alert('functioncall');
-                 return isNumber(event, this)
-                 });*/
-                $(".textbox").on("keypress keyup blur",function (event) {
-                    //this.value = this.value.replace(/[^0-9\.]/g,'');
-                    $(this).val($(this).val().replace(/[^0-9\.]/g,''));
+                $(".textbox").on("keypress keyup blur", function (event) {
+                    $(this).val($(this).val().replace(/[^0-9\.]/g, ''));
                     if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
                         event.preventDefault();
                     }
@@ -693,173 +637,188 @@
 
                     return true;
                 }
-                $('#resetbuttonid').click(function($e)
-                {
+
+                $('#resetbuttonid').click(function ($e) {
                     $e.preventDefault();
                     $('.resetclass').val(' ');
                 });
-                $(".addclasskpivalue").live('click',function($e)
-                        {
-                            $e.preventDefault();
-                            var validationStatusField=false;
-                            if($(this).attr('id') == 'upload_btn_id') {
-                                validationStatusField=true;
+
+                $(".addclasskpivalue").live('click', function ($e) {
+                    $e.preventDefault();
+                    var validationStatusField = false;
+                    if ($(this).attr('id') == 'upload_btn_id' || $(this).attr('id') == 'savebuttonid' || $(this).attr('id') == 'updatebuttonid') {
+                        validationStatusField = true;
+                    } else {
+                        $("input[name='newelemetvalues[]']").each(function () {
+                            var elementvalue = $(this).val();
+                            if (elementvalue == "") {
+                                validationStatusField = false;
+                                $(this).focus();
+                                alert("Please fil out this field");
+                                return false;
                             }
-                            $("input[name='newelemetvalues[]']").each(function(){
-                                var elementvalue=$(this).val();
-                                if(elementvalue=="")
-                                {
-                                    validationStatusField=false;
-                                    $(this).focus();
-                                    alert("Please fil out this field");
-                                    return false;
-                                }
-                                else
-                                {
-                                    validationStatusField=true;
-                                    return true;
-                                }
-                                });
-                            if( validationStatusField==true)
-                            {
-                                var preshipid=$('#shipid').val();
-                                var btn= $(this).attr('id');
-                                var formid = $('#kpiform');
-                                $.ajaxSetup({
-                                    global: false,
-                                    type: "post",
-                                    'url': Routing.generate('addkpivaluesname_forranking', {'buttonid':btn}),
-                                    data: formid.serialize(),
-                                    beforeSend: function ()
-                                    {
-                                        var beforsend=ajaxbefore_send();
-                                    },
-                                    complete: function () {
-                                        var complete=ajax_complete();
-                                    }
-                                });
-
-                                $.ajax({
-                                    success: function(data)
-                                    {
-                                        $('#datofmonthid').val(data.currentdatetime);
-                                        $('#datofmonthid_data').val(data.currentdatetime);
-                                        var valuearray=data.elementvalues;
-                                        $('#'+preshipid).after('<img src="/images/tick_icon.png">');
-                                        var valuearray=data.elementvalues;
-                                        $('#shipid').val('');
-                                        $('#addkpiformid').html('');
-                                        $('#addkpiformid').text('');
-                                        $('#shipname').text(' ');
-                                        $('#verfiybuttonid').show();
-                                        if(data.shipid!=0) {
-                                            $('#nogroupselected').hide();
-                                            $('#kpiformforship').show();
-                                            if (data.shipcount == data.ship_status_done_count) {
-//                                                $('.linkclass').removeClass("active");
-//                                                $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
-//                                                $('#allbuttondiv').hide();
-                                                $('#upload_btn_id').show();
-                                            } else if(data.ship_status_done_count == -1) {
-
-                                                $('.linkclass').removeClass("active");
-                                                $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
-                                                /*$('#allbuttondiv').hide();*/
-                                            }
-                                            else
-                                            {
-                                                $('#shipid').val(data.shipid);
-                                                $('#shipname').text(data.shipname);
-                                                $('.linkclass').removeClass("active");
-                                                $('#' + data.shipid).addClass('active');
-                                                var j = 1;
-                                                var newtemp = 0;
-                                                $.each(data.kpiNameArray, function (i, listkpi) {
-
-                                                    var k = $.isNumeric(i);
-                                                    if (!k) {
-                                                        var temp = 1
-                                                        $('<table  class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"><th>' + i + '</th></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
-                                                        if (newtemp == 0) {
-                                                            $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
-                                                        }
-                                                        else {
-                                                            $(' <th></th><<th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
-                                                        }
-                                                        $.each(listkpi, function (mykey, myvalue) {
-                                                            if (valuearray.length > 0) {
-                                                                $('#updatebuttonid').show();
-                                                                $('#savebuttonid').hide();
-                                                                $('#adminbuttonid').show();
-                                                                if (temp == 1) {
-                                                                    $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td></tr>').appendTo("#tablebody" + j);
-                                                                }
-                                                                if (temp > 1) {
-                                                                    $('<tr><td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>   <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
-                                                                }
-                                                            }
-                                                            else {
-                                                                $('#updatebuttonid').hide();
-                                                                $('#savebuttonid').show();
-                                                                $('#adminbuttonid').show();
-                                                                if (temp == 1) {
-                                                                    $('<tr><td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
-                                                                }
-                                                                if (temp > 1) {
-                                                                    $('<tr><td class="kpi_lement_name">' + myvalue + '</td> <td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td></tr>').appendTo("#tablebody" + j);
-                                                                }
-                                                            }
-                                                            newtemp++;
-                                                            temp++;
-
-                                                        });
-                                                        $(' </tbody></table>').appendTo('#addkpiformid');
-
-
-                                                    }
-                                                    j++;
-                                                });
-                                            }
-                                            jAlert('',data.returnmsg);
-                                        }
-                                        else
-                                        {
-                                            $('#shipid').val(' ');
-                                            $('#shipname').text(' ');
-                                            $('#nogroupselected').show();
-                                            $('#kpiformforship').hide();
-                                            jAlert('',data.returnmsg);
-                                        }
-                                    },
-                                    error: function(XMLHttpRequest, textStatus, errorThrown)
-                                    {
-
-                                    }
-                                });
+                            else {
+                                validationStatusField = true;
+                                return true;
                             }
                         });
+                    }
+
+                    if (validationStatusField == true) {
+                        var preshipid = $('#shipid').val();
+                        var btn = $(this).attr('id');
+                        var formid = $('#kpiform');
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            'url': Routing.generate('addkpivaluesname_forranking', {'buttonid': btn}),
+                            data: formid.serialize(),
+                            beforeSend: function () {
+                                var beforsend = ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var complete = ajax_complete();
+                            }
+                        });
+
+                        $.ajax({
+                            success: function (data) {
+                                if(data.status == -1) {
+                                    $('#img_' + data.ship_id ).remove();
+                                    $('#' + data.ship_id).after('<img id="img_'+data.ship_id+'" style="width: 20px;height: 20px" src="/images/error.png">');
+                                    $('#addkpiformid').text(data.return_msg);
+                                } else {
+                                    $('#datofmonthid').val(data.currentdatetime);
+                                    $('#datofmonthid_data').val(data.currentdatetime);
+                                    var valuearray = data.elementvalues;
+                                    $('#shipid').val('');
+                                    $('#addkpiformid').html('');
+                                    $('#addkpiformid').text('');
+                                    $('#shipname').text(' ');
+                                    $('#verfiybuttonid').show();
+
+                                    if (data.shipid != 0) {
+                                        $('#nogroupselected').hide();
+                                        $('#kpiformforship').show();
+
+                                        if (data.shipcount == data.ship_status_done_count) {
+                                            $('#upload_btn_id').show();
+                                        } else if (data.ship_status_done_count == -1) {
+                                            $('.linkclass').removeClass("active");
+                                            $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
+                                        } else {
+
+                                            $('#shipid').val(data.shipid);
+                                            $('#shipname').text(data.shipname);
+                                            $('.linkclass').removeClass("active");
+                                            $('#' + data.shipid).addClass('active');
+
+                                            var j = 1;
+                                            var newtemp = 0;
+                                            $.each(data.kpiNameArray, function (i, listkpi) {
+
+                                                var k = $.isNumeric(i);
+                                                if (!k) {
+                                                    var temp = 1;
+                                                    $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                                    {% endif %}
+                                                    $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+
+                                                    if (newtemp == 0) {
+                                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                                                    }
+                                                    else {
+                                                        $(' <th></th><<th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                                                    }
+
+                                                    $.each(listkpi, function (mykey, myvalue) {
+                                                        $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
+                                                        {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                        $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                                        {% endif %}
+
+                                                        if (valuearray.length > 0) {
+                                                            $('#updatebuttonid').show();
+                                                            $('#savebuttonid').hide();
+                                                            $('#adminbuttonid').show();
+                                                            if (temp == 1) {
+                                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td><td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td>').appendTo("#" + j + "tr_id_" + temp);
+                                                            }
+                                                            if (temp > 1) {
+                                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                                            }
+                                                        }
+                                                        else {
+                                                            $('#updatebuttonid').hide();
+                                                            $('#savebuttonid').show();
+                                                            $('#adminbuttonid').show();
+                                                            if (temp == 1) {
+                                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                                            }
+                                                            if (temp > 1) {
+                                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                                            }
+                                                        }
+                                                        newtemp++;
+                                                        temp++;
+                                                    });
+                                                    $(' </tbody></table>').appendTo('#addkpiformid');
+                                                }
+                                                j++;
+                                            });
+                                        }
+                                        jAlert('', data.returnmsg);
+                                    }
+                                    else {
+                                        $('#shipid').val(' ');
+                                        $('#shipname').text(' ');
+                                        $('#nogroupselected').show();
+                                        $('#kpiformforship').hide();
+                                        jAlert('', data.returnmsg);
+                                    }
+
+                                    if(data.ship_status_done_count == data.shipcount) {
+                                        $('#allbuttondiv').hide();
+                                        $('.linkclass').removeClass("active");
+                                        $('#img_' + preshipid ).remove();
+                                        $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
+                                        $('#addkpiformid').text('All vessels data updated !');
+                                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                    } else {
+                                        $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
+                                    }
+                                }
+
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                            }
+                        });
+                    }
+                });
+
                 $('#kpiformforship').show();
                 $('#currentmonhthdetails').show();
                 $('#previousmonthdata').hide();
-               /*........................... Submit Button Enable and Disable Funtion.............................................................*/
-                $('form > input').keyup(function() {
+                /*........................... Submit Button Enable and Disable Funtion.............................................................*/
+
+                $('form > input').keyup(function () {
                     alert('funtioncall');
                     var empty = false;
-                    $('form > input').each(function() {
+                    $('form > input').each(function () {
                         if ($(this).val() == "") {
                             empty = true;
                         }
                     });
-
                     if (empty) {
-                        $(".addclasskpivalue").each(function()
-                        {
+                        $(".addclasskpivalue").each(function () {
                             $(this).attr('disabled', 'disabled');
                             $(this).addClass('not-allowed');
                         });
                     } else {
-                        $(".addclasskpivalue").each(function()
-                        {
+                        $(".addclasskpivalue").each(function () {
                             $(this).removeAttr('disabled');
                             $(this).removeClass('not-allowed');
                         });
@@ -868,10 +827,8 @@
             });
 
             /*........................... Allow Only Numeric Values.............................................................*/
-            function isNumberKey(e)
-            {
-                if (e.which != 46 && e.which != 45 && e.which != 46 &&
-                        !(e.which >= 48 && e.which <= 57)) {
+            function isNumberKey(e) {
+                if (e.which != 46 && e.which != 45 && e.which != 46 && !(e.which >= 48 && e.which <= 57)) {
                     return false;
                 }
             }
@@ -882,45 +839,45 @@
 
     <section id="currentmonhthdetails">
         <div class="col-sm-3 views_kpi_form_list" id="overallshids">
-            <div class="views_kpi_name_total"><span>{{ 'dashboard.shipname'|trans }}  ({{ shipcount }})</span></div>
+            <div class="views_kpi_name_total"><span>{{ 'dashboard.shipname'|trans }} ({{ shipcount }})</span></div>
             <div class="views_kpi_form_list_main">
                 <ui>
-
                     {% set j=0 %}
                     {% for shipobject in listofships %}
                         <li>
-                            <a class="linkclass" title="{{ shipobject.shipName }}" id="{{ shipobject.id }}" >{{ shipobject.shipName }}</a>
+                            <a class="linkclass" title="{{ shipobject.shipName }}"
+                               id="{{ shipobject.id }}">{{ shipobject.shipName }}</a>
 
-                            {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-
-
-                                {% if status_ship[j]==1 %}
-                                    <img src="/images/tick_icon.png">
-                                    {% set j=j+1 %}
+                            {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                {% if rejection_status == 'yes' %}
+                                    {% if rejections[loop.index-1] is not null %}
+                                        <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
+                                        {% set j=j+1 %}
+                                    {% else %}
+                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
+                                        {% set j=j+1 %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if status_ship[j]==1 and rejection_status == 'empty'  %}
+                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
+                                        {% set j=j+1 %}
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
-                            {%  if  is_granted("ROLE_ADMIN") %}
-
+                            {% if  is_granted("ROLE_ADMIN") %}
                                 {% if status_ship[j]==3 %}
-                                    <img src="/images/tick_icon.png">
+                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% set j=j+1 %}
                                 {% endif %}
                             {% endif %}
-
-                            {%  if is_granted("ROLE_MANAGER") %}
+                            {% if is_granted("ROLE_MANAGER") %}
                                 {% if status_ship[j]==2 %}
-                                    <img src="/images/tick_icon.png">
+                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% set j=j+1 %}
                                 {% endif %}
-
                             {% endif %}
-
                         </li>
-
-
                     {% endfor %}
-
-
                 </ui>
             </div>
 
@@ -935,9 +892,10 @@
             </div>
         </div>
     </section>
+
     <section id="kpiformforship">
         <div class="col-sm-12">
-            <div  class="add_new_kpi_form_screen">
+            <div class="add_new_kpi_form_screen">
                 {% if elementkpiarray|length > 0 %}
                 <form id="kpiform" class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
@@ -963,18 +921,26 @@
                             {% if j==shipcount %}
                                 <span>All Ship Data Upload!</span>
                                 <div class="actions_submit">
-                                    {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id"  value="Submit">{{ 'dataverification.upload'|trans }}</button>
+                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                                id="upload_btn_id"
+                                                value="Submit">{{ 'dataverification.upload'|trans }}</button>
                                     {% endif %}
                                 </div>
                             {% else %}
 
                                 {% set i=0 %}
+                                {% set kpi_count=0 %}
                                 {% for key, value in elementkpiarray %}
                                     <table class="table kpi_table_form_section">
                                         <thead>
                                         <tr>
-                                            <th colspan="{# {{ elementcount }}#} ">  {{ key }}</th>
+                                            {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                <th>
+                                                    <input type="checkbox" class="checkboxes" name="reject_id[]" value={{ kpi_details[kpi_count]['id'] }}>
+                                                </th>
+                                            {% endif %}
+                                            <th>  {{ key }}</th>
                                             {% if i == 0 %}
                                                 <th class="kpi_value">Wt</th>
                                                 <th class="kpi_value">Symbol</th>
@@ -993,17 +959,25 @@
                                         {% for user in value %}
 
                                             <tr>
-                                                <td class="kpi_lement_name required_field">{{ user }}  </td>
+                                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                                    <td></td>
+                                                {% endif %}
+                                                <td class="kpi_lement_name">{{ user }}  </td>
                                                 <td class="kpi_lement_number">{{ elementweightage[i] }}</td>
                                                 <td class="kpi_lement_inputname">{{ symbolIndication[i] }}</td>
                                                 <td class="kpi_lement_inputname">{{ indicationValue[i] }}</td>
                                                 <td class="kpi_lement_inputname">
                                                     {% if elementvalues|length <= 0 %}
 
-                                                        <input class="resetclass" onkeypress="return isNumberKey(event)" name="newelemetvalues[]" type="text"  required placeholder="123">
+                                                        <input class="resetclass" onkeypress="return isNumberKey(event)"
+                                                               name="newelemetvalues[]" type="text" required
+                                                               placeholder="123">
                                                     {% endif %}
                                                     {% if elementvalues|length > 0 %}
-                                                        <input class="resetclass" onkeypress="return isNumberKey(event)" name="newelemetvalues[]" type="text" value="{{ elementvalues[i] }}" required placeholder="123">
+                                                        <input class="resetclass" onkeypress="return isNumberKey(event)"
+                                                               name="newelemetvalues[]" type="text"
+                                                               value="{{ elementvalues[i] }}" required
+                                                               placeholder="123">
                                                     {% endif %}
                                                 </td>
                                             </tr>
@@ -1013,26 +987,33 @@
                                         {% endfor %}
                                         </tbody>
                                     </table>
+                                    {% set kpi_count=kpi_count+1 %}
                                 {% endfor %}
                             {% endif %}
                         </div>
                     </div>
                     <div id="allbuttondiv" class="actions_submit">
 
-                        {%  if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-
-                            <input type="submit" class="submit_btn addclasskpivalue " id="savebuttonid"   value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn addclasskpivalue " id="updatebuttonid"    value="{{ 'dataverification.update'|trans }}">
-                            <button class="cancel_btn" id="resetbuttonid"  value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                            <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
+                                   value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="updatebuttonid"
+                                   value="{{ 'dataverification.update'|trans }}">
+                            <button class="cancel_btn" id="resetbuttonid"
+                                    value="Submit">{{ 'dataverification.reset'|trans }}</button>
                         {% endif %}
-                        {%  if  is_granted("ROLE_ADMIN") %}
-
-                            <input type="submit" class="submit_btn addclasskpivalue " id="adminbuttonid"    value="{{ 'dataverification.upload'|trans }}">
+                        {% if  is_granted("ROLE_ADMIN") %}
+                            <input type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"
+                                   value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                   value="{{ 'dataverification.reject'|trans }}">
                         {% endif %}
 
-                        {%  if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn addclasskpivalue " id="verfiybuttonid"    value="{{ 'dataverification.verfiy'|trans }}">
-
+                        {% if is_granted("ROLE_MANAGER") %}
+                            <input type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
+                                   value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                   value="{{ 'dataverification.reject'|trans }}">
                         {% endif %}
                     </div>
                     {% endif %}
@@ -1040,7 +1021,6 @@
             </div>
         </div>
     </section>
-
 
     <section id="previousmonthdata">
         <div class="col-sm-12">

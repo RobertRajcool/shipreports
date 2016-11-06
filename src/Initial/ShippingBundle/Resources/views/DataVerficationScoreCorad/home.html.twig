@@ -39,8 +39,8 @@
                         month = nowdate.toLocaleString(locale, {month: "long"}),
                         year = nowdate.getFullYear();
 
-                $('#currentid').text(month + '-' + year)
-                $('#currentid_data').text(month + '-' + year)
+                $('#currentid').text(month + '-' + year);
+                $('#currentid_data').text(month + '-' + year);
                 $('#datofmonthid').val(currentdatetime);
                 $('#datofmonthid_data').val(currentdatetime);
                 $('#spantext').hide();
@@ -61,8 +61,7 @@
                     currentdate, locale = "en-us",
                             month = currentdate.toLocaleString(locale, {month: "long"}),
                             year = currentdate.getFullYear();
-                    // var data={'dataofmonth':month+'-'+year};
-                    //alert(currentdate.getDate());
+
                     var current = month + '-' + year;
                     var data = {
                         dataofmonth: current
@@ -256,7 +255,6 @@
                             window.location.href = base_url + '/login';
                         }
                     });
-
 
                 });
                 /*------------------------------------- Previous Month Dataview Ends Here-------------------------------------------- */
@@ -513,6 +511,7 @@
                             $('#' + linkid).addClass('active');
                             var j = 1;
                             var newtemp = 0;
+
                             $.each(data.kpiNameArray, function (i, listkpi) {
                                 var k = $.isNumeric(i);
                                 if (!k) {
@@ -525,11 +524,15 @@
                                     var rejection_status = 0;
                                     if(data.rejection_status == 'yes') {
                                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                            $.each(data.rejections, function(i,kpi_id) {
-                                                if(kpi_id==data.kpi_details[j-1]['id']) {
-                                                    rejection_status = 1;
-                                                }
-                                            });
+                                            if(data.rejections  == 'ALL') {
+                                                rejection_status = 1;
+                                            } else {
+                                                $.each(data.rejections, function(i,kpi_id) {
+                                                    if(kpi_id==data.kpi_details[j-1]['id']) {
+                                                        rejection_status = 1;
+                                                    }
+                                                });
+                                            }
                                             if(rejection_status == 1) {
                                                 $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                             } else {
@@ -581,7 +584,6 @@
 
                                     });
                                     $(' </tr></tbody></table>').appendTo('#addkpiformid');
-
                                 }
                                 j++;
 
@@ -685,10 +687,8 @@
                                         if (data.shipcount == data.ship_status_done_count) {
                                             $('#upload_btn_id').show();
                                         } else if (data.ship_status_done_count == -1) {
-
                                             $('.linkclass').removeClass("active");
                                             $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
-                                            /*$('#allbuttondiv').hide();*/
                                         } else {
 
                                             $('#shipid').val(data.shipid);
@@ -844,6 +844,7 @@
 
         </div>
     </section>
+
     <section id="nogroupselected">
         <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
             <div class="text_image">
@@ -852,6 +853,7 @@
             </div>
         </div>
     </section>
+
     <section id="kpiformforship">
         <div class="col-sm-12">
             <div class="add_new_kpi_form_screen">
@@ -895,7 +897,8 @@
                                         <thead>
                                         <tr>
                                             {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                <th><input type="checkbox" class="checkboxes" name="reject_id[]" value={{ kpi_details[kpi_count]['id'] }}>
+                                                <th>
+                                                    <input type="checkbox" class="checkboxes" name="reject_id[]" value={{ kpi_details[kpi_count]['id'] }}>
                                                 </th>
                                             {% endif %}
                                             <th class="kpi_lement_name"> {{ key }} </th>
@@ -978,6 +981,7 @@
             </div>
         </div>
     </section>
+
     <section id="previousmonthdata">
         <div class="col-sm-12">
             <div class="verfication_ranking_form_screen">

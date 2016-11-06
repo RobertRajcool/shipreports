@@ -38,6 +38,13 @@ class Ranking_LookupStatus
     private $status;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="rejections", type="string", nullable=true)
+     */
+    private $rejections;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="dataofmonth", type="date")
@@ -146,5 +153,22 @@ class Ranking_LookupStatus
     {
         $this->userid = $userid;
     }
+
+    /**
+     * @return string
+     */
+    public function getRejections()
+    {
+        return $this->rejections;
+    }
+
+    /**
+     * @param string $rejections
+     */
+    public function setRejections($rejections)
+    {
+        $this->rejections = $rejections;
+    }
+
 
 }
