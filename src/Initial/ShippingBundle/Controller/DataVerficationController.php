@@ -3678,10 +3678,6 @@ class DataVerficationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $dataofmonth = $request->request->get('dataofmonth');
-        // $time = strtotime($mydate);
-        // $newformat = date('Y-m-d', $time);
-        // $new_date = new \DateTime($newformat);
-        // $new_date->modify('last day of this month');
         $userId = $user->getId();
         $username = $user->getUsername();
         $role = $user->getRoles();
@@ -3736,14 +3732,9 @@ class DataVerficationController extends Controller
             if ($role[0] == 'ROLE_ADMIN') {
                 $status = 2;
                 $index = array_search(0, $statusforship);
-                /*if($index!=false)
-                {
-                 */
                 $shipid = $listallshipforcompany[$index]['id'];
                 $shipname = $listallshipforcompany[$index]['shipName'];
                 $finddatawithstatus = $this->finddatawithstatus_ranking($status, $shipid, $dataofmonth);
-                /*}*/
-
             }
             if ($role[0] == 'ROLE_MANAGER') {
                 $status = 1;
@@ -3770,7 +3761,7 @@ class DataVerficationController extends Controller
             }
 
             $response = new JsonResponse();
-            if (count($finddatawithstatus) == 6) {
+            if (count($finddatawithstatus) == 7) {
                 $response->setData(
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
