@@ -2173,6 +2173,8 @@ class DashboradController extends Controller
             $new_monthdetail_date = new \DateTime($monthDetails[$currentMonth - 1]);
             $new_monthdetail_date->modify('last day of this month');
             $statusVerified = $currentMonth - 1;
+            $currentyear=date_format($new_monthdetail_date, 'Y');
+            $oneyear_montharray = array();
             $monthlyShipDataStatus = $em->createQueryBuilder()
                 ->select('b.status')
                 ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
@@ -2182,21 +2184,45 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
 
-            if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
-                $statusVerified = $currentMonth;
-            } else {
+            if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
+            {
+                $currentMonthinter = date('n');
+                $limit=(int)$currentMonthinter;
+                // $statusVerified = $currentMonth;
+                for ($m = 1; $m <= $limit; $m++) {
+                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($currentyear)));
+                    array_push($oneyear_montharray, $month);
+                }
+            }
+            else
+            {/*
+                $currentMonthinter = date('n');
+                $limit=(int)$currentMonthinter;
+                for ($m = 1; $m <=$limit; $m++) {
+                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($currentyear)));
+                    array_push($oneyear_montharray, $month);
+                }*/
                 $statusFieldQuery = $em->createQueryBuilder()
-                    ->select('b.status, b.dataofmonth')
+                    ->select('b.dataofmonth,b.status')
                     ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                    ->where('b.shipid = :shipId ')
+                    ->where('b.shipid = :shipId and b.status = :monthStatus')
+                    ->setParameter('monthStatus', 4)
                     ->setParameter('shipId', $shipId)
+                    ->groupby('b.dataofmonth')
                     ->getQuery()
                     ->getResult();
                 if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
-                    $dateFromDb = $statusFieldQuery[count($statusFieldQuery) - 1]['dataofmonth'];
-                    $statusVerified = $dateFromDb->format('n');
+                    for ($m =0; $m < count($statusFieldQuery); $m++)
+                    {
+                        $month = date_format($statusFieldQuery[$m]['dataofmonth'], 'Y-m-d');
+                        array_push($oneyear_montharray, $month);
+
+                    }
                 }
+
+
             }
+
             if ($kpiName == 'Vessel age') {
 
                 $monthNameLetter = array();
@@ -2206,7 +2232,7 @@ class DashboradController extends Controller
                 $newshipid = $em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipId));
                 $shipname = $newshipid->getShipName();
                 $manufacturingYear=$newshipid->getManufacturingYear();
-                for ($monthCount = 0; $monthCount < $statusVerified; $monthCount++) {
+                for ($monthCount = 0; $monthCount < count($oneyear_montharray); $monthCount++) {
                     $scorecardElementValueArray = array();
                     $kpiElementColorArray = array();
                     $scorecardElementRules = array();
@@ -2316,7 +2342,7 @@ class DashboradController extends Controller
                     $monthlyElementColorArray = array();
                     $monthlyElementValueArray = array();
                     $monthlyweightage_status=array();
-                    for ($monthCount = 0; $monthCount < $statusVerified; $monthCount++) {
+                    for ($monthCount = 0; $monthCount < count($oneyear_montharray); $monthCount++) {
                         $scorecardElementValueArray = array();
                         $kpiElementColorArray = array();
                         $scorecardElementRules = array();
@@ -2485,7 +2511,7 @@ class DashboradController extends Controller
                     $monthlyKpiAverageValueTotal = array();
                     $monthlyElementColorArray = array();
                     $monthlyElementValueArray = array();
-                    for ($monthCount = 0; $monthCount < $statusVerified; $monthCount++) {
+                    for ($monthCount = 0; $monthCount < count($oneyear_montharray); $monthCount++) {
                         $scorecardElementValueArray = array();
                         $kpiElementColorArray = array();
                         $scorecardElementRules = array();
@@ -3092,8 +3118,17 @@ class DashboradController extends Controller
             $oneyear_montharray = array();
             $rankingKpiWeightarray = array();
             $scorecardElementRules = array();
+            $statusFieldQuery = $em->createQueryBuilder()
+                ->select('b.dataofmonth,b.status')
+                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->where('b.shipid = :shipId and b.status = :monthStatus')
+                ->setParameter('monthStatus', 4)
+                ->setParameter('shipId', $shipid)
+                ->groupby('b.dataofmonth')
+                ->getQuery()
+                ->getResult();
             if ($year == ' ') {
-                for ($m = 1; $m <= 12; $m++) {
+                for ($m = 1; $m <= count($statusFieldQuery); $m++) {
                     $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
                     array_push($oneyear_montharray, $month);
                 }
@@ -3132,13 +3167,15 @@ class DashboradController extends Controller
 
                 if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4) {
                     $statusVerified = $currentMonth;
-                } else {
+                }
+                else {
                     $statusFieldQuery = $em->createQueryBuilder()
-                        ->select('b.status, b.dataofmonth')
+                        ->select('b.dataofmonth,b.status')
                         ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                        ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
+                        ->where('b.shipid = :shipId and b.status = :monthStatus')
+                        ->setParameter('monthStatus', 4)
                         ->setParameter('shipId', $shipid)
-                        ->setParameter('monthDetail', $new_monthdetail_date)
+                        ->groupby('b.dataofmonth')
                         ->getQuery()
                         ->getResult();
                     if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
