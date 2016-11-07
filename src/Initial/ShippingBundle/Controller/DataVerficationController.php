@@ -3770,6 +3770,7 @@ class DataVerficationController extends Controller
                         'elementweightage' => $finddatawithstatus['elementweightage'],
                         'indicationValue' => $finddatawithstatus['indicationValue'],
                         'symbolIndication' => $finddatawithstatus['symbolIndication'],
+                        'kpi_details' => $finddatawithstatus['kpi_details'],
                         'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false
                     ));
                 return $response;
