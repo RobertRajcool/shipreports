@@ -218,13 +218,13 @@ class RankingKpiDetailsController extends Controller
                 }
             }
             //This is for Weightage status Starts Here//
-            $weightage_status_object=new RankingWeightageStatus();
-            $weightage_status_object->setActiveDate($new_date);
-            $weightage_status_object->setElementId($id);
-            $weightage_status_object->setStatus(0);
-            $weightage_status_object->setWeightage($weightage);
-            $em->persist($weightage_status_object);
-            $em->flush();
+//            $weightage_status_object=new RankingWeightageStatus();
+//            $weightage_status_object->setActiveDate($new_date);
+//            $weightage_status_object->setElementId($id);
+//            $weightage_status_object->setStatus(0);
+//            $weightage_status_object->setWeightage($weightage);
+//            $em->persist($weightage_status_object);
+//            $em->flush();
 
             //This is for Weightage status Starts Here//
             $value = $request->request->get('value');

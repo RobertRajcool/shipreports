@@ -61,7 +61,7 @@ class KpiDetails
     /**
      * @var string
      *
-     * @ORM\Column(name="CellName", type="string", length=35)
+     * @ORM\Column(name="CellName", type="string", length=35, nullable=true)
      */
     private $cellName;
 
