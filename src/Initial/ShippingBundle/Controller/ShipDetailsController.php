@@ -351,7 +351,11 @@ class ShipDetailsController extends Controller
             }
 
             $ans = $query->getResult();
-            $companyName = $ans[0]['id'];
+            if($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                $companyName = $ans[0]['id'];
+            } else {
+                $companyName = $ans[0][1];
+            }
 
             $course = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id' => $companyName));
             $shipTypeObj = $this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipTypes')->findOneBy(array('id' => $shipType));
