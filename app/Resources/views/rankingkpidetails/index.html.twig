@@ -87,11 +87,12 @@
                 });
                 var editCheck = $('#edit-check');
                 editCheck.live("click", function () {
+                    var editShipNameOptions = $('#editShipId option');
                     if (editCheck.is(':checked') == true) {
-                        editShipOptions.attr('selected', 'selected');
+                        editShipNameOptions.attr('selected', 'selected');
                     }
                     else {
-                        editShipOptions.attr('selected', false);
+                        editShipNameOptions.attr('selected', false);
                     }
                 });
 
@@ -152,7 +153,6 @@
                     };
                     var checkElementWeight = checkKpiWeightFunction(data,editWeightError);
                 });
-
 
                 var save_error_status = 'no';
                 function checkKpiWeightFunction(data,errorMessage) {
@@ -458,6 +458,7 @@
                         rule_array.push($('#rule_obj_text-' + i_i).val());
                     }
                     var data = {
+                        shipName:$('.ship_name_edit').val(),
                         kpiName: $('.edit_kpi_name').val(),
                         weightage: $('.edit_kpi_weightage').val(),
                         description: $('.edit_kpi_description').val(),

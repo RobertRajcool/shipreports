@@ -385,8 +385,10 @@ class RankingKpiDetailsController extends Controller
     public function ranking_ajax_editAction(Request $request)
     {
         $user = $this->getUser();
+        $userId = $user->getId();
         if ($user != null) {
             $id = $request->request->get('Id');
+            $shipName = $request->request->get('shipName');
             $kpiName = $request->request->get('kpiName');
             $weightage = $request->request->get('weightage');
             $description = $request->request->get('description');
@@ -405,38 +407,39 @@ class RankingKpiDetailsController extends Controller
             $endMonthDate = $endYear . '-' . $integerEndMonth . '-' . '01';
             $endMonthDateObject = new \DateTime($endMonthDate);
             $endMonthDateObject->modify("last day of this month");
+            $today = new \DateTime();
 
             $em = $this->getDoctrine()->getManager();
-            //This is for Weightedit status Starts Here//
-            /*$weightage_startus_Result = $em->createQueryBuilder()
-                ->select('a.weightage','a.endDate','a.id')
-                ->from('InitialShippingBundle:RankingWeightageStatus', 'a')
-                ->where('a.elementId = :kpi_id')
-                ->andWhere('a.endDate IS NULL')
-                ->setParameter('kpi_id', $id)
+
+            $kpi_array = $em->createQueryBuilder()
+                ->select('identity(a.shipDetailsId)')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'a')
+                ->where('a.kpiName = :kpi_name')
+                ->setParameter('kpi_name', $kpiName)
                 ->getQuery()
                 ->getResult();
-            if(count($weightage_startus_Result)==1)
-            {
-                $resultweightage=$weightage_startus_Result[0]['weightage'];
-                if($weightage!=(int)$resultweightage)
-                {
-                    $editweighate_entity = $em->getRepository('InitialShippingBundle:RankingWeightageStatus')->find($weightage_startus_Result[0]['id']);
-                    //$ranking_weightagestatus=new RankingWeightageStatus();
-                    $currentdatetime=new \DateTime();
-                    $editweighate_entity->setEndDate($currentdatetime);
-                    $em->flush();
-                    $ranking_weightagestatus=new RankingWeightageStatus();
-                    $ranking_weightagestatus->setWeightage($weightage);
-                    $ranking_weightagestatus->setElementId($id);
-                    $ranking_weightagestatus->setActiveDate($currentdatetime);
-                    $ranking_weightagestatus->setStatus(1);
-                    $em->persist($ranking_weightagestatus);
-                    $em->flush();
+            $kpi_ship_id_array = array();
+            for($kpi_count=0;$kpi_count<count($kpi_array);$kpi_count++) {
+                array_push($kpi_ship_id_array,$kpi_array[$kpi_count][1]);
+            }
 
+            for($shi_count=0;$shi_count<count($shipName);$shi_count++) {
+                if(in_array($shipName[$shi_count],$kpi_ship_id_array)){
+                    continue;
+                } else {
+                    $kpidetails = new RankingKpiDetails();
+                    $kpidetails->setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipName[$shi_count])));
+                    $kpidetails->setKpiName($kpiName);
+                    $kpidetails->setDescription($description);
+                    $kpidetails->setActiveDate($activeMonthDateObject);
+                    $kpidetails->setEndDate($endMonthDateObject);
+                    $kpidetails->setCellName($cellName);
+                    $kpidetails->setCellDetails($cellDetails);
+                    $kpidetails->setWeightage($weightage);
+                    $em->persist($kpidetails);
+                    $em->flush();
                 }
-            }*/
-            //This is for Weightedit status Stars Here//
+            }
 
             $kpi_id_array = $em->createQueryBuilder()
                 ->select('a.id')
@@ -448,7 +451,6 @@ class RankingKpiDetailsController extends Controller
 
             for ($j = 0; $j < count($kpi_id_array); $j++) {
                 $entity = $em->getRepository('InitialShippingBundle:RankingKpiDetails')->find($kpi_id_array[$j]);
-
                 $kpiDetail = new RankingKpiDetails();
                 $entity->setKpiName($kpiName);
                 $entity->setDescription($description);

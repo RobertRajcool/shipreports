@@ -91,11 +91,12 @@
                 });
                 var editCheck = $('#edit-check');
                 editCheck.live("click", function () {
+                    var editShipNameOptions = $('#editShipId option');
                     if (editCheck.is(':checked') == true) {
-                        editShipOptions.attr('selected', 'selected');
+                        editShipNameOptions.attr('selected', 'selected');
                     }
                     else {
-                        editShipOptions.attr('selected', false);
+                        editShipNameOptions.attr('selected', false);
                     }
                 });
 
@@ -1298,7 +1299,7 @@
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel Details</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <label class="control-label col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_kpi_cellName" value="" placeholder="">
                                     </div>
