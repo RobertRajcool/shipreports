@@ -154,13 +154,14 @@
                 });
 
 
+                var save_error_status = 'no';
                 function checkKpiWeightFunction(data,errorMessage) {
                     if (createWeight.val() != null) {
                         $.ajaxSetup({
                             global: false,
                             type: "POST",
                             data: data,
-                            url: Routing.generate('kpidetails_kpi_ajax_weightage'),/*"kpi_ajax_weightage",*/
+                            url: Routing.generate('kpidetails_ranking_kpi_ajax_weightage'),/*"kpidetails_ranking_kpi_ajax_weightage",*/
                             beforeSend: function () {
                                 var setAjaxBeforeSend = ajaxbefore_send();
                             },
@@ -175,6 +176,9 @@
                                     var weight = data.Weightage - 100;
                                     errorMessage.text('Weightage value exceeded ! - ' + weight);
                                     createWeight.focus();
+                                    save_error_status = 'weightage';
+                                } else {
+                                    save_error_status = 'no';
                                 }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -443,6 +447,9 @@
                     if (parseInt(aY) > parseInt(eY) || parseInt(aY) == parseInt(eY) && parseInt(aM) > parseInt(eM) || aM == '--' || aY == '--' || eM == '--' || eY == '--') {
                         validDate.empty();
                         validDate.text("Choose the valid date !");
+                        return false;
+                    } else if(save_error_status == 'weightage') {
+                        createWeight.focus();
                         return false;
                     }
                     var count_row = $('.rule_table_edit tr').length;

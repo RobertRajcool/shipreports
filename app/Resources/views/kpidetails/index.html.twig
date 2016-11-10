@@ -269,6 +269,13 @@
                 }
 
                 function successFunction(data) {
+
+                    if(data.ship_id.length == data.ship_name.length) {
+                        $('#edit-check').attr('checked', true);
+                    } else {
+                        $('#edit-check').attr('checked', false);
+                    }
+
                     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                     var active_date = new Date(data.kpi_detail[0].activeDate.date);
                     var end_date = new Date(data.kpi_detail[0].endDate.date);
@@ -437,6 +444,7 @@
                 $('#editShipId').live("click", function () {
                     var editShipNameOptions = $('#editShipId option');
                     $('.check').attr('checked', false);
+                    editShipNameOptions.attr('selected', false);
                     $('#edit-check').live("click", function () {
                         if ($('#edit-check').is(':checked') == true) {
                             editShipNameOptions.attr('selected', true);
@@ -465,6 +473,7 @@
                         rule_array.push($('#rule_obj_text-' + i_i).val());
                     }
                     var data = {
+                        shipName:$('.ship_name_edit').val(),
                         kpiName: $('.edit_kpi_name').val(),
                         weightage: $('.edit_kpi_weightage').val(),
                         description: $('.edit_kpi_description').val(),

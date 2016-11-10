@@ -83,8 +83,10 @@ class KpiDetailsController extends Controller
     public function ajax_editAction(Request $request)
     {
         $user = $this->getUser();
+        $userId = $user->getId();
         if ($user != null) {
             $id = $request->request->get('Id');
+            $shipName = $request->request->get('shipName');
             $kpiName = $request->request->get('kpiName');
             $weightage = $request->request->get('weightage');
             $description = $request->request->get('description');
@@ -103,8 +105,41 @@ class KpiDetailsController extends Controller
             $endMonthDate = $endYear . '-' . $integerEndMonth . '-' . '01';
             $endMonthDateObject = new \DateTime($endMonthDate);
             $endMonthDateObject->modify("last day of this month");
+            $today = new \DateTime();
 
             $em = $this->getDoctrine()->getManager();
+            $kpi_array = $em->createQueryBuilder()
+                ->select('identity(a.shipDetailsId)')
+                ->from('InitialShippingBundle:KpiDetails', 'a')
+                ->where('a.kpiName = :kpi_name')
+                ->setParameter('kpi_name', $kpiName)
+                ->getQuery()
+                ->getResult();
+            $kpi_ship_id_array = array();
+            for($kpi_count=0;$kpi_count<count($kpi_array);$kpi_count++) {
+                array_push($kpi_ship_id_array,$kpi_array[$kpi_count][1]);
+            }
+
+            for($shi_count=0;$shi_count<count($shipName);$shi_count++) {
+                if(in_array($shipName[$shi_count],$kpi_ship_id_array)){
+                    continue;
+                } else {
+                    $kpidetails = new KpiDetails();
+                    $kpidetails->setShipDetailsId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' => $shipName[$shi_count])));
+                    $kpidetails->setKpiName($kpiName);
+                    $kpidetails->setDescription($description);
+                    $kpidetails->setActiveDate($activeMonthDateObject);
+                    $kpidetails->setEndDate($endMonthDateObject);
+                    $kpidetails->setCellName($cellName);
+                    $kpidetails->setCellDetails($cellDetails);
+                    $kpidetails->setWeightage($weightage);
+                    $kpidetails->setDateTime($today);
+                    $kpidetails->setUserId($this->getDoctrine()->getManager()->getRepository('InitialShippingBundle:User')->findOneBy(array('id' => $userId)));
+                    $em->persist($kpidetails);
+                    $em->flush();
+                }
+            }
+
             $kpi_id_array = $em->createQueryBuilder()
                 ->select('a.id')
                 ->from('InitialShippingBundle:KpiDetails', 'a')
@@ -208,6 +243,8 @@ class KpiDetailsController extends Controller
             $kpiDetails = $query->getResult();
             $count = count($kpiDetails);
 
+            $ship_count_array = $em->getRepository('InitialShippingBundle:ShipDetails')->findAll();
+
             $kpiDetail = new KpiDetails();
             $form = $this->createForm(new KpiDetailsType($userId, $role), $kpiDetail);
             $form->handleRequest($request);
@@ -216,7 +253,8 @@ class KpiDetailsController extends Controller
                 'kpiDetails' => $kpiDetails,
                 'kpiDetail' => $kpiDetail,
                 'form' => $form->createView(),
-                'kpi_count' => $count
+                'kpi_count' => $count,
+                'ship_count' => count($ship_count_array)
             ));
         } else {
             return $this->redirectToRoute('fos_user_security_login');

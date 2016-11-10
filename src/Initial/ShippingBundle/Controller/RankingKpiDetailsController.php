@@ -408,7 +408,7 @@ class RankingKpiDetailsController extends Controller
 
             $em = $this->getDoctrine()->getManager();
             //This is for Weightedit status Starts Here//
-            $weightage_startus_Result = $em->createQueryBuilder()
+            /*$weightage_startus_Result = $em->createQueryBuilder()
                 ->select('a.weightage','a.endDate','a.id')
                 ->from('InitialShippingBundle:RankingWeightageStatus', 'a')
                 ->where('a.elementId = :kpi_id')
@@ -435,7 +435,7 @@ class RankingKpiDetailsController extends Controller
                     $em->flush();
 
                 }
-            }
+            }*/
             //This is for Weightedit status Stars Here//
 
             $kpi_id_array = $em->createQueryBuilder()
