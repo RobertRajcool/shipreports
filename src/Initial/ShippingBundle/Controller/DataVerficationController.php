@@ -2313,7 +2313,7 @@ class DataVerficationController extends Controller
                     $rejection_string = $lookup_status[0]['rejections'];
                     $rejection_obj = explode(',',$rejection_string);
                     $reject_status = 'yes';
-                } else if($lookup_status[0]['rejections']!='ALL') {
+                } else if($lookup_status[0]['rejections']!='ALL' && $lookup_status[0]['rejections']!=null) {
                     $rejection_obj = 'ALL';
                     $reject_status = 'yes';
                 } else
