@@ -49,12 +49,13 @@
                 $('.prevmonth').live('click', function ($e) {
                     $e.preventDefault();
                     var linkid = $(this).attr('id');
+                    var currentdate;
                     if (linkid == 'proviousmonth_data') {
 
-                        var currentdate = new Date($('#datofmonthid_data').val());
+                        currentdate = new Date($('#datofmonthid_data').val());
                     }
                     else {
-                        var currentdate = new Date($('#datofmonthid').val());
+                        currentdate = new Date($('#datofmonthid').val());
                     }
 
                     currentdate.setMonth(currentdate.getMonth() - 1);
@@ -121,7 +122,6 @@
                                         valuecount++;
                                     }
                                 });
-
 
                                 if (linkid == 'proviousmonth_data') {
                                     $('#currentid_data').text(month + '-' + year);
@@ -243,8 +243,10 @@
                                     });
                                 }
                                 else {
-                                    $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
+//                                    $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
                                     $('#allbuttondiv').hide();
+                                    $('#addkpiformid').text('All vessels data updated !');
+                                    $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                 }
                             }
                         },
@@ -262,12 +264,13 @@
                 $('.nextmonth').live('click', function ($e) {
                     $e.preventDefault();
                     var linkid = $(this).attr('id');
+                    var currentdate;
                     if (linkid == 'proviousmonth_data') {
 
-                        var currentdate = new Date($('#datofmonthid_data').val());
+                        currentdate = new Date($('#datofmonthid_data').val());
                     }
                     else {
-                        var currentdate = new Date($('#datofmonthid').val());
+                        currentdate = new Date($('#datofmonthid').val());
                     }
                     currentdate.setMonth(currentdate.getMonth() + 1);
                     currentdate, locale = "en-us",
@@ -455,8 +458,10 @@
                                         });
                                     }
                                     else {
-                                        $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
+//                                        $('<span id="spanallid">All Ships Data Upload.</span>').appendTo('#elementformid');
                                         $('#allbuttondiv').hide();
+                                        $('#addkpiformid').text('All vessels data updated !');
+                                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                     }
                                 }
                             },

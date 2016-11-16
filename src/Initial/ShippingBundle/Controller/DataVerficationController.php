@@ -80,8 +80,7 @@ class DataVerficationController extends Controller
                 $shipid = 0;
                 $shipname = '';
                 $counts = array_count_values($statusforship);
-
-
+                
                 if ($role[0] == 'ROLE_ADMIN') {
                     $status = 2;
                     $index = array_search(0, $statusforship);
@@ -146,7 +145,6 @@ class DataVerficationController extends Controller
                     $reject_status = 'empty';
                 }
 
-
                 if (count($finddatawithstatus) == 7) {
                     return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
                         array('listofships' => $listallshipforcompany,
@@ -195,7 +193,6 @@ class DataVerficationController extends Controller
             $mydate = '01-' . $dataofmonth;
             $time = strtotime($mydate);
             $stringdataofmonth = date('Y-m-d', $time);
-
         }
         $status = 0;
         $new_date = new \DateTime($stringdataofmonth);
@@ -220,21 +217,15 @@ class DataVerficationController extends Controller
                     ->getResult();
                 if (count($statusfromresult) == 0) {
                     array_push($statusarray, 0);
-
                 }
                 if (count($statusfromresult) > 0) {
                     array_push($statusarray, 3);
-
                 }
-
             }
-
             return $statusarray;
         }
         if ($role == 'ROLE_MANAGER') {
             $status = 2;
-
-
             for ($ship = 0; $ship < count($shipdetialsarray); $ship++) {
                 $statusfromresult = $em->createQueryBuilder()
                     ->select('b.status')
@@ -251,13 +242,9 @@ class DataVerficationController extends Controller
                 }
                 if (count($statusfromresult) > 0) {
                     array_push($statusarray, 2);
-
                 }
-
             }
             return $statusarray;
-
-
         }
         if ($role == 'ROLE_KPI_INFO_PROVIDER') {
             $status = 1;
@@ -279,13 +266,9 @@ class DataVerficationController extends Controller
                     array_push($statusarray, 0);
                 }
                 if (count($statusfromresult) > 0) {
-                    array_push($statusarray, 1);
-
+                    array_push($statusarray, $statusfromresult[0]['status']);
                 }
-
             }
-
-
             return $statusarray;
 
         } else {
@@ -794,9 +777,7 @@ class DataVerficationController extends Controller
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
                 }
-
             }
-
         }
 
         if ($buttonid == 'savebuttonid') {
@@ -1052,7 +1033,6 @@ class DataVerficationController extends Controller
                 $newlookupstatus->setDatetime(new \DateTime());
                 $em->flush();
             }
-
             $reading_kpi_values_status = $em->getRepository('InitialShippingBundle:ReadingKpiValues')->findBy(array('monthdetail' => $new_date, 'shipDetailsId' => $shipid));
             if (count($reading_kpi_values_status) != 0) {
                 foreach ($reading_kpi_values_status as $reading_kpi_values_status_obj) {
@@ -1060,10 +1040,8 @@ class DataVerficationController extends Controller
                     $em->flush();
                 }
             }
-
             $ship_status_done_count = -1;
             $returnmsg = ' rejected...';
-
         }
 
         if ($buttonid != 'upload_btn_id' ) {
@@ -1155,6 +1133,7 @@ class DataVerficationController extends Controller
         }
 
     }
+
 
     /**
      * Element and Kpi for Particular Ships.
@@ -1303,9 +1282,8 @@ class DataVerficationController extends Controller
                         array_push($symbolIndication, $elementids[$j]['symbolIndication']);
                     }
                     array_push($elementindicationValue, $elementids[$j]['indicationValue']);
-
-
                 }
+
             } else {
                 if ($maxelementcount < count($elementids)) {
                     $maxelementcount = count($elementids);
@@ -1322,10 +1300,8 @@ class DataVerficationController extends Controller
                         array_push($symbolIndication, $elementids[$j]['symbolIndication']);
                     }
                     array_push($elementindicationValue, $elementids[$j]['indicationValue']);
-
                 }
             }
-
 
         }
         $elementvalues = array();
@@ -1506,10 +1482,9 @@ class DataVerficationController extends Controller
                         'currentshipid' => '', 'currentshipname' => '', 'templatechoosen' => $templatechoosen
                     ));
             }
-
         }
-
     }
+
 
     //Finding Status For monthdata While after add,save,verify,upload
 
@@ -1523,7 +1498,6 @@ class DataVerficationController extends Controller
             $mydate = '01-' . $dataofmonth;
             $time = strtotime($mydate);
             $stringdataofmonth = date('Y-m-d', $time);
-
         }
         $status = 0;
         $new_date = new \DateTime($stringdataofmonth);
@@ -1533,8 +1507,6 @@ class DataVerficationController extends Controller
 
         if ($role == 'ROLE_ADMIN') {
             $status = 3;
-
-
             for ($ship = 0; $ship < count($shipdetialsarray); $ship++) {
                 $statusfromresult = $em->createQueryBuilder()
                     ->select('b.status')
@@ -1549,21 +1521,16 @@ class DataVerficationController extends Controller
                     ->getResult();
                 if (count($statusfromresult) == 0) {
                     array_push($statusarray, 0);
-
                 }
                 if (count($statusfromresult) > 0) {
                     array_push($statusarray, 3);
-
                 }
-
             }
 
             return $statusarray;
         }
         if ($role == 'ROLE_MANAGER') {
             $status = 2;
-
-
             for ($ship = 0; $ship < count($shipdetialsarray); $ship++) {
                 $statusfromresult = $em->createQueryBuilder()
                     ->select('b.status')
@@ -1580,13 +1547,9 @@ class DataVerficationController extends Controller
                 }
                 if (count($statusfromresult) > 0) {
                     array_push($statusarray, 2);
-
                 }
-
             }
             return $statusarray;
-
-
         }
         if ($role == 'ROLE_KPI_INFO_PROVIDER') {
             $status = 1;
@@ -1608,12 +1571,9 @@ class DataVerficationController extends Controller
                     array_push($statusarray, 0);
                 }
                 if (count($statusfromresult) > 0) {
-                    array_push($statusarray, 1);
-
+                    array_push($statusarray, $statusfromresult[0]['status']);
                 }
-
             }
-
 
             return $statusarray;
 
@@ -3716,8 +3676,8 @@ class DataVerficationController extends Controller
                 $ship_status_done_count = 0;
             }
         } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-            if (array_key_exists(1, $counts)) {
-                $ship_status_done_count = $counts[1];
+            if (array_key_exists(5, $counts)) {
+                $ship_status_done_count = $counts[5];
             } else {
                 $ship_status_done_count = 0;
             }
@@ -3940,10 +3900,6 @@ class DataVerficationController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         $dataofmonth = $request->request->get('dataofmonth');
-        // $time = strtotime($mydate);
-        // $newformat = date('Y-m-d', $time);
-        // $new_date = new \DateTime($newformat);
-        // $new_date->modify('last day of this month');
         $userId = $user->getId();
         $username = $user->getUsername();
         $role = $user->getRoles();
@@ -3984,8 +3940,8 @@ class DataVerficationController extends Controller
                 $ship_status_done_count = 0;
             }
         } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-            if (array_key_exists(1, $counts)) {
-                $ship_status_done_count = $counts[1];
+            if (array_key_exists(5, $counts)) {
+                $ship_status_done_count = $counts[5];
             } else {
                 $ship_status_done_count = 0;
             }
