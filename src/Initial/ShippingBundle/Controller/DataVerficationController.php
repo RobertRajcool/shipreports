@@ -80,7 +80,7 @@ class DataVerficationController extends Controller
                 $shipid = 0;
                 $shipname = '';
                 $counts = array_count_values($statusforship);
-                
+
                 if ($role[0] == 'ROLE_ADMIN') {
                     $status = 2;
                     $index = array_search(0, $statusforship);
@@ -1910,8 +1910,8 @@ class DataVerficationController extends Controller
 
             if ($buttonid == 'savebuttonid') {
 
-                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid, 'dataofmonth' => $new_date));
-                $newlookupstatus = $lookstatus[0];
+//                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid, 'dataofmonth' => $new_date));
+//                $newlookupstatus = $lookstatus[0];
 
                 foreach ($kpiandelementids as $element) {
                     for ($elementCount = 0; $elementCount < count($element); $elementCount++) {
