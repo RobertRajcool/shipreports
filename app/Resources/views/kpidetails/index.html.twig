@@ -91,11 +91,12 @@
                 });
                 var editCheck = $('#edit-check');
                 editCheck.live("click", function () {
+                    var editShipNameOptions = $('#editShipId option');
                     if (editCheck.is(':checked') == true) {
-                        editShipOptions.attr('selected', 'selected');
+                        editShipNameOptions.attr('selected', 'selected');
                     }
                     else {
-                        editShipOptions.attr('selected', false);
+                        editShipNameOptions.attr('selected', false);
                     }
                 });
 
@@ -269,6 +270,13 @@
                 }
 
                 function successFunction(data) {
+
+                    if(data.ship_id.length == data.ship_name.length) {
+                        $('#edit-check').attr('checked', true);
+                    } else {
+                        $('#edit-check').attr('checked', false);
+                    }
+
                     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                     var active_date = new Date(data.kpi_detail[0].activeDate.date);
                     var end_date = new Date(data.kpi_detail[0].endDate.date);
@@ -424,8 +432,9 @@
                     showKpi.hide();
                     editKpi.show();
                     ruleEditPlace.hide();
-                    $('.check').attr('checked', true);
+                    /*$('.check').attr('checked', true);*/
                 });
+
                 editCancelButton.click(function ($e) {
                     $e.preventDefault();
                     validDate.empty();
@@ -437,6 +446,7 @@
                 $('#editShipId').live("click", function () {
                     var editShipNameOptions = $('#editShipId option');
                     $('.check').attr('checked', false);
+                    editShipNameOptions.attr('selected', false);
                     $('#edit-check').live("click", function () {
                         if ($('#edit-check').is(':checked') == true) {
                             editShipNameOptions.attr('selected', true);
@@ -465,6 +475,7 @@
                         rule_array.push($('#rule_obj_text-' + i_i).val());
                     }
                     var data = {
+                        shipName:$('.ship_name_edit').val(),
                         kpiName: $('.edit_kpi_name').val(),
                         weightage: $('.edit_kpi_weightage').val(),
                         description: $('.edit_kpi_description').val(),
@@ -1064,7 +1075,7 @@
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel Details</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <label class="control-label col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
                                     </div>
@@ -1289,7 +1300,7 @@
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel Details</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <label class="control-label col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_kpi_cellName" value="" placeholder="">
                                     </div>

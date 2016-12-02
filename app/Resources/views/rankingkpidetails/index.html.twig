@@ -87,11 +87,12 @@
                 });
                 var editCheck = $('#edit-check');
                 editCheck.live("click", function () {
+                    var editShipNameOptions = $('#editShipId option');
                     if (editCheck.is(':checked') == true) {
-                        editShipOptions.attr('selected', 'selected');
+                        editShipNameOptions.attr('selected', 'selected');
                     }
                     else {
-                        editShipOptions.attr('selected', false);
+                        editShipNameOptions.attr('selected', false);
                     }
                 });
 
@@ -153,14 +154,14 @@
                     var checkElementWeight = checkKpiWeightFunction(data,editWeightError);
                 });
 
-
+                var save_error_status = 'no';
                 function checkKpiWeightFunction(data,errorMessage) {
                     if (createWeight.val() != null) {
                         $.ajaxSetup({
                             global: false,
                             type: "POST",
                             data: data,
-                            url: Routing.generate('kpidetails_kpi_ajax_weightage'),/*"kpi_ajax_weightage",*/
+                            url: Routing.generate('kpidetails_ranking_kpi_ajax_weightage'),/*"kpidetails_ranking_kpi_ajax_weightage",*/
                             beforeSend: function () {
                                 var setAjaxBeforeSend = ajaxbefore_send();
                             },
@@ -175,6 +176,9 @@
                                     var weight = data.Weightage - 100;
                                     errorMessage.text('Weightage value exceeded ! - ' + weight);
                                     createWeight.focus();
+                                    save_error_status = 'weightage';
+                                } else {
+                                    save_error_status = 'no';
                                 }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -444,6 +448,9 @@
                         validDate.empty();
                         validDate.text("Choose the valid date !");
                         return false;
+                    } else if(save_error_status == 'weightage') {
+                        createWeight.focus();
+                        return false;
                     }
                     var count_row = $('.rule_table_edit tr').length;
                     var rule_array = new Array();
@@ -451,6 +458,7 @@
                         rule_array.push($('#rule_obj_text-' + i_i).val());
                     }
                     var data = {
+                        shipName:$('.ship_name_edit').val(),
                         kpiName: $('.edit_kpi_name').val(),
                         weightage: $('.edit_kpi_weightage').val(),
                         description: $('.edit_kpi_description').val(),
@@ -1048,7 +1056,7 @@
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel Details</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <label class="control-label col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         {{ form_widget(form.cellName,{'id':'valueid','label': ''}) }}
                                     </div>
@@ -1220,7 +1228,7 @@
                             <fieldset class="fieldset_box">
                                 <legend class="legend_name">Excel Details</legend>
                                 <div class="form-group">
-                                    <label class="control-label required_field col-xs-4"><strong>Cell Name</strong></label>
+                                    <label class="control-label col-xs-4"><strong>Cell Name</strong></label>
                                     <div class="col-xs-8">
                                         <input type="text" class="edit_kpi_cellName" value="" placeholder="">
                                     </div>
