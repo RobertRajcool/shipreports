@@ -243,6 +243,7 @@
                                         $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                     }
                                 }
+                                $('.datetimepicker').val(this_val);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 $('#resultLoading .bg').height('100%');
