@@ -394,11 +394,13 @@
                         });
                     }
                 });
+
                 $(".dynamiclabel").live("click", function (e) {
                     var b = $(this).text();
                     $('#toemail').val(b);
                     $('#livesearchdiv').hide();
                 });
+
                 $('#livesearchdiv').hide()
                 $('#mycommentid').click(function () {
                     $('#livesearchdiv').hide();
@@ -475,7 +477,7 @@
                                     <span>
                                         <select class="add_rule_basic_year_drop activeYear" name="activeYear">
                                             <option selected="selected">--</option>
-                                            {% for i in 2000..2020 %}
+                                            {% for i in 2015..2025 %}
                                                 <option value={{ i }}>{{ i }}</option>
                                             {% endfor %}
                                         </select>
@@ -501,7 +503,7 @@
                                     <span>
                                         <select class="add_rule_basic_year_drop endYear" name="endYear">
                                             <option selected="selected">--</option>
-                                            {% for i in 2000..2020 %}
+                                            {% for i in 2015..2025 %}
                                                 <option value={{ i }}>{{ i }}</option>
                                             {% endfor %}
                                         </select>

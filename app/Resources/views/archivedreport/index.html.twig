@@ -533,6 +533,7 @@
                 commentId.focus(function () {
                     liveSearchDiv.hide();
                 });
+
                 $('#toemail').keyup(function ($e) {
                     $e.preventDefault();
                     var searchstring = $(this).val();
@@ -1127,7 +1128,7 @@
                                     <span>
                                         <select class="add_rule_basic_year_drop activeYear" name="activeYear">
                                             <option selected="selected">--</option>
-                                            {% for i in 2000..2020 %}
+                                            {% for i in 2015..2025 %}
                                                 <option value={{ i }}>{{ i }}</option>
                                             {% endfor %}
                                         </select>
@@ -1153,7 +1154,7 @@
                                     <span>
                                         <select class="add_rule_basic_year_drop endYear" name="endYear">
                                             <option selected="selected">--</option>
-                                            {% for i in 2000..2020 %}
+                                            {% for i in 2015..2025 %}
                                                 <option value={{ i }}>{{ i }}</option>
                                             {% endfor %}
                                         </select>
@@ -1194,7 +1195,7 @@
                                             <span>
                                                <select required class="report_year select-year"  name="year">
                                                    <option selected="selected" value="">--</option>
-                                                   {% for i in 2000..2020 %}
+                                                   {% for i in 2015..2025 %}
                                                        <option value={{ i }}>{{ i }}</option>
                                                    {% endfor %}
                                                </select>
