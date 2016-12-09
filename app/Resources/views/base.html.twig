@@ -22,7 +22,7 @@
 
     <script src="/js/css_browser_selector.js"></script>
     <script src="/js/jquery.min.js"></script>
-    <script src="/js/jquery-ui.js"></script>
+    {#<script src="/js/jquery-ui.js"></script>#}
     <script src="/js/moment.js"></script>
     <script src="/js/angular.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -39,18 +39,7 @@
     <script src="/js/router.js"></script>
     <script src="/js/fos_js_routes.js"></script>
     <script src="/js/bootstrap-datetimepicker.min.js"></script>
-   {# <script src="/js/highchart/highcharts.js"></script> #}
-    {#  <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>#}
 
-    {#    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>#}
-    {# <script>
-         //paste this code under head tag or in a seperate js file.
-         // Wait for window load
-         $(window).load(function() {
-             // Animate loader off screen
-             $(".se-pre-con").fadeOut("slow");;
-         });
-     </script>#}
     <script>
 
     </script>
@@ -58,66 +47,7 @@
     <script type="text/javascript">
         $(window).ready(function()
         {
-           /* Highcharts.theme = {
-                colors: ["#7cb5ec", "#f7a35c", "#90ee7e", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
-                    "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
-                chart: {
-                    backgroundColor: null,
-                    style: {
-                        fontFamily: "Dosis, sans-serif"
-                    }
-                },
-                title: {
-                    style: {
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        textTransform: 'uppercase'
-                    }
-                },
-                tooltip: {
-                    borderWidth: 0,
-                    backgroundColor: 'rgba(219,219,216,0.8)',
-                    shadow: false
-                },
-                legend: {
-                    itemStyle: {
-                        fontWeight: 'bold',
-                        fontSize: '13px'
-                    }
-                },
-                xAxis: {
-                    gridLineWidth: 1,
-                    labels: {
-                        style: {
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yAxis: {
-                    minorTickInterval: 'auto',
-                    title: {
-                        style: {
-                            textTransform: 'uppercase'
-                        }
-                    },
-                    labels: {
-                        style: {
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                plotOptions: {
-                    candlestick: {
-                        lineColor: '#404048'
-                    }
-                },
 
-
-                // General
-                background2: '#F0F0EA'
-
-            };
-            Highcharts.setOptions(Highcharts.theme);*/
             var base_url = window.location.origin;
             var pathname = window.location.pathname;
             if(pathname=='/dashboard/')
