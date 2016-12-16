@@ -87,6 +87,9 @@
                             data: data,
                             success: function (data) {
 
+                                $('#datofmonthid_data').val(data.dateFormat);
+                                $('#datofmonthid').val(data.dateFormat);
+
                                 if (data.commontext == true) {
 
                                     $('#prvieoustablecontent').html(' ');
@@ -251,7 +254,6 @@
                                 window.location.href = base_url + '/login';
                             }
                         });
-                        //console.log(data_split_array, nowdate, current);
                     }
                 }).datepicker("setDate", new Date());
 
@@ -901,7 +903,7 @@
                                 if(data.status == -1) {
                                     $('#img_' + data.ship_id ).remove();
                                     $('#' + data.ship_id).after('<img id="img_'+data.ship_id+'" style="width: 20px;height: 20px" src="/images/error.png">');
-                                    $('#addkpiformid').text(data.return_msg);
+                                    $('#addkpiformid').text(data.return_msg).css({"color":"red"});
                                 } else {
                                     $('#datofmonthid').val(data.currentdatetime);
                                     $('#datofmonthid_data').val(data.currentdatetime);
@@ -1233,6 +1235,7 @@
                                 <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
                                 <a id="nextmonth_data" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
                             </label>#}
+                            <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
                             <div class="col-lg-3" style="float: right; margin-right: 20px">
                                 <div class="form-group">
                                     <input type='text' placeholder="-- Choose Month & Year --" class="form-control datetimepicker">

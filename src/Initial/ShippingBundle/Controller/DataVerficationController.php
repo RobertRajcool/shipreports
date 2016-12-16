@@ -3641,6 +3641,11 @@ class DataVerficationController extends Controller
         $userId = $user->getId();
         $username = $user->getUsername();
         $role = $user->getRoles();
+
+        $mydate = '01-' . $dataofmonth;
+        $time = strtotime($mydate);
+        $dateFormat = date('Y-m-d', $time);
+
         if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
             $query = $em->createQueryBuilder()
                 ->select('a.shipName', 'a.id')
@@ -3658,9 +3663,11 @@ class DataVerficationController extends Controller
                 ->setParameter('userId', $userId)
                 ->getQuery();
         }
+
         $listallshipforcompany = $query->getResult();
         $statusforship = $this->findshipstatus_ranking($dataofmonth, $listallshipforcompany, $role[0]);
         $counts = array_count_values($statusforship);
+        $ship_status_done_count = 0;
         if ($role[0] == 'ROLE_ADMIN') {
             if (array_key_exists(3, $counts)) {
                 $ship_status_done_count = $counts[3];
@@ -3731,7 +3738,7 @@ class DataVerficationController extends Controller
                         'indicationValue' => $finddatawithstatus['indicationValue'],
                         'symbolIndication' => $finddatawithstatus['symbolIndication'],
                         'kpi_details' => $finddatawithstatus['kpi_details'],
-                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false
+                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false, 'dateFormat' => $dateFormat
                     ));
                 return $response;
             } else {
@@ -3740,7 +3747,7 @@ class DataVerficationController extends Controller
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray' => array(), 'elementcount' => 0,
                         'elementvalues' => array(),
-                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false
+                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false, 'dateFormat' => $dateFormat
                     ));
                 return $response;
             }
@@ -3884,7 +3891,8 @@ class DataVerficationController extends Controller
                     'rankingKpiList' => $common_RankingKpiList,
                     'elementname' => $ElmentNameArray,
                     'elementweightage' => $ElementWeighate_Array,
-                    'commontext' => true
+                    'commontext' => true,
+                    'dateFormat' => $dateFormat
                 ));
             return $response;
         }
@@ -3903,6 +3911,11 @@ class DataVerficationController extends Controller
         $userId = $user->getId();
         $username = $user->getUsername();
         $role = $user->getRoles();
+
+        $mydate = '01-' . $dataofmonth;
+        $time = strtotime($mydate);
+        $dateFormat = date('Y-m-d', $time);
+
         if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
             $query = $em->createQueryBuilder()
                 ->select('a.shipName', 'a.id')
@@ -3987,7 +4000,7 @@ class DataVerficationController extends Controller
                         'indicationValue' => $finddatawithstatus['indicationValue'],
                         'symbolIndication' => $finddatawithstatus['symbolIndication'],
                         'kpi_details' => $finddatawithstatus['kpi_details'],
-                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false
+                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false, 'dateFormat' => $dateFormat
                     ));
                 return $response;
             } else {
@@ -3996,7 +4009,7 @@ class DataVerficationController extends Controller
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                         'elementkpiarray' => array(), 'elementcount' => 0,
                         'elementvalues' => array(),
-                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false
+                        'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false, 'dateFormat' => $dateFormat
                     ));
                 return $response;
             }
@@ -4141,7 +4154,8 @@ class DataVerficationController extends Controller
                     'rankingKpiList' => $common_RankingKpiList,
                     'elementname' => $ElmentNameArray,
                     'elementweightage' => $ElementWeighate_Array,
-                    'commontext' => true
+                    'commontext' => true,
+                    'dateFormat' => $dateFormat
                 ));
             return $response;
         }
