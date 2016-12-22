@@ -998,7 +998,9 @@
                                         $('#img_' + preshipid ).remove();
                                         $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
                                         $('#addkpiformid').text('All vessels data updated !');
+                                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
                                         $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                        {% endif %}
                                     } else {
                                         $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
                                     }
