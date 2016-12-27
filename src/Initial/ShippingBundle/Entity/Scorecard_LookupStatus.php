@@ -41,6 +41,12 @@ class Scorecard_LookupStatus
      * @ORM\Column(name="rejections", type="string", nullable=true)
      */
     private $rejections;
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="rejectionsStatus", type="boolean", nullable=false)
+     */
+    private $rejectionsStatus;
 
     /**
      * @var \DateTime

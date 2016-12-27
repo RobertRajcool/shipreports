@@ -57,7 +57,6 @@
                 $('#datofmonthid_data').val(currentdatetime);
                 $('#spantext').hide();
                 $('#previousmonthdata').hide();
-
                 $('.datetimepicker').datepicker({
                     changeMonth: true,
                     changeYear: true,
@@ -75,7 +74,212 @@
                         $.ajaxSetup({
                             global: false,
                             type: "post",
-                            'url': Routing.generate('prev_month_change_scorecard'),
+                            'url': Routing.generate('gotoscorecardmonthdata'),
+                            beforeSend: function () {
+                                var beforsend = ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var complete = ajax_complete();
+                            }
+                        });
+                        $.ajax({
+                            data: data,
+                            success: function (data) {
+                                $('#datofmonthid_data').val(data.dateFormat);
+                                $('#datofmonthid').val(data.dateFormat);
+                                var statusQueryResult = data.statusQueryResult;
+                                var listofSucessships=statusQueryResult[0]['shipid'];
+                                var lookStatus=statusQueryResult[0]['status'];
+                                var rejectionStatus=statusQueryResult[0]['rejectionsStatus'];
+                                if(data.shipoverallStatus=="yes"){
+                                    if(rejectionStatus){
+                                        ListView(data)
+                                    }
+                                    else {
+                                        EditableView(data)
+                                    }
+
+                                }
+                                else if(data.shipoverallStatus=="no"){
+                                    EditableView(data)
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                $('#resultLoading .bg').height('100%');
+                                $('#resultLoading').fadeOut(300);
+                                $('body').css('cursor', 'default');
+                                // window.location.href = base_url + '/login';
+                            }
+                        });
+                    }
+                }).datepicker("setDate", new Date());
+                function ListView(data){
+                    $('#prvieoustablecontent').html(' ');
+                    $('#prvieoustablecontent').text(' ');
+                    var addcolumn = 0;
+                    var valuecount = 0;
+                    $('<table id="table_id_" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
+                    $('<thead id="firsttable_head_"></thead><tbody id="firsttable_body_"></tbody>').appendTo('#table_id_');
+                    $('<tr class="v_r_min_height" id="firsttable_head_tr_"></tr>').appendTo('#firsttable_head_');
+                    $('<th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo('#firsttable_head_tr_');
+                    $.each(data.listofships, function (j) {
+                        $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_');
+                    });
+                    $.each(data.kpi_details, function (i) {
+                        var colspan = data.shipcount + 2;
+                        $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
+                        $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
+                        $('<tr id="firsttable_head_tr_' + i + '"></tr>').appendTo('#firsttable_head_' + i);
+                        $('<th colspan="' + colspan + '" class="kpi_lement_name">' + data.kpi_details[i]['kpiName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
+                        var kpiid=data.kpi_details[i]['id']
+                        var elementnamearray = data.elementkpiarray[data.kpi_details[i]['kpiName']];
+                        var forloopcount = 0;
+                        for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
+                            $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
+                            $('<td class="kpi_lement_name kpi_lement_name">' + elementnamearray[forloopcount]+ '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                            $('<td class="kpi_weightage kpi_lement_number">' + data.elementweightage[valuecount]  + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                            $.each(data.listofships, function (j) {
+                                var shipid = data.listofships[j]['id']
+                                var elementvalue = 0;
+                                if (elementvalue != null) {
+                                    $('<td class="kpi_ship kpi_lement_inputname">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                }
+                                else {
+                                    $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                }
+                            });
+                            valuecount++;
+                        }
+                    });
+                    $('#kpiformforship').hide();
+                    $('#currentmonhthdetails').hide();
+                    $('#previousmonthdata').show();
+                }
+                function EditableView(data){
+                    $('#allbuttondiv').show();
+                    $('#kpiformforship').show();
+                    $('#previousmonthdata').hide();
+                    $('#currentmonhthdetails').show();
+                    $('#overallshids').html('');
+                    $('#overallshids').text('');
+                    $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
+                    $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
+                    var shipstatus = 0
+                    $.each(data.listofships, function (i) {
+                        $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
+                        if (role == 'ROLE_ADMIN') {
+                            /* if (status == 3) {
+                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                             shipstatus++;
+                             }*/
+                        }
+                        else if (role == 'ROLE_MANAGER') {
+                            /*if (status == 2) {
+                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                             shipstatus++;
+                             }*/
+                        }
+                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                            if (status == 1) {
+                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                shipstatus++;
+                            }
+                        }
+
+                    });
+                    $('#elementformid').html('');
+                    $('#elementformid').text('');
+                    $('#shipname').text(data.currentshipname);
+                    $('#currentid').text(month + '-' + year);
+                    $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
+                    if (data.shipcount != shipstatus) {
+                        $('#shipid').val(data.currentshipid);
+                        $('.linkclass').removeClass("active");
+                        $('#' + data.currentshipid).addClass('active');
+                        var j = 1;
+                        var newtemp = 0;
+                        $.each(data.elementkpiarray, function (i, listkpi) {
+
+                            var k = $.isNumeric(i);
+                            if (!k) {
+                                var temp = 1;
+
+                                $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                {% endif %}
+                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                if (newtemp == 0) {
+                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                                }
+                                else {
+                                    $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                                }
+                                $.each(listkpi, function (mykey, myvalue) {
+                                    $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
+                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                    $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                    {% endif %}
+
+                                    if (data.elementvalues.length > 0) {
+
+                                        $('#updatebuttonid').show();
+                                        $('#savebuttonid').hide();
+                                        $('#adminbuttonid').show();
+
+                                        if (temp == 1) {
+                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                        }
+                                        if (temp > 1) {
+                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                        }
+                                    }
+                                    else {
+                                        $('#updatebuttonid').hide();
+                                        $('#savebuttonid').show();
+                                        $('#adminbuttonid').show();
+                                        if (temp == 1) {
+                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                        }
+                                        if (temp > 1) {
+                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                        }
+                                    }
+                                    temp++;
+                                    newtemp++;
+                                });
+                                $(' </tr></tbody></table>').appendTo('#addkpiformid');
+                            }
+                            j++;
+                        });
+                    }
+                    else {
+                        $('#allbuttondiv').hide();
+                        $('#addkpiformid').text('All vessels data updated !');
+                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                    }
+
+                }
+
+
+                $('.datetimepicker1').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'MM yy',
+                    onClose: function(dateText, inst) {
+                        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                        var this_val = $(this).val();
+                        var data_split_array = $(this).val().split(' ');
+                        var current = data_split_array[0] + '-' + data_split_array[1];
+                        on_month = current;
+                        var data = {
+                            dataofmonth: current
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            'url': Routing.generate('gotoscorecardmonthdata'),
                             beforeSend: function () {
                                 var beforsend = ajaxbefore_send();
                             },
@@ -94,7 +298,6 @@
 
                                     $('#prvieoustablecontent').html(' ');
                                     $('#prvieoustablecontent').text(' ');
-
                                     var addcolumn = 0;
                                     var valuecount = 0;
                                     $('<table id="table_id_" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
@@ -105,7 +308,6 @@
                                         $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_');
                                     });
                                     $.each(data.rankingKpiList, function (i) {
-
                                         var colspan = data.shipcount + 2;
                                         $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
                                         $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
@@ -127,12 +329,10 @@
                                                 else {
                                                     $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
                                                 }
-
                                             });
                                             valuecount++;
                                         }
                                     });
-
                                     $('#kpiformforship').hide();
                                     $('#currentmonhthdetails').hide();
                                     $('#previousmonthdata').show();
@@ -148,21 +348,18 @@
                                     $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
                                     var shipstatus = 0
                                     $.each(data.listofships, function (i) {
-                                        var status = data.status_ship[i];
-
-
                                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
                                         if (role == 'ROLE_ADMIN') {
-                                            if (status == 3) {
+                                           /* if (status == 3) {
                                                 $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                                 shipstatus++;
-                                            }
+                                            }*/
                                         }
                                         else if (role == 'ROLE_MANAGER') {
-                                            if (status == 2) {
+                                            /*if (status == 2) {
                                                 $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
                                                 shipstatus++;
-                                            }
+                                            }*/
                                         }
                                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                                             if (status == 1) {
@@ -251,7 +448,7 @@
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
-                                window.location.href = base_url + '/login';
+                               // window.location.href = base_url + '/login';
                             }
                         });
                     }
