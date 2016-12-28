@@ -3919,9 +3919,8 @@ class DataVerficationController extends Controller
                 ->select('a.shipName', 'a.id')
                 ->from('InitialShippingBundle:ShipDetails', 'a')
                 ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
-                ->join('InitialShippingBundle:ShipStatusDetails', 'sd', 'WITH', 'sd.shipDetailsId = a.id')
                 ->where('b.adminName = :username')
-                ->andWhere('sd.activeDate <= :activeDate')
+                ->andWhere('a.dateTime <= :activeDate')
                 ->setParameter('activeDate',$dateObject)
                 ->groupBy('a.id')
                 ->setParameter('username', $username)
@@ -3931,8 +3930,7 @@ class DataVerficationController extends Controller
                 ->select('a.shipName', 'a.id')
                 ->from('InitialShippingBundle:ShipDetails', 'a')
                 ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                ->join('InitialShippingBundle:ShipStatusDetails', 'sd', 'WITH', 'sd.shipDetailsId = a.id')
-                ->where('sd.activeDate <= :activeDate')
+                ->where('a.dateTime <= :activeDate')
                 ->setParameter('activeDate',$dateObject)
                 ->andwhere('b.id = :userId')
                 ->setParameter('userId', $userId)
@@ -3984,12 +3982,13 @@ class DataVerficationController extends Controller
         $kpiids = $em->createQueryBuilder()
             ->select('b.kpiName', 'b.id')
             ->from('InitialShippingBundle:KpiDetails', 'b')
+            ->where('b.dateTime <= :dateTime')
+            ->setParameter('dateTime',$dateObject)
             ->add('orderBy', 'b.id  ASC ')
             ->groupBy('b.kpiName')
             ->getQuery()
             ->getResult();
         $maxelementcount = 0;
-        $k = 0;
         for ($i = 0; $i < count($kpiids); $i++) {
             $kpiid = $kpiids[$i]['id'];
             $kpiname = $kpiids[$i]['kpiName'];
@@ -3998,6 +3997,8 @@ class DataVerficationController extends Controller
                 ->from('InitialShippingBundle:ElementDetails', 'b')
                 ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                 ->where('b.kpiDetailsId = :kpidetailsid')
+                ->andwhere('b.dateTime <= :dateTime')
+                ->setParameter('dateTime',$dateObject)
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
                 ->getQuery();
@@ -4007,6 +4008,8 @@ class DataVerficationController extends Controller
                     ->select('b.kpiName', 'b.id')
                     ->from('InitialShippingBundle:KpiDetails', 'b')
                     ->where('b.kpiName = :kpiName')
+                    ->andwhere('b.dateTime <= :dateTime')
+                    ->setParameter('dateTime',$dateObject)
                     ->setParameter('kpiName', $kpiname)
                     ->add('orderBy', 'b.id  ASC ')
                     ->groupby('b.kpiName')
@@ -4019,6 +4022,8 @@ class DataVerficationController extends Controller
                     ->from('InitialShippingBundle:ElementDetails', 'b')
                     ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
+                    ->andwhere('b.dateTime <= :dateTime')
+                    ->setParameter('dateTime',$dateObject)
                     ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
                     ->getQuery();
@@ -4055,6 +4060,7 @@ class DataVerficationController extends Controller
             }
         }
         $shipoverallStatus="";
+        $elementValues=array();
         if(count($statusQueryResult)==0){
             $shipoverallStatus="no";
 
@@ -4065,11 +4071,36 @@ class DataVerficationController extends Controller
             $shipidinArray=explode(",",$shipidinString);
             if(count($listallshipforcompany)==count($shipidinArray)){
                 $shipoverallStatus="yes";
+                for($shipCount=0;$shipCount<count($listallshipforcompany);$shipCount++){
+                    $resultarray = $em->createQueryBuilder()
+                        ->select('b.value')
+                        ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                        ->where('b.shipDetailsId = :shipdetailsid')
+                        ->andWhere('b.monthdetail =:dataofmonth')
+                        ->setParameter('shipdetailsid', $listallshipforcompany[$shipCount]['id'])
+                        ->setParameter('dataofmonth', $dateObject)
+                        ->getQuery()
+                        ->getResult();
+                    $tempshipValueArray=array();
+                    for($valueCount=0;$valueCount<count($resultarray);$valueCount++){
+                        array_push($tempshipValueArray,$resultarray[$valueCount]['value']);
+                    }
+                    array_push($elementValues,$tempshipValueArray);
+                }
             }
             else{
                 $shipoverallStatus="no";
             }
         }
+        if(count($listallshipforcompany)!=0){
+            $currentShipId=$listallshipforcompany[0]['id'];
+            $currentShipName=$listallshipforcompany[0]['shipName'];
+        }
+        else{
+            $currentShipId="";
+            $currentShipName="";
+        }
+
         $respone=new JsonResponse();
         $respone->setData(array(
             'listofships' => $listallshipforcompany,
@@ -4081,12 +4112,13 @@ class DataVerficationController extends Controller
             'maxelementcount' => $maxelementcount,
             'elementvalues'=>$elementvalues,
             'kpi_details' => $kpiids,
-            'currentshipid' => $listallshipforcompany[0]['id'],
-            'currentshipname' => $listallshipforcompany[0]['shipName'],
+            'currentshipid' => $currentShipId,
+            'currentshipname' => $currentShipName,
             'commontext' => false,
             'dateFormat' => $dateFormat,
             'statusQueryResult'=>$statusQueryResult,
             'shipoverallStatus'=>$shipoverallStatus,
+            'shipwiseElementValues'=>$elementValues
         ));
         return $respone;
     }

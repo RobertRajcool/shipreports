@@ -372,6 +372,7 @@ class ShipDetailsController extends Controller
             $shipdetails->setBuilt($built);
             $shipdetails->setSize($size);
             $shipdetails->setGt($gt);
+            $shipdetails->setDateTime();
             $shipdetails->setManufacturingYear($manufacturingYear);
 
             $em->persist($shipdetails);

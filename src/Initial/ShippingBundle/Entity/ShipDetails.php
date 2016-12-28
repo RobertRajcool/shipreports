@@ -109,6 +109,12 @@ class ShipDetails
      * @ORM\Column(name="gt", type="string", length=125)
      */
     private $gt;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateTime", type="datetime")
+     */
+    private $dateTime;
 
 
     /**
@@ -321,6 +327,22 @@ class ShipDetails
     public function setGt($gt)
     {
         $this->gt = $gt;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateTime()
+    {
+        return $this->dateTime;
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     */
+    public function setDateTime()
+    {
+        $this->dateTime = new \DateTime();
     }
 
 
