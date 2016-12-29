@@ -210,6 +210,7 @@ class RankingKpiDetailsController extends Controller
                 $kpidetails->setCellName($cellName);
                 $kpidetails->setCellDetails($cellDetails);
                 $kpidetails->setWeightage($weightage);
+                $kpidetails->setDateTime();
                 $em->persist($kpidetails);
                 $em->flush();
 

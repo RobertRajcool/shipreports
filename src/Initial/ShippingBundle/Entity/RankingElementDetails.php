@@ -123,6 +123,12 @@ class RankingElementDetails
      * @ORM\Column(name="BaseValue", type="integer", length=11)
      */
     private $baseValue;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateTime", type="datetime")
+     */
+    private $dateTime;
 
 
     /**
@@ -412,6 +418,22 @@ class RankingElementDetails
     public function setBaseValue($baseValue)
     {
         $this->baseValue = $baseValue;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateTime()
+    {
+        return $this->dateTime;
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     */
+    public function setDateTime()
+    {
+        $this->dateTime = new \DateTime();
     }
 
 

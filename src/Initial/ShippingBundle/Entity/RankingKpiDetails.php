@@ -78,6 +78,12 @@ class RankingKpiDetails
      * @ORM\Column(name="Weightage", type="integer", length=255)
      */
     private $weightage;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="dateTime", type="datetime")
+     */
+    private $dateTime;
 
 
     /**
@@ -277,4 +283,22 @@ class RankingKpiDetails
     {
         return $this->weightage;
     }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateTime()
+    {
+        return $this->dateTime;
+    }
+
+    /**
+     * @param \DateTime $dateTime
+     */
+    public function setDateTime()
+    {
+        $this->dateTime = new \DateTime();
+    }
+
+
 }
