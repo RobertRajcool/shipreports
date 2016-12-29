@@ -2,7 +2,7 @@
 {% block body %}
 
     {% block stylesheets %}
-        <link href = "/css/jquery-ui.css" rel = "stylesheet">
+        <link href="/css/jquery-ui.css" rel="stylesheet">
         <style>
             .ui-datepicker-calendar {
                 display: none;
@@ -14,22 +14,24 @@
 
         {% javascripts '@InitialShippingBundle/Resources/public/js/aa_jquery-1.8.0.min.js' %}
         <script src="{{ asset_url }}"></script>
-        <script src = "/js/jquery-ui.js"></script>
+        <script src="/js/jquery-ui.js"></script>
         {% endjavascripts %}
 
         <script>
             $(document).ready(function () {
                 $('#updatebuttonid').hide();
+                $('#savebuttonid').hide();
                 var base_url = window.location.origin;
                 $('#nogroupselected').hide();
                 $('#kpiformforship').show();
-                var datePickerValue="";
+                var datePickerValue = "";
                 var shipid = '{{ currentshipid }}';
                 var shipname = '{{ currentshipname }}';
                 var statusofship = '{{ statuscount }}';
                 var shipcount = '{{ shipcount }}';
                 var role = '{{ app.user.roles[0] }}';
                 var currentdatetime = '{{ currentdatetime }}';
+                var ship_btn_status = '{{ ship_btn_status }}';
 
                 if (statusofship == shipcount) {
                     $('#allbuttondiv').hide();
@@ -42,6 +44,11 @@
                     $('#shipname').text(shipname);
                     $('#allbuttondiv').show();
                     $('#upload_btn_id').hide();
+                    if(ship_btn_status == 'save') {
+                        $('#savebuttonid').show();
+                    } else if(ship_btn_status == 'update') {
+                        $('#updatebuttonid').show();
+                    }
                 }
 
                 var on_month = '';
@@ -51,18 +58,20 @@
                         year = nowdate.getFullYear();
 
                 on_month = month + '-' + year;
+
                 $('#currentid').text(month + '-' + year);
                 $('#currentid_data').text(month + '-' + year);
                 $('#datofmonthid').val(currentdatetime);
                 $('#datofmonthid_data').val(currentdatetime);
                 $('#spantext').hide();
                 $('#previousmonthdata').hide();
+
                 $('.datetimepicker').datepicker({
                     changeMonth: true,
                     changeYear: true,
                     showButtonPanel: true,
                     dateFormat: 'MM yy',
-                    onClose: function(dateText, inst) {
+                    onClose: function (dateText, inst) {
                         $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
                         var this_val = $(this).val();
                         var data_split_array = $(this).val().split(' ');
@@ -87,22 +96,21 @@
                             success: function (data) {
                                 $('#datofmonthid_data').val(data.dateFormat);
                                 $('#datofmonthid').val(data.dateFormat);
-                                datePickerValue=data.dateFormat;
-                                if(data.shipcount!=0){
+                                datePickerValue = data.dateFormat;
+                                if (data.shipcount != 0) {
                                     var statusQueryResult = data.statusQueryResult;
-                                    var listofSucessships=statusQueryResult[0]['shipid'];
-                                    var lookStatus=statusQueryResult[0]['status'];
-                                    var rejectionStatus=statusQueryResult[0]['rejectionsStatus'];
-                                    if(data.shipoverallStatus=="yes"){
-                                        if(rejectionStatus){
+                                    var listofSucessships = statusQueryResult[0]['shipid'];
+                                    var lookStatus = statusQueryResult[0]['status'];
+                                    var rejectionStatus = statusQueryResult[0]['rejectionsStatus'];
+                                    if (data.shipoverallStatus == "yes") {
+                                        if (!rejectionStatus) {
                                             ListView(data)
                                         }
                                         else {
                                             EditableView(data)
                                         }
-
                                     }
-                                    else if(data.shipoverallStatus=="no"){
+                                    else if (data.shipoverallStatus == "no") {
                                         EditableView(data)
                                     }
                                 }
@@ -114,7 +122,7 @@
                                     $('#shiplistinui').html('');
 
                                 }
-
+                                $('.datetimepicker').val(this_val);
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 $('#resultLoading .bg').height('100%');
@@ -124,10 +132,9 @@
                             }
                         });
                     }
-                }).datepicker("setDate",
-                        new Date(datePickerValue)
-                );
-                function ListView(data){
+                }).datepicker("setDate", new Date());
+
+                function ListView(data) {
                     $('#prvieoustablecontent').html(' ');
                     $('#prvieoustablecontent').text(' ');
                     var addcolumn = 0;
@@ -145,26 +152,26 @@
                         $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
                         $('<tr id="firsttable_head_tr_' + i + '"></tr>').appendTo('#firsttable_head_' + i);
                         $('<th colspan="' + colspan + '" class="kpi_lement_name">' + data.kpi_details[i]['kpiName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
-                        var kpiid=data.kpi_details[i]['id']
+                        var kpiid = data.kpi_details[i]['id']
                         var elementnamearray = data.elementkpiarray[data.kpi_details[i]['kpiName']];
                         var forloopcount = 0;
                         for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
                             $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
-                            $('<td class="kpi_lement_name kpi_lement_name">' + elementnamearray[forloopcount]+ '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                            $('<td class="kpi_weightage kpi_lement_number">' + data.elementweightage[valuecount]  + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                            $('<td class="kpi_lement_name kpi_lement_name">' + elementnamearray[forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                            $('<td class="kpi_weightage kpi_lement_number">' + data.elementweightage[valuecount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
                             $.each(data.listofships, function (j) {
                                 var shipid = data.listofships[j]['id']
                                 var elementvaluearray = data.shipwiseElementValues[j];
                                 /*for(var shipvalueCount=0;shipvalueCount<elementvaluearray.length;shipvalueCount++){
-                                    var elementValue=elementvaluearray[shipvalueCount];
-                                    if (elementValue != null) {
-                                        $('<td class="kpi_ship kpi_lement_inputname">' + elementValue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                    }
-                                    else {
-                                        $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                    }
+                                 var elementValue=elementvaluearray[shipvalueCount];
+                                 if (elementValue != null) {
+                                 $('<td class="kpi_ship kpi_lement_inputname">' + elementValue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                 }
+                                 else {
+                                 $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                 }
 
-                                }*/
+                                 }*/
                                 var elementvalue = data.shipwiseElementValues[j][valuecount]
                                 if (elementvalue != null) {
                                     $('<td class="kpi_ship kpi_lement_inputname">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
@@ -180,49 +187,86 @@
                     $('#currentmonhthdetails').hide();
                     $('#previousmonthdata').show();
                 }
-                function EditableView(data){
+
+                function EditableView(data) {
                     $('#allbuttondiv').show();
                     $('#kpiformforship').show();
                     $('#previousmonthdata').hide();
                     $('#currentmonhthdetails').show();
                     $('#overallshids').html('');
                     $('#overallshids').text('');
+
+                    var status = data.statusQueryResult[0]['status'];
+                    var rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                    var rejection_status = data.statusQueryResult[0]['rejectionsStatus'];
+                    var updated_ships = data.statusQueryResult[0]['shipid'].split(',');
+
                     $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
                     $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
-                    var shipstatus = 0
+                    var shipstatus = 0;
+
                     $.each(data.listofships, function (i) {
-                        $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
+                        var ship_id = data.listofships[i]['id'];
+                        $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + ship_id + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
                         if (role == 'ROLE_ADMIN') {
-                            /* if (status == 3) {
-                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                             shipstatus++;
-                             }*/
-                        }
-                        else if (role == 'ROLE_MANAGER') {
-                            /*if (status == 2) {
-                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                             shipstatus++;
-                             }*/
-                        }
-                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
-                            if (status == 1) {
-                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                            if (status == 2) {
+                                if (!$.isEmptyObject(rejections) && rejection_status) {
+                                    if (ship_id in rejections) {
+                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        delete rejections[ship_id];
+                                    }
+                                } else {
+                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                }
                                 shipstatus++;
                             }
                         }
-
+                        else if (role == 'ROLE_MANAGER') {
+                            if (status == 5) {
+                                if (!$.isEmptyObject(rejections) && rejection_status) {
+                                    if (ship_id in rejections) {
+                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        delete rejections[ship_id];
+                                    }
+                                } else {
+                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                }
+                                shipstatus++;
+                            }
+                        }
+                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                            if (status == 1) {
+                                if (!$.isEmptyObject(rejections) && rejection_status) {
+                                    if (ship_id in rejections) {
+                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        delete rejections[ship_id];
+                                        shipstatus++;
+                                    } else if (updated_ships.indexOf(String(ship_id)) != -1) {
+                                        $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                        shipstatus++;
+                                    }
+                                } else if (updated_ships.indexOf(String(ship_id)) != -1) {
+                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    shipstatus++;
+                                }
+                            }
+                        }
                     });
+
                     $('#elementformid').html('');
                     $('#elementformid').text('');
                     $('#shipname').text(data.currentshipname);
                     $('#currentid').text(month + '-' + year);
                     $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
+
                     if (data.shipcount != shipstatus) {
+
                         $('#shipid').val(data.currentshipid);
                         $('.linkclass').removeClass("active");
                         $('#' + data.currentshipid).addClass('active');
                         var j = 1;
                         var newtemp = 0;
+
                         $.each(data.elementkpiarray, function (i, listkpi) {
 
                             var k = $.isNumeric(i);
@@ -231,7 +275,7 @@
 
                                 $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                 {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                 {% endif %}
                                 $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                 if (newtemp == 0) {
@@ -240,7 +284,9 @@
                                 else {
                                     $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
                                 }
+
                                 $.each(listkpi, function (mykey, myvalue) {
+
                                     $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
                                     {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
                                     $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
@@ -283,7 +329,6 @@
                         $('#addkpiformid').text('All vessels data updated !');
                         $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                     }
-
                 }
 
 
@@ -292,7 +337,7 @@
                     changeYear: true,
                     showButtonPanel: true,
                     dateFormat: 'MM yy',
-                    onClose: function(dateText, inst) {
+                    onClose: function (dateText, inst) {
                         $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
                         var this_val = $(this).val();
                         var data_split_array = $(this).val().split(' ');
@@ -375,16 +420,16 @@
                                     $.each(data.listofships, function (i) {
                                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
                                         if (role == 'ROLE_ADMIN') {
-                                           /* if (status == 3) {
-                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                                shipstatus++;
-                                            }*/
+                                            /* if (status == 3) {
+                                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                             shipstatus++;
+                                             }*/
                                         }
                                         else if (role == 'ROLE_MANAGER') {
                                             /*if (status == 2) {
-                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                                shipstatus++;
-                                            }*/
+                                             $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
+                                             shipstatus++;
+                                             }*/
                                         }
                                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                                             if (status == 1) {
@@ -413,7 +458,7 @@
 
                                                 $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                                 {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                                 {% endif %}
                                                 $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                 if (newtemp == 0) {
@@ -473,7 +518,7 @@
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
                                 $('body').css('cursor', 'default');
-                               // window.location.href = base_url + '/login';
+                                // window.location.href = base_url + '/login';
                             }
                         });
                     }
@@ -629,7 +674,7 @@
 
                                             $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                             {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                            $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                            $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                             {% endif %}
                                             $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                             if (newtemp == 0) {
@@ -844,7 +889,7 @@
 
                                                 $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                                 {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                                 {% endif %}
                                                 $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                 if (newtemp == 0) {
@@ -912,7 +957,8 @@
                         setTimeout(function () {
                             $('#spantext').fadeOut('fast');
                         }, 4000)
-                    }alue="'+j+'"
+                    }
+                    alue = "'+j+'"
                 });
                 /*------------------------------------- Next Month Dataview Starts Here-------------------------------------------- */
                 /*------------------------------------- Induvial Ships Dataview Starts Here-------------------------------------------- */
@@ -957,27 +1003,27 @@
 
                                     $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                     {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                     {% endif %}
                                     var rejection_status = 0;
-                                    if(data.rejection_status == 'yes') {
+                                    if (data.rejection_status == 'yes') {
                                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                            if(data.rejections  == 'ALL') {
-                                                rejection_status = 1;
-                                            } else {
-                                                $.each(data.rejections, function(i,kpi_id) {
-                                                    if(kpi_id==data.kpi_details[j-1]['id']) {
-                                                        rejection_status = 1;
-                                                    }
-                                                });
-                                            }
-                                            if(rejection_status == 1) {
-                                                $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
-                                            } else {
-                                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
-                                            }
-                                        {% else %}
+                                        if (data.rejections == 'ALL') {
+                                            rejection_status = 1;
+                                        } else {
+                                            $.each(data.rejections, function (i, kpi_id) {
+                                                if (kpi_id == data.kpi_details[j - 1]['id']) {
+                                                    rejection_status = 1;
+                                                }
+                                            });
+                                        }
+                                        if (rejection_status == 1) {
+                                            $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        } else {
                                             $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        }
+                                        {% else %}
+                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                         {% endif %}
                                     } else {
                                         $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
@@ -1001,7 +1047,7 @@
 
                                             if (temp == 1) {
 
-                                                if( typeof data.elementvalues[newtemp]=='undefined'){
+                                                if (typeof data.elementvalues[newtemp] == 'undefined') {
                                                     $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
 
                                                 }
@@ -1011,8 +1057,8 @@
                                                 }
                                             }
                                             if (temp > 1) {
-                                                var elemetvalue=data.elementvalues[newtemp];
-                                                if( typeof elemetvalue=='undefined'){
+                                                var elemetvalue = data.elementvalues[newtemp];
+                                                if (typeof elemetvalue == 'undefined') {
                                                     $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="" required ></td>').appendTo("#" + j + "tr_id_" + temp);
 
                                                 }
@@ -1122,10 +1168,10 @@
 
                         $.ajax({
                             success: function (data) {
-                                if(data.status == -1) {
-                                    $('#img_' + data.ship_id ).remove();
-                                    $('#' + data.ship_id).after('<img id="img_'+data.ship_id+'" style="width: 20px;height: 20px" src="/images/error.png">');
-                                    $('#addkpiformid').text(data.return_msg).css({"color":"red"});
+                                if (data.status == -1) {
+                                    $('#img_' + data.ship_id).remove();
+                                    $('#' + data.ship_id).after('<img id="img_' + data.ship_id + '" style="width: 20px;height: 20px" src="/images/error.png">');
+                                    $('#addkpiformid').text(data.return_msg).css({"color": "red"});
                                 } else {
                                     $('#datofmonthid').val(data.currentdatetime);
                                     $('#datofmonthid_data').val(data.currentdatetime);
@@ -1160,7 +1206,7 @@
 
                                                     $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                                     {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                                     {% endif %}
                                                     $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                     if (newtemp == 0) {
@@ -1214,23 +1260,23 @@
                                         jAlert('', data.returnmsg);
                                     }
 
-                                    if(data.ship_status_done_count == data.shipcount) {
+                                    if (data.ship_status_done_count == data.shipcount) {
                                         $('#allbuttondiv').hide();
                                         $('.linkclass').removeClass("active");
-                                        $('#img_' + preshipid ).remove();
-                                        $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
+                                        $('#img_' + preshipid).remove();
+                                        $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
                                         $('#addkpiformid').text('All vessels data updated !');
                                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
                                         $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                         {% endif %}
                                     } else {
-                                        $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
+                                        $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
                                     }
                                 }
 
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                 window.location.href = base_url+'/login';
+                                window.location.href = base_url + '/login';
                             }
                         });
 
@@ -1254,101 +1300,65 @@
     {% endblock %}
 
 
-
-
     <section id="currentmonhthdetails">
-        <div class="col-sm-3 views_kpi_form_list" id="overallshids">
-            <div class="views_kpi_name_total"><span id="shipcountwithtext">{{ 'dashboard.shipname'|trans }} ({{ shipcount }})</span></div>
-            <div class="views_kpi_form_list_main" id="shiplistinui">
-                <ui>
-
-                    {% set j=0 %}
-                    {% for shipobject in listofships %}
-                        <li>
-                            <a class="linkclass" title="{{ shipobject.shipName }}"
-                               id="{{ shipobject.id }}">{{ shipobject.shipName }}</a>
-                            {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                {% if rejection_status == 'yes' %}
-                                    {% if shipobject.id in rejections|keys %}
-                                        <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                        {% set j=j+1 %}
-                                    {% else %}
-                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                        {% set j=j+1 %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if status_ship[j]==1 and rejection_status == 'empty'  %}
-                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                        {% set j=j+1 %}
-                                    {% endif %}
+        {% if data_view == 'editable-view' %}
+            <div class="col-sm-3 views_kpi_form_list" id="overallshids">
+                <div class="views_kpi_name_total">
+                    <span id="shipcountwithtext">{{ 'dashboard.shipname'|trans }}({{ shipcount }})</span>
+                </div>
+                <div class="views_kpi_form_list_main" id="shiplistinui">
+                    <ui>
+                        {% set j=0 %}
+                        {% for vessel in listofships %}
+                            <li>
+                                <a class="linkclass" title="{{ vessel.shipName }}"
+                                   id="{{ vessel.id }}">{{ vessel.shipName }}</a>
+                                {% if ship_status[j]==1 %}
+                                    <img id="img_{{ vessel.id }}" src="{{ asset('images/tick_icon.png') }}">
+                                {% elseif ship_status[j]==2 %}
+                                    <img id="img_{{ vessel.id }}" style="width: 20px;height: 20px"
+                                         src="{{ asset('images/error.png') }}">
                                 {% endif %}
-                            {% endif %}
-                            {% if  is_granted("ROLE_ADMIN") %}
-                                {% if status_ship[j]==3 %}
-                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                    {% set j=j+1 %}
-                                {% endif %}
-                            {% endif %}
-                            {% if is_granted("ROLE_MANAGER") %}
-                                {% if status_ship[j]==2 %}
-                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                    {% set j=j+1 %}
-                                {% endif %}
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ui>
+                            </li>
+                            {% set j=j+1 %}
+                        {% endfor %}
+                    </ui>
+                </div>
             </div>
-
-        </div>
-    </section>
-
-    <section id="nogroupselected">
-        <div class="col-sm-8 col-md-offset-6 no_user_selected_views">
-            <div class="text_image">
-                <img src="/images/no-user.png">
-                <label>Ships Not Found </label>
-            </div>
-        </div>
+        {% endif %}
     </section>
 
     <section id="kpiformforship">
-        <div class="col-sm-12">
+        {% if data_view == 'editable-view' %}
+            <div class="col-sm-12">
             <div class="add_new_kpi_form_screen">
                 {% if elementkpiarray|length > 0 %}
                 <form id="kpiform" class="form-horizontal no-style">
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
                             <label class="title"> <span id="shipname"> </span></label>
-                            {#<span id="spantext" class="errormsg">March-2016</span>
-                            <label class="toolbar-title">
-
-                                <a id="proviousmonth" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
-                                <span id="currentid" class="item">March-2016</span>
-                                <input type="hidden" name="dataofmonth" id="datofmonthid">
-                                <a id="nextmonth" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
-                            </label>#}
                             <input type="hidden" name="dataofmonth" id="datofmonthid">
                             <div class="col-lg-3" style="float: right; margin-right: 20px">
                                 <div class="form-group">
-                                    <input type='text' placeholder="-- Choose Month & Year --" class="form-control datetimepicker">
+                                    <input type='text' placeholder="-- Choose Month & Year --"
+                                           class="form-control datetimepicker">
                                 </div>
                             </div>
                         </div>
                     </div>
                     {% endif %}
-
                     <div id="elementformid" class="add_new_kpi_form_section">
                         {% if elementkpiarray|length <= 0 %}
                             No Kpi Found
                         {% endif %}
                         {% if elementkpiarray|length > 0 %}
                         <div id="addkpiformid" class="table-responsive">
-                            {% if j==shipcount %}
+                            {% if j==statuscount %}
                                 <span>All vessels data saved !</span>
                                 <div class="actions_submit">
                                     {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">
+                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                                id="upload_btn_id" value="Submit">
                                             {{ 'dataverification.upload'|trans }}
                                         </button>
                                     {% endif %}
@@ -1362,7 +1372,8 @@
                                         <tr>
                                             {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
                                                 <th>
-                                                    <input type="checkbox" class="checkboxes" name="reject_id[]" value={{ kpi_details[kpi_count]['id'] }}>
+                                                    <input type="checkbox" class="checkboxes" name="reject_id[]"
+                                                           value={{ kpi_details[kpi_count]['id'] }}>
                                                 </th>
                                             {% endif %}
                                             <th class="kpi_lement_name"> {{ key }} </th>
@@ -1380,7 +1391,6 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-
                                         {% for user in value %}
                                             <tr>
                                                 {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
@@ -1404,9 +1414,7 @@
                                                     {% endif %}
                                                 </td>
                                             </tr>
-
                                             {% set i=i+1 %}
-
                                         {% endfor %}
                                         </tbody>
                                     </table>
@@ -1416,6 +1424,7 @@
                         </div>
                     </div>
                 <input type="hidden" name="shipid" id="shipid">
+
                     <div id="allbuttondiv" class="actions_submit">
 
                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
@@ -1444,6 +1453,7 @@
                 </form>
             </div>
         </div>
+        {% endif %}
     </section>
 
     <section id="previousmonthdata">
@@ -1462,7 +1472,8 @@
                             <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
                             <div class="col-lg-3" style="float: right; margin-right: 20px">
                                 <div class="form-group">
-                                    <input type='text' placeholder="-- Choose Month & Year --" class="form-control datetimepicker">
+                                    <input type='text' placeholder="-- Choose Month & Year --"
+                                           class="form-control datetimepicker">
                                 </div>
                             </div>
                         </div>

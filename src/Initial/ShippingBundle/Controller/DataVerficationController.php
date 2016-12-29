@@ -52,12 +52,19 @@ class DataVerficationController extends Controller
             $userId = $user->getId();
             $username = $user->getUsername();
             $role = $user->getRoles();
+
+            $dateObject = new \DateTime();
+            $dateObject->modify('last day of this month');
+
             if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
                 $query = $em->createQueryBuilder()
                     ->select('a.shipName', 'a.id')
                     ->from('InitialShippingBundle:ShipDetails', 'a')
                     ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
                     ->where('b.adminName = :username')
+                    ->andWhere('a.dateTime <= :activeDate')
+                    ->setParameter('activeDate', $dateObject)
+                    ->groupBy('a.id')
                     ->setParameter('username', $username)
                     ->getQuery();
             } else {
@@ -65,21 +72,36 @@ class DataVerficationController extends Controller
                     ->select('a.shipName', 'a.id')
                     ->from('InitialShippingBundle:ShipDetails', 'a')
                     ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                    ->where('b.id = :userId')
+                    ->where('a.dateTime <= :activeDate')
+                    ->setParameter('activeDate', $dateObject)
+                    ->andwhere('b.id = :userId')
                     ->setParameter('userId', $userId)
+                    ->groupBy('a.id')
                     ->getQuery();
             }
-            $templatechoosen = 'base.html.twig';
-            $listallshipforcompany = $query->getResult();
-            if (count($listallshipforcompany) > 0) {
+
+            $vesselList = $query->getResult();
+
+            $template_chosen = 'base.html.twig';
+
+            if (count($vesselList) > 0) {
                 if ($mode == 'nextshipajaxcall') {
-                    return $listallshipforcompany;
+                    return $vesselList;
                 }
-                $statusforship = $this->findshipstatusmonth($dataofmonth = '', $listallshipforcompany, $role[0]);
+                $statusforship = $this->gotoScorecardMonthDataAction($request, 'fetch');
+
+                $fullData = $this->gotoScorecardMonthDataAction($request, 'fetch');
+
+                $rejections = json_decode($fullData['statusQueryResult'][0]['rejections']);
+                $rejection_status = $fullData['statusQueryResult'][0]['rejectionsStatus'];
+                $updated_ships = explode(',',$fullData['statusQueryResult'][0]['shipid']);
+                $data_status = $fullData['statusQueryResult'][0]['status'];
+                $data_view = '';
+
                 $finddatawithstatus = array();
                 $shipid = 0;
                 $shipname = '';
-                $counts = array_count_values($statusforship);
+//                $counts = array_count_values($statusforship);
 
                 if ($role[0] == 'ROLE_ADMIN') {
                     $status = 2;
@@ -93,11 +115,12 @@ class DataVerficationController extends Controller
                         $ship_status_done_count = 0;
                     }
                 }
+
                 if ($role[0] == 'ROLE_MANAGER') {
                     $status = 5;
                     $index = array_search(0, $statusforship);
-                    $shipid = $listallshipforcompany[$index]['id'];
-                    $shipname = $listallshipforcompany[$index]['shipName'];
+                    $shipid = $vesselList[$index]['id'];
+                    $shipname = $vesselList[$index]['shipName'];
                     $finddatawithstatus = $this->finddatawithstatus($status, $shipid);
                     if (array_key_exists(2, $counts)) {
                         $ship_status_done_count = $counts[2];
@@ -105,22 +128,53 @@ class DataVerficationController extends Controller
                         $ship_status_done_count = 0;
                     }
                 }
+
                 if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                    $templatechoosen = 'v-ships_layout.html.twig';
-                    $status = 0;
-                    $index = array_search(0, $statusforship);
-                    $shipid = $listallshipforcompany[$index]['id'];
-                    $shipname = $listallshipforcompany[$index]['shipName'];
-                    $finddatawithstatus = $this->finddatawithstatus($status, $shipid);
-                    if (array_key_exists(1, $counts)) {
-                        $ship_status_done_count = $counts[1];
+                    $template_chosen = 'v-ships_layout.html.twig';
+                    if($data_status == 1 || $data_status == 2 || $data_status == 3 || $data_status == 4 || $data_status == 5) {
+                        if(count($updated_ships) == count($vesselList)) {
+                            if($rejection_status) {
+                                $data_view = 'editable-view';
+                            } else {
+                                $data_view = 'summary-view';
+                            }
+
+                        } else {
+                            $data_view = 'editable-view';
+                        }
                     } else {
-                        $ship_status_done_count = 0;
+                        $data_view = 'editable-view';
                     }
 
                 }
 
-                $currentdatetime = date('Y-m-d');
+                $ship_status_array = array();
+                if(count($updated_ships)>0) {
+                    foreach ($vesselList as $vessel) {
+                        if(in_array($vessel['id'], $updated_ships)) {
+                            if($rejections) {
+                                if(array_key_exists($vessel['id'], $rejections)  && $rejection_status) {
+                                    array_push($ship_status_array, 2);
+                                } else {
+                                    array_push($ship_status_array, 1);
+                                }
+                            } else {
+                                array_push($ship_status_array, 1);
+                            }
+                        } else {
+                            array_push($ship_status_array, 0);
+                        }
+                    }
+                }
+
+                $ship_btn_staus = '';
+                if(in_array($vesselList[0]['id'],$updated_ships)) {
+                    $ship_btn_staus = 'update';
+                } else {
+                    $ship_btn_staus = 'save';
+                }
+
+                /*$currentdatetime = date('Y-m-d');
                 $last_date = date("Y-m-t", strtotime($currentdatetime));
 
                 $lookup_status = $em->createQueryBuilder()
@@ -130,8 +184,8 @@ class DataVerficationController extends Controller
                     ->setParameter('dataofmonth', $last_date)
                     ->getQuery()
                     ->getResult();
-                if(count($lookup_status)>0) {
-                    if($lookup_status[0]['rejections']!=null) {
+                if (count($lookup_status) > 0) {
+                    if ($lookup_status[0]['rejections'] != null) {
                         $rejection_string = $lookup_status[0]['rejections'];
                         $rejection_obj = json_decode($rejection_string);
                         $rejection_obj = json_decode($rejection_string, true);
@@ -143,9 +197,9 @@ class DataVerficationController extends Controller
                 } else {
                     $rejection_obj = null;
                     $reject_status = 'empty';
-                }
+                }*/
 
-                if (count($finddatawithstatus) == 7) {
+                /*if (count($finddatawithstatus) == 7) {
                     return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
                         array('listofships' => $listallshipforcompany,
                             'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship, 'statuscount' => $ship_status_done_count,
@@ -156,7 +210,7 @@ class DataVerficationController extends Controller
                             'symbolIndication' => $finddatawithstatus['symbolIndication'],
                             'kpi_details' => $finddatawithstatus['kpi_details'],
                             'rejections' => $rejection_obj, 'rejection_status' => $reject_status,
-                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen, 'currentdatetime' => $currentdatetime,
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $template_chosen, 'currentdatetime' => $currentdatetime,
                             'lookup_status' => 2
                         ));
                 } else {
@@ -165,17 +219,33 @@ class DataVerficationController extends Controller
                             'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
                             'elementkpiarray' => array(), 'elementcount' => 0,
                             'elementvalues' => array(),
-                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $templatechoosen, 'currentdatetime' => $currentdatetime
+                            'currentshipid' => $shipid, 'currentshipname' => $shipname, 'templatechoosen' => $template_chosen, 'currentdatetime' => $currentdatetime
                         ));
-                }
+                }*/
+
+                return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
+                    array(
+                        'listofships' => $vesselList,
+                        'shipcount' => count($vesselList),
+                        'elementkpiarray' => $fullData['elementkpiarray'], 'elementcount' => $fullData['maxelementcount'],
+                        'elementvalues' => $fullData['elementvalues'],
+                        'elementweightage' => $fullData['elementweightage'],
+                        'indicationValue' => $fullData['indicationValue'],
+                        'symbolIndication' => $fullData['symbolIndication'],
+                        'kpi_details' => $fullData['kpi_details'],
+                        'currentshipid' => $vesselList[0]['id'], 'currentshipname' => $vesselList[0]['shipName'],
+                        'templatechoosen' => $template_chosen,
+                        'statuscount' => count($updated_ships), 'currentdatetime' => date('Y-m-d'),
+                        'data_view' => $data_view, 'ship_status' => $ship_status_array, 'ship_btn_status' => $ship_btn_staus
+                    ));
 
             } else {
                 return $this->render('InitialShippingBundle:DataVerficationScoreCorad:home.html.twig',
-                    array('listofships' => $listallshipforcompany,
-                        'shipcount' => count($listallshipforcompany), 'status_ship' => 0,
+                    array('listofships' => $vesselList,
+                        'shipcount' => count($vesselList), 'status_ship' => 0,
                         'elementkpiarray' => array(), 'elementcount' => 0,
                         'elementvalues' => array(),
-                        'currentshipid' => '', 'currentshipname' => '', 'templatechoosen' => $templatechoosen, 'statuscount' => ''
+                        'currentshipid' => '', 'currentshipname' => '', 'templatechoosen' => $template_chosen, 'statuscount' => ''
                     ));
             }
         }
@@ -724,13 +794,13 @@ class DataVerficationController extends Controller
                         ->getQuery()
                         ->getResult();
 
-                    if(count($pre_rejections) > 0) {
-                        if($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
+                    if (count($pre_rejections) > 0) {
+                        if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                             $temp = json_decode($pre_rejections[0]['rejections']);
                             $temp = json_decode($pre_rejections[0]['rejections'], true);
-                            if(array_key_exists($shipid,$temp)) {
+                            if (array_key_exists($shipid, $temp)) {
                                 unset($temp[$shipid]);
-                                if(count($temp) <= 0) {
+                                if (count($temp) <= 0) {
                                     $temp = null;
                                 }
                                 $temp = json_encode($temp);
@@ -933,7 +1003,7 @@ class DataVerficationController extends Controller
             }
             $shipDetails = $query->getResult();
 
-            foreach($shipDetails as $vessel) {
+            foreach ($shipDetails as $vessel) {
                 $check_empty_value_query = $em->createQueryBuilder()
                     ->select('a.value')
                     ->from('InitialShippingBundle:ReadingKpiValues', 'a')
@@ -943,11 +1013,11 @@ class DataVerficationController extends Controller
                     ->setParameter('dataofmonth', $new_date)
                     ->getQuery()
                     ->getResult();
-                foreach( $check_empty_value_query as $check_empty_values) {
-                    if($check_empty_values['value']!=null) {
+                foreach ($check_empty_value_query as $check_empty_values) {
+                    if ($check_empty_values['value'] != null) {
                         continue;
                     } else {
-                        $return_msg = $vessel['shipName'].' data is not completed !';
+                        $return_msg = $vessel['shipName'] . ' data is not completed !';
                         $response = new JsonResponse();
                         $response->setData(array(
                             'return_msg' => $return_msg,
@@ -992,33 +1062,33 @@ class DataVerficationController extends Controller
                 ->getQuery()
                 ->getResult();
             $reject_id_string = null;
-            if($reject_id_array != null) {
+            if ($reject_id_array != null) {
                 $reject_id_string = implode(",", $reject_id_array);
             } else {
                 $reject_id_string = 'ALL';
             }
 
-            if(count($pre_rejections) > 0) {
-                if($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
+            if (count($pre_rejections) > 0) {
+                if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                     $temp = json_decode($pre_rejections[0]['rejections']);
-                    if($reject_id_string == 'ALL') {
+                    if ($reject_id_string == 'ALL') {
                         $temp->$shipid = $reject_id_string;
                     } else {
-                        $temp->$shipid = explode(',',$reject_id_string);
+                        $temp->$shipid = explode(',', $reject_id_string);
                     }
                     $temp = json_encode($temp);
                 } else {
-                    if($reject_id_string == 'ALL') {
+                    if ($reject_id_string == 'ALL') {
                         $temp = json_encode(array($shipid => $reject_id_string));
                     } else {
-                        $temp = json_encode(array($shipid => explode(',',$reject_id_string)));
+                        $temp = json_encode(array($shipid => explode(',', $reject_id_string)));
                     }
                 }
             } else {
-                if($reject_id_string == 'ALL') {
+                if ($reject_id_string == 'ALL') {
                     $temp = json_encode(array($shipid => $reject_id_string));
                 } else {
-                    $temp = json_encode(array($shipid => explode(',',$reject_id_string)));
+                    $temp = json_encode(array($shipid => explode(',', $reject_id_string)));
                 }
             }
 
@@ -1042,7 +1112,7 @@ class DataVerficationController extends Controller
             $returnmsg = ' rejected...';
         }
 
-        if ($buttonid != 'upload_btn_id' ) {
+        if ($buttonid != 'upload_btn_id') {
             $shipname = $newshipid->getShipName();
         } else {
             $shipname = 'All vessels';
@@ -1192,12 +1262,12 @@ class DataVerficationController extends Controller
             ->setParameter('dataofmonth', $new_date)
             ->getQuery()
             ->getResult();
-        if(count($lookup_status) > 0) {
-            if($lookup_status[0]['rejections']!=null && $lookup_status[0]['rejections']!="null") {
+        if (count($lookup_status) > 0) {
+            if ($lookup_status[0]['rejections'] != null && $lookup_status[0]['rejections'] != "null") {
                 $rejection_string = $lookup_status[0]['rejections'];
                 $rejection_obj = json_decode($rejection_string);
                 $rejection_obj = json_decode($rejection_string, true);
-                if(array_key_exists($shipid,$rejection_obj)) {
+                if (array_key_exists($shipid, $rejection_obj)) {
                     $reject_status = 'yes';
                     $rejection_obj = $rejection_obj[$shipid];
                 } else {
@@ -1417,7 +1487,7 @@ class DataVerficationController extends Controller
                 $last_date = date("Y-m-t", strtotime($currentdatetime));
 
                 $temp_rejection_obj = array();
-                foreach($listallshipforcompany as $vessel) {
+                foreach ($listallshipforcompany as $vessel) {
                     $lookup_status = $em->createQueryBuilder()
                         ->select('a.status, a.rejections')
                         ->from('InitialShippingBundle:Ranking_LookupStatus', 'a')
@@ -1427,14 +1497,14 @@ class DataVerficationController extends Controller
                         ->setParameter('shipid', $vessel['id'])
                         ->getQuery()
                         ->getResult();
-                    if(count($lookup_status)>0) {
-                        if($lookup_status[0]['rejections']!=null) {
+                    if (count($lookup_status) > 0) {
+                        if ($lookup_status[0]['rejections'] != null) {
                             $rejection_string = $lookup_status[0]['rejections'];
-                            array_push($temp_rejection_obj,explode(',',$rejection_string));
+                            array_push($temp_rejection_obj, explode(',', $rejection_string));
                             $rejection_obj = $temp_rejection_obj;
                             $reject_status = 'yes';
                         } else {
-                            array_push($temp_rejection_obj,null);
+                            array_push($temp_rejection_obj, null);
                             $rejection_obj = $temp_rejection_obj;
                             $reject_status = 'yes';
                         }
@@ -1884,8 +1954,8 @@ class DataVerficationController extends Controller
                         ->getQuery()
                         ->getResult();
 
-                    if(count($pre_rejections) > 0) {
-                        if($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
+                    if (count($pre_rejections) > 0) {
+                        if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                             $temp = null;
                             $reject_status = 'yes';
                             $rejection_obj = $temp;
@@ -2001,7 +2071,7 @@ class DataVerficationController extends Controller
 
                 $ship_details = $query->getResult();
 
-                foreach($ship_details as $vessel) {
+                foreach ($ship_details as $vessel) {
                     $check_empty_value_query = $em->createQueryBuilder()
                         ->select('a.value')
                         ->from('InitialShippingBundle:RankingMonthlyData', 'a')
@@ -2011,11 +2081,11 @@ class DataVerficationController extends Controller
                         ->setParameter('dataofmonth', $new_date)
                         ->getQuery()
                         ->getResult();
-                    foreach( $check_empty_value_query as $check_empty_values) {
-                        if($check_empty_values['value']!=null) {
+                    foreach ($check_empty_value_query as $check_empty_values) {
+                        if ($check_empty_values['value'] != null) {
                             continue;
                         } else {
-                            $return_msg = $vessel['shipName'].' data is not completed !';
+                            $return_msg = $vessel['shipName'] . ' data is not completed !';
                             $response = new JsonResponse();
                             $response->setData(array(
                                 'return_msg' => $return_msg,
@@ -2027,7 +2097,7 @@ class DataVerficationController extends Controller
                     }
                 }
 
-                foreach($ship_details as $vessel) {
+                foreach ($ship_details as $vessel) {
                     $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $vessel['id'], 'dataofmonth' => $new_date));
 
                     if (count($lookstatus) != 0) {
@@ -2064,13 +2134,13 @@ class DataVerficationController extends Controller
                     ->getQuery()
                     ->getResult();
                 $reject_id_string = null;
-                if($reject_id_array != null) {
+                if ($reject_id_array != null) {
                     $reject_id_string = implode(",", $reject_id_array);
                 } else {
                     $reject_id_string = 'ALL';
                 }
-                if(count($pre_rejections) > 0) {
-                    if($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
+                if (count($pre_rejections) > 0) {
+                    if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                         $temp = $reject_id_string;
                     } else {
                         $temp = $reject_id_string;
@@ -2079,7 +2149,7 @@ class DataVerficationController extends Controller
                     $temp = $reject_id_string;
                 }
 
-                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('dataofmonth' => $new_date, 'shipid' => $shipid ));
+                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('dataofmonth' => $new_date, 'shipid' => $shipid));
                 if (count($lookstatus) != 0) {
                     $newlookupstatus = $lookstatus[0];
 
@@ -2266,16 +2336,15 @@ class DataVerficationController extends Controller
                 ->setParameter('shipid', $shipid)
                 ->getQuery()
                 ->getResult();
-            if(count($lookup_status)>0) {
-                if($lookup_status[0]['rejections']!=null) {
+            if (count($lookup_status) > 0) {
+                if ($lookup_status[0]['rejections'] != null) {
                     $rejection_string = $lookup_status[0]['rejections'];
-                    $rejection_obj = explode(',',$rejection_string);
+                    $rejection_obj = explode(',', $rejection_string);
                     $reject_status = 'yes';
-                } else if($lookup_status[0]['rejections']!='ALL' && $lookup_status[0]['rejections']!=null) {
+                } else if ($lookup_status[0]['rejections'] != 'ALL' && $lookup_status[0]['rejections'] != null) {
                     $rejection_obj = 'ALL';
                     $reject_status = 'yes';
-                } else
-                {
+                } else {
                     $rejection_obj = null;
                     $reject_status = 'empty';
                 }
@@ -3895,12 +3964,13 @@ class DataVerficationController extends Controller
             return $response;
         }
     }
+
     /**
      * Ajax Call For change of Prev monthdata of Scorecard
      *
      * @Route("/gotoscorecardmonthdata", name="gotoscorecardmonthdata")
      */
-    public function gotoScorecardMonthDataAction(Request $request)
+    public function gotoScorecardMonthDataAction(Request $request, $mode='')
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
@@ -3909,11 +3979,18 @@ class DataVerficationController extends Controller
         $username = $user->getUsername();
         $role = $user->getRoles();
 
-        $mydate = '01-' . $dataofmonth;
-        $time = strtotime($mydate);
-        $dateFormat = date('Y-m-d', $time);
-        $dateObject=new \DateTime($dateFormat);
-        $dateObject->modify('last day of this month');
+        if($mode!='') {
+            $dateFormat = date('Y-m-d');
+            $dateObject = new \DateTime($dateFormat);
+            $dateObject->modify('last day of this month');
+        } else {
+            $mydate = '01-' . $dataofmonth;
+            $time = strtotime($mydate);
+            $dateFormat = date('Y-m-d', $time);
+            $dateObject = new \DateTime($dateFormat);
+            $dateObject->modify('last day of this month');
+        }
+
         if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
             $query = $em->createQueryBuilder()
                 ->select('a.shipName', 'a.id')
@@ -3921,7 +3998,7 @@ class DataVerficationController extends Controller
                 ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
                 ->where('b.adminName = :username')
                 ->andWhere('a.dateTime <= :activeDate')
-                ->setParameter('activeDate',$dateObject)
+                ->setParameter('activeDate', $dateObject)
                 ->groupBy('a.id')
                 ->setParameter('username', $username)
                 ->getQuery();
@@ -3931,102 +4008,86 @@ class DataVerficationController extends Controller
                 ->from('InitialShippingBundle:ShipDetails', 'a')
                 ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
                 ->where('a.dateTime <= :activeDate')
-                ->setParameter('activeDate',$dateObject)
+                ->setParameter('activeDate', $dateObject)
                 ->andwhere('b.id = :userId')
                 ->setParameter('userId', $userId)
                 ->groupBy('a.id')
                 ->getQuery();
         }
         $listallshipforcompany = $query->getResult();
-        /* if ($role[0] == 'ROLE_ADMIN') {
-             $statusQuery = $em->createQueryBuilder()
-                 ->select('b.shipid,b.rejections,b.rejectionsStatus,b.status')
-                 ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
-                 ->Where('b.monthdetail =:dataofmonth')
-                 ->andWhere('b.status = 2 OR b.status  = 3 OR b.status  = 4')
-                 ->setParameter('dataofmonth', $dateObject)
-                 ->getQuery();
-         }
-         else if ($role[0] == 'ROLE_MANAGER') {
-             $statusQuery = $em->createQueryBuilder()
-                 ->select('b.shipid,b.rejections,b.rejectionsStatus,b.status')
-                 ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
-                 ->Where('b.monthdetail =:dataofmonth')
-                 ->andWhere('b.status = 2 OR b.status  = 3 OR b.status  = 4 OR b.status  = 5')
-                 ->setParameter('dataofmonth', $dateObject)
-                 ->getQuery();
-         }
-         else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-             $statusQuery = $em->createQueryBuilder()
-                 ->select('b.shipid,b.rejections,b.rejectionsStatus,b.status')
-                 ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
-                 ->Where('b.monthdetail =:dataofmonth')
-                 ->andWhere('b.status = 1 OR b.status = 2 OR b.status  = 3 OR b.status  = 4 OR b.status  = 5')
-                 ->setParameter('dataofmonth', $dateObject)
-                 ->getQuery();
-         }
-         $statusQueryResult=$statusQuery->getResult();
-         $shipIdsString=$statusQueryResult[0]['shipid'];*/
+
         $statusQueryResult = $em->createQueryBuilder()
-            ->select('b.shipid,b.rejections,b.rejectionsStatus,b.status')
+            ->select('b.shipid, b.rejections, b.rejectionsStatus, b.status')
             ->from('InitialShippingBundle:Scorecard_LookupStatus', 'b')
             ->Where('b.dataofmonth =:dataofmonth')
             ->setParameter('dataofmonth', $dateObject)
             ->getQuery()
             ->getResult();
+
         $elementvalues = array();
         $returnarray = array();
         $elementweightage = array();
         $elementindicationValue = array();
         $symbolIndication = array();
+
         $kpiids = $em->createQueryBuilder()
             ->select('b.kpiName', 'b.id')
             ->from('InitialShippingBundle:KpiDetails', 'b')
             ->where('b.dateTime <= :dateTime')
-            ->setParameter('dateTime',$dateObject)
+            ->setParameter('dateTime', $dateObject)
             ->add('orderBy', 'b.id  ASC ')
             ->groupBy('b.kpiName')
             ->getQuery()
             ->getResult();
+
         $maxelementcount = 0;
+
         for ($i = 0; $i < count($kpiids); $i++) {
             $kpiid = $kpiids[$i]['id'];
             $kpiname = $kpiids[$i]['kpiName'];
+
             $query = $em->createQueryBuilder()
                 ->select('b.elementName', 'b.id', 'b.indicationValue', 'b.weightage', 'c.symbolIndication')
                 ->from('InitialShippingBundle:ElementDetails', 'b')
                 ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                 ->where('b.kpiDetailsId = :kpidetailsid')
                 ->andwhere('b.dateTime <= :dateTime')
-                ->setParameter('dateTime',$dateObject)
+                ->setParameter('dateTime', $dateObject)
                 ->setParameter('kpidetailsid', $kpiid)
                 ->add('orderBy', 'b.id  ASC ')
                 ->getQuery();
+
             $elementids = $query->getResult();
+
             if (count($elementids) == 0) {
+
                 $query1 = $em->createQueryBuilder()
                     ->select('b.kpiName', 'b.id')
                     ->from('InitialShippingBundle:KpiDetails', 'b')
                     ->where('b.kpiName = :kpiName')
                     ->andwhere('b.dateTime <= :dateTime')
-                    ->setParameter('dateTime',$dateObject)
+                    ->setParameter('dateTime', $dateObject)
                     ->setParameter('kpiName', $kpiname)
                     ->add('orderBy', 'b.id  ASC ')
                     ->groupby('b.kpiName')
                     ->getQuery();
+
                 $ids1 = $query1->getResult();
+
                 $newkpiid = $ids1[0]['id'];
                 $newkpiname = $ids1[0]['kpiName'];
+
                 $query = $em->createQueryBuilder()
                     ->select('b.elementName', 'b.id', 'b.indicationValue', 'b.weightage', 'c.symbolIndication')
                     ->from('InitialShippingBundle:ElementDetails', 'b')
                     ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
                     ->where('b.kpiDetailsId = :kpidetailsid')
                     ->andwhere('b.dateTime <= :dateTime')
-                    ->setParameter('dateTime',$dateObject)
+                    ->setParameter('dateTime', $dateObject)
                     ->setParameter('kpidetailsid', $newkpiid)
                     ->add('orderBy', 'b.id  ASC ')
                     ->getQuery();
+
                 $elementids = $query->getResult();
                 if ($maxelementcount < count($elementids)) {
                     $maxelementcount = count($elementids);
@@ -4059,19 +4120,38 @@ class DataVerficationController extends Controller
                 }
             }
         }
-        $shipoverallStatus="";
-        $elementValues=array();
-        if(count($statusQueryResult)==0){
-            $shipoverallStatus="no";
+        $shipOverallStatus = "";
+        $elementValues = array();
 
-        }
-        else{
+        if (count($statusQueryResult) == 0) {
+            $shipOverallStatus = "no";
+        } else {
+            $shipidinString = $statusQueryResult[0]['shipid'];
+            $shipidinArray = explode(",", $shipidinString);
 
-            $shipidinString=$statusQueryResult[0]['shipid'];
-            $shipidinArray=explode(",",$shipidinString);
-            if(count($listallshipforcompany)==count($shipidinArray)){
-                $shipoverallStatus="yes";
-                for($shipCount=0;$shipCount<count($listallshipforcompany);$shipCount++){
+            if (count($listallshipforcompany) == count($shipidinArray)) {
+
+                if ($role[0] == 'ROLE_ADMIN') {
+                    if($statusQueryResult[0]['status'] == 3 || $statusQueryResult[0]['status'] == 4) {
+                        $shipOverallStatus = "yes";
+                    } else {
+                        $shipOverallStatus = "no";
+                    }
+                } else if ($role[0] == 'ROLE_MANAGER') {
+                    if($statusQueryResult[0]['status'] == 2 || $statusQueryResult[0]['status'] == 3 || $statusQueryResult[0]['status'] == 4) {
+                        $shipOverallStatus = "yes";
+                    } else {
+                        $shipOverallStatus = "no";
+                    }
+                } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    if($statusQueryResult[0]['status'] == 2 || $statusQueryResult[0]['status'] == 3 || $statusQueryResult[0]['status'] == 4 || $statusQueryResult[0]['status'] == 5) {
+                        $shipOverallStatus = "yes";
+                    } else {
+                        $shipOverallStatus = "no";
+                    }
+                }
+
+                for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
                     $resultarray = $em->createQueryBuilder()
                         ->select('b.value')
                         ->from('InitialShippingBundle:ReadingKpiValues', 'b')
@@ -4081,27 +4161,65 @@ class DataVerficationController extends Controller
                         ->setParameter('dataofmonth', $dateObject)
                         ->getQuery()
                         ->getResult();
-                    $tempshipValueArray=array();
-                    for($valueCount=0;$valueCount<count($resultarray);$valueCount++){
-                        array_push($tempshipValueArray,$resultarray[$valueCount]['value']);
+
+                    $tempshipValueArray = array();
+
+                    for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
+                        array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
                     }
-                    array_push($elementValues,$tempshipValueArray);
+                    array_push($elementValues, $tempshipValueArray);
                 }
-            }
-            else{
-                $shipoverallStatus="no";
+            } else {
+
+                $resultarray = $em->createQueryBuilder()
+                    ->select('b.value')
+                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                    ->where('b.shipDetailsId = :shipdetailsid')
+                    ->andWhere('b.monthdetail =:dataofmonth')
+                    ->setParameter('shipdetailsid', $listallshipforcompany[0]['id'])
+                    ->setParameter('dataofmonth', $dateObject)
+                    ->getQuery()
+                    ->getResult();
+
+                $tempshipValueArray = array();
+
+                for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
+                    array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
+                }
+                array_push($elementValues, $tempshipValueArray);
+
+                $shipOverallStatus = "no";
             }
         }
-        if(count($listallshipforcompany)!=0){
-            $currentShipId=$listallshipforcompany[0]['id'];
-            $currentShipName=$listallshipforcompany[0]['shipName'];
-        }
-        else{
-            $currentShipId="";
-            $currentShipName="";
+        if (count($listallshipforcompany) != 0) {
+            $currentShipId = $listallshipforcompany[0]['id'];
+            $currentShipName = $listallshipforcompany[0]['shipName'];
+        } else {
+            $currentShipId = "";
+            $currentShipName = "";
         }
 
-        $respone=new JsonResponse();
+        if($mode!='') {
+            return array(
+                'listofships' => $listallshipforcompany,
+                'shipcount' => count($listallshipforcompany),
+                'symbolIndication' => $symbolIndication,
+                'indicationValue' => $elementindicationValue,
+                'elementweightage' => $elementweightage,
+                'elementkpiarray' => $returnarray,
+                'maxelementcount' => $maxelementcount,
+                'elementvalues' => $elementValues[0],
+                'kpi_details' => $kpiids,
+                'currentshipid' => $currentShipId,
+                'currentshipname' => $currentShipName,
+                'commontext' => false,
+                'dateFormat' => $dateFormat,
+                'statusQueryResult' => $statusQueryResult,
+                'shipoverallStatus' => $shipOverallStatus,
+            );
+        }
+
+        $respone = new JsonResponse();
         $respone->setData(array(
             'listofships' => $listallshipforcompany,
             'shipcount' => count($listallshipforcompany),
@@ -4110,15 +4228,15 @@ class DataVerficationController extends Controller
             'elementweightage' => $elementweightage,
             'elementkpiarray' => $returnarray,
             'maxelementcount' => $maxelementcount,
-            'elementvalues'=>$elementvalues,
+            'elementvalues' => $elementValues[0],
             'kpi_details' => $kpiids,
             'currentshipid' => $currentShipId,
             'currentshipname' => $currentShipName,
             'commontext' => false,
             'dateFormat' => $dateFormat,
-            'statusQueryResult'=>$statusQueryResult,
-            'shipoverallStatus'=>$shipoverallStatus,
-            'shipwiseElementValues'=>$elementValues
+            'statusQueryResult' => $statusQueryResult,
+            'shipoverallStatus' => $shipOverallStatus,
+            'shipwiseElementValues' => $elementValues
         ));
         return $respone;
     }
@@ -4140,7 +4258,7 @@ class DataVerficationController extends Controller
         $mydate = '01-' . $dataofmonth;
         $time = strtotime($mydate);
         $dateFormat = date('Y-m-d', $time);
-        $dateObject=new \DateTime($dateFormat);
+        $dateObject = new \DateTime($dateFormat);
         $dateObject->modify('last day of this month');
         if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
             $query = $em->createQueryBuilder()
@@ -4150,7 +4268,7 @@ class DataVerficationController extends Controller
                 ->join('InitialShippingBundle:ShipStatusDetails', 'sd', 'WITH', 'sd.shipDetailsId = a.id')
                 ->where('b.adminName = :username')
                 ->andWhere('sd.activeDate <= :activeDate')
-                ->setParameter('activeDate',$dateObject)
+                ->setParameter('activeDate', $dateObject)
                 ->groupBy('a.id')
                 ->setParameter('username', $username)
                 ->getQuery();
@@ -4161,7 +4279,7 @@ class DataVerficationController extends Controller
                 ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
                 ->join('InitialShippingBundle:ShipStatusDetails', 'sd', 'WITH', 'sd.shipDetailsId = a.id')
                 ->where('sd.activeDate <= :activeDate')
-                ->setParameter('activeDate',$dateObject)
+                ->setParameter('activeDate', $dateObject)
                 ->andwhere('b.id = :userId')
                 ->setParameter('userId', $userId)
                 ->getQuery();
@@ -4200,21 +4318,21 @@ class DataVerficationController extends Controller
             $shipname = '';
 
             if ($role[0] == 'ROLE_ADMIN') {
-                $listofStatus = array(3,4);
+                $listofStatus = array(3, 4);
                 $index = array_search(0, $statusforship);
                 $shipid = $listallshipforcompany[$index]['id'];
                 $shipname = $listallshipforcompany[$index]['shipName'];
                 $finddatawithstatus = $this->finddatawithstatus($listofStatus, $shipid, $dataofmonth);
             }
             if ($role[0] == 'ROLE_MANAGER') {
-                $listofStatus = array(2,3,4);
+                $listofStatus = array(2, 3, 4);
                 $index = array_search(0, $statusforship);
                 $shipid = $listallshipforcompany[$index]['id'];
                 $shipname = $listallshipforcompany[$index]['shipName'];
                 $finddatawithstatus = $this->finddatawithstatus($listofStatus, $shipid, $dataofmonth);
             }
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                $listofStatus = array(1,5,2,3,4);
+                $listofStatus = array(1, 5, 2, 3, 4);
                 $index = array_search(0, $statusforship);
                 $shipid = $listallshipforcompany[$index]['id'];
                 $shipname = $listallshipforcompany[$index]['shipName'];
@@ -4223,8 +4341,7 @@ class DataVerficationController extends Controller
             }
 
             $response = new JsonResponse();
-            if (count($finddatawithstatus) == 7)
-            {
+            if (count($finddatawithstatus) == 7) {
                 $response->setData(
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
@@ -4238,9 +4355,7 @@ class DataVerficationController extends Controller
                         'currentshipid' => $shipid, 'currentshipname' => $shipname, 'commontext' => false, 'dateFormat' => $dateFormat
                     ));
                 return $response;
-            }
-            else
-            {
+            } else {
                 $response->setData(
                     array('listofships' => $listallshipforcompany,
                         'shipcount' => count($listallshipforcompany), 'status_ship' => $statusforship,
@@ -4251,8 +4366,7 @@ class DataVerficationController extends Controller
                 return $response;
             }
 
-        } else
-        {
+        } else {
             if ($dataofmonth == '') {
                 $monthInString = date('Y-m-d');
                 $lastMonthDetail = new \DateTime($monthInString);
