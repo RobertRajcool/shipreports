@@ -767,8 +767,8 @@
                     var charCode = (evt.which) ? evt.which : event.keyCode
 
                     if (
-                            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
-                            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // â€œ-â€ CHECK MINUS, AND ONLY ONE.
+                            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // â€œ.â€ CHECK DOT, AND ONLY ONE.
                             (charCode < 48 || charCode > 57))
                         return false;
 
@@ -981,8 +981,8 @@
                             No Kpi Found
                         {% endif %}
                         {% if listoreditViewStatus=='listView' %}
-                        <div id="addkpiformid" class="table-responsive">
-                            <span>All ships Data Verified</span>
+                            <div id="addkpiformid" class="table-responsive">
+                                <span>All ships Data Verified</span>
                             </div>
                         {% endif %}
                         {% if elementkpiarray|length > 0  and listoreditViewStatus=='editView' %}
@@ -1078,18 +1078,18 @@
                     </div>
                     <div id="allbuttondiv" class="actions_submit">
                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                        {% if currentshipid!="" %}
-                            {% if elementvalues|length <= 0 %}
-                                <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
-                                       value="{{ 'dataverification.save'|trans }}">
-                            {% else %}
-                                <input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"
-                                       value="{{ 'dataverification.update'|trans }}">
-                            {% endif %}
+                            {% if currentshipid!="" %}
+                                {% if elementvalues|length <= 0 %}
+                                    <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
+                                           value="{{ 'dataverification.save'|trans }}">
+                                {% else %}
+                                    <input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"
+                                           value="{{ 'dataverification.update'|trans }}">
+                                {% endif %}
 
 
-                            <button class="cancel_btn" id="resetbuttonid"
-                                    value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                                <button class="cancel_btn" id="resetbuttonid"
+                                        value="Submit">{{ 'dataverification.reset'|trans }}</button>
                             {% else %}
                                 <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
                                         id="upload_btn_id"
@@ -1106,19 +1106,19 @@
                         {% if is_granted("ROLE_MANAGER") %}
                             {% if shipcount==statusQueryResult|length %}
                                 {% if currentshipid!="" %}
-                                {% if listofships[currentshipid-1]['status']==1  %}
-                                    <input  type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="verfiybuttonid"
-                                            value="{{ 'dataverification.verfiy'|trans }}">
-                                    <input type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="reject_btn_id"
-                                           value="{{ 'dataverification.reject'|trans }}">
-                                {% else %}
-                                    <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
-                                            value="{{ 'dataverification.verfiy'|trans }}">
-                                    <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
-                                           value="{{ 'dataverification.reject'|trans }}">
-                                {% endif %}
+                                    {% if listofships[currentshipid-1]['status']==1  %}
+                                        <input  type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="verfiybuttonid"
+                                                value="{{ 'dataverification.verfiy'|trans }}">
+                                        <input type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                               value="{{ 'dataverification.reject'|trans }}">
+                                    {% else %}
+                                        <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
+                                                value="{{ 'dataverification.verfiy'|trans }}">
+                                        <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                               value="{{ 'dataverification.reject'|trans }}">
                                     {% endif %}
                                 {% endif %}
+                            {% endif %}
                         {% endif %}
                     </div>
                     {% endif %}
