@@ -91,7 +91,7 @@
                                         var statusofship=data.statusQueryResult;
                                         var listviewStatusField='listview';
                                         $.each(statusofship, function(key, info) {
-                                            if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
                                                 if (info.status == 1) {
                                                     listviewStatusField = key;
                                                     return false;
@@ -255,7 +255,6 @@
 
                         }
                     });
-
                     $('#elementformid').html('');
                     $('#elementformid').text('');
                     $('#shipname').text(data.currentshipname);
@@ -269,7 +268,12 @@
                                 $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                             }
                             else {
-                                $('#addkpiformid').text(''+data.dateFormat+' This Month Data Not Updated');
+                                var findShortMonth = new Date(data.dateFormat),
+                                        locale = "en-us",
+                                        monthName = nowdate.toLocaleString(locale, {month: "long"}),
+                                        year = nowdate.getFullYear();
+
+                                $('#addkpiformid').text(''+findShortMonth + '-' + year+' This Month Data Not Updated');
                                 $('#shipname').text('');
                                 $('#shipname').val('');
                             }
@@ -284,8 +288,12 @@
                                     listKpiandElments(data);
                                 }
                                 else {
+                                    var findShortMonth = new Date(data.dateFormat),
+                                            locale = "en-us",
+                                            monthName = nowdate.toLocaleString(locale, {month: "long"}),
+                                            year = nowdate.getFullYear();
                                     $('#allbuttondiv').hide();
-                                    $('#addkpiformid').text(''+data.dateFormat+' This Month Data Not Updated');
+                                    $('#addkpiformid').text(''+findShortMonth + '-' + year+' This Month Data Not Updated');
                                     $('#shipname').text('');
                                     $('#shipname').val('');
                                 }
@@ -820,7 +828,7 @@
                                         var statusofship=data.statusQueryResult;
                                         var listviewStatusField='listview';
                                         $.each(statusofship, function(key, info) {
-                                            if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
                                                 if (info.status == 1) {
                                                     listviewStatusField = key;
                                                     return false;
@@ -917,7 +925,7 @@
                                 {% if  is_granted("ROLE_MANAGER") %}
                                     {% if shipobject.rejections == true %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                    {% elseif shipobject.status==2 %}
+                                    {% elseif shipobject.status==2 or shipobject.status==3 %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% endif %}
                                 {% endif %}
@@ -981,7 +989,7 @@
                         <div id="addkpiformid" class="table-responsive">
                             {% if currentshipid=="" %}
                                 {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                    <span>All Ship Data Updated!</span>
+                                    <span>All vessels data updated !</span>
                                     <div class="actions_submit">
 
                                     <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
@@ -1070,6 +1078,7 @@
                     </div>
                     <div id="allbuttondiv" class="actions_submit">
                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                        {% if currentshipid!="" %}
                             {% if elementvalues|length <= 0 %}
                                 <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
                                        value="{{ 'dataverification.save'|trans }}">
@@ -1081,6 +1090,11 @@
 
                             <button class="cancel_btn" id="resetbuttonid"
                                     value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                            {% else %}
+                                <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                        id="upload_btn_id"
+                                        value="Submit">{{ 'dataverification.upload'|trans }}</button>
+                            {% endif %}
                         {% endif %}
                         {% if  is_granted("ROLE_ADMIN") %}
                             <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"
@@ -1091,6 +1105,7 @@
 
                         {% if is_granted("ROLE_MANAGER") %}
                             {% if shipcount==statusQueryResult|length %}
+                                {% if currentshipid!="" %}
                                 {% if listofships[currentshipid-1]['status']==1  %}
                                     <input  type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="verfiybuttonid"
                                             value="{{ 'dataverification.verfiy'|trans }}">
@@ -1102,6 +1117,7 @@
                                     <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
                                            value="{{ 'dataverification.reject'|trans }}">
                                 {% endif %}
+                                    {% endif %}
                                 {% endif %}
                         {% endif %}
                     </div>
