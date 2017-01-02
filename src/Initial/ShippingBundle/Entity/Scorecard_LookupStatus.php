@@ -198,7 +198,6 @@ class Scorecard_LookupStatus
     {
         $this->rejectionsStatus = $rejectionsStatus;
     }
-
     /**
      * @return string
      */
@@ -214,7 +213,5 @@ class Scorecard_LookupStatus
     {
         $this->temp_rejections = $temp_rejections;
     }
-
-
 
 }

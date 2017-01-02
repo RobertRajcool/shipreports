@@ -1757,10 +1757,9 @@ class DataVerficationController extends Controller
      *
      * @Route("/add_data_forranking", name="adddata_scorecard_forranking")
      */
-    public function findnumofshipsforrankingAction(Request $request, $mode = '')
+    public function findnumofshipsforrankingAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        //Finding Company for Login user Starts Here//
         $user = $this->getUser();
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
@@ -1768,6 +1767,169 @@ class DataVerficationController extends Controller
             $userId = $user->getId();
             $username = $user->getUsername();
             $role = $user->getRoles();
+            $templatechoosen = 'base.html.twig';
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                $status = 5;
+                $templatechoosen = 'v-ships_layout.html.twig';
+            }
+            $findRankingdata=$this->gotoRankingMonthDataAction($request,"defulatmonth");
+            $currentdatetime = date('Y-m-d');
+            $findListVieworEditViewStatus="";
+            if ($findRankingdata['shipcount'] != 0) {
+                if ($findRankingdata['shipoverallStatus'] == "yes" && $findRankingdata['currentshipid'] =="") {
+                    $findstatusofship=$findRankingdata['statusQueryResult'];
+                    $listviewStatusField='listView';
+                    foreach ($findstatusofship as $key => $val)
+                    {
+                        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER' ||$role[0] == 'ROLE_MANAGER' ||$role[0] == 'ROLE_ADMIN')
+                        {
+                            if ($val['status'] ==1)
+                            {
+                                $listviewStatusField = $key;
+                            }
+                        }
+                    }
+                    if ($listviewStatusField=='listView')
+                    {
+                        $findListVieworEditViewStatus="listView";
+                    }
+                    else
+                    {
+                        $findListVieworEditViewStatus="editView";
+                    }
+                }
+                else if ($findRankingdata['shipoverallStatus'] == "no")
+                {
+                    $findListVieworEditViewStatus="editView";
+                }
+                else {
+                    $findListVieworEditViewStatus="editView";
+                }
+            }
+            else
+            {
+                $findListVieworEditViewStatus="editView";
+
+            }
+            $elementvalues="";
+            if($findRankingdata['currentshipid']==""){
+                $elementvalues=array();
+            }
+            else{
+                $elementvalues=$findRankingdata['shipwiseElementValues'][$findRankingdata['currentshipid']];
+            }
+            //Find Shipstatus with Rejections//
+            for($shipStatusCount=0;$shipStatusCount<count($findRankingdata['listofships']);$shipStatusCount++){
+                $shipId=$findRankingdata['listofships'][$shipStatusCount]['id'];
+                $statusofshipOverall=$findRankingdata['statusQueryResult'];
+                $shipwisestatusCountOverall=$findRankingdata['shipwiseStatuscount'];
+                if(count($statusofshipOverall)==count($findRankingdata['listofships'])){
+                    $statusofship=$statusofshipOverall[$shipStatusCount];
+                    if($statusofship['rejections']!=null){
+                        $findRankingdata['listofships'][$shipStatusCount]['rejections']=true;
+                        $findRankingdata['listofships'][$shipStatusCount]['status']=$statusofship['status'];
+
+                    }
+                    else{
+                        $findRankingdata['listofships'][$shipStatusCount]['rejections']=false;
+                        $findRankingdata['listofships'][$shipStatusCount]['status']=$statusofship['status'];
+                    }
+                }
+                else{
+                    $shipwisecountStatus=$shipwisestatusCountOverall[$shipId];
+                    if(count($shipwisecountStatus)>0){
+                        if($shipwisecountStatus['rejections']!=null){
+                            $findRankingdata['listofships'][$shipStatusCount]['rejections']=true;
+                            $findRankingdata['listofships'][$shipStatusCount]['status']=$shipwisecountStatus['status'];
+                        }
+                        else{
+                            $findRankingdata['listofships'][$shipStatusCount]['rejections']=false;
+                            $findRankingdata['listofships'][$shipStatusCount]['status']=$shipwisecountStatus['status'];
+                        }
+
+                    }
+                    else{
+                        $findRankingdata['listofships'][$shipStatusCount]['rejections']=false;
+                        $findRankingdata['listofships'][$shipStatusCount]['status']=0;
+                    }
+                }
+            }
+            //Find Kpi Status and Rejections
+            for($kpiCount=0;$kpiCount<count($findRankingdata['currentshipkpilist']);$kpiCount++){
+                $statusofshipOverall=$findRankingdata['statusQueryResult'];
+                $shipwisestatusCountOverall=$findRankingdata['shipwiseStatuscount'];
+                if(count($statusofshipOverall)==count($findRankingdata['listofships'])){
+                    if($findRankingdata['currentshipid']!=""){
+                        $rejectionIds=$statusofshipOverall[$findRankingdata['currentshipid']-1]['rejections'];
+                        if($rejectionIds!=null){
+                            if($rejectionIds=='ALL'){
+                                $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=true;
+                            }
+                            else {
+                                $rejectionIdsArray=explode(",",$rejectionIds);
+                                if(in_array($findRankingdata['currentshipkpilist'][$kpiCount]['id'],$rejectionIdsArray)){
+                                    $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=true;
+                                }
+                                else{
+                                    $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=false;
+                                }
+                            }
+
+                        }
+                        else {
+                            $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=false;
+                        }
+                    }
+                }
+                else{
+                    $shipwisecountStatus=$shipwisestatusCountOverall[$findRankingdata['currentshipid']];
+                    if(count($shipwisecountStatus)>0){
+                        if($shipwisecountStatus['rejections']!=null){
+                            $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=true;
+                        }
+                        else{
+                            $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=false;
+                        }
+
+                    }
+                    else{
+                        $findRankingdata['currentshipkpilist'][$kpiCount]['rejections']=false;
+                    }
+
+
+                }
+            }
+            if ($role[0] == 'ROLE_ADMIN' ||$role[0] == 'ROLE_MANAGER') {
+                if(count($findRankingdata['statusQueryResult'])!=count($findRankingdata['listofships'])){
+                    $findRankingdata['currentshipid']="";
+                    $findRankingdata['currentshipname']="";
+                }
+            }
+            return $this->render('InitialShippingBundle:DataVerficationRanking:home.html.twig',
+                array(
+                    'listoreditViewStatus'=>$findListVieworEditViewStatus,
+                    'templatechoosen' => $templatechoosen,
+                    'currentdatetime' => $currentdatetime,
+                    'listofships' => $findRankingdata['listofships'],
+                    'shipcount' => $findRankingdata['shipcount'],
+                    'symbolIndication' => $findRankingdata['symbolIndication'],
+                    'indicationValue' => $findRankingdata['indicationValue'],
+                    'elementweightage' => $findRankingdata['elementweightage'],
+                    'elementkpiarray' => $findRankingdata['elementkpiarray'],
+                    'maxelementcount' => $findRankingdata['maxelementcount'],
+                    'kpi_details' => $findRankingdata['kpi_details'],
+                    'currentshipid' => $findRankingdata['currentshipid'],
+                    'currentshipname' => $findRankingdata['currentshipname'],
+                    'commontext' => false,
+                    'dateFormat' => $findRankingdata['dateFormat'],
+                    'statusQueryResult' => $findRankingdata['statusQueryResult'],
+                    'shipoverallStatus' => $findRankingdata['shipoverallStatus'],
+                    'shipwiseElementValues' => $findRankingdata['shipwiseElementValues'],
+                    'currentshipkpilist'=>$findRankingdata['currentshipkpilist'],
+                    'shipwiseStatuscount'=>$findRankingdata['shipwiseStatuscount'],
+                    'elementvalues'=>$elementvalues,
+                ));
+            /*
             $rejection_obj = null;
             $reject_status = 'empty';
             if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
@@ -1788,7 +1950,6 @@ class DataVerficationController extends Controller
                     ->getQuery();
             }
             $listallshipforcompany = $query->getResult();
-            $templatechoosen = 'base.html.twig';
             if (count($listallshipforcompany) > 0) {
                 if ($mode == 'nextshipajaxcall') {
                     return $listallshipforcompany;
@@ -1907,6 +2068,7 @@ class DataVerficationController extends Controller
                         'currentshipid' => '', 'currentshipname' => '', 'templatechoosen' => $templatechoosen
                     ));
             }
+            */
         }
     }
 
@@ -2227,6 +2389,7 @@ class DataVerficationController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         } else {
             $userid = $user->getId();
+            $role = $user->getRoles();
             $shipid = $request->request->get('shipid');
             $reject_id_array = $request->request->get('reject_id');
             $returnfromcontroller = $this->findelementkpiid_ranking($shipid);
@@ -2292,15 +2455,16 @@ class DataVerficationController extends Controller
                     $newlookupstatus = $lookstatus[0];
 
                     $newlookupstatus->setStatus(2);
+                    $newlookupstatus->setRejections(null);
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
+
                 }
 
                 if ($buttonid == 'updatebuttonid') {
 
                     $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid, 'dataofmonth' => $new_date));
                     $newlookupstatus = $lookstatus[0];
-
                     $pre_rejections = $em->createQueryBuilder()
                         ->select('a.rejections')
                         ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
@@ -2332,7 +2496,6 @@ class DataVerficationController extends Controller
                 }
 
             }
-
             if ($buttonid == 'savebuttonid') {
 
 //                $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $newshipid, 'dataofmonth' => $new_date));
@@ -2405,7 +2568,6 @@ class DataVerficationController extends Controller
             }
 
             if ($buttonid == 'upload_btn_id') {
-
                 $userId = $user->getId();
                 $username = $user->getUsername();
                 if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
@@ -2427,7 +2589,6 @@ class DataVerficationController extends Controller
                 }
 
                 $ship_details = $query->getResult();
-
                 foreach ($ship_details as $vessel) {
                     $check_empty_value_query = $em->createQueryBuilder()
                         ->select('a.value')
@@ -2456,23 +2617,23 @@ class DataVerficationController extends Controller
 
                 foreach ($ship_details as $vessel) {
                     $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('shipid' => $vessel['id'], 'dataofmonth' => $new_date));
-
                     if (count($lookstatus) != 0) {
                         $newlookupstatus = $lookstatus[0];
-
-                        $newlookupstatus->setStatus(5);
-                        $newlookupstatus->setDatetime(new \DateTime());
-                        $em->flush();
+                        if($newlookupstatus->getStatus()==1){
+                            $newlookupstatus->setStatus(5);
+                            $newlookupstatus->setDatetime(new \DateTime());
+                            $em->flush();
+                        }
                     }
                 }
 
-                $reading_kpi_values_status = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->findBy(array('monthdetail' => $new_date));
+                /*$reading_kpi_values_status = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->findBy(array('monthdetail' => $new_date));
                 if (count($reading_kpi_values_status) != 0) {
                     foreach ($reading_kpi_values_status as $reading_kpi_values_status_obj) {
                         $reading_kpi_values_status_obj->setStatus(5);
                         $em->flush();
                     }
-                }
+                }*/
 
                 $ship_status_done_count = -1;
                 $returnmsg = ' Data Uploaded...';
@@ -2509,20 +2670,25 @@ class DataVerficationController extends Controller
                 $lookstatus = $em->getRepository('InitialShippingBundle:Ranking_LookupStatus')->findBy(array('dataofmonth' => $new_date, 'shipid' => $shipid));
                 if (count($lookstatus) != 0) {
                     $newlookupstatus = $lookstatus[0];
+                    if ($role[0] == 'ROLE_ADMIN') {
+                        $newlookupstatus->setStatus(2);
+                    }
+                    if ($role[0] == 'ROLE_MANAGER') {
 
-                    $newlookupstatus->setStatus(1);
+                        $newlookupstatus->setStatus(1);
+                    }
                     $newlookupstatus->setRejections($temp);
                     $newlookupstatus->setDatetime(new \DateTime());
                     $em->flush();
                 }
 
-                $reading_kpi_values_status = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->findBy(array('monthdetail' => $new_date, 'shipDetailsId' => $shipid));
-                if (count($reading_kpi_values_status) != 0) {
-                    foreach ($reading_kpi_values_status as $reading_kpi_values_status_obj) {
-                        $reading_kpi_values_status_obj->setStatus(1);
-                        $em->flush();
-                    }
-                }
+                /* $reading_kpi_values_status = $em->getRepository('InitialShippingBundle:RankingMonthlyData')->findBy(array('monthdetail' => $new_date, 'shipDetailsId' => $shipid));
+                 if (count($reading_kpi_values_status) != 0) {
+                     foreach ($reading_kpi_values_status as $reading_kpi_values_status_obj) {
+                         $reading_kpi_values_status_obj->setStatus(1);
+                         $em->flush();
+                     }
+                 }*/
 
                 $ship_status_done_count = -1;
                 $returnmsg = ' rejected...';
@@ -2535,7 +2701,7 @@ class DataVerficationController extends Controller
                 $shipname = 'All vessels';
             }
 
-            $nextshipid = 0;
+            /*$nextshipid = 0;
             $nextshipname = '';
             $user = $this->getUser();
             $role = $user->getRoles();
@@ -2614,7 +2780,30 @@ class DataVerficationController extends Controller
                     'elementcount' => 0, 'currentdatetime' => $dataofmonth,
                     'elementvalues' => array()));
                 return $response;
-            }
+            }*/
+            $findStattus=$this->gotoRankingMonthDataAction($request,$reuseMode="rebuildcode");
+            $respone = new JsonResponse();
+            $respone->setData(array(
+                'returnmsg' => $shipname . $returnmsg,
+                'listofships' => $findStattus['listofships'],
+                'shipcount' => $findStattus['shipcount'],
+                'symbolIndication' => $findStattus['symbolIndication'],
+                'indicationValue' => $findStattus['indicationValue'],
+                'elementweightage' => $findStattus['elementweightage'],
+                'elementkpiarray' => $findStattus['elementkpiarray'],
+                'maxelementcount' => $findStattus['maxelementcount'],
+                'kpi_details' => $findStattus['kpi_details'],
+                'currentshipid' => $findStattus['currentshipid'],
+                'currentshipname' => $findStattus['currentshipname'],
+                'commontext' => false,
+                'dateFormat' => $findStattus['dateFormat'],
+                'statusQueryResult' => $findStattus['statusQueryResult'],
+                'shipoverallStatus' => $findStattus['shipoverallStatus'],
+                'shipwiseElementValues' => $findStattus['shipwiseElementValues'],
+                'currentshipkpilist'=>$findStattus['currentshipkpilist'],
+                'shipwiseStatuscount'=>$findStattus['shipwiseStatuscount']
+            ));
+            return $respone;
         }
     }
 
@@ -4741,6 +4930,606 @@ class DataVerficationController extends Controller
             'shipwiseElementValues' => $elementValues
         ));
         return $respone;
+    }
+    /**
+     * Ajax Call For change of Prev monthdata of Ranking
+     *
+     * @Route("/gotorankingdmonthdata", name="gotorankingmonthdata")
+     */
+    public function gotoRankingMonthDataAction(Request $request, $reuseMode='')
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $dataofmonth = $request->request->get('dataofmonth');
+        $userId = $user->getId();
+        $username = $user->getUsername();
+        $role = $user->getRoles();
+
+        if($reuseMode!='') {
+            if($reuseMode=='defulatmonth')
+            {
+                $stringdataofmonth = date('Y-m-d');
+                $time = strtotime($stringdataofmonth);
+                $dateFormat = date('Y-m-d', $time);
+                $dateObject = new \DateTime($stringdataofmonth);
+                $dateObject->modify('last day of this month');
+            }
+            else
+            {
+                $time = strtotime($dataofmonth);
+                $dateFormat = date('Y-m-d', $time);
+                $dateObject = new \DateTime($dataofmonth);
+                $dateObject->modify('last day of this month');
+            }
+
+        } else {
+            $mydate = '01-' . $dataofmonth;
+            $time = strtotime($mydate);
+            $dateFormat = date('Y-m-d', $time);
+            $dateObject = new \DateTime($dateFormat);
+            $dateObject->modify('last day of this month');
+        }
+
+        if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                ->where('b.adminName = :username')
+                ->andWhere('a.dateTime <= :activeDate')
+                ->setParameter('activeDate', $dateObject)
+                ->groupBy('a.id')
+                ->setParameter('username', $username)
+                ->getQuery();
+        } else {
+            $query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                ->where('a.dateTime <= :activeDate')
+                ->setParameter('activeDate', $dateObject)
+                ->andwhere('b.id = :userId')
+                ->setParameter('userId', $userId)
+                ->groupBy('a.id')
+                ->getQuery();
+        }
+        $listallshipforcompany = $query->getResult();
+
+        $statusQueryResult = $em->createQueryBuilder()
+            ->select('identity(b.shipid), b.rejections, b.status')
+            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+            ->Where('b.dataofmonth =:dataofmonth')
+            ->setParameter('dataofmonth', $dateObject)
+            ->addOrderBy('b.shipid', 'ASC')
+            ->getQuery()
+            ->getResult();
+        $elementvalues = array();
+        $shipOverallStatus = "";
+        $elementValues = array();
+        $overallShipStatusarray=array();
+        $currentShipId = "";
+        $currentShipName = "";
+        $tempvaluefindcurrentShip=0;
+        if (count($listallshipforcompany) == count($statusQueryResult)) {
+            $shipdetailswithStatus=$this->findRankingOverallStatus($listallshipforcompany,$statusQueryResult);
+            if ($role[0] == 'ROLE_ADMIN') {
+                foreach ($shipdetailswithStatus as $key => $val)
+                {
+                    if ($val['status'] == 2 && $val['rejections'] ==false)
+                    {
+                        $currentShipId = $val['id'];
+                        $currentShipName=$val['shipName'];
+                        $shipOverallStatus = "no";
+                        break;
+                    }
+                }
+                if($currentShipName==""){
+                    foreach ($shipdetailswithStatus as $key => $val)
+                    {
+                        if ($val['status'] == 2 && $val['rejections'] ==true)
+                        {
+                            $currentShipId = $val['id'];
+                            $currentShipName=$val['shipName'];
+                            $shipOverallStatus = "no";
+                            break;
+                        }
+                    }
+                }
+
+                if($currentShipName==""){
+                    $shipOverallStatus = "yes";
+                }
+
+            }
+            if ($role[0] == 'ROLE_MANAGER') {
+                foreach ($shipdetailswithStatus as $key => $val)
+                {
+                    if ($val['status'] == 5 && $val['rejections'] ==false)
+                    {
+                        $currentShipId = $val['id'];
+                        $currentShipName=$val['shipName'];
+                        $shipOverallStatus = "no";
+                        break;
+                    }
+                }
+                if($currentShipName==""){
+                    foreach ($shipdetailswithStatus as $key => $val)
+                    {
+                        if ($val['status'] == 2 && $val['rejections'] ==true)
+                        {
+                            $currentShipId = $val['id'];
+                            $currentShipName=$val['shipName'];
+                            $shipOverallStatus = "no";
+                            break;
+                        }
+                    }
+                }
+                if($currentShipName==""){
+                    $shipOverallStatus = "yes";
+                }
+
+            }
+            if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                /*foreach ($shipdetailswithStatus as $key => $val)
+                {
+                    if ($val['status'] == 1 && $val['rejections'] ==false)
+                    {
+                        $currentShipId = $val['id'];
+                        $currentShipName=$val['shipName'];
+                        $shipOverallStatus = "no";
+                        break;
+                    }
+                }*/
+                if($currentShipName==""){
+                    foreach ($shipdetailswithStatus as $key => $val)
+                    {
+                        if ($val['status'] == 1 && $val['rejections'] ==true)
+                        {
+                            $currentShipId = $val['id'];
+                            $currentShipName=$val['shipName'];
+                            $shipOverallStatus = "no";
+                            break;
+                        }
+                    }
+                }
+
+                if($currentShipName==""){
+                    $shipOverallStatus = "yes";
+                }
+
+            }
+            for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
+               /*  if ($role[0] == 'ROLE_MANAGER') {
+                    if( $statusQueryResult[$shipCount]['status'] == 2 || $statusQueryResult[$shipCount]['status'] == 3 || $statusQueryResult[$shipCount]['status'] == 4 )
+                    {
+                        if($statusQueryResult[$shipCount]['rejections']==null){
+                            for($FirstinnerLoopCount=$shipCount+1;$FirstinnerLoopCount<count($listallshipforcompany);$FirstinnerLoopCount++){
+                                $statusField=$statusQueryResult[$FirstinnerLoopCount]['status'];
+                                $rejectionField=$statusQueryResult[$FirstinnerLoopCount]['rejections'];
+                                if($statusField==5 && $rejectionField ==null){
+                                    if($tempvaluefindcurrentShip==0){
+                                        $currentShipId = $listallshipforcompany[$FirstinnerLoopCount]['id'];
+                                        $currentShipName =$listallshipforcompany[$FirstinnerLoopCount]['shipName'];
+                                        $tempvaluefindcurrentShip++;
+                                    }
+                                    $shipOverallStatus = "no";
+                                }
+                                else{
+                                    $shipOverallStatus = "yes";
+                                }
+                            }
+                        }
+                        else if($statusQueryResult[$shipCount]['rejections']!=null){
+                            if($statusQueryResult[$shipCount]['rejections']!=null &&$statusQueryResult[$shipCount]['status']==2){
+                                if($tempvaluefindcurrentShip==0){
+                                    $currentShipId = $listallshipforcompany[$shipCount]['id'];
+                                    $currentShipName =$listallshipforcompany[$shipCount]['shipName'];
+                                    $tempvaluefindcurrentShip++;
+                                }
+                                $shipOverallStatus = "no";
+                            }
+                            else{
+                                for($innerLoopCount=$shipCount+1;$innerLoopCount<count($listallshipforcompany);$innerLoopCount++){
+                                    $statusField=$statusQueryResult[$innerLoopCount]['status'];
+                                    $rejectionField=$statusQueryResult[$innerLoopCount]['rejections'];
+                                    if($statusField==2 && $rejectionField ==null){
+                                        if($tempvaluefindcurrentShip==0){
+                                            $currentShipId = $listallshipforcompany[$innerLoopCount]['id'];
+                                            $currentShipName =$listallshipforcompany[$innerLoopCount]['shipName'];
+                                            $tempvaluefindcurrentShip++;
+                                        }
+                                        $shipOverallStatus = "no";
+                                    }
+                                    elseif ($rejectionField !=null){
+                                        if($tempvaluefindcurrentShip==0){
+                                            $currentShipId = $listallshipforcompany[$innerLoopCount]['id'];
+                                            $currentShipName =$listallshipforcompany[$innerLoopCount]['shipName'];
+                                            $tempvaluefindcurrentShip++;
+                                        }
+                                        $shipOverallStatus = "no";
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    if($statusQueryResult[$shipCount]['rejections']!=null &&$statusQueryResult[$shipCount]['status']==1){
+                        if($tempvaluefindcurrentShip==0){
+                            $currentShipId = $listallshipforcompany[$shipCount]['id'];
+                            $currentShipName =$listallshipforcompany[$shipCount]['shipName'];
+                            $tempvaluefindcurrentShip++;
+                        }
+                        $shipOverallStatus = "no";
+                    }
+                    if($statusQueryResult[$shipCount]['rejections']==null &&$statusQueryResult[$shipCount]['status']==1){
+                        if($tempvaluefindcurrentShip==0){
+                            $currentShipId = $listallshipforcompany[$shipCount]['id'];
+                            $currentShipName =$listallshipforcompany[$shipCount]['shipName'];
+                            $tempvaluefindcurrentShip++;
+                        }
+                        $shipOverallStatus = "no";
+                    }
+                    if($statusQueryResult[$shipCount]['rejections']==null &&$statusQueryResult[$shipCount]['status']==5){
+                        if($tempvaluefindcurrentShip==0){
+                            $currentShipId = $listallshipforcompany[$shipCount]['id'];
+                            $currentShipName =$listallshipforcompany[$shipCount]['shipName'];
+                            $tempvaluefindcurrentShip++;
+                        }
+                        $shipOverallStatus = "no";
+                    }
+                    /*else {
+                        if($tempvaluefindcurrentShip==0){
+                            $currentShipId = $listallshipforcompany[$shipCount]['id'];
+                            $currentShipName =$listallshipforcompany[$shipCount]['shipName'];
+                            $tempvaluefindcurrentShip++;
+                        }
+                        $shipOverallStatus = "no";
+                    }
+                }
+                else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+                    if($statusQueryResult[$shipCount]['status'] == 1 || $statusQueryResult[$shipCount]['status'] == 2 || $statusQueryResult[$shipCount]['status'] == 3 || $statusQueryResult[$shipCount]['status'] == 4 || $statusQueryResult[$shipCount]['status'] == 5)
+                    {
+                        if($statusQueryResult[$shipCount]['rejections']==null){
+
+                            $shipOverallStatus = "yes";
+                        }
+                        else if($statusQueryResult[$shipCount]['rejections']!=null){
+                            if($statusQueryResult[$shipCount]['rejections']!=null &&$statusQueryResult[$shipCount]['status']==1){
+                                if($tempvaluefindcurrentShip==0){
+                                    $currentShipId = $listallshipforcompany[$shipCount]['id'];
+                                    $currentShipName =$listallshipforcompany[$shipCount]['shipName'];
+                                    $tempvaluefindcurrentShip++;
+                                }
+                                $shipOverallStatus = "no";
+                            }
+                            else{
+                                for($innerLoopCount=$shipCount+1;$innerLoopCount<count($listallshipforcompany);$innerLoopCount++){
+                                    $statusField=$statusQueryResult[$innerLoopCount]['status'];
+                                    $rejectionField=$statusQueryResult[$innerLoopCount]['rejections'];
+
+                                    if ($rejectionField !=null && $statusField==1){
+                                        if($tempvaluefindcurrentShip==0){
+                                            $currentShipId = $listallshipforcompany[$innerLoopCount]['id'];
+                                            $currentShipName =$listallshipforcompany[$innerLoopCount]['shipName'];
+                                            $tempvaluefindcurrentShip++;
+                                        }
+                                        $shipOverallStatus = "no";
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                }*/
+
+                $resultarray = $em->createQueryBuilder()
+                    ->select('b.value')
+                    ->from('InitialShippingBundle:RankingMonthlyData', 'b')
+                    ->where('b.shipDetailsId = :shipdetailsid')
+                    ->andWhere('b.monthdetail =:dataofmonth')
+                    ->setParameter('shipdetailsid', $listallshipforcompany[$shipCount]['id'])
+                    ->setParameter('dataofmonth', $dateObject)
+                    ->getQuery()
+                    ->getResult();
+
+                $tempshipValueArray = array();
+
+                for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
+                    array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
+                }
+                $elementValues[$listallshipforcompany[$shipCount]['id']]=$tempshipValueArray;
+            }
+        }
+        else {
+            $shipOverallStatus = "no";
+            for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
+                $resultarray = $em->createQueryBuilder()
+                    ->select('b.value')
+                    ->from('InitialShippingBundle:RankingMonthlyData', 'b')
+                    ->where('b.shipDetailsId = :shipdetailsid')
+                    ->andWhere('b.monthdetail =:dataofmonth')
+                    ->setParameter('shipdetailsid', $listallshipforcompany[$shipCount]['id'])
+                    ->setParameter('dataofmonth', $dateObject)
+                    ->getQuery()
+                    ->getResult();
+                $tempshipValueArray = array();
+                for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
+                    array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
+                }
+                $elementValues[$listallshipforcompany[$shipCount]['id']]=$tempshipValueArray;
+            }
+            $shipStatuswithCurrentshipDetail=$this->findRankingShipStatus($listallshipforcompany,$dateObject);
+            $currentShipId=$shipStatuswithCurrentshipDetail['currentshipId'];
+            $currentShipName=$shipStatuswithCurrentshipDetail['currentShipName'];
+            $overallShipStatusarray=$shipStatuswithCurrentshipDetail['shipStatus'];
+
+        }
+        $returnarray = array();
+        $elementweightage = array();
+        $elementindicationValue = array();
+        $symbolIndication = array();
+        $curretshipObject=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' =>$currentShipId));
+        if($currentShipId==""){
+            $kpiids = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.dateTime <= :dateTime')
+                ->andwhere('b.kpiName != :vesselageValue')
+                ->setParameter('vesselageValue', 'Vessel age')
+                ->setParameter('dateTime', $dateObject)
+                ->add('orderBy', 'b.id  ASC ')
+                ->groupBy('b.kpiName')
+                ->getQuery()
+                ->getResult();
+        }
+        else
+        {
+            $kpiids = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.dateTime <= :dateTime')
+                ->andwhere('b.kpiName != :vesselageValue')
+                ->andwhere('b.shipDetailsId =:currentshipId')
+                ->setParameter('currentshipId',$curretshipObject)
+                ->setParameter('vesselageValue', 'Vessel age')
+                ->setParameter('dateTime', $dateObject)
+                ->add('orderBy', 'b.id  ASC ')
+                ->groupBy('b.kpiName')
+                ->getQuery()
+                ->getResult();
+        }
+        $maxelementcount = 0;
+        for ($i = 0; $i < count($kpiids); $i++) {
+            $kpiid = $kpiids[$i]['id'];
+            $kpiname = $kpiids[$i]['kpiName'];
+
+            $query = $em->createQueryBuilder()
+                ->select('b.elementName', 'b.id', 'b.indicationValue', 'b.weightage', 'c.symbolIndication')
+                ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
+                ->where('b.kpiDetailsId = :kpidetailsid')
+                ->andwhere('b.dateTime <= :dateTime')
+                ->setParameter('dateTime', $dateObject)
+                ->setParameter('kpidetailsid', $kpiid)
+                ->add('orderBy', 'b.id  ASC ')
+                ->getQuery();
+            $elementids = $query->getResult();
+            if (count($elementids) == 0) {
+                $query1 = $em->createQueryBuilder()
+                    ->select('b.kpiName', 'b.id')
+                    ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                    ->where('b.kpiName = :kpiName')
+                    ->andwhere('b.dateTime <= :dateTime')
+                    ->setParameter('dateTime', $dateObject)
+                    ->setParameter('kpiName', $kpiname)
+                    ->add('orderBy', 'b.id  ASC ')
+                    ->groupby('b.kpiName')
+                    ->getQuery();
+                $ids1 = $query1->getResult();
+                $newkpiid = $ids1[0]['id'];
+                $newkpiname = $ids1[0]['kpiName'];
+                $query = $em->createQueryBuilder()
+                    ->select('b.elementName', 'b.id', 'b.indicationValue', 'b.weightage', 'c.symbolIndication')
+                    ->from('InitialShippingBundle:RankingElementDetails', 'b')
+                    ->leftjoin('InitialShippingBundle:ElementSymbols', 'c', 'WITH', 'c.id = b.symbolId')
+                    ->where('b.kpiDetailsId = :kpidetailsid')
+                    ->andwhere('b.dateTime <= :dateTime')
+                    ->setParameter('dateTime', $dateObject)
+                    ->setParameter('kpidetailsid', $newkpiid)
+                    ->add('orderBy', 'b.id  ASC ')
+                    ->getQuery();
+                $elementids = $query->getResult();
+                if ($maxelementcount < count($elementids)) {
+                    $maxelementcount = count($elementids);
+                }
+                for ($j = 0; $j < count($elementids); $j++) {
+                    $returnarray[$newkpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage, $elementids[$j]['weightage']);
+                    $indicationvalue = $elementids[$j]['symbolIndication'];
+                    if ($indicationvalue == null) {
+                        array_push($symbolIndication, "");
+                    } else {
+                        array_push($symbolIndication, $elementids[$j]['symbolIndication']);
+                    }
+                    array_push($elementindicationValue, $elementids[$j]['indicationValue']);
+                }
+            } else {
+                if ($maxelementcount < count($elementids)) {
+                    $maxelementcount = count($elementids);
+                }
+                for ($j = 0; $j < count($elementids); $j++) {
+                    $returnarray[$kpiname][$j] = $elementids[$j]['elementName'];
+                    array_push($elementweightage, $elementids[$j]['weightage']);
+                    $indicationvalue = $elementids[$j]['symbolIndication'];
+                    if ($indicationvalue == null) {
+                        array_push($symbolIndication, "");
+                    } else {
+                        array_push($symbolIndication, $elementids[$j]['symbolIndication']);
+                    }
+                    array_push($elementindicationValue, $elementids[$j]['indicationValue']);
+                }
+            }
+        }
+
+
+        if($currentShipId==""){
+            $currentShipKpiList = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.dateTime <= :dateTime')
+                ->andwhere('b.kpiName != :vesselageValue')
+                ->setParameter('vesselageValue', 'Vessel age')
+                ->setParameter('dateTime', $dateObject)
+                ->add('orderBy', 'b.id  ASC ')
+                ->groupBy('b.kpiName')
+                ->getQuery()
+                ->getResult();
+        }
+        else
+        {
+            $currentShipKpiList = $em->createQueryBuilder()
+                ->select('b.kpiName', 'b.id')
+                ->from('InitialShippingBundle:RankingKpiDetails', 'b')
+                ->where('b.dateTime <= :dateTime')
+                ->andwhere('b.kpiName != :vesselageValue')
+                ->andwhere('b.shipDetailsId =:currentshipId')
+                ->setParameter('currentshipId',$curretshipObject)
+                ->setParameter('vesselageValue', 'Vessel age')
+                ->setParameter('dateTime', $dateObject)
+                ->add('orderBy', 'b.id  ASC ')
+                ->groupBy('b.kpiName')
+                ->getQuery()
+                ->getResult();
+        }
+
+        if($reuseMode!=''){
+            return array(
+                'listofships' => $listallshipforcompany,
+                'shipcount' => count($listallshipforcompany),
+                'symbolIndication' => $symbolIndication,
+                'indicationValue' => $elementindicationValue,
+                'elementweightage' => $elementweightage,
+                'elementkpiarray' => $returnarray,
+                'maxelementcount' => $maxelementcount,
+                'kpi_details' => $kpiids,
+                'currentshipid' => $currentShipId,
+                'currentshipname' => $currentShipName,
+                'commontext' => false,
+                'dateFormat' => $dateFormat,
+                'statusQueryResult' => $statusQueryResult,
+                'shipoverallStatus' => $shipOverallStatus,
+                'shipwiseElementValues' => $elementValues,
+                'currentshipkpilist'=>$currentShipKpiList,
+                'shipwiseStatuscount'=>$overallShipStatusarray,
+            );
+        }
+        $respone = new JsonResponse();
+        $respone->setData(array(
+            'listofships' => $listallshipforcompany,
+            'shipcount' => count($listallshipforcompany),
+            'symbolIndication' => $symbolIndication,
+            'indicationValue' => $elementindicationValue,
+            'elementweightage' => $elementweightage,
+            'elementkpiarray' => $returnarray,
+            'maxelementcount' => $maxelementcount,
+            'kpi_details' => $kpiids,
+            'currentshipid' => $currentShipId,
+            'currentshipname' => $currentShipName,
+            'commontext' => false,
+            'dateFormat' => $dateFormat,
+            'statusQueryResult' => $statusQueryResult,
+            'shipoverallStatus' => $shipOverallStatus,
+            'shipwiseElementValues' => $elementValues,
+            'currentshipkpilist'=>$currentShipKpiList,
+            'shipwiseStatuscount'=>$overallShipStatusarray,
+        ));
+        return $respone;
+    }
+    private function findRankingOverallStatus($listofShips,$statusQueryResult)
+    {
+        $returnshipwithStaus=$listofShips;
+        for($shipLimitCount=0;$shipLimitCount<count($listofShips);$shipLimitCount++){
+            $returnshipwithStaus[$shipLimitCount]['status']=$statusQueryResult[$shipLimitCount]['status'];
+            if($statusQueryResult[$shipLimitCount]['rejections']!=null){
+                $returnshipwithStaus[$shipLimitCount]['rejections']=true;
+            }
+            else{
+                $returnshipwithStaus[$shipLimitCount]['rejections']=false;
+            }
+
+        }
+        return $returnshipwithStaus;
+
+    }
+    private function findRankingShipStatus($listofShips,$dateObject){
+        $em = $this->getDoctrine()->getManager();
+        $shipStatusArray=array();
+        $currentShipId=0;
+        $currentShipName="";
+        $tempCountValue=0;
+        for($outerLoopStatusCount=0;$outerLoopStatusCount<count($listofShips);$outerLoopStatusCount++){
+            $statusandRejectionarray=array();
+            $loopshipObject=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' =>$listofShips[$outerLoopStatusCount]['id']));
+            $currentMonthStatusQueryResult = $em->createQueryBuilder()
+                ->select('identity(b.shipid) as shipId, b.rejections, b.status')
+                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->Where('b.dataofmonth =:dataofmonth')
+                ->andwhere('b.shipid =:loopshipObject')
+                ->setParameter('dataofmonth', $dateObject)
+                ->setParameter('loopshipObject',$loopshipObject)
+                ->getQuery()
+                ->getResult();
+            if(count($currentMonthStatusQueryResult)!=0){
+                $statuValue=$currentMonthStatusQueryResult[0]['status'];
+                $rejectionvalue=$currentMonthStatusQueryResult[0]['rejections'];
+                $statusandRejectionarray['status']=$statuValue;
+                $statusandRejectionarray['rejections']=$rejectionvalue;
+                if($rejectionvalue!=null){
+                    for($innerLoopCount=$outerLoopStatusCount+1;$innerLoopCount<count($listofShips);$innerLoopCount++){
+                        $innterloopshipObject=$em->getRepository('InitialShippingBundle:ShipDetails')->findOneBy(array('id' =>$listofShips[$innerLoopCount]['id']));
+                        $innterLoopStatusQueryResult = $em->createQueryBuilder()
+                            ->select('identity(b.shipid) as shipId, b.rejections, b.status')
+                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                            ->Where('b.dataofmonth =:dataofmonth')
+                            ->andwhere('b.shipid =:loopshipObject')
+                            ->setParameter('dataofmonth', $dateObject)
+                            ->setParameter('loopshipObject',$innterloopshipObject)
+                            ->getQuery()
+                            ->getResult();
+                        if($innterLoopStatusQueryResult==0){
+                            $statusCheckFiled=false;
+                            if($tempCountValue==0){
+                                $currentShipId=$listofShips[$innerLoopCount]['id'];
+                                $currentShipName=$listofShips[$innerLoopCount]['shipName'];
+                                $tempCountValue++;
+                            }
+                            break;
+                        }
+                        else{
+                            continue;
+                        }
+                    }
+                    /*if($statusCheckFiled){
+                        if($tempCountValue==0){
+                            $currentShipId=$listofShips[$outerLoopStatusCount]['id'];
+                            $currentShipName=$listofShips[$outerLoopStatusCount]['shipName'];
+                            $tempCountValue++;
+                        }
+                    }*/
+                }
+
+            }
+            else{
+                if($tempCountValue==0){
+                    $currentShipId=$listofShips[$outerLoopStatusCount]['id'];
+                    $currentShipName=$listofShips[$outerLoopStatusCount]['shipName'];
+                    $tempCountValue++;
+                }
+            }
+            $shipStatusArray[$listofShips[$outerLoopStatusCount]['id']]=$statusandRejectionarray;
+        }
+        return array('currentshipId'=>$currentShipId,'currentShipName'=>$currentShipName,'shipStatus'=>$shipStatusArray);
     }
 
     /**
