@@ -99,9 +99,18 @@
                                 datePickerValue = data.dateFormat;
                                 if (data.shipcount != 0) {
                                     var statusQueryResult = data.statusQueryResult;
-                                    var listofSucessships = statusQueryResult[0]['shipid'];
-                                    var lookStatus = statusQueryResult[0]['status'];
-                                    var rejectionStatus = statusQueryResult[0]['rejectionsStatus'];
+                                    var listofSucessships;
+                                    var lookStatus;
+                                    var rejectionStatus;
+                                    if(statusQueryResult.length>0) {
+                                        listofSucessships = statusQueryResult[0]['shipid'];
+                                        lookStatus = statusQueryResult[0]['status'];
+                                        rejectionStatus = statusQueryResult[0]['rejectionsStatus'];
+                                    } else {
+                                        listofSucessships = null;
+                                        lookStatus = null;
+                                        rejectionStatus = null;
+                                    }
                                     if (data.shipoverallStatus == "yes") {
                                         if (!rejectionStatus) {
                                             ListView(data);
@@ -196,10 +205,21 @@
                     $('#overallshids').html('');
                     $('#overallshids').text('');
 
-                    var status = data.statusQueryResult[0]['status'];
-                    var rejections = JSON.parse(data.statusQueryResult[0]['temp_rejections']);
-                    var rejection_status = data.statusQueryResult[0]['rejectionsStatus'];
-                    var updated_ships = data.statusQueryResult[0]['shipid'].split(',');
+                    var status;
+                    var rejections;
+                    var rejection_status;
+                    var updated_ships;
+                    if(data.statusQueryResult.length>0) {
+                        status = data.statusQueryResult[0]['status'];
+                        rejections = JSON.parse(data.statusQueryResult[0]['temp_rejections']);
+                        rejection_status = data.statusQueryResult[0]['rejectionsStatus'];
+                        updated_ships = data.statusQueryResult[0]['shipid'].split(',');
+                    } else {
+                        status = null;
+                        rejections = null;
+                        rejection_status = null;
+                        updated_ships = null;
+                    }
 
                     $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
                     $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
@@ -224,7 +244,10 @@
                             }
                         }
                         else if (role == 'ROLE_MANAGER') {
-                            rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+
+                            if(data.statusQueryResult.length>0) {
+                                rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                            }
                             if (status == 5 || status == 2) {
                                 if (!$.isEmptyObject(rejections)) {
                                     if (ship_id in rejections) {
@@ -289,7 +312,9 @@
                                 {% endif %}
 
                                 var ship_id = data.listofships[0]['id'];
-                                rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                                if(data.statusQueryResult.length>0) {
+                                    rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                                }
 
                                 if (role == 'ROLE_MANAGER') {
                                     if (status == 5 || status == 2) {
