@@ -254,9 +254,11 @@
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                         delete rejections[ship_id];
                                         shipstatus++;
-                                    } else if (updated_ships.indexOf(String(ship_id)) != -1) {
-                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
-                                        shipstatus++;
+                                    } else if(status == 2) {
+                                        if (updated_ships.indexOf(String(ship_id)) != -1) {
+                                            $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
+                                            shipstatus++;
+                                        }
                                     }
                                 } else if(updated_ships.indexOf(String(ship_id)) != -1) {
                                     if (status == 2) {

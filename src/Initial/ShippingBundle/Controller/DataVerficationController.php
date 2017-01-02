@@ -1004,7 +1004,7 @@ class DataVerficationController extends Controller
                         $shipids = $shipid;
                     }*/
 
-                    $newlookupstatus->setStatus(1);
+//                    $newlookupstatus->setStatus(1);
 //                    $newlookupstatus->setShipid($shipids);
                     $newlookupstatus->setTempRejections($rejection_obj);
                     $newlookupstatus->setDatetime(new \DateTime());
@@ -1451,10 +1451,15 @@ class DataVerficationController extends Controller
                 $ship_status_done_count = 0;
             }*/
 
+            $rejections = $StatusQuery[0]['temp_rejections'];
             if($data_status == 2 || $data_status == 3 || $data_status == 4 || $data_status == 5) {
                 if(count($updated_vessels) == count($shipDetails)) {
                     if($rejection_status || count($rejections)>0) {
-                        $data_view = 'editable-view';
+                        if($rejections != 'null' && $rejections != null) {
+                            $data_view = 'editable-view';
+                        } else {
+                            $data_view = 'summary-view';
+                        }
                     } else {
                         $data_view = 'summary-view';
                     }
@@ -4551,7 +4556,7 @@ class DataVerficationController extends Controller
 
                 } else if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
                     if($temp_status == 2 || $temp_status == 3 || $temp_status == 4 || $temp_status == 5) {
-                        if($statusQueryResult[0]['rejections'] == null || $statusQueryResult[0]['rejections'] == 'null') {
+                        if($statusQueryResult[0]['temp_rejections'] == null || $statusQueryResult[0]['temp_rejections'] == 'null') {
                             $shipOverallStatus = "yes";
                         } else {
                             $shipOverallStatus = "no";
@@ -4681,7 +4686,7 @@ class DataVerficationController extends Controller
                         }
                     }
                     if($temp_status == 2 || $temp_status == 3 || $temp_status == 4 || $temp_status == 5) {
-                        if($statusQueryResult[0]['rejections'] == null || $statusQueryResult[0]['rejections'] == 'null') {
+                        if($statusQueryResult[0]['temp_rejections'] == null || $statusQueryResult[0]['temp_rejections'] == 'null') {
                             $shipOverallStatus = "yes";
                         }
                     }
