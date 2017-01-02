@@ -175,5 +175,21 @@ class Scorecard_LookupStatus
         $this->rejections = $rejections;
     }
 
+    /**
+     * @return boolean
+     */
+    public function isRejectionsStatus()
+    {
+        return $this->rejectionsStatus;
+    }
+
+    /**
+     * @param boolean $rejectionsStatus
+     */
+    public function setRejectionsStatus($rejectionsStatus)
+    {
+        $this->rejectionsStatus = $rejectionsStatus;
+    }
+
 
 }

@@ -1421,10 +1421,10 @@ class DataVerficationController extends Controller
             if ($findRankingdata['shipcount'] != 0) {
                 if ($findRankingdata['shipoverallStatus'] == "yes" && $findRankingdata['currentshipid'] =="") {
                     $findstatusofship=$findRankingdata['statusQueryResult'];
-                    $listviewStatusField=true;
+                    $listviewStatusField='listView';
                     foreach ($findstatusofship as $key => $val)
                     {
-                        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER')
+                        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER' ||$role[0] == 'ROLE_MANAGER' ||$role[0] == 'ROLE_ADMIN')
                         {
                             if ($val['status'] ==1)
                             {
@@ -1432,7 +1432,7 @@ class DataVerficationController extends Controller
                             }
                         }
                     }
-                    if ($listviewStatusField==true)
+                    if ($listviewStatusField=='listView')
                     {
                         $findListVieworEditViewStatus="listView";
                     }
@@ -4562,14 +4562,13 @@ class DataVerficationController extends Controller
                         }
                     }
                 }
-
                 if($currentShipName==""){
                     $shipOverallStatus = "yes";
                 }
 
             }
             if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-                foreach ($shipdetailswithStatus as $key => $val)
+                /*foreach ($shipdetailswithStatus as $key => $val)
                 {
                     if ($val['status'] == 1 && $val['rejections'] ==false)
                     {
@@ -4578,7 +4577,7 @@ class DataVerficationController extends Controller
                         $shipOverallStatus = "no";
                         break;
                     }
-                }
+                }*/
                 if($currentShipName==""){
                     foreach ($shipdetailswithStatus as $key => $val)
                     {
