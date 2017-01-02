@@ -104,14 +104,14 @@
                                     var rejectionStatus = statusQueryResult[0]['rejectionsStatus'];
                                     if (data.shipoverallStatus == "yes") {
                                         if (!rejectionStatus) {
-                                            ListView(data)
+                                            ListView(data);
                                         }
                                         else {
-                                            EditableView(data)
+                                            EditableView(data);
                                         }
                                     }
                                     else if (data.shipoverallStatus == "no") {
-                                        EditableView(data)
+                                        EditableView(data);
                                     }
                                 }
                                 else {
@@ -197,7 +197,7 @@
                     $('#overallshids').text('');
 
                     var status = data.statusQueryResult[0]['status'];
-                    var rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                    var rejections = JSON.parse(data.statusQueryResult[0]['temp_rejections']);
                     var rejection_status = data.statusQueryResult[0]['rejectionsStatus'];
                     var updated_ships = data.statusQueryResult[0]['shipid'].split(',');
 
@@ -209,44 +209,53 @@
                         var ship_id = data.listofships[i]['id'];
                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + ship_id + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
                         if (role == 'ROLE_ADMIN') {
-                            if (status == 2) {
+                            if (status == 2 || status == 3) {
                                 if (!$.isEmptyObject(rejections) && rejection_status) {
                                     if (ship_id in rejections) {
-                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                         delete rejections[ship_id];
                                     }
-                                } else {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                } else if(updated_ships.indexOf(String(ship_id)) != -1)  {
+                                    if (status == 3) {
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
+                                        shipstatus++;
+                                    }
                                 }
-                                shipstatus++;
                             }
                         }
                         else if (role == 'ROLE_MANAGER') {
-                            if (status == 5) {
-                                if (!$.isEmptyObject(rejections) && rejection_status) {
+                            rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                            if (status == 5 || status == 2) {
+                                if (!$.isEmptyObject(rejections)) {
                                     if (ship_id in rejections) {
-                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
-                                        delete rejections[ship_id];
-                                    }
-                                } else {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
-                                }
-                                shipstatus++;
-                            }
-                        }
-                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
-                            if (status == 1) {
-                                if (!$.isEmptyObject(rejections) && rejection_status) {
-                                    if (ship_id in rejections) {
-                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                         delete rejections[ship_id];
                                         shipstatus++;
                                     } else if (updated_ships.indexOf(String(ship_id)) != -1) {
-                                        $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
+                                        shipstatus++;
+                                    }
+                                } else if(updated_ships.indexOf(String(ship_id)) != -1) {
+                                    if (status == 2) {
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
+                                        shipstatus++;
+                                    }
+                                }
+                            }
+                        }
+                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                            if (status == 1 || status == 2 || status == 3 || status == 5) {
+                                if (!$.isEmptyObject(rejections) && rejection_status) {
+                                    if (ship_id in rejections) {
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        delete rejections[ship_id];
+                                        shipstatus++;
+                                    } else if (updated_ships.indexOf(String(ship_id)) != -1) {
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                         shipstatus++;
                                     }
                                 } else if (updated_ships.indexOf(String(ship_id)) != -1) {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                     shipstatus++;
                                 }
                             }
@@ -259,7 +268,7 @@
                     $('#currentid').text(month + '-' + year);
                     $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
 
-                    if (data.shipcount != shipstatus) {
+                    if (data.shipcount != shipstatus || JSON.parse(data.statusQueryResult[0]['rejections'])!=null) {
 
                         $('#shipid').val(data.currentshipid);
                         $('.linkclass').removeClass("active");
@@ -274,10 +283,55 @@
                                 var temp = 1;
 
                                 $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+
                                 {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
+                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.kpi_details[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
                                 {% endif %}
-                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+
+                                var ship_id = data.listofships[0]['id'];
+                                rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+
+                                if (role == 'ROLE_MANAGER') {
+                                    if (status == 5 || status == 2) {
+                                        if (!$.isEmptyObject(rejections)) {
+                                            if (ship_id in rejections) {
+                                                if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
+                                                    $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                } else {
+                                                    $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                }
+                                            } else {
+                                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                            }
+                                        } else {
+                                            $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        }
+                                    } else {
+                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                    }
+                                } else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                                    if (status == 1 || status == 2 || status == 3 || status == 5) {
+                                        if (!$.isEmptyObject(rejections) && rejection_status) {
+                                            if (ship_id in rejections) {
+                                                if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
+                                                    $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                } else {
+                                                    $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                }
+                                            } else {
+                                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                            }
+                                        } else {
+                                            $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        }
+                                    } else {
+                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                    }
+                                } else {
+                                    $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                }
+
+
                                 if (newtemp == 0) {
                                     $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
                                 }
@@ -292,20 +346,32 @@
                                     $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
                                     {% endif %}
 
-                                    if (data.elementvalues.length > 0) {
+                                    if(data.elementvalues.length>0) {
+                                        if (data.elementvalues[0].length > 0) {
 
-                                        $('#updatebuttonid').show();
-                                        $('#savebuttonid').hide();
-                                        $('#adminbuttonid').show();
+                                            $('#updatebuttonid').show();
+                                            $('#savebuttonid').hide();
+                                            $('#adminbuttonid').show();
 
-                                        if (temp == 1) {
-                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                            if (temp == 1) {
+                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[0][newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                            }
+                                            if (temp > 1) {
+                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[0][newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                            }
                                         }
-                                        if (temp > 1) {
-                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                        else {
+                                            $('#updatebuttonid').hide();
+                                            $('#savebuttonid').show();
+                                            $('#adminbuttonid').show();
+                                            if (temp == 1) {
+                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                            }
+                                            if (temp > 1) {
+                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                            }
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         $('#updatebuttonid').hide();
                                         $('#savebuttonid').show();
                                         $('#adminbuttonid').show();
@@ -316,6 +382,7 @@
                                             $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                         }
                                     }
+
                                     temp++;
                                     newtemp++;
                                 });
@@ -326,8 +393,10 @@
                     }
                     else {
                         $('#allbuttondiv').hide();
-                        $('#addkpiformid').text('All vessels data updated !');
-                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                            $('#addkpiformid').text('All vessels data updated !');
+                            $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                        {% endif %}
                     }
                 }
 
@@ -1038,7 +1107,7 @@
                                     $.each(listkpi, function (mykey, myvalue) {
                                         $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
                                         {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                        $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                            $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
                                         {% endif %}
                                         if (valuearray.length > 0) {
                                             $('#updatebuttonid').show();
@@ -1053,7 +1122,6 @@
                                                 }
                                                 else {
                                                     $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-
                                                 }
                                             }
                                             if (temp > 1) {
@@ -1168,14 +1236,22 @@
 
                         $.ajax({
                             success: function (data) {
-                                if (data.status == -1) {
+                                var status = data.statusQueryResult[0]['status'];
+                                if(data.returnmsg == 'rejection_error') {
+                                    $('#addkpiformid').text('Please check rejected vessels and update it !');
+                                    jAlert("Please check rejected vessels and update it!");
+                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                    {% endif %}
+                                } else if (data.status == -1) {
                                     $('#img_' + data.ship_id).remove();
                                     $('#' + data.ship_id).after('<img id="img_' + data.ship_id + '" style="width: 20px;height: 20px" src="/images/error.png">');
-                                    $('#addkpiformid').text(data.return_msg).css({"color": "red"});
-                                } else {
+                                    $('#addkpiformid').text(data.return_msg);
+                                } else if(data.data_view == 'editable-view') {
                                     $('#datofmonthid').val(data.currentdatetime);
                                     $('#datofmonthid_data').val(data.currentdatetime);
-                                    var valuearray = data.elementvalues;
+                                    EditableView(data);
+                                    /*/!*var valuearray = data.elementvalues;
                                     $('#shipid').val('');
                                     $('#addkpiformid').html('');
                                     $('#addkpiformid').text('');
@@ -1267,10 +1343,38 @@
                                         $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
                                         $('#addkpiformid').text('All vessels data updated !');
                                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                            $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                         {% endif %}
                                     } else {
-                                        $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
+                                        if(data.data_view == 'finished') {
+                                            $('#allbuttondiv').hide();
+                                            $('.linkclass').removeClass("active");
+                                            $('#img_' + preshipid).remove();
+                                            $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
+                                            $('#addkpiformid').text('All vessels data updated !');
+                                            {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                                $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                            {% endif %}
+                                        } else {
+                                            $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
+                                        }
+                                    }*!/*/
+                                } else if(data.data_view == 'summary-view') {
+                                    $('#allbuttondiv').hide();
+                                    $('#datofmonthid').val(data.currentdatetime);
+                                    $('#datofmonthid_data').val(data.currentdatetime);
+                                    $('.linkclass').removeClass("active");
+                                    $('#img_' + preshipid).remove();
+                                    $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
+                                    if (role == 'ROLE_MANAGER') {
+                                        $('#addkpiformid').text('All vessels data verified !');
+                                    } else if(role == 'ROLE_KPI_INFO_PROVIDER') {
+                                        if(status == 5) {
+                                            $('#addkpiformid').text('All vessels data uploaded !');
+                                        } else if(status == 1) {
+                                            $('#addkpiformid').text('All vessels data saved !');
+                                            $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                        }
                                     }
                                 }
 
@@ -1401,15 +1505,21 @@
                                                 <td class="kpi_lement_inputname"> {{ symbolIndication[i] }} </td>
                                                 <td class="kpi_lement_inputname">{{ indicationValue[i] }}</td>
                                                 <td class="kpi_lement_inputname">
-                                                    {% if elementvalues|length <= 0 %}
+                                                    {% if elementvalues|length > 0 %}
+                                                        {% if elementvalues[0]|length <= 0 %}
+                                                            <input class="resetclass" onkeypress="return isNumberKey(event)"
+                                                                   name="newelemetvalues[]" type="text" required
+                                                                   placeholder="123">
+                                                        {% endif %}
+                                                        {% if elementvalues[0]|length > 0 and  elementvalues[0]|length > i %}
+                                                            <input class="resetclass" onkeypress="return isNumberKey(event)"
+                                                                   name="newelemetvalues[]" type="text"
+                                                                   value="{{ elementvalues[0][i] }}" required
+                                                                   placeholder="123">
+                                                        {% endif %}
+                                                    {% else %}
                                                         <input class="resetclass" onkeypress="return isNumberKey(event)"
                                                                name="newelemetvalues[]" type="text" required
-                                                               placeholder="123">
-                                                    {% endif %}
-                                                    {% if elementvalues|length > 0 and  elementvalues|length > i %}
-                                                        <input class="resetclass" onkeypress="return isNumberKey(event)"
-                                                               name="newelemetvalues[]" type="text"
-                                                               value="{{ elementvalues[i] }}" required
                                                                placeholder="123">
                                                     {% endif %}
                                                 </td>
