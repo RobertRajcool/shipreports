@@ -270,10 +270,10 @@
                             else {
                                 var findShortMonth = new Date(data.dateFormat),
                                         locale = "en-us",
-                                        monthName = nowdate.toLocaleString(locale, {month: "long"}),
-                                        year = nowdate.getFullYear();
+                                        monthName = findShortMonth.toLocaleString(locale, {month: "long"}),
+                                        year = findShortMonth.getFullYear();
 
-                                $('#addkpiformid').text(''+findShortMonth + '-' + year+' This Month Data Not Updated');
+                                $('#addkpiformid').text(''+monthName + '-' + year+' This Month Data Not Updated');
                                 $('#shipname').text('');
                                 $('#shipname').val('');
                             }
@@ -290,10 +290,10 @@
                                 else {
                                     var findShortMonth = new Date(data.dateFormat),
                                             locale = "en-us",
-                                            monthName = nowdate.toLocaleString(locale, {month: "long"}),
-                                            year = nowdate.getFullYear();
+                                            monthName = findShortMonth.toLocaleString(locale, {month: "long"}),
+                                            year = findShortMonth.getFullYear();
                                     $('#allbuttondiv').hide();
-                                    $('#addkpiformid').text(''+findShortMonth + '-' + year+' This Month Data Not Updated');
+                                    $('#addkpiformid').text(''+monthName + '-' + year+' This Month Data Not Updated');
                                     $('#shipname').text('');
                                     $('#shipname').val('');
                                 }
