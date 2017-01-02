@@ -38,9 +38,17 @@ class Scorecard_LookupStatus
     /**
      * @var string
      *
-     * @ORM\Column(name="rejections", type="string", nullable=true)
+     * @ORM\Column(name="rejections", type="text", nullable=true)
      */
     private $rejections;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="temp_rejections", type="text", nullable=true)
+     */
+    private $temp_rejections;
+
     /**
      * @var boolean
      *
@@ -190,6 +198,20 @@ class Scorecard_LookupStatus
     {
         $this->rejectionsStatus = $rejectionsStatus;
     }
+    /**
+     * @return string
+     */
+    public function getTempRejections()
+    {
+        return $this->temp_rejections;
+    }
 
+    /**
+     * @param string $temp_rejections
+     */
+    public function setTempRejections($temp_rejections)
+    {
+        $this->temp_rejections = $temp_rejections;
+    }
 
 }
