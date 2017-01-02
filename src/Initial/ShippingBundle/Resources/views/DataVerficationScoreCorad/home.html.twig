@@ -207,11 +207,13 @@
 
                     var status;
                     var rejections;
+                    var temp_rejections;
                     var rejection_status;
                     var updated_ships;
                     if(data.statusQueryResult.length>0) {
                         status = data.statusQueryResult[0]['status'];
                         rejections = JSON.parse(data.statusQueryResult[0]['temp_rejections']);
+                        temp_rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
                         rejection_status = data.statusQueryResult[0]['rejectionsStatus'];
                         updated_ships = data.statusQueryResult[0]['shipid'].split(',');
                     } else {
@@ -245,15 +247,17 @@
                         }
                         else if (role == 'ROLE_MANAGER') {
 
-                            if(data.statusQueryResult.length>0) {
-                                rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
-                            }
                             if (status == 5 || status == 2) {
-                                if (!$.isEmptyObject(rejections)) {
-                                    if (ship_id in rejections) {
+                                if (!$.isEmptyObject(temp_rejections)) {
+                                    if (ship_id in temp_rejections) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
-                                        delete rejections[ship_id];
+                                        delete temp_rejections[ship_id];
                                         shipstatus++;
+                                        if(rejections) {
+                                            if (ship_id in rejections) {
+                                                $('#allbuttondiv').hide();
+                                            }
+                                        }
                                     } else if(status == 2) {
                                         if (updated_ships.indexOf(String(ship_id)) != -1) {
                                             $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
@@ -1103,7 +1107,7 @@
                                     {% endif %}
                                     var rejection_status = 0;
                                     if (data.rejection_status == 'yes') {
-                                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        {#{% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}#}
                                         if (data.rejections == 'ALL') {
                                             rejection_status = 1;
                                         } else {
@@ -1118,9 +1122,9 @@
                                         } else {
                                             $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                         }
-                                        {% else %}
-                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
-                                        {% endif %}
+                                        {#{% else %}#}
+                                        //$('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                        {#{% endif %}#}
                                     } else {
                                         $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                     }
