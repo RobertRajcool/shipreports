@@ -16,33 +16,33 @@
         <script src="{{ asset_url }}"></script>
         <script src = "/js/jquery-ui.js"></script>
         {% endjavascripts %}
-
         <script>
             $(document).ready(function () {
-                $('#updatebuttonid').hide();
                 var base_url = window.location.origin;
                 $('#nogroupselected').hide();
                 $('#kpiformforship').show();
                 var shipid = '{{ currentshipid }}';
                 var shipname = '{{ currentshipname }}';
-                var statusofship = '{{ statuscount }}';
                 var shipcount = '{{ shipcount }}';
                 var role = '{{ app.user.roles[0] }}';
                 var currentdatetime = '{{ currentdatetime }}';
-
-                if (statusofship == shipcount) {
-                    $('#allbuttondiv').hide();
-                    $('#upload_btn_id').show();
-                    $('#shipid').val('');
-                    $('#shipname').text('');
-                } else {
+                var listoreditViewStatus='{{ listoreditViewStatus }}';
+                if(listoreditViewStatus=="editView"){
+                    $('#currentmonhthdetails').hide();
                     $('#' + shipid).addClass('active');
                     $('#shipid').val(shipid);
                     $('#shipname').text(shipname);
                     $('#allbuttondiv').show();
                     $('#upload_btn_id').hide();
                 }
-
+                if(listoreditViewStatus=="listView"){
+                    $('#currentmonhthdetails').hide();
+                    $('#previousmonthdata').show();
+                    $('#allbuttondiv').hide();
+                    $('#upload_btn_id').show();
+                    $('#shipid').val('');
+                    $('#shipname').text('');
+                }
                 var on_month = '';
                 var nowdate = new Date(currentdatetime),
                         locale = "en-us",
@@ -50,13 +50,390 @@
                         year = nowdate.getFullYear();
 
                 on_month = month + '-' + year;
-
                 $('#currentid').text(month + '-' + year);
+                $('#currentMonthText').text(month + '-' + year);
                 $('#currentid_data').text(month + '-' + year);
                 $('#datofmonthid').val(currentdatetime);
                 $('#datofmonthid_data').val(currentdatetime);
-
                 $('.datetimepicker').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'MM yy',
+                    onClose: function (dateText, inst) {
+                        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                        var this_val = $(this).val();
+                        var data_split_array = $(this).val().split(' ');
+                        var current = data_split_array[0] + '-' + data_split_array[1];
+                        on_month = current;
+                        var data = {
+                            dataofmonth: current
+                        };
+                        $.ajaxSetup({
+                            global: false,
+                            type: "post",
+                            'url': Routing.generate('gotorankingmonthdata'),
+                            beforeSend: function () {
+                                var beforsend = ajaxbefore_send();
+                            },
+                            complete: function () {
+                                var complete = ajax_complete();
+                            }
+                        });
+                        $.ajax({
+                            data: data,
+                            success: function (data) {
+                                $('#datofmonthid_data').val(data.dateFormat);
+                                $('#datofmonthid').val(data.dateFormat);
+                                datePickerValue = data.dateFormat;
+                                if (data.shipcount != 0) {
+                                    if (data.shipoverallStatus == "yes" && data.currentshipid =="") {
+                                        var statusofship=data.statusQueryResult;
+                                        var listviewStatusField='listview';
+                                        $.each(statusofship, function(key, info) {
+                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
+                                                if (info.status == 1) {
+                                                    listviewStatusField = key;
+                                                    return false;
+                                                };
+                                            }
+
+                                        });
+                                        if (listviewStatusField=='listview') {
+                                            ListView(data)
+                                        }
+                                        else {
+                                            EditableView(data)
+                                        }
+                                    }
+                                    else if (data.shipoverallStatus == "no") {
+                                        EditableView(data)
+                                    }
+                                    else {
+                                        EditableView(data)
+                                    }
+                                }
+                                else {
+                                    $('#elementformid').hide();
+                                    $('#allbuttondiv').hide();
+                                    $('#shipname').text('');
+                                    $('#shipcountwithtext').text('Vessels (0)');
+                                    $('#shiplistinui').html('');
+
+                                }
+                                $('.datetimepicker').val(this_val);
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                $('#resultLoading .bg').height('100%');
+                                $('#resultLoading').fadeOut(300);
+                                $('body').css('cursor', 'default');
+                                // window.location.href = base_url + '/login';
+                            }
+                        });
+                    }
+                }).datepicker("setDate", new Date());
+
+                function ListView(data) {
+                    $('#prvieoustablecontent').html(' ');
+                    $('#prvieoustablecontent').text(' ');
+                    var addcolumn = 0;
+                    var valuecount = 0;
+                    $('<table id="table_id_" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
+                    $('<thead id="firsttable_head_"></thead><tbody id="firsttable_body_"></tbody>').appendTo('#table_id_');
+                    $('<tr class="v_r_min_height" id="firsttable_head_tr_"></tr>').appendTo('#firsttable_head_');
+                    $('<th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo('#firsttable_head_tr_');
+                    $.each(data.listofships, function (j) {
+                        $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_');
+                    });
+                    $.each(data.kpi_details, function (i) {
+                        var colspan = data.shipcount + 2;
+                        $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
+                        $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
+                        $('<tr id="firsttable_head_tr_' + i + '"></tr>').appendTo('#firsttable_head_' + i);
+                        $('<th colspan="' + colspan + '" class="kpi_lement_name">' + data.kpi_details[i]['kpiName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
+                        var kpiid = data.kpi_details[i]['id']
+                        var elementnamearray = data.elementkpiarray[data.kpi_details[i]['kpiName']];
+                        var forloopcount = 0;
+                        for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
+                            $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
+                            $('<td class="kpi_lement_name kpi_lement_name">' + elementnamearray[forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                            $('<td class="kpi_weightage kpi_lement_number">' + data.elementweightage[valuecount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                            $.each(data.listofships, function (j) {
+                                var shipid = data.listofships[j]['id']
+                                var elementvaluearray = data.shipwiseElementValues[shipid];
+                                /*for(var shipvalueCount=0;shipvalueCount<elementvaluearray.length;shipvalueCount++){
+                                 var elementValue=elementvaluearray[shipvalueCount];
+                                 if (elementValue != null) {
+                                 $('<td class="kpi_ship kpi_lement_inputname">' + elementValue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                 }
+                                 else {
+                                 $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                 }
+
+                                 }*/
+                                var elementvalue = elementvaluearray[valuecount]
+                                if (elementvalue != null) {
+                                    $('<td class="kpi_ship kpi_lement_inputname">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                }
+                                else {
+                                    $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
+                                }
+                            });
+                            valuecount++;
+                        }
+                    });
+                    $('#kpiformforship').hide();
+                    $('#currentmonhthdetails').hide();
+                    $('#previousmonthdata').show();
+                }
+
+                function EditableView(data) {
+                    $('#allbuttondiv').show();
+                    $('#kpiformforship').show();
+                    $('#previousmonthdata').hide();
+                    $('#currentmonhthdetails').show();
+                    $('#overallshids').html('');
+                    $('#overallshids').text('');
+                    $('#elementformid').show();
+                    $('#allbuttondiv').show();
+                    /* var status = data.statusQueryResult[0]['status'];
+                     var rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
+                     var rejection_status = data.statusQueryResult[0]['rejectionsStatus'];
+                     var updated_ships = data.statusQueryResult[0]['shipid'].split(',');*/
+
+                    $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
+                    $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
+                    var shipstatus = 0;
+
+                    $.each(data.listofships, function (shipindex) {
+                        var ship_id = data.listofships[shipindex]['id'];
+                        var statusofship=data.statusQueryResult[shipindex];
+                        var shipwisestatusCount=data.shipwiseStatuscount[ship_id];
+                        $('<li><a class="linkclass" title="' + data.listofships[shipindex]['shipName'] + '" id="' + ship_id + '" >' + data.listofships[shipindex]['shipName'] + '</a></li>').appendTo('#addshipids');
+                        if (role == 'ROLE_ADMIN') {
+                            if(data.statusQueryResult.length==data.shipcount){
+                                if (statusofship['rejections']!=null) {
+                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                }
+                                else if (statusofship['status']==3) {
+                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                }
+                            }
+                        }
+                        else if (role == 'ROLE_MANAGER') {
+                            if(data.statusQueryResult.length==data.shipcount){
+                                if (statusofship['rejections']!=null) {
+                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                }
+                                else if (statusofship['status']==2 ||statusofship['status']==3) {
+                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                }
+                            }
+                        }
+                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                            if(data.statusQueryResult.length==data.shipcount){
+                                if (statusofship['rejections']!=null && statusofship['status']==1) {
+                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                }
+                                else {
+                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                }
+                            }
+                            else {
+                                if(shipwisestatusCount.hasOwnProperty("status")){
+                                    if (shipwisestatusCount['rejections']!=null) {
+                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    }
+                                    else {
+                                        $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    }
+                                }
+                                else {
+
+                                }
+                            }
+
+                        }
+                    });
+                    $('#elementformid').html('');
+                    $('#elementformid').text('');
+                    $('#shipname').text(data.currentshipname);
+                    $('#currentid').text(month + '-' + year);
+                    $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
+                    if (data.shipcount != shipstatus) {
+                        if(data.currentshipid==""){
+                            if (role == 'ROLE_KPI_INFO_PROVIDER'){
+                                $('#allbuttondiv').hide();
+                                $('#addkpiformid').text('All vessels data updated !');
+                                $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                            }
+                            else {
+                                var findShortMonth = new Date(data.dateFormat),
+                                        locale = "en-us",
+                                        monthName = nowdate.toLocaleString(locale, {month: "long"}),
+                                        year = nowdate.getFullYear();
+
+                                $('#addkpiformid').text(''+findShortMonth + '-' + year+' This Month Data Not Updated');
+                                $('#shipname').text('');
+                                $('#shipname').val('');
+                            }
+
+                        }
+                        else {
+                            if (role == 'ROLE_KPI_INFO_PROVIDER'){
+                                listKpiandElments(data);
+                            }
+                            else {
+                                if(data.statusQueryResult.length==data.shipcount){
+                                    listKpiandElments(data);
+                                }
+                                else {
+                                    var findShortMonth = new Date(data.dateFormat),
+                                            locale = "en-us",
+                                            monthName = nowdate.toLocaleString(locale, {month: "long"}),
+                                            year = nowdate.getFullYear();
+                                    $('#allbuttondiv').hide();
+                                    $('#addkpiformid').text(''+findShortMonth + '-' + year+' This Month Data Not Updated');
+                                    $('#shipname').text('');
+                                    $('#shipname').val('');
+                                }
+
+                            }
+                        }
+                    }
+                    else {
+                        $('#allbuttondiv').hide();
+                        $('#addkpiformid').text('All vessels data updated !');
+                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                    }
+                }
+                function listKpiandElments(data) {
+                    $('#shipid').val(data.currentshipid);
+                    $('.linkclass').removeClass("active");
+                    $('#' + data.currentshipid).addClass('active');
+                    var shipwiseelementValues=data.shipwiseElementValues[data.currentshipid];
+                    var j = 1;
+                    var newtemp = 0;
+                    $.each(data.elementkpiarray, function (i, listkpi) {
+                        var inarrayvalue;
+                        var buttonstatusValue=true;
+                        var currentkpiid=data.currentshipkpilist[j - 1]['id'];
+                        var currentshipIdstatus=""
+                        if(data.statusQueryResult.length==data.shipcount){
+                            var rejectionid=data.statusQueryResult[data.currentshipid-1]['rejections'];
+                            currentshipIdstatus=data.statusQueryResult[data.currentshipid-1]['status'];
+                            if(rejectionid!=null){
+                                if(rejectionid=='ALL'){
+                                    inarrayvalue=0;
+                                }
+                                else {
+                                    buttonstatusValue=false;
+                                    var rejectionidarray=rejectionid.split(',');
+                                    inarrayvalue=$.inArray(currentkpiid.toString(),rejectionidarray);
+                                }
+
+                            }
+                            else {
+                                inarrayvalue=-1;
+                            }
+
+                        }
+                        else {
+                            var shipwisestatusCount=data.shipwiseStatuscount[data.currentshipid];
+                            if(shipwisestatusCount.hasOwnProperty('rejections')){
+                                var currentRejectionId=shipwisestatusCount['rejections'];
+                                if(currentRejectionId!=null){
+                                    buttonstatusValue=false;
+                                    var currentRejectionIdArray=currentRejectionId.split(',');
+                                    inarrayvalue=$.inArray(currentkpiid.toString(),currentRejectionIdArray);
+                                }
+                                else {
+                                    inarrayvalue=-1;
+                                }
+                            }
+                            else {
+                                inarrayvalue=-1;
+                            }
+                        }
+                        var k = $.isNumeric(i);
+                        if (!k) {
+                            var temp = 1;
+
+                            $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
+                            {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                            if(inarrayvalue==-1){
+                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="' + data.currentshipkpilist[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
+                            }
+                            else {
+                                $('<th><input type="checkbox" checked class="checkboxes" name= "reject_id[]" value="' + data.currentshipkpilist[j - 1]['id'] + '"></th>').appendTo('#firstheader_tr_' + newtemp);
+                            }
+
+                            {% endif %}
+                            if(inarrayvalue==-1){
+                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                            }
+                            else {
+                                $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                            }
+                            if (newtemp == 0) {
+                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
+                            }
+                            else {
+                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
+                            }
+
+                            $.each(listkpi, function (mykey, myvalue) {
+
+                                $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
+                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+
+                                $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
+                                {% endif %}
+
+                                if (shipwiseelementValues.length > 0) {
+                                    $('#updatebuttonid').show();
+                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                                    if(currentshipIdstatus==1){
+                                        $('#verfiybuttonid').prop('disabled', true);
+                                        $('#verfiybuttonid').attr('title','This ship Data Not Upload From V-ships');
+                                        $('#reject_btn_id').prop('disabled', true);
+                                        $('#reject_btn_id').attr('title','This ship Data Not Upload From V-ships');
+                                    }
+                                    else {
+
+                                    }
+                                    {% endif %}
+
+                                    $('#savebuttonid').hide();
+                                    $('#adminbuttonid').show();
+
+                                    if (temp == 1) {
+                                        $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + shipwiseelementValues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                    }
+                                    if (temp > 1) {
+                                        $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + shipwiseelementValues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                    }
+                                }
+                                else {
+                                    $('#updatebuttonid').hide();
+                                    $('#savebuttonid').show();
+                                    $('#adminbuttonid').show();
+                                    if (temp == 1) {
+                                        $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                    }
+                                    if (temp > 1) {
+                                        $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
+                                    }
+                                }
+                                temp++;
+                                newtemp++;
+                            });
+                            $(' </tr></tbody></table>').appendTo('#addkpiformid');
+                        }
+                        j++;
+                    });
+                }
+                $('.datetimepicker1').datepicker({
                     changeMonth: true,
                     changeYear: true,
                     showButtonPanel: true,
@@ -184,11 +561,9 @@
                                         var j = 1;
                                         var newtemp = 0;
                                         $.each(data.elementkpiarray, function (i, listkpi) {
-
                                             var k = $.isNumeric(i);
                                             if (!k) {
                                                 var temp = 1;
-
                                                 $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
                                                 {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
                                                 $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
@@ -256,467 +631,12 @@
                     }
 
                 }).datepicker("setDate", new Date());
-
-                $('.prevmonth').live('click', function ($e) {
-                    $e.preventDefault();
-                    $('#allbuttondiv').show();
-                    var currentdate;
-                    var linkid = $(this).attr('id');
-                    if (linkid == 'proviousmonth_data') {
-
-                        currentdate = new Date($('#datofmonthid_data').val());
-                    }
-                    else {
-                        currentdate = new Date($('#datofmonthid').val());
-                    }
-                    currentdate.setMonth(currentdate.getMonth() - 1);
-                    currentdate, locale = "en-us",
-                            month = currentdate.toLocaleString(locale, {month: "long"}),
-                            year = currentdate.getFullYear();
-
-                    var current = month + '-' + year;
-                    var data = {
-                        dataofmonth: current
-                    };
-
-                    $.ajaxSetup({
-                        global: false,
-                        type: "post",
-                        'url': Routing.generate('ranking_previousmonth'),
-                        beforeSend: function () {
-                            var beforsend = ajaxbefore_send();
-                        },
-                        complete: function () {
-                            var complete = ajax_complete();
-                        }
-                    });
-
-                    $.ajax({
-                        data: data,
-                        success: function (data) {
-                            if (data.commontext == true) {
-                                $('#prvieoustablecontent').html(' ');
-                                $('#prvieoustablecontent').text(' ');
-                                var addcolumn = 0;
-                                var valuecount = 0;
-                                $('<table id="table_id_" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
-                                $('<thead id="firsttable_head_"></thead><tbody id="firsttable_body_"></tbody>').appendTo('#table_id_');
-                                $('<tr class="v_r_min_height" id="firsttable_head_tr_"></tr>').appendTo('#firsttable_head_');
-                                $('<th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo('#firsttable_head_tr_');
-                                $.each(data.listofships, function (j) {
-                                    $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_');
-                                });
-
-                                $.each(data.rankingKpiList, function (i) {
-                                    if (data.rankingKpiList[i]['kpiName'] == 'Vessel age') {
-
-                                    }
-                                    else {
-                                        var colspan = data.shipcount + 2;
-                                        $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
-                                        $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
-                                        $('<tr id="firsttable_head_tr_' + i + '"></tr>').appendTo('#firsttable_head_' + i);
-                                        $('<th colspan="' + colspan + '" class="kpi_lement_name">' + data.rankingKpiList[i]['kpiName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
-                                        var kpiid = data.rankingKpiList[i]['id'];
-                                        var elementnamearray = data.elementname[kpiid];
-                                        var forloopcount = 0;
-                                        for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
-                                            $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
-                                            $('<td class="kpi_lement_name kpi_lement_name">' + data.elementweightage[kpiid][forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                            $('<td class="kpi_weightage kpi_lement_number">' + data.elementname[kpiid][forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                            $.each(data.listofships, function (j) {
-                                                var shipid = data.listofships[j]['id']
-                                                var elementvalue = data.elementvalues_ship[shipid][valuecount]
-                                                if (elementvalue != null) {
-                                                    $('<td class="kpi_ship kpi_lement_inputname">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                                }
-                                                else {
-                                                    $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                                }
-
-                                            });
-                                            valuecount++;
-                                        }
-                                    }
-
-                                });
-
-                                if (linkid == 'proviousmonth_data') {
-                                    $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
-                                    $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
-                                }
-                                else {
-                                    $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
-                                    $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
-                                }
-                                $('#kpiformforship').hide();
-                                $('#currentmonhthdetails').hide();
-                                $('#previousmonthdata').show();
-                            }
-                            else {
-                                $('#elementformid1').hide();
-                                $('#elementformid').show();
-                                $('#allbuttondiv').show();
-                                $('#overallshids').html('');
-                                $('#overallshids').text('');
-                                $('#previousmonthdata').hide();
-                                $('#kpiformforship').show();
-                                $('#currentmonhthdetails').show();
-                                $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
-                                $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
-                                var shipstatus = 0
-                                $.each(data.listofships, function (i) {
-                                    var status = data.status_ship[i];
-
-
-                                    $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
-                                    if (role == 'ROLE_ADMIN') {
-                                        if (status == 3) {
-                                            $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                            shipstatus++;
-                                        }
-                                    }
-                                    else if (role == 'ROLE_MANAGER') {
-                                        if (status == 2) {
-                                            $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                            shipstatus++;
-                                        }
-                                    }
-                                    else if (role == 'ROLE_KPI_INFO_PROVIDER') {
-                                        if (status == 1) {
-                                            $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                            shipstatus++;
-                                        }
-                                    }
-                                });
-                                $('#elementformid').html('');
-                                $('#elementformid').text('');
-                                $('#shipname').text(data.currentshipname);
-                                $('#currentid').text(month + '-' + year);
-                                $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
-                                $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
-                                $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
-
-                                if (data.shipcount != shipstatus) {
-                                    $('#shipid').val(data.currentshipid);
-                                    $('.linkclass').removeClass("active");
-                                    $('#' + data.currentshipid).addClass('active');
-                                    var j = 1;
-                                    var newtemp = 0;
-
-                                    $.each(data.elementkpiarray, function (i, listkpi) {
-
-                                        var k = $.isNumeric(i);
-                                        if (!k) {
-                                            var temp = 1;
-
-                                            $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
-                                            {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                            $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
-                                            {% endif %}
-                                            $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
-
-                                            if (newtemp == 0) {
-                                                $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
-                                            }
-                                            else {
-                                                $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
-                                            }
-
-                                            $.each(listkpi, function (mykey, myvalue) {
-                                                $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
-                                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
-                                                {% endif %}
-
-                                                if (data.elementvalues.length > 0) {
-
-                                                    $('#updatebuttonid').show();
-                                                    $('#savebuttonid').hide();
-                                                    $('#adminbuttonid').show();
-
-                                                    if (temp == 1) {
-                                                        $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                    }
-                                                    if (temp > 1) {
-                                                        $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                    }
-                                                }
-                                                else {
-                                                    $('#adminbuttonid').show();
-                                                    $('#updatebuttonid').hide();
-                                                    $('#savebuttonid').show();
-
-                                                    if (temp == 1) {
-                                                        $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                    }
-                                                    if (temp > 1) {
-                                                        $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                    }
-                                                }
-                                                temp++;
-                                                newtemp++;
-                                            });
-                                            $(' </tr></tbody></table>').appendTo('#addkpiformid');
-                                        }
-                                        j++;
-                                    });
-                                }
-                                else {
-                                    $('#allbuttondiv').hide();
-                                    $('#addkpiformid').text('All vessels data updated !');
-                                    $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
-                                }
-                            }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            $('#resultLoading .bg').height('100%');
-                            $('#resultLoading').fadeOut(300);
-                            $('body').css('cursor', 'default');
-                            window.location.href = base_url + '/login';
-                        }
-                    });
-                });
-
-                $('.nextmonth').live('click', function ($e) {
-                    $e.preventDefault();
-                    var linkid = $(this).attr('id');
-                    var currentdate;
-                    if (linkid == 'proviousmonth_data') {
-
-                        currentdate = new Date($('#datofmonthid_data').val());
-                    }
-                    else {
-                        currentdate = new Date($('#datofmonthid').val());
-                    }
-
-                    currentdate.setMonth(currentdate.getMonth() + 1);
-                    currentdate, locale = "en-us",
-                            month = currentdate.toLocaleString(locale, {month: "long"}),
-                            year = currentdate.getFullYear();
-                    var nowdate = new Date();
-                    if (currentdate <= nowdate) {
-                        $('#allbuttondiv').show();
-                        var current = month + '-' + year;
-                        var data = {
-                            dataofmonth: current
-                        };
-
-                        $.ajaxSetup({
-                            global: false,
-                            type: "post",
-                            'url': Routing.generate('ranking_previousmonth'),
-                            beforeSend: function () {
-                                var beforsend = ajaxbefore_send();
-                            },
-                            complete: function () {
-                                var complete = ajax_complete();
-                            }
-                        });
-                        $.ajax({
-                            data: data,
-                            success: function (data) {
-                                if (data.commontext == true) {
-                                    $('#prvieoustablecontent').html(' ');
-                                    $('#prvieoustablecontent').text(' ');
-                                    var addcolumn = 0;
-                                    var valuecount = 0;
-                                    $('<table id="table_id_" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
-                                    $('<thead id="firsttable_head_"></thead><tbody id="firsttable_body_"></tbody>').appendTo('#table_id_');
-                                    $('<tr class="v_r_min_height" id="firsttable_head_tr_"></tr>').appendTo('#firsttable_head_');
-                                    $('<th class="kpi_lement_name"></th><th class="kpi_weightage"><div class="verfication_ranking_text_rotation_2">Weightage</div></th>').appendTo('#firsttable_head_tr_');
-                                    $.each(data.listofships, function (j) {
-                                        $('<th class="kpi_ship "><div class="verfication_ranking_text_rotation_2">' + data.listofships[j]['shipName'] + '</div></th>').appendTo('#firsttable_head_tr_');
-                                    });
-
-                                    $.each(data.rankingKpiList, function (i) {
-                                        if (data.rankingKpiList[i]['kpiName'] == 'Vessel age') {
-
-                                        }
-                                        else {
-                                            var colspan = data.shipcount + 2;
-                                            $('<table id="table_id_' + i + '" class="table verfication_ranking_table_form_section"></table>').appendTo('#prvieoustablecontent');
-                                            $('<thead id="firsttable_head_' + i + '"></thead><tbody id="firsttable_body_' + i + '"></tbody>').appendTo('#table_id_' + i);
-                                            $('<tr id="firsttable_head_tr_' + i + '"></tr>').appendTo('#firsttable_head_' + i);
-                                            $('<th colspan="' + colspan + '" class="kpi_lement_name">' + data.rankingKpiList[i]['kpiName'] + '</th>').appendTo('#firsttable_head_tr_' + i);
-                                            var kpiid = data.rankingKpiList[i]['id'];
-                                            var elementnamearray = data.elementname[kpiid];
-                                            var forloopcount = 0;
-                                            for (forloopcount = 0; forloopcount < elementnamearray.length; forloopcount++) {
-                                                $('<tr id="firsttable_body_tr_' + kpiid + '_' + forloopcount + '"></tr>').appendTo('#firsttable_body_' + i + '');
-                                                $('<td class="kpi_lement_name kpi_lement_name">' + data.elementweightage[kpiid][forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                                $('<td class="kpi_weightage kpi_lement_number">' + data.elementname[kpiid][forloopcount] + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                                $.each(data.listofships, function (j) {
-                                                    var shipid = data.listofships[j]['id']
-                                                    var elementvalue = data.elementvalues_ship[shipid][valuecount]
-                                                    if (elementvalue != null) {
-                                                        $('<td class="kpi_ship kpi_lement_inputname">' + elementvalue + '</td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                                    }
-                                                    else {
-                                                        $('<td class="kpi_ship kpi_lement_inputname"></td>').appendTo('#firsttable_body_tr_' + kpiid + '_' + forloopcount + '');
-                                                    }
-
-                                                });
-                                                valuecount++;
-                                            }
-                                        }
-                                    });
-
-                                    if (linkid == 'proviousmonth_data') {
-                                        $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
-                                        $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
-                                    }
-                                    else {
-                                        $('#currentid').text(month + '-' + year);
-                                        $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
-                                        $('#currentid_data').text(month + '-' + year);
-                                        $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
-                                    }
-                                    $('#kpiformforship').hide();
-                                    $('#currentmonhthdetails').hide();
-                                    $('#previousmonthdata').show();
-                                }
-                                else {
-                                    $('#previousmonthdata').hide();
-                                    $('#kpiformforship').show();
-                                    $('#currentmonhthdetails').show();
-                                    $('#overallshids').html('');
-                                    $('#overallshids').text('');
-                                    $('<div class="views_kpi_name_total"><span>Vessels (' + data.shipcount + ')</span></div>').appendTo('#overallshids');
-                                    $('<div class="views_kpi_form_list_main"> <ui id="addshipids"></ui></div>').appendTo('#overallshids');
-                                    var shipstatus = 0
-                                    $.each(data.listofships, function (i) {
-                                        var status = data.status_ship[i];
-
-
-                                        $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + data.listofships[i]['id'] + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
-                                        if (role == 'ROLE_ADMIN') {
-                                            if (status == 3) {
-                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                                shipstatus++;
-                                            }
-                                        }
-                                        else if (role == 'ROLE_MANAGER') {
-                                            if (status == 2) {
-                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                                shipstatus++;
-                                            }
-                                        }
-                                        else if (role == 'ROLE_KPI_INFO_PROVIDER') {
-                                            if (status == 1) {
-                                                $('#' + data.listofships[i]['id']).after('<img src="/images/tick_icon.png">');
-                                                shipstatus++;
-                                            }
-                                        }
-                                    });
-                                    $('#elementformid').html('');
-                                    $('#elementformid').text('');
-                                    $('#shipname').text(data.currentshipname);
-                                    $('#currentid').text(month + '-' + year);
-                                    $('#datofmonthid').val(year + '-' + month + '-' + currentdate.getDate());
-                                    $('#currentid_data').text(month + '-' + year);
-                                    $('#datofmonthid_data').val(year + '-' + month + '-' + currentdate.getDate());
-                                    $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
-                                    //alert(data.shipstatusstring)
-                                    if (data.shipcount != shipstatus) {
-                                        $('#shipid').val(data.currentshipid);
-                                        $('.linkclass').removeClass("active");
-                                        $('#' + data.currentshipid).addClass('active');
-                                        var j = 1;
-                                        var newtemp = 0;
-                                        $.each(data.elementkpiarray, function (i, listkpi) {
-
-                                            var k = $.isNumeric(i);
-                                            if (!k) {
-                                                var temp = 1;
-
-                                                $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
-                                                {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
-                                                {% endif %}
-                                                $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
-
-                                                if (newtemp == 0) {
-                                                    $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
-                                                }
-                                                else {
-                                                    $(' <th></th><th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
-                                                }
-                                                $.each(listkpi, function (mykey, myvalue) {
-                                                    $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
-                                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                    $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
-                                                    {% endif %}
-                                                    if (data.elementvalues.length > 0) {
-
-                                                        $('#updatebuttonid').show();
-                                                        $('#savebuttonid').hide();
-                                                        $('#adminbuttonid').show();
-
-                                                        if (temp == 1) {
-                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + data.elementvalues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                        }
-                                                        if (temp > 1) {
-                                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" onkeypress="return isNumberKey(event)" value="' + data.elementvalues[newtemp] + '" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                        }
-                                                    }
-                                                    else {
-                                                        $('#updatebuttonid').hide();
-                                                        $('#savebuttonid').show();
-                                                        $('#adminbuttonid').show();
-                                                        if (temp == 1) {
-                                                            $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                        }
-                                                        if (temp > 1) {
-                                                            $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123"  onkeypress="return isNumberKey(event)" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                        }
-                                                    }
-                                                    temp++;
-                                                    newtemp++;
-                                                });
-                                                $(' </tr></tbody></table>').appendTo('#addkpiformid');
-                                            }
-                                            j++;
-                                        });
-                                    }
-                                    else {
-                                        $('#allbuttondiv').hide();
-                                        $('#addkpiformid').text('All vessels data updated !');
-                                        $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
-                                    }
-                                }
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                $('#resultLoading .bg').height('100%');
-                                $('#resultLoading').fadeOut(300);
-                                $('body').css('cursor', 'default');
-                                window.location.href = base_url + '/login';
-                            }
-                        });
-                    }
-                    else {
-                        $('#spantext').text('Date Exceed...');
-                        $('#spantext').show();
-                        setTimeout(function () {
-                            $('#spantext').fadeOut('fast');
-                        }, 4000)
-                    }
-                });
-
                 $('#spantext').hide();
 
                 $('.linkclass').live('click', function () {
-
                     var linkid = $(this).attr('id');
                     var shipname = $(this).attr('title');
                     $('#shipid').val('');
-
                     $('#addkpiformid').html('');
                     $('#addkpiformid').text('');
                     $('#shipname').text(' ');
@@ -847,8 +767,8 @@
                     var charCode = (evt.which) ? evt.which : event.keyCode
 
                     if (
-                            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // “-” CHECK MINUS, AND ONLY ONE.
-                            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+                            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // â€œ-â€ CHECK MINUS, AND ONLY ONE.
+                            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // â€œ.â€ CHECK DOT, AND ONLY ONE.
                             (charCode < 48 || charCode > 57))
                         return false;
 
@@ -900,116 +820,44 @@
 
                         $.ajax({
                             success: function (data) {
-                                if(data.status == -1) {
-                                    $('#img_' + data.ship_id ).remove();
-                                    $('#' + data.ship_id).after('<img id="img_'+data.ship_id+'" style="width: 20px;height: 20px" src="/images/error.png">');
-                                    $('#addkpiformid').text(data.return_msg).css({"color":"red"});;
-                                } else {
-                                    $('#datofmonthid').val(data.currentdatetime);
-                                    $('#datofmonthid_data').val(data.currentdatetime);
-                                    var valuearray = data.elementvalues;
-                                    $('#shipid').val('');
-                                    $('#addkpiformid').html('');
-                                    $('#addkpiformid').text('');
-                                    $('#shipname').text(' ');
-                                    $('#verfiybuttonid').show();
+                                jAlert('', data.returnmsg);
+                                $('#datofmonthid_data').val(data.dateFormat);
+                                $('#datofmonthid').val(data.dateFormat);
+                                if (data.shipcount != 0) {
+                                    if (data.shipoverallStatus == "yes" && data.currentshipid =="") {
+                                        var statusofship=data.statusQueryResult;
+                                        var listviewStatusField='listview';
+                                        $.each(statusofship, function(key, info) {
+                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
+                                                if (info.status == 1) {
+                                                    listviewStatusField = key;
+                                                    return false;
+                                                };
+                                            }
 
-                                    if (data.shipid != 0) {
-                                        $('#nogroupselected').hide();
-                                        $('#kpiformforship').show();
-
-                                        if (data.shipcount == data.ship_status_done_count) {
-                                            $('#upload_btn_id').show();
-                                        } else if (data.ship_status_done_count == -1) {
-                                            $('.linkclass').removeClass("active");
-                                            $('<span id="spanallid">All Ships Data Uploaded.</span>').appendTo('#elementformid');
-                                        } else {
-
-                                            $('#shipid').val(data.shipid);
-                                            $('#shipname').text(data.shipname);
-                                            $('.linkclass').removeClass("active");
-                                            $('#' + data.shipid).addClass('active');
-
-                                            var j = 1;
-                                            var newtemp = 0;
-                                            $.each(data.kpiNameArray, function (i, listkpi) {
-
-                                                var k = $.isNumeric(i);
-                                                if (!k) {
-                                                    var temp = 1;
-                                                    $('<table class="table kpi_table_form_section"><thead><tr id="firstheader_tr_' + newtemp + '"></tr></thead> <tbody id="tablebody' + j + '">').appendTo('#addkpiformid');
-                                                    {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                    $('<th><input type="checkbox" class="checkboxes" name= "reject_id[]" value="'+data.kpi_details[j-1]['id']+'"></th>').appendTo('#firstheader_tr_' + newtemp);
-                                                    {% endif %}
-                                                    $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
-
-                                                    if (newtemp == 0) {
-                                                        $(' <th class="kpi_value">Wt</th><th class="kpi_value">Symbol</th><th class="kpi_value">Indication</th><th class="kpi_value">Value</th>').appendTo('#firstheader_tr_' + newtemp)
-                                                    }
-                                                    else {
-                                                        $(' <th></th><<th></th><th></th><th></th>').appendTo('#firstheader_tr_' + newtemp)
-                                                    }
-
-                                                    $.each(listkpi, function (mykey, myvalue) {
-                                                        $('<tr id="' + j + 'tr_id_' + temp + '"></tr>').appendTo("#tablebody" + j);
-                                                        {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                        $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
-                                                        {% endif %}
-
-                                                        if (valuearray.length > 0) {
-                                                            $('#updatebuttonid').show();
-                                                            $('#savebuttonid').hide();
-                                                            $('#adminbuttonid').show();
-                                                            if (temp == 1) {
-                                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td><td class="kpi_lement_inputname"><input class="resetclass" value="' + data.elementvalues[newtemp] + '" placeholder="123" type="text" name="newelemetvalues[]" required></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                            }
-                                                            if (temp > 1) {
-                                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" value="' + data.elementvalues[newtemp] + '" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                            }
-                                                        }
-                                                        else {
-                                                            $('#updatebuttonid').hide();
-                                                            $('#savebuttonid').show();
-                                                            $('#adminbuttonid').show();
-                                                            if (temp == 1) {
-                                                                $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                            }
-                                                            if (temp > 1) {
-                                                                $('<td class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" type="text" placeholder="123" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
-                                                            }
-                                                        }
-                                                        newtemp++;
-                                                        temp++;
-                                                    });
-                                                    $(' </tbody></table>').appendTo('#addkpiformid');
-                                                }
-                                                j++;
-                                            });
+                                        });
+                                        if (listviewStatusField=='listview') {
+                                            ListView(data)
                                         }
-                                        jAlert('', data.returnmsg);
+                                        else {
+                                            EditableView(data)
+                                        }
+                                    }
+                                    else if (data.shipoverallStatus == "no") {
+                                        EditableView(data)
                                     }
                                     else {
-                                        $('#shipid').val(' ');
-                                        $('#shipname').text(' ');
-                                        $('#nogroupselected').show();
-                                        $('#kpiformforship').hide();
-                                        jAlert('', data.returnmsg);
-                                    }
-
-                                    if(data.ship_status_done_count == data.shipcount) {
-                                        $('#allbuttondiv').hide();
-                                        $('.linkclass').removeClass("active");
-                                        $('#img_' + preshipid ).remove();
-                                        $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
-                                        $('#addkpiformid').text('All vessels data updated !');
-                                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                            $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
-                                        {% endif %}
-                                    } else {
-                                        $('#' + preshipid).after('<img id="img_'+preshipid+'" src="/images/tick_icon.png">');
+                                        EditableView(data)
                                     }
                                 }
+                                else {
+                                    $('#elementformid').hide();
+                                    $('#allbuttondiv').hide();
+                                    $('#shipname').text('');
+                                    $('#shipcountwithtext').text('Vessels (0)');
+                                    $('#shiplistinui').html('');
 
+                                }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
 
@@ -1058,46 +906,44 @@
 
     <section id="currentmonhthdetails">
         <div class="col-sm-3 views_kpi_form_list" id="overallshids">
-            <div class="views_kpi_name_total"><span>{{ 'dashboard.shipname'|trans }} ({{ shipcount }})</span></div>
-            <div class="views_kpi_form_list_main">
-                <ui>
-                    {% set j=0 %}
-                    {% for shipobject in listofships %}
-                        <li>
-                            <a class="linkclass" title="{{ shipobject.shipName }}"
-                               id="{{ shipobject.id }}">{{ shipobject.shipName }}</a>
-
-                            {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                {% if rejection_status == 'yes' %}
-                                    {% if rejections[loop.index-1] is not null %}
+            <div class="views_kpi_name_total" id="shipcountwithtext"><span>{{ 'dashboard.shipname'|trans }} ({{ shipcount }})</span></div>
+            <div class="views_kpi_form_list_main" id="shiplistinui">
+                {% if listofships|length > 0 %}
+                    <ui>
+                        {% set j=0 %}
+                        {% for shipobject in listofships %}
+                            <li>
+                                <a class="linkclass" title="{{ shipobject.shipName }}"
+                                   id="{{ shipobject.id }}">{{ shipobject.shipName }}</a>
+                                {% if  is_granted("ROLE_ADMIN") %}
+                                    {% if shipobject.rejections == true %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                        {% set j=j+1 %}
-                                    {% else %}
+                                    {% elseif shipobject.status==3 %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                        {% set j=j+1 %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if status_ship[j]==1 and rejection_status == 'empty'  %}
-                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                        {% set j=j+1 %}
                                     {% endif %}
                                 {% endif %}
-                            {% endif %}
-                            {% if  is_granted("ROLE_ADMIN") %}
-                                {% if status_ship[j]==3 %}
-                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                    {% set j=j+1 %}
+                                {% if  is_granted("ROLE_MANAGER") %}
+                                    {% if shipobject.rejections == true %}
+                                        <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
+                                    {% elseif shipobject.status==2 or shipobject.status==3 %}
+                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                            {% if is_granted("ROLE_MANAGER") %}
-                                {% if status_ship[j]==2 %}
-                                    <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
-                                    {% set j=j+1 %}
+
+                                {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                    {% if shipobject.rejections == true and shipobject.status == 1 %}
+                                        <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
+                                    {% elseif shipobject.status==1 or shipobject.status==5 or shipobject.status==2 %}
+                                        <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ui>
+                            </li>
+                            {% set j=j+1 %}
+                        {% endfor %}
+                    </ui>
+                {% else %}
+
+                {% endif %}
             </div>
 
         </div>
@@ -1120,14 +966,6 @@
                     <div class="add_new_kpi_top_title">
                         <div class="title_month">
                             <label class="title"> <span id="shipname"> </span></label>
-                            {#<span id="spantext" class="errormsg">March-2016</span>
-                            <label class="toolbar-title">
-                                <a id="proviousmonth" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
-                                <span id="currentid" class="item">March-2016</span>
-                                <input type="hidden" name="dataofmonth" id="datofmonthid">
-                                <input type="hidden" name="shipid" id="shipid">
-                                <a id="nextmonth" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
-                            </label>#}
                             <input type="hidden" name="dataofmonth" id="datofmonthid">
                             <input type="hidden" name="shipid" id="shipid">
                             <div class="col-lg-3" style="float: right; margin-right: 20px">
@@ -1142,16 +980,24 @@
                         {% if elementkpiarray|length <= 0 %}
                             No Kpi Found
                         {% endif %}
-                        {% if elementkpiarray|length > 0 %}
+                        {% if listoreditViewStatus=='listView' %}
+                            <div id="addkpiformid" class="table-responsive">
+                                <span>All ships Data Verified</span>
+                            </div>
+                        {% endif %}
+                        {% if elementkpiarray|length > 0  and listoreditViewStatus=='editView' %}
                         <div id="addkpiformid" class="table-responsive">
-                            {% if j==shipcount %}
-                                <span>All Ship Data Upload!</span>
-                                <div class="actions_submit">
-                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
-                                                id="upload_btn_id"
-                                                value="Submit">{{ 'dataverification.upload'|trans }}</button>
-                                    {% endif %}
+                            {% if currentshipid=="" %}
+                                {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                    <span>All vessels data updated !</span>
+                                    <div class="actions_submit">
+
+                                    <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                            id="upload_btn_id"
+                                            value="Submit">{{ 'dataverification.upload'|trans }}</button>
+                                {% else %}
+                                    <span> <small id="currentMonthText"></small> This Month Data not Updated</span>
+                                {% endif %}
                                 </div>
                             {% else %}
 
@@ -1162,11 +1008,23 @@
                                         <thead>
                                         <tr>
                                             {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
-                                                <th>
-                                                    <input type="checkbox" class="checkboxes" name="reject_id[]" value={{ kpi_details[kpi_count]['id'] }}>
-                                                </th>
+
+                                                {% if currentshipkpilist[kpi_count]['rejections'] == false %}
+                                                    <th>
+                                                        <input type="checkbox" class="checkboxes" name="reject_id[]" value={{ currentshipkpilist[kpi_count]['id'] }}>
+                                                    </th>
+                                                {% else %}
+                                                    <th>
+                                                        <input type="checkbox" checked class="checkboxes" name="reject_id[]" value={{ currentshipkpilist[kpi_count]['id'] }}>
+                                                    </th>
+                                                {% endif %}
                                             {% endif %}
-                                            <th>  {{ key }}</th>
+                                            {% if currentshipkpilist[kpi_count]['rejections'] == false %}
+                                                <th>  {{ key }} </th>
+                                            {% else %}
+                                                <th style="color: red">  {{ key }} </th>
+                                            {% endif %}
+
                                             {% if i == 0 %}
                                                 <th class="kpi_value">Wt</th>
                                                 <th class="kpi_value">Symbol</th>
@@ -1219,27 +1077,48 @@
                         </div>
                     </div>
                     <div id="allbuttondiv" class="actions_submit">
-
                         {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                            <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
-                                   value="{{ 'dataverification.save'|trans }}">
-                            <input type="submit" class="submit_btn addclasskpivalue" id="updatebuttonid"
-                                   value="{{ 'dataverification.update'|trans }}">
-                            <button class="cancel_btn" id="resetbuttonid"
-                                    value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                            {% if currentshipid!="" %}
+                                {% if elementvalues|length <= 0 %}
+                                    <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
+                                           value="{{ 'dataverification.save'|trans }}">
+                                {% else %}
+                                    <input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"
+                                           value="{{ 'dataverification.update'|trans }}">
+                                {% endif %}
+
+
+                                <button class="cancel_btn" id="resetbuttonid"
+                                        value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                            {% else %}
+                                <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                        id="upload_btn_id"
+                                        value="Submit">{{ 'dataverification.upload'|trans }}</button>
+                            {% endif %}
                         {% endif %}
                         {% if  is_granted("ROLE_ADMIN") %}
-                            <input type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"
-                                   value="{{ 'dataverification.upload'|trans }}">
+                            <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"
+                                    value="{{ 'dataverification.upload'|trans }}">
                             <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
                                    value="{{ 'dataverification.reject'|trans }}">
                         {% endif %}
 
                         {% if is_granted("ROLE_MANAGER") %}
-                            <input type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
-                                   value="{{ 'dataverification.verfiy'|trans }}">
-                            <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
-                                   value="{{ 'dataverification.reject'|trans }}">
+                            {% if shipcount==statusQueryResult|length %}
+                                {% if currentshipid!="" %}
+                                    {% if listofships[currentshipid-1]['status']==1  %}
+                                        <input  type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="verfiybuttonid"
+                                                value="{{ 'dataverification.verfiy'|trans }}">
+                                        <input type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                               value="{{ 'dataverification.reject'|trans }}">
+                                    {% else %}
+                                        <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
+                                                value="{{ 'dataverification.verfiy'|trans }}">
+                                        <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                               value="{{ 'dataverification.reject'|trans }}">
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
                         {% endif %}
                     </div>
                     {% endif %}
