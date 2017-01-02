@@ -1075,10 +1075,10 @@ class DataVerficationController extends Controller
                     $k++;
                 }
             }
-            $returnmsg = ' Data Saved...';
+            /*$returnmsg = ' Data Saved...';
             $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
             $domain = $_SERVER['SERVER_NAME'];
-            $url = $protocol . '://' . $domain . '/login';
+            $url = $protocol . '://' . $domain . '/login';*/
             /*$fullurl = "http://shipreports/login";
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
