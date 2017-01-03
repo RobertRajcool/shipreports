@@ -4881,7 +4881,9 @@ class DataVerficationController extends Controller
                     }
                     if($temp_status == 3 || $temp_status == 4) {
                         if($statusQueryResult[0]['rejections'] == null || $statusQueryResult[0]['rejections'] == 'null') {
-                            $shipOverallStatus = "yes";
+                            if (count($listallshipforcompany) == count($shipidinArray)) {
+                                $shipOverallStatus = "yes";
+                            }
                         }
                     }
 
@@ -4906,9 +4908,11 @@ class DataVerficationController extends Controller
                             array_push($elementValues, $tempshipValueArray);
                         }
                     }
-                    if($temp_status == 2 || $temp_status == 3 || $temp_status == 4) {
+                    if($temp_status == 3 || $temp_status == 4) {
                         if($statusQueryResult[0]['rejections'] == null || $statusQueryResult[0]['rejections'] == 'null') {
-                            $shipOverallStatus = "yes";
+                            if (count($listallshipforcompany) == count($shipidinArray)) {
+                                $shipOverallStatus = "yes";
+                            }
                         }
                     }
 
