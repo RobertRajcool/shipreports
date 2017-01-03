@@ -213,39 +213,39 @@
                         if (role == 'ROLE_ADMIN') {
                             if(data.statusQueryResult.length==data.shipcount){
                                 if (statusofship['rejections']!=null) {
-                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    $('#' + ship_id).after('<img  id="img_' + ship_id + '"  style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else if (statusofship['status']==3) {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                         }
                         else if (role == 'ROLE_MANAGER') {
                             if(data.statusQueryResult.length==data.shipcount){
                                 if (statusofship['rejections']!=null) {
-                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else if (statusofship['status']==2 ||statusofship['status']==3) {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                         }
                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                             if(data.statusQueryResult.length==data.shipcount){
                                 if (statusofship['rejections']!=null && statusofship['status']==1) {
-                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                             else {
                                 if(shipwisestatusCount.hasOwnProperty("status")){
                                     if (shipwisestatusCount['rejections']!=null) {
-                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                     }
                                     else {
-                                        $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                     }
                                 }
                                 else {
@@ -312,6 +312,71 @@
                     $('.linkclass').removeClass("active");
                     $('#' + data.currentshipid).addClass('active');
                     var shipwiseelementValues=data.shipwiseElementValues[data.currentshipid];
+                    if (role == 'ROLE_ADMIN') {
+                        var length=$( "#allbuttondiv" ).length;
+                        if(length==0){
+                            $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                            $('#allbuttondiv').html('' +
+                                    ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                            );
+                        }
+                        else {
+                            $('#allbuttondiv').html('' +
+                                    ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                            );
+                        }
+
+                    }
+                    else if (role == 'ROLE_MANAGER') {
+                        var length=$( "#allbuttondiv" ).length;
+                        if(length==0){
+                            $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                            $('#allbuttondiv').html('' +
+                                    ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                            );
+                        }
+                        else {
+                            $('#allbuttondiv').html('' +
+                                    ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                            );
+                        }
+                    }
+                    else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                        var length=$( "#allbuttondiv" ).length;
+                        if(length==0){
+                            $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                            if(shipwiseelementValues.length>0){
+                                $('#allbuttondiv').html('' +
+                                        '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                        '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                );
+                            }
+                            else {
+                                $('#allbuttondiv').html('' +
+                                        '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                        '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                );
+                            }
+                        }
+                        else {
+                            if(shipwiseelementValues.length>0){
+                                $('#allbuttondiv').html('' +
+                                        '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                        '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                );
+                            }
+                            else {
+                                $('#allbuttondiv').html('' +
+                                        '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                        '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                );
+                            }
+                        }
+                    }
                     var j = 1;
                     var newtemp = 0;
                     $.each(data.elementkpiarray, function (i, listkpi) {
@@ -406,7 +471,6 @@
 
                                     $('#savebuttonid').hide();
                                     $('#adminbuttonid').show();
-
                                     if (temp == 1) {
                                         $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + shipwiseelementValues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                     }
@@ -418,6 +482,7 @@
                                     $('#updatebuttonid').hide();
                                     $('#savebuttonid').show();
                                     $('#adminbuttonid').show();
+                                    $('#allbuttondiv').show();
                                     if (temp == 1) {
                                         $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                     }
@@ -632,7 +697,6 @@
 
                 }).datepicker("setDate", new Date());
                 $('#spantext').hide();
-
                 $('.linkclass').live('click', function () {
                     var linkid = $(this).attr('id');
                     var shipname = $(this).attr('title');
@@ -656,9 +720,7 @@
                         }
                     });
                     $.ajax({
-
                         success: function (data) {
-
                             var valuearray = data.elementvalues;
                             $('#spanallid').hide();
                             $('#shipid').val(linkid);
@@ -669,6 +731,72 @@
                             $('#' + linkid).addClass('active');
                             var j = 1;
                             var newtemp = 0;
+                            if (role == 'ROLE_ADMIN') {
+                                var length=$( "#allbuttondiv" ).length;
+                                if(length==0){
+                                    $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+                                }
+                                else {
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+                                }
+
+                            }
+                            else if (role == 'ROLE_MANAGER') {
+                                var length=$( "#allbuttondiv" ).length;
+                                if(length==0){
+                                    $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+                                }
+                                else {
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+                                }
+                            }
+                            else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                                var length=$( "#allbuttondiv" ).length;
+                                if(length==0){
+                                    $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                                    if(valuearray.length>0){
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+                                    else {
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+
+                                }
+                                else {
+                                    if(valuearray.length>0){
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+                                    else {
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+                                }
+                            }
 
                             $.each(data.kpiNameArray, function (i, listkpi) {
 
@@ -817,47 +945,59 @@
                                 var complete = ajax_complete();
                             }
                         });
-
                         $.ajax({
                             success: function (data) {
-                                jAlert('', data.returnmsg);
-                                $('#datofmonthid_data').val(data.dateFormat);
-                                $('#datofmonthid').val(data.dateFormat);
-                                if (data.shipcount != 0) {
-                                    if (data.shipoverallStatus == "yes" && data.currentshipid =="") {
-                                        var statusofship=data.statusQueryResult;
-                                        var listviewStatusField='listview';
-                                        $.each(statusofship, function(key, info) {
-                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
-                                                if (info.status == 1) {
-                                                    listviewStatusField = key;
-                                                    return false;
-                                                };
-                                            }
 
-                                        });
-                                        if (listviewStatusField=='listview') {
-                                            ListView(data)
+                                if(data.ship_id){
+                                    jAlert('', data.return_msg);
+                                    $('#img_' + data.ship_id).remove();
+                                    $('#' + data.ship_id).after('<img id="img_' + data.ship_id + '" style="width: 20px;height: 20px" src="/images/error.png">');
+                                    $('#addkpiformid').text(data.return_msg);
+                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                    $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                    {% endif %}
+                                }
+                                else {
+                                    jAlert('', data.returnmsg);
+                                    $('#datofmonthid_data').val(data.dateFormat);
+                                    $('#datofmonthid').val(data.dateFormat);
+                                    if (data.shipcount != 0) {
+                                        if (data.shipoverallStatus == "yes" && data.currentshipid =="") {
+                                            var statusofship=data.statusQueryResult;
+                                            var listviewStatusField='listview';
+                                            $.each(statusofship, function(key, info) {
+                                                if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
+                                                    if (info.status == 1) {
+                                                        listviewStatusField = key;
+                                                        return false;
+                                                    };
+                                                }
+
+                                            });
+                                            if (listviewStatusField=='listview') {
+                                                ListView(data)
+                                            }
+                                            else {
+                                                EditableView(data)
+                                            }
+                                        }
+                                        else if (data.shipoverallStatus == "no") {
+                                            EditableView(data)
                                         }
                                         else {
                                             EditableView(data)
                                         }
                                     }
-                                    else if (data.shipoverallStatus == "no") {
-                                        EditableView(data)
-                                    }
                                     else {
-                                        EditableView(data)
+                                        $('#elementformid').hide();
+                                        $('#allbuttondiv').hide();
+                                        $('#shipname').text('');
+                                        $('#shipcountwithtext').text('Vessels (0)');
+                                        $('#shiplistinui').html('');
+
                                     }
                                 }
-                                else {
-                                    $('#elementformid').hide();
-                                    $('#allbuttondiv').hide();
-                                    $('#shipname').text('');
-                                    $('#shipcountwithtext').text('Vessels (0)');
-                                    $('#shiplistinui').html('');
 
-                                }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
 
