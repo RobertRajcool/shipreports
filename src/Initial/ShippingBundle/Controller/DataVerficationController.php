@@ -1075,10 +1075,10 @@ class DataVerficationController extends Controller
                     $k++;
                 }
             }
-            $returnmsg = ' Data Saved...';
+            /*$returnmsg = ' Data Saved...';
             $protocol = empty($_SERVER['HTTPS']) ? 'http' : 'https';
             $domain = $_SERVER['SERVER_NAME'];
-            $url = $protocol . '://' . $domain . '/login';
+            $url = $protocol . '://' . $domain . '/login';*/
             /*$fullurl = "http://shipreports/login";
             $mailer = $this->container->get('mailer');
             $message = \Swift_Message::newInstance()
@@ -1583,7 +1583,6 @@ class DataVerficationController extends Controller
                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                 ->where('b.shipDetailsId = :shipdetailsid')
                 ->andWhere('b.monthdetail =:dataofmonth')
-                ->andWhere('b.status = 2 OR b.status  = 3 ')
                 ->setParameter('shipdetailsid', $shipid)
                 ->setParameter('dataofmonth', $new_date)
                 ->getQuery();
@@ -1594,7 +1593,6 @@ class DataVerficationController extends Controller
                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                 ->where('b.shipDetailsId = :shipdetailsid')
                 ->andWhere('b.monthdetail =:dataofmonth')
-                ->andWhere(' b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                 ->setParameter('shipdetailsid', $shipid)
                 ->setParameter('dataofmonth', $new_date)
                 ->getQuery();
@@ -1604,7 +1602,6 @@ class DataVerficationController extends Controller
                 ->select('b.value')
                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                 ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.status = 0 OR b.status  = 1 OR b.status  = 2 OR b.status  = 3 OR b.status  = 5')
                 ->andWhere('b.monthdetail =:dataofmonth')
                 ->setParameter('shipdetailsid', $shipid)
                 ->setParameter('dataofmonth', $new_date)
