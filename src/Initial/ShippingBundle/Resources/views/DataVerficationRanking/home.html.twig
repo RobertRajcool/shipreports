@@ -721,6 +721,12 @@
 
 
                                 }
+                                else {
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+                                }
 
                             }
                             else if (role == 'ROLE_MANAGER') {
@@ -731,7 +737,12 @@
                                             ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
                                             '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
                                     );
-
+                                }
+                                else {
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                    );
                                 }
                             }
                             else if (role == 'ROLE_KPI_INFO_PROVIDER') {
@@ -751,6 +762,20 @@
                                         );
                                     }
 
+                                }
+                                else {
+                                    if(valuearray.length>0){
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+                                    else {
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
                                 }
                             }
 
