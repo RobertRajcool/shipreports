@@ -216,7 +216,7 @@
                                 if (statusofship['rejections']!=null) {
                                     $('#' + ship_id).after('<img  id="img_' + ship_id + '"  style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
-                                else if (statusofship['status']==3) {
+                                else if (statusofship['status']==3 ||statusofship['status']==4) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
@@ -226,14 +226,14 @@
                                 if (statusofship['rejections']!=null) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
-                                else if (statusofship['status']==2 ||statusofship['status']==3) {
+                                else if (statusofship['status']==2 ||statusofship['status']==3 ||statusofship['status']==4) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                         }
                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                             if(data.statusQueryResult.length==data.shipcount){
-                                if (statusofship['rejections']!=null && statusofship['status']==1) {
+                                if (statusofship['rejections']!=null && statusofship['status']==1 ||tatusofship['status']==2 ||tatusofship['status']==3 ||tatusofship['status']==4 ||tatusofship['status']==5) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else {
@@ -1059,14 +1059,14 @@
                                 {% if  is_granted("ROLE_ADMIN") %}
                                     {% if shipobject.rejections == true %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                    {% elseif shipobject.status==3 %}
+                                    {% elseif shipobject.status==3 or   shipobject.status==4 %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% endif %}
                                 {% endif %}
                                 {% if  is_granted("ROLE_MANAGER") %}
                                     {% if shipobject.rejections == true %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                    {% elseif shipobject.status==2 or shipobject.status==3 %}
+                                    {% elseif shipobject.status==2 or shipobject.status==3 or shipobject.status==4 %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% endif %}
                                 {% endif %}
@@ -1074,7 +1074,7 @@
                                 {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
                                     {% if shipobject.rejections == true and shipobject.status == 1 %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                    {% elseif shipobject.status==1 or shipobject.status==5 or shipobject.status==2 %}
+                                    {% elseif shipobject.status==1 or shipobject.status==5 or shipobject.status==2 or shipobject.status==4 %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% endif %}
                                 {% endif %}
