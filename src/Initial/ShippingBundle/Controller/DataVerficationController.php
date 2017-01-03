@@ -2567,7 +2567,7 @@ class DataVerficationController extends Controller
             if ($buttonid == 'upload_btn_id') {
                 $userId = $user->getId();
                 $username = $user->getUsername();
-                if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                /*if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
                     $query = $em->createQueryBuilder()
                         ->select('a.shipName', 'a.id')
                         ->from('InitialShippingBundle:ShipDetails', 'a')
@@ -2582,6 +2582,29 @@ class DataVerficationController extends Controller
                         ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
                         ->where('b.id = :userId')
                         ->setParameter('userId', $userId)
+                        ->getQuery();
+                }*/
+                if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+                    $query = $em->createQueryBuilder()
+                        ->select('a.shipName', 'a.id')
+                        ->from('InitialShippingBundle:ShipDetails', 'a')
+                        ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                        ->where('b.adminName = :username')
+                        ->andWhere('a.dateTime <= :activeDate')
+                        ->setParameter('activeDate', $new_date)
+                        ->groupBy('a.id')
+                        ->setParameter('username', $username)
+                        ->getQuery();
+                } else {
+                    $query = $em->createQueryBuilder()
+                        ->select('a.shipName', 'a.id')
+                        ->from('InitialShippingBundle:ShipDetails', 'a')
+                        ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                        ->where('a.dateTime <= :activeDate')
+                        ->setParameter('activeDate', $new_date)
+                        ->andwhere('b.id = :userId')
+                        ->setParameter('userId', $userId)
+                        ->groupBy('a.id')
                         ->getQuery();
                 }
 
@@ -2599,7 +2622,9 @@ class DataVerficationController extends Controller
                     foreach ($check_empty_value_query as $check_empty_values) {
                         if ($check_empty_values['value'] != null) {
                             continue;
-                        } else {
+                        }
+                        else
+                            {
                             $return_msg = $vessel['shipName'] . ' data is not completed !';
                             $response = new JsonResponse();
                             $response->setData(array(

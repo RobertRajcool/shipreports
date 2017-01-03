@@ -213,39 +213,39 @@
                         if (role == 'ROLE_ADMIN') {
                             if(data.statusQueryResult.length==data.shipcount){
                                 if (statusofship['rejections']!=null) {
-                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    $('#' + ship_id).after('<img  id="img_' + ship_id + '"  style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else if (statusofship['status']==3) {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                         }
                         else if (role == 'ROLE_MANAGER') {
                             if(data.statusQueryResult.length==data.shipcount){
                                 if (statusofship['rejections']!=null) {
-                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else if (statusofship['status']==2 ||statusofship['status']==3) {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                         }
                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                             if(data.statusQueryResult.length==data.shipcount){
                                 if (statusofship['rejections']!=null && statusofship['status']==1) {
-                                    $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                 }
                                 else {
-                                    $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                 }
                             }
                             else {
                                 if(shipwisestatusCount.hasOwnProperty("status")){
                                     if (shipwisestatusCount['rejections']!=null) {
-                                        $('#' + ship_id).after('<img style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                     }
                                     else {
-                                        $('#' + ship_id).after('<img src="{{ asset('images/tick_icon.png') }}">');
+                                        $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                     }
                                 }
                                 else {
@@ -697,7 +697,6 @@
 
                 }).datepicker("setDate", new Date());
                 $('#spantext').hide();
-
                 $('.linkclass').live('click', function () {
                     var linkid = $(this).attr('id');
                     var shipname = $(this).attr('title');
@@ -948,44 +947,57 @@
                         });
                         $.ajax({
                             success: function (data) {
-                                jAlert('', data.returnmsg);
-                                $('#datofmonthid_data').val(data.dateFormat);
-                                $('#datofmonthid').val(data.dateFormat);
-                                if (data.shipcount != 0) {
-                                    if (data.shipoverallStatus == "yes" && data.currentshipid =="") {
-                                        var statusofship=data.statusQueryResult;
-                                        var listviewStatusField='listview';
-                                        $.each(statusofship, function(key, info) {
-                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
-                                                if (info.status == 1) {
-                                                    listviewStatusField = key;
-                                                    return false;
-                                                };
-                                            }
 
-                                        });
-                                        if (listviewStatusField=='listview') {
-                                            ListView(data)
+                                if(data.ship_id){
+                                    jAlert('', data.return_msg);
+                                    $('#img_' + data.ship_id).remove();
+                                    $('#' + data.ship_id).after('<img id="img_' + data.ship_id + '" style="width: 20px;height: 20px" src="/images/error.png">');
+                                    $('#addkpiformid').text(data.return_msg);
+                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                    $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
+                                    {% endif %}
+                                }
+                                else {
+                                    jAlert('', data.returnmsg);
+                                    $('#datofmonthid_data').val(data.dateFormat);
+                                    $('#datofmonthid').val(data.dateFormat);
+                                    if (data.shipcount != 0) {
+                                        if (data.shipoverallStatus == "yes" && data.currentshipid =="") {
+                                            var statusofship=data.statusQueryResult;
+                                            var listviewStatusField='listview';
+                                            $.each(statusofship, function(key, info) {
+                                                if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
+                                                    if (info.status == 1) {
+                                                        listviewStatusField = key;
+                                                        return false;
+                                                    };
+                                                }
+
+                                            });
+                                            if (listviewStatusField=='listview') {
+                                                ListView(data)
+                                            }
+                                            else {
+                                                EditableView(data)
+                                            }
+                                        }
+                                        else if (data.shipoverallStatus == "no") {
+                                            EditableView(data)
                                         }
                                         else {
                                             EditableView(data)
                                         }
                                     }
-                                    else if (data.shipoverallStatus == "no") {
-                                        EditableView(data)
-                                    }
                                     else {
-                                        EditableView(data)
+                                        $('#elementformid').hide();
+                                        $('#allbuttondiv').hide();
+                                        $('#shipname').text('');
+                                        $('#shipcountwithtext').text('Vessels (0)');
+                                        $('#shiplistinui').html('');
+
                                     }
                                 }
-                                else {
-                                    $('#elementformid').hide();
-                                    $('#allbuttondiv').hide();
-                                    $('#shipname').text('');
-                                    $('#shipcountwithtext').text('Vessels (0)');
-                                    $('#shiplistinui').html('');
 
-                                }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
 
