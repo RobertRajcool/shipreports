@@ -70,7 +70,8 @@
                     changeMonth: true,
                     changeYear: true,
                     showButtonPanel: true,
-                    currentText: 'this month',
+                    currentText: 'This month',
+                    closeText: 'Done',
                     dateFormat: 'MM yy',
                     onClose: function (dateText, inst) {
                         $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
@@ -1268,7 +1269,12 @@
 
                         $.ajax({
                             success: function (data) {
-                                var status = data.statusQueryResult[0]['status'];
+                                var status;
+                                if(data.statusQueryResult.length > 0) {
+                                    status = data.statusQueryResult[0]['status'];
+                                } else {
+                                    status = 0;
+                                }
                                 if(data.returnmsg == 'rejection_error') {
                                     $('#addkpiformid').text('Please check rejected vessels and update it !');
                                     jAlert("Please check rejected vessels and update it!");
