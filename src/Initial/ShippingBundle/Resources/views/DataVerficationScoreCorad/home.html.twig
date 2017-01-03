@@ -1270,7 +1270,7 @@
                         $.ajax({
                             success: function (data) {
                                 var status;
-                                if(data.statusQueryResult.length > 0) {
+                                if(data.statusQueryResult) {
                                     status = data.statusQueryResult[0]['status'];
                                 } else {
                                     status = 0;
