@@ -312,6 +312,49 @@
                     $('.linkclass').removeClass("active");
                     $('#' + data.currentshipid).addClass('active');
                     var shipwiseelementValues=data.shipwiseElementValues[data.currentshipid];
+                    if (role == 'ROLE_ADMIN') {
+                        var length=$( "#allbuttondiv" ).length;
+                        if(length==0){
+                            $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                            $('#allbuttondiv').html('' +
+                                    ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                            );
+
+
+                        }
+
+                    }
+                    else if (role == 'ROLE_MANAGER') {
+                        var length=$( "#allbuttondiv" ).length;
+                        if(length==0){
+                            $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                            $('#allbuttondiv').html('' +
+                                    ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                            );
+
+                        }
+                    }
+                    else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                        var length=$( "#allbuttondiv" ).length;
+                        if(length==0){
+                            $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                            if(shipwiseelementValues.length>0){
+                                $('#allbuttondiv').html('' +
+                                        '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                        '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                );
+                            }
+                            else {
+                                $('#allbuttondiv').html('' +
+                                        '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                        '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                );
+                            }
+
+                        }
+                    }
                     var j = 1;
                     var newtemp = 0;
                     $.each(data.elementkpiarray, function (i, listkpi) {
@@ -406,7 +449,6 @@
 
                                     $('#savebuttonid').hide();
                                     $('#adminbuttonid').show();
-
                                     if (temp == 1) {
                                         $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td> <td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td> <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" onkeypress="return isNumberKey(event)"  value="' + shipwiseelementValues[newtemp] + '" type="text" name="newelemetvalues[]" required ></td>').appendTo("#" + j + "tr_id_" + temp);
                                     }
@@ -418,6 +460,7 @@
                                     $('#updatebuttonid').hide();
                                     $('#savebuttonid').show();
                                     $('#adminbuttonid').show();
+                                    $('#allbuttondiv').show();
                                     if (temp == 1) {
                                         $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]" required onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                     }
@@ -656,9 +699,7 @@
                         }
                     });
                     $.ajax({
-
                         success: function (data) {
-
                             var valuearray = data.elementvalues;
                             $('#spanallid').hide();
                             $('#shipid').val(linkid);
@@ -669,6 +710,49 @@
                             $('#' + linkid).addClass('active');
                             var j = 1;
                             var newtemp = 0;
+                            if (role == 'ROLE_ADMIN') {
+                                var length=$( "#allbuttondiv" ).length;
+                                if(length==0){
+                                    $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+
+
+                                }
+
+                            }
+                            else if (role == 'ROLE_MANAGER') {
+                                var length=$( "#allbuttondiv" ).length;
+                                if(length==0){
+                                    $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                                    $('#allbuttondiv').html('' +
+                                            ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
+                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                    );
+
+                                }
+                            }
+                            else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                                var length=$( "#allbuttondiv" ).length;
+                                if(length==0){
+                                    $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
+                                    if(valuearray.length>0){
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit"  class="submit_btn addclasskpivalue" id="updatebuttonid"  value="{{ 'dataverification.update'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+                                    else {
+                                        $('#allbuttondiv').html('' +
+                                                '<input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid" value="{{ 'dataverification.save'|trans }}">' +
+                                                '<button class="cancel_btn" id="resetbuttonid" value="Submit">{{ 'dataverification.reset'|trans }}</button>'
+                                        );
+                                    }
+
+                                }
+                            }
 
                             $.each(data.kpiNameArray, function (i, listkpi) {
 
@@ -817,7 +901,6 @@
                                 var complete = ajax_complete();
                             }
                         });
-
                         $.ajax({
                             success: function (data) {
                                 jAlert('', data.returnmsg);
