@@ -1608,8 +1608,8 @@ class DataVerficationController extends Controller
         }
         if ($role[0] == 'ROLE_MANAGER') {
             if (count($lookup_status) > 0) {
-                $status = explode(',',$lookup_status[0]['shipid']);
-                $updated_ships = $lookup_status[0]['status'];
+                $updated_ships = explode(',',$lookup_status[0]['shipid']);
+                $status = $lookup_status[0]['status'];
                 if($status == 2 || $status == 3 || $status == 4 || $status == 5) {
                     if(in_array($shipid,$updated_ships )) {
                         $query = $em->createQueryBuilder()
@@ -1627,9 +1627,9 @@ class DataVerficationController extends Controller
         }
         if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
             if (count($lookup_status) > 0) {
-                $status = explode(',',$lookup_status[0]['shipid']);
-                $updated_ships = $lookup_status[0]['status'];
-                if($status == 2 || $status == 3 || $status == 4 || $status == 5) {
+                $updated_ships = explode(',',$lookup_status[0]['shipid']);
+                $status = $lookup_status[0]['status'];
+                if($status == 1 |$status == 2 || $status == 3 || $status == 4 || $status == 5) {
                     if(in_array($shipid,$updated_ships )) {
                         $query = $em->createQueryBuilder()
                             ->select('b.value')
