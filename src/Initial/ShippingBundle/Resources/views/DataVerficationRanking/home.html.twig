@@ -1074,7 +1074,7 @@
                                 {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
                                     {% if shipobject.rejections == true and shipobject.status == 1 %}
                                         <img id="img_{{ shipobject.id }}" style="width: 20px;height: 20px" src="/images/error.png">
-                                    {% elseif shipobject.status==1 or shipobject.status==5 or shipobject.status==2 or shipobject.status==4 %}
+                                    {% elseif shipobject.status==1 or shipobject.status==5 or shipobject.status==2 or shipobject.status==3  or shipobject.status==4  %}
                                         <img id="img_{{ shipobject.id }}" src="/images/tick_icon.png">
                                     {% endif %}
                                 {% endif %}
