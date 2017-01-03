@@ -319,13 +319,13 @@
                             $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
                             $('#allbuttondiv').html('' +
                                     ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
-                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                    '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
                             );
                         }
                         else {
                             $('#allbuttondiv').html('' +
                                     ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
-                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                    '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
                             );
                         }
 
@@ -336,13 +336,13 @@
                             $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
                             $('#allbuttondiv').html('' +
                                     ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
-                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                    '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
                             );
                         }
                         else {
                             $('#allbuttondiv').html('' +
                                     ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
-                                    '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                    '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
                             );
                         }
                     }
@@ -738,13 +738,13 @@
                                     $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
                                     $('#allbuttondiv').html('' +
                                             ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
-                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                            '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
                                     );
                                 }
                                 else {
                                     $('#allbuttondiv').html('' +
                                             ' <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid" value="{{ 'dataverification.upload'|trans }}">' +
-                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
+                                            '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"  value="{{ 'dataverification.reject'|trans }}">'
                                     );
                                 }
 
@@ -755,13 +755,13 @@
                                     $('<div class="actions_submit" id="allbuttondiv"></div>').appendTo('#addkpiformid');
                                     $('#allbuttondiv').html('' +
                                             ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
-                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                            '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
                                     );
                                 }
                                 else {
                                     $('#allbuttondiv').html('' +
                                             ' <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"  value="{{ 'dataverification.verfiy'|trans }}">' +
-                                            '<input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
+                                            '<input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id" value="{{ 'dataverification.reject'|trans }}">'
                                     );
                                 }
                             }
@@ -1240,7 +1240,7 @@
                         {% if  is_granted("ROLE_ADMIN") %}
                             <input  type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"
                                     value="{{ 'dataverification.upload'|trans }}">
-                            <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                            <input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
                                    value="{{ 'dataverification.reject'|trans }}">
                         {% endif %}
 
@@ -1250,12 +1250,12 @@
                                     {% if listofships[currentshipid-1]['status']==1  %}
                                         <input  type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="verfiybuttonid"
                                                 value="{{ 'dataverification.verfiy'|trans }}">
-                                        <input type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                        <input style="margin-left: 10px;" type="submit" disabled title="This ship Data Not Upload From V-ships" class="submit_btn addclasskpivalue" id="reject_btn_id"
                                                value="{{ 'dataverification.reject'|trans }}">
                                     {% else %}
                                         <input  type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
                                                 value="{{ 'dataverification.verfiy'|trans }}">
-                                        <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                        <input style="margin-left: 10px;" type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
                                                value="{{ 'dataverification.reject'|trans }}">
                                     {% endif %}
                                 {% endif %}
