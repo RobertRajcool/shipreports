@@ -1577,45 +1577,76 @@ class DataVerficationController extends Controller
         $role = $user->getRoles();
         $status = 0;
         $resularray = array();
-        if ($role[0] == 'ROLE_ADMIN') {
-            $query = $em->createQueryBuilder()
-                ->select('b.value')
-                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.monthdetail =:dataofmonth')
-                ->setParameter('shipdetailsid', $shipid)
-                ->setParameter('dataofmonth', $new_date)
-                ->getQuery();
-        }
-        if ($role[0] == 'ROLE_MANAGER') {
-            $query = $em->createQueryBuilder()
-                ->select('b.value')
-                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.monthdetail =:dataofmonth')
-                ->setParameter('shipdetailsid', $shipid)
-                ->setParameter('dataofmonth', $new_date)
-                ->getQuery();
-        }
-        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
-            $query = $em->createQueryBuilder()
-                ->select('b.value')
-                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                ->where('b.shipDetailsId = :shipdetailsid')
-                ->andWhere('b.monthdetail =:dataofmonth')
-                ->setParameter('shipdetailsid', $shipid)
-                ->setParameter('dataofmonth', $new_date)
-                ->getQuery();
-        }
-        $resularray = $query->getResult();
+        $query = array();
 
         $lookup_status = $em->createQueryBuilder()
-            ->select('a.status, a.rejections')
+            ->select('a.shipid, a.status, a.rejections')
             ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
             ->where('a.dataofmonth = :dataofmonth')
             ->setParameter('dataofmonth', $new_date)
             ->getQuery()
             ->getResult();
+
+        if ($role[0] == 'ROLE_ADMIN') {
+            if (count($lookup_status) > 0) {
+                $updated_ships = explode(',',$lookup_status[0]['shipid']);
+                $status = $lookup_status[0]['status'];
+                if($status == 2 || $status == 3 || $status == 4) {
+                    if(in_array($shipid,$updated_ships )) {
+                        $query = $em->createQueryBuilder()
+                            ->select('b.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                            ->where('b.shipDetailsId = :shipdetailsid')
+                            ->andWhere('b.monthdetail =:dataofmonth')
+                            ->setParameter('shipdetailsid', $shipid)
+                            ->setParameter('dataofmonth', $new_date)
+                            ->getQuery()
+                            ->getResult();
+                    }
+                }
+            }
+        }
+        if ($role[0] == 'ROLE_MANAGER') {
+            if (count($lookup_status) > 0) {
+                $status = explode(',',$lookup_status[0]['shipid']);
+                $updated_ships = $lookup_status[0]['status'];
+                if($status == 2 || $status == 3 || $status == 4 || $status == 5) {
+                    if(in_array($shipid,$updated_ships )) {
+                        $query = $em->createQueryBuilder()
+                            ->select('b.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                            ->where('b.shipDetailsId = :shipdetailsid')
+                            ->andWhere('b.monthdetail =:dataofmonth')
+                            ->setParameter('shipdetailsid', $shipid)
+                            ->setParameter('dataofmonth', $new_date)
+                            ->getQuery()
+                            ->getResult();
+                    }
+                }
+            }
+        }
+        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
+            if (count($lookup_status) > 0) {
+                $status = explode(',',$lookup_status[0]['shipid']);
+                $updated_ships = $lookup_status[0]['status'];
+                if($status == 2 || $status == 3 || $status == 4 || $status == 5) {
+                    if(in_array($shipid,$updated_ships )) {
+                        $query = $em->createQueryBuilder()
+                            ->select('b.value')
+                            ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                            ->where('b.shipDetailsId = :shipdetailsid')
+                            ->andWhere('b.monthdetail =:dataofmonth')
+                            ->setParameter('shipdetailsid', $shipid)
+                            ->setParameter('dataofmonth', $new_date)
+                            ->getQuery()
+                            ->getResult();
+                    }
+                }
+            }
+        }
+        $resularray = $query;
+
+
         if (count($lookup_status) > 0) {
             if ($lookup_status[0]['rejections'] != null && $lookup_status[0]['rejections'] != "null") {
                 $rejection_string = $lookup_status[0]['rejections'];
@@ -4828,7 +4859,7 @@ class DataVerficationController extends Controller
 
                 $temp_status = $statusQueryResult[0]['status'];
                 if ($role[0] == 'ROLE_ADMIN') {
-                    if($temp_status == 3 || $temp_status == 4) {
+                    if($temp_status == 2 ||$temp_status == 3 || $temp_status == 4) {
                         for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
                             $resultarray = $em->createQueryBuilder()
                                 ->select('b.value')
