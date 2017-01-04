@@ -92,8 +92,14 @@
                                         var statusofship=data.statusQueryResult;
                                         var listviewStatusField='listview';
                                         $.each(statusofship, function(key, info) {
-                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER'||role == 'ROLE_ADMIN') {
+                                            if (role == 'ROLE_KPI_INFO_PROVIDER'||role == 'ROLE_MANAGER') {
                                                 if (info.status == 1) {
+                                                    listviewStatusField = key;
+                                                    return false;
+                                                };
+                                            }
+                                            else if(role == 'ROLE_ADMIN') {
+                                                if (info.status == 5) {
                                                     listviewStatusField = key;
                                                     return false;
                                                 };
