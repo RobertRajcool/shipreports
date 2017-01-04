@@ -2937,9 +2937,9 @@ class DataVerficationController extends Controller
                 ->getResult();
             $currentshipStatus="";
             if (count($lookup_status) > 0) {
+                $currentshipStatus=$lookup_status[0]['status'];
                 if ($lookup_status[0]['rejections'] != null) {
                     $rejection_string = $lookup_status[0]['rejections'];
-                    $currentshipStatus=$lookup_status[0]['status'];
                     $rejection_obj = explode(',', $rejection_string);
                     $reject_status = 'yes';
                 } else if ($lookup_status[0]['rejections'] != 'ALL' && $lookup_status[0]['rejections'] != null) {
