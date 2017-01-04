@@ -535,7 +535,6 @@
                             }
                             $('#allbuttondiv').show();
                             $.each(data.kpiNameArray, function (i, listkpi) {
-
                                 var k = $.isNumeric(i);
                                 if (!k) {
                                     var temp = 1;
@@ -579,7 +578,7 @@
                                         {% if  is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
                                         $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
                                         {% endif %}
-                                        if (valuearray.length > 0) {
+                                        if (data.elementvalues.length > 0) {
                                             {% if  is_granted("ROLE_ADMIN")  %}
                                             if(data.currentshipStatus==2 ||data.currentshipStatus==3 ||data.currentshipStatus==4){
                                                 if (temp == 1) {
