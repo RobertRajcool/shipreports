@@ -2935,9 +2935,11 @@ class DataVerficationController extends Controller
                 ->setParameter('shipid', $shipid)
                 ->getQuery()
                 ->getResult();
+            $currentshipStatus="";
             if (count($lookup_status) > 0) {
                 if ($lookup_status[0]['rejections'] != null) {
                     $rejection_string = $lookup_status[0]['rejections'];
+                    $currentshipStatus=$lookup_status[0]['status'];
                     $rejection_obj = explode(',', $rejection_string);
                     $reject_status = 'yes';
                 } else if ($lookup_status[0]['rejections'] != 'ALL' && $lookup_status[0]['rejections'] != null) {
@@ -3068,7 +3070,7 @@ class DataVerficationController extends Controller
                 'elementvalues' => $elementvalues,
                 'rejections' => $rejection_obj,
                 'rejection_status' => $reject_status,
-                'kpi_details' => $ids
+                'kpi_details' => $ids,'currentshipStatus'=>$currentshipStatus
             ));
             return $response;
         }
