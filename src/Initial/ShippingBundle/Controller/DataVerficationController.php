@@ -1608,8 +1608,8 @@ class DataVerficationController extends Controller
         }
         if ($role[0] == 'ROLE_MANAGER') {
             if (count($lookup_status) > 0) {
-                $status = explode(',',$lookup_status[0]['shipid']);
-                $updated_ships = $lookup_status[0]['status'];
+                $updated_ships = explode(',',$lookup_status[0]['shipid']);
+                $status = $lookup_status[0]['status'];
                 if($status == 2 || $status == 3 || $status == 4 || $status == 5) {
                     if(in_array($shipid,$updated_ships )) {
                         $query = $em->createQueryBuilder()
@@ -1627,9 +1627,9 @@ class DataVerficationController extends Controller
         }
         if ($role[0] == 'ROLE_KPI_INFO_PROVIDER') {
             if (count($lookup_status) > 0) {
-                $status = explode(',',$lookup_status[0]['shipid']);
-                $updated_ships = $lookup_status[0]['status'];
-                if($status == 2 || $status == 3 || $status == 4 || $status == 5) {
+                $updated_ships = explode(',',$lookup_status[0]['shipid']);
+                $status = $lookup_status[0]['status'];
+                if($status == 1 |$status == 2 || $status == 3 || $status == 4 || $status == 5) {
                     if(in_array($shipid,$updated_ships )) {
                         $query = $em->createQueryBuilder()
                             ->select('b.value')
@@ -4883,7 +4883,9 @@ class DataVerficationController extends Controller
                     }
                     if($temp_status == 3 || $temp_status == 4) {
                         if($statusQueryResult[0]['rejections'] == null || $statusQueryResult[0]['rejections'] == 'null') {
-                            $shipOverallStatus = "yes";
+                            if (count($listallshipforcompany) == count($shipidinArray)) {
+                                $shipOverallStatus = "yes";
+                            }
                         }
                     }
 
@@ -4908,9 +4910,11 @@ class DataVerficationController extends Controller
                             array_push($elementValues, $tempshipValueArray);
                         }
                     }
-                    if($temp_status == 2 || $temp_status == 3 || $temp_status == 4) {
+                    if($temp_status == 3 || $temp_status == 4) {
                         if($statusQueryResult[0]['rejections'] == null || $statusQueryResult[0]['rejections'] == 'null') {
-                            $shipOverallStatus = "yes";
+                            if (count($listallshipforcompany) == count($shipidinArray)) {
+                                $shipOverallStatus = "yes";
+                            }
                         }
                     }
 
