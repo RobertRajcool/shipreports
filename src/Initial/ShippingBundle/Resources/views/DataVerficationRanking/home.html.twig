@@ -239,8 +239,11 @@
                         }
                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
                             if(data.statusQueryResult.length==data.shipcount){
-                                if (statusofship['rejections']!=null && statusofship['status']==1 ||statusofship['status']==2 ||statusofship['status']==3 ||statusofship['status']==4 ||statusofship['status']==5) {
+                                if (statusofship['rejections']!=null && statusofship['status']==1) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
+                                }
+                                else if (statusofship['rejections']==null && statusofship['status']==1 ||statusofship['status']==2 ||statusofship['status']==3 ||statusofship['status']==4 ||statusofship['status']==5) {
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                 }
                                 else {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
