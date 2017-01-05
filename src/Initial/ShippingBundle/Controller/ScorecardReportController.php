@@ -288,7 +288,7 @@ class ScorecardReportController extends Controller
             $HighChartLocation = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js ';
             $inFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/graphData' . $todayDate . $todayTime . '.json ';
             $outFile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/graphImage' . $todayDate . $todayTime . '.png ';
-            $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 2.5 -width 1024';
+            $imageGeneration = 'phantomjs ' . $HighChartLocation . '-infile ' . $inFile . '-outfile ' . $outFile . ' -scale 1.5 -width 1024';
             $fileHandle = popen($imageGeneration, 'r');
             $result = fread($fileHandle, 2096);
             /*return $this->render('InitialShippingBundle:ScorecardReport:finalPdfTemplate.html.twig',
