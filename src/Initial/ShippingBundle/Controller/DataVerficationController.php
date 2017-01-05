@@ -118,7 +118,11 @@ class DataVerficationController extends Controller
                             if($rejection_status) {
                                 $data_view = 'editable-view';
                             } else {
-                                $data_view = 'summary-view';
+                                if($data_status == 2) {
+                                    $data_view = 'editable-view';
+                                } else {
+                                    $data_view = 'summary-view';
+                                }
                             }
 
                         } else {
@@ -170,7 +174,11 @@ class DataVerficationController extends Controller
                             if($rejection_status || count($rejections)>0) {
                                 $data_view = 'editable-view';
                             } else {
-                                $data_view = 'summary-view';
+                                if($data_status == 5) {
+                                    $data_view = 'editable-view';
+                                } else {
+                                    $data_view = 'summary-view';
+                                }
                             }
 
                         } else {
