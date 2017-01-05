@@ -118,7 +118,11 @@ class DataVerficationController extends Controller
                             if($rejection_status) {
                                 $data_view = 'editable-view';
                             } else {
-                                $data_view = 'summary-view';
+                                if($data_status == 2) {
+                                    $data_view = 'editable-view';
+                                } else {
+                                    $data_view = 'summary-view';
+                                }
                             }
 
                         } else {
@@ -170,7 +174,11 @@ class DataVerficationController extends Controller
                             if($rejection_status || count($rejections)>0) {
                                 $data_view = 'editable-view';
                             } else {
-                                $data_view = 'summary-view';
+                                if($data_status == 5) {
+                                    $data_view = 'editable-view';
+                                } else {
+                                    $data_view = 'summary-view';
+                                }
                             }
 
                         } else {
@@ -209,10 +217,10 @@ class DataVerficationController extends Controller
                     $template_chosen = 'v-ships_layout.html.twig';
                     if($data_status == 1 || $data_status == 2 || $data_status == 3 || $data_status == 4 || $data_status == 5) {
                         if(count($updated_ships) == count($vesselList)) {
-                            if($rejection_status) {
-                                $data_view = 'editable-view';
-                            } else {
+                            if(!$rejection_status) {
                                 $data_view = 'summary-view';
+                            } else {
+                                $data_view = 'editable-view';
                             }
 
                         } else {
