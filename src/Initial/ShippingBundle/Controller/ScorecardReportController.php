@@ -311,7 +311,7 @@ class ScorecardReportController extends Controller
                     'headerTitle' => 'Pioneer Scorecard Report'
                 ));
 
-            $pdfObject->AddPage('', 4, '', 'on');
+            $pdfObject->AddPage('A4-L');
             $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
             $pdfObject->WriteHTML($customerListDesign);
 
