@@ -911,9 +911,15 @@
                             No Kpi Found
                         {% endif %}
                         {% if listoreditViewStatus=='listView' %}
+                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
                             <div id="addkpiformid" class="table-responsive">
-                                <span>All ships Data Verified</span>
+                                <span>All vessels are uploaded</span>
                             </div>
+                            {% else %}
+                                <div id="addkpiformid" class="table-responsive">
+                                    <span>All ships Data Verified</span>
+                                </div>
+                            {% endif %}
                         {% endif %}
                         {% if elementkpiarray|length > 0  and listoreditViewStatus=='editView' %}
                         <div id="addkpiformid" class="table-responsive">
