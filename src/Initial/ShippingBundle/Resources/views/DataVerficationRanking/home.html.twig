@@ -274,7 +274,7 @@
                         if(data.currentshipid==""){
                             if (role == 'ROLE_KPI_INFO_PROVIDER'){
                                 $('#allbuttondiv').hide();
-                                $('#addkpiformid').text('All vessels data updated !');
+                                $('#addkpiformid').text('All vessels data are updated !');
                                 $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                             }
                             else {
@@ -283,7 +283,7 @@
                                         monthName = findShortMonth.toLocaleString(locale, {month: "long"}),
                                         year = findShortMonth.getFullYear();
 
-                                $('#addkpiformid').text('This Month Data Not Updated');
+                                $('#addkpiformid').text('This month data not updated');
                                 $('#shipname').text('');
                                 $('#shipname').val('');
                             }
@@ -303,7 +303,7 @@
                                             monthName = findShortMonth.toLocaleString(locale, {month: "long"}),
                                             year = findShortMonth.getFullYear();
                                     $('#allbuttondiv').hide();
-                                    $('#addkpiformid').text(' This Month Data Not Updated');
+                                    $('#addkpiformid').text('This month data not updated');
                                     $('#shipname').text('');
                                     $('#shipname').val('');
                                 }
@@ -600,8 +600,8 @@
                                             else {
                                                 $('#adminbuttonid').prop("disabled",true)
                                                 $('#reject_btn_id').prop("disabled",true)
-                                                $('#adminbuttonid').prop("title",'This Month Data not Updated')
-                                                $('#reject_btn_id').prop("title",'This Month Data not Updated')
+                                                $('#adminbuttonid').prop("title",'This month data not updated')
+                                                $('#reject_btn_id').prop("title",'This month data not updated')
                                                 if (temp == 1) {
                                                     $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]"  onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                 }
@@ -621,8 +621,8 @@
                                             else {
                                                 $('#verfiybuttonid').prop("disabled",true)
                                                 $('#reject_btn_id').prop("disabled",true)
-                                                $('#reject_btn_id').prop("title",'This Month Data not Updated')
-                                                $('#verfiybuttonid').prop("title",'This Month Data not Updated')
+                                                $('#reject_btn_id').prop("title",'This month data not updated')
+                                                $('#verfiybuttonid').prop("title",'This month data not updated')
                                                 if (temp == 1) {
                                                     $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]"  onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
                                                 }
@@ -647,9 +647,9 @@
                                             $('#adminbuttonid').prop("disabled",true)
                                             $('#reject_btn_id').prop("disabled",true)
                                             $('#verfiybuttonid').prop("disabled",true)
-                                            $('#adminbuttonid').prop("title",'This Month Data not Updated')
-                                            $('#reject_btn_id').prop("title",'This Month Data not Updated')
-                                            $('#verfiybuttonid').prop("title",'This Month Data not Updated')
+                                            $('#adminbuttonid').prop("title",'This month data not updated')
+                                            $('#reject_btn_id').prop("title",'This month data not updated')
+                                            $('#verfiybuttonid').prop("title",'This month data not updated')
 
                                             if (temp == 1) {
                                                 $('<td  class="kpi_lement_name">' + myvalue + '</td><td class="kpi_lement_number">' + data.elementweightage[newtemp] + '</td><td class="kpi_lement_inputname">' + data.symbolIndication[newtemp] + '</td><td class="kpi_lement_inputname">' + data.indicationValue[newtemp] + '</td>  <td class="kpi_lement_inputname"><input class="resetclass" placeholder="123" type="text" name="newelemetvalues[]"  onkeypress="return isNumberKey(event)" ></td>').appendTo("#" + j + "tr_id_" + temp);
@@ -917,7 +917,7 @@
                             </div>
                             {% else %}
                                 <div id="addkpiformid" class="table-responsive">
-                                    <span>All ships Data Verified</span>
+                                    <span>All vessels data are verified</span>
                                 </div>
                             {% endif %}
                         {% endif %}
@@ -932,7 +932,7 @@
                                             id="upload_btn_id"
                                             value="Submit">{{ 'dataverification.upload'|trans }}</button>
                                 {% else %}
-                                    <span>This Month Data not Updated</span>
+                                    <span>This month data not updated</span>
                                 {% endif %}
                                 </div>
                             {% else %}
