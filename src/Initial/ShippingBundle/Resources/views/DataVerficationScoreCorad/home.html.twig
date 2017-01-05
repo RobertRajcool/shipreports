@@ -1468,6 +1468,31 @@
                 </div>
             </div>
         {% endif %}
+        {% if data_view == 'summary-view' %}
+            <div class="col-sm-3 views_kpi_form_list" id="overallshids">
+                <div class="views_kpi_name_total">
+                    <span id="shipcountwithtext">{{ 'dashboard.shipname'|trans }}({{ shipcount }})</span>
+                </div>
+                <div class="views_kpi_form_list_main" id="shiplistinui">
+                    <ui>
+                        {% set j=0 %}
+                        {% for vessel in listofships %}
+                            <li>
+                                <a class="linkclass" title="{{ vessel.shipName }}"
+                                   id="{{ vessel.id }}">{{ vessel.shipName }}</a>
+                                {% if ship_status[j]==1 %}
+                                    <img id="img_{{ vessel.id }}" src="{{ asset('images/tick_icon.png') }}">
+                                {% elseif ship_status[j]==2 %}
+                                    <img id="img_{{ vessel.id }}" style="width: 20px;height: 20px"
+                                         src="{{ asset('images/error.png') }}">
+                                {% endif %}
+                            </li>
+                            {% set j=j+1 %}
+                        {% endfor %}
+                    </ui>
+                </div>
+            </div>
+        {% endif %}
     </section>
 
     <section id="kpiformforship">
@@ -1598,6 +1623,30 @@
                         {% endif %}
                     </div>
                     {% endif %}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if data_view == 'summary-view' %}
+        <div class="col-sm-12">
+            <div class="add_new_kpi_form_screen">
+                <form id="kpiform" class="form-horizontal no-style">
+                    <div class="add_new_kpi_top_title">
+                        <div class="title_month">
+                            <label class="title"> <span id="shipname"> </span></label>
+                            <input type="hidden" name="dataofmonth" id="datofmonthid">
+                            <div class="col-lg-3" style="float: right; margin-right: 20px">
+                                <div class="form-group">
+                                    <input type='text' placeholder="-- Choose Month & Year --"
+                                           class="form-control datetimepicker">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="elementformid" class="add_new_kpi_form_section">
+                        All vessels data are uploaded !
+                    </div>
                 </form>
             </div>
         </div>
