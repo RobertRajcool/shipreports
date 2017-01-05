@@ -1809,9 +1809,15 @@ class DataVerficationController extends Controller
                     $listviewStatusField='listView';
                     foreach ($findstatusofship as $key => $val)
                     {
-                        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER' ||$role[0] == 'ROLE_MANAGER' ||$role[0] == 'ROLE_ADMIN')
+                        if ($role[0] == 'ROLE_KPI_INFO_PROVIDER' ||$role[0] == 'ROLE_MANAGER')
                         {
                             if ($val['status'] ==1)
+                            {
+                                $listviewStatusField = $key;
+                            }
+                        }
+                        elseif ($role[0] == 'ROLE_ADMIN'){
+                            if ($val['status'] ==5)
                             {
                                 $listviewStatusField = $key;
                             }
@@ -2598,23 +2604,6 @@ class DataVerficationController extends Controller
             if ($buttonid == 'upload_btn_id') {
                 $userId = $user->getId();
                 $username = $user->getUsername();
-                /*if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
-                    $query = $em->createQueryBuilder()
-                        ->select('a.shipName', 'a.id')
-                        ->from('InitialShippingBundle:ShipDetails', 'a')
-                        ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
-                        ->where('b.adminName = :username')
-                        ->setParameter('username', $username)
-                        ->getQuery();
-                } else {
-                    $query = $em->createQueryBuilder()
-                        ->select('a.shipName', 'a.id')
-                        ->from('InitialShippingBundle:ShipDetails', 'a')
-                        ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
-                        ->where('b.id = :userId')
-                        ->setParameter('userId', $userId)
-                        ->getQuery();
-                }*/
                 if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
                     $query = $em->createQueryBuilder()
                         ->select('a.shipName', 'a.id')
@@ -2651,7 +2640,7 @@ class DataVerficationController extends Controller
                         ->getQuery()
                         ->getResult();
                     foreach ($check_empty_value_query as $check_empty_values) {
-                        if ($check_empty_values['value'] != null) {
+                        if ($check_empty_values['value'] != null && $check_empty_values['value'] !=" ") {
                             continue;
                         }
                         else
@@ -2935,7 +2924,9 @@ class DataVerficationController extends Controller
                 ->setParameter('shipid', $shipid)
                 ->getQuery()
                 ->getResult();
+            $currentshipStatus="";
             if (count($lookup_status) > 0) {
+                $currentshipStatus=$lookup_status[0]['status'];
                 if ($lookup_status[0]['rejections'] != null) {
                     $rejection_string = $lookup_status[0]['rejections'];
                     $rejection_obj = explode(',', $rejection_string);
@@ -3068,7 +3059,7 @@ class DataVerficationController extends Controller
                 'elementvalues' => $elementvalues,
                 'rejections' => $rejection_obj,
                 'rejection_status' => $reject_status,
-                'kpi_details' => $ids
+                'kpi_details' => $ids,'currentshipStatus'=>$currentshipStatus
             ));
             return $response;
         }
