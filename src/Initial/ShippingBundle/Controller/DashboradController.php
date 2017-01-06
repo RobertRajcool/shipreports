@@ -835,7 +835,6 @@ class DashboradController extends Controller
                 $findingcolorarray = array();
 
                 for ($element = 0; $element < count($listallkpi); $element++) {
-
                     $kpiidvalue = $listallkpi[$element]['id'];
                     $kpiweightage = $listallkpi[$element]['weightage'];
                     $kpiname = $listallkpi[$element]['kpiName'];
@@ -3118,10 +3117,15 @@ class DashboradController extends Controller
             $oneyear_montharray = array();
             $rankingKpiWeightarray = array();
             $scorecardElementRules = array();
+            $lastdayofYear='01-12-'.$year;
+            $lastMonthdateObject=new \DateTime($lastdayofYear);
+            $lastMonthdateObject->modify('last day of this month');
             $statusFieldQuery = $em->createQueryBuilder()
                 ->select('b.dataofmonth,b.status')
                 ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
                 ->where('b.shipid = :shipId and b.status = :monthStatus')
+                ->andwhere('b.dataofmonth <= :activeDate')
+                ->setParameter('activeDate', $lastMonthdateObject)
                 ->setParameter('monthStatus', 4)
                 ->setParameter('shipId', $shipid)
                 ->groupby('b.dataofmonth')
@@ -3135,7 +3139,7 @@ class DashboradController extends Controller
                 $currentyear = date('Y');
             }
             if ($year != ' ') {
-                for ($m = 1; $m <= 12; $m++) {
+                for ($m = 1; $m <= count($statusFieldQuery); $m++) {
                     $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
                     array_push($oneyear_montharray, $month);
                 }
@@ -3217,7 +3221,7 @@ class DashboradController extends Controller
             $NewMonthlyAvgTotal = array();
             $vesseldata=array();
             $NewMonthColor = array();
-            for ($d = $initial; $d < $statusVerified; $d++) {
+            for ($d = 0; $d < count($oneyear_montharray); $d++) {
                 $time2 = strtotime($oneyear_montharray[$d]);
                 $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
@@ -3309,7 +3313,6 @@ class DashboradController extends Controller
                             } else if ($elementResultColor == 'Red') {
                                 $elementColorValue = 0;
                             }
-
                             array_push($scorecardElementRules, $rankingElementRulesArray);
                             array_push($scorecardElementValueArray, (($rankingElementResult[0]['elementdata'])*$rankingKpiWeight)/100);
                             $elementValueWithWeight = $elementColorValue;
@@ -3430,7 +3433,7 @@ class DashboradController extends Controller
                 $New_Month_Avg_Total = array();
                 $New_Month_Element_Value = array();
                 $New_Month_Element_Color = array();
-                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < $statusVerified; $New_FindKpivalueCount++) {
+                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < count($oneyear_montharray); $New_FindKpivalueCount++) {
                     $New_Month_Avg_Total[$New_FindKpivalueCount] = $NewMonthlyAvgTotal[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Value[$New_FindKpivalueCount] = $NewMonthlyKPIValue[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Color[$New_FindKpivalueCount] = $NewMonthColor[$New_FindKpivalueCount][$rankingKpiId];
@@ -3453,7 +3456,6 @@ class DashboradController extends Controller
                 $diff = $d2->diff($d1);
                 $yearcount = $diff->y + 1;
             }
-
             if ($sendReport == 'sendReport') {
                 return array(
                     'listofkpi' => $rankingKpiList,
@@ -3528,12 +3530,12 @@ class DashboradController extends Controller
             $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
-            $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
-            $mpdf->SetWatermarkImage($WateMarkImagePath);
+            /*//$WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+           // $mpdf->SetWatermarkImage($WateMarkImagePath);
             //$mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
-            $mpdf->showWatermarkImage = true;
+            $mpdf->showWatermarkImage = true;*/
             $graphObject = array(
-                'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line"),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3598,7 +3600,7 @@ class DashboradController extends Controller
                 'kpimonthdata' => $reportObject['kpimonthdata'],
                 'currentyear' => date('Y')
             ));
-            $mpdf->AddPage('', 4, '', 'on');
+            $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
             for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
@@ -3607,7 +3609,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line"),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3628,7 +3630,7 @@ class DashboradController extends Controller
                 else
                 {
                     $graphObject = array(
-                        'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line"),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3655,7 +3657,6 @@ class DashboradController extends Controller
                 $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
-
                 $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
                     'kpiid' => $kpiid,
                     'screenName' => 'Ranking Report',
@@ -3674,7 +3675,7 @@ class DashboradController extends Controller
                     'currentyear' => date('Y')
                 ));
 
-                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
             }
@@ -3711,9 +3712,6 @@ class DashboradController extends Controller
             $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
-            $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
-            $mpdf->SetWatermarkImage($WateMarkImagePath);
-            $mpdf->showWatermarkImage = true;
             $graphObject = array(
                 'chart' => array('renderTo' => 'areaId', 'type' => "line"),
                 'exporting' => array('enabled' => false),
@@ -3763,7 +3761,7 @@ class DashboradController extends Controller
                 'kpimonthdata' => $reportObject['kpimonthdata'],
                 'currentyear' => date('Y')
             ));
-            $mpdf->AddPage('', 4, '', 'on');
+            $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
             for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
@@ -3839,7 +3837,7 @@ class DashboradController extends Controller
                     'currentyear' => date('Y')
                 ));
 
-                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
             }
