@@ -3535,7 +3535,7 @@ class DashboradController extends Controller
             //$mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $mpdf->showWatermarkImage = true;*/
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3565,7 +3565,7 @@ class DashboradController extends Controller
 
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
             $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
-            $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
+            $ImageGeneration = 'phantomjs  ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
             /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
@@ -3598,7 +3598,7 @@ class DashboradController extends Controller
                 'avgscore' => $reportObject['avgscore'],
                 'ageofvessel' => $reportObject['ageofvessel'],
                 'kpimonthdata' => $reportObject['kpimonthdata'],
-                'currentyear' => date('Y')
+                'currentyear' =>$reportObject['currentyear']
             ));
             $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
@@ -3609,7 +3609,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3630,7 +3630,7 @@ class DashboradController extends Controller
                 else
                 {
                     $graphObject = array(
-                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3672,7 +3672,7 @@ class DashboradController extends Controller
                     'elementRule' => $reportObject['elementRule'],
                     'listofelement' => $reportObject['listofelement'][$kpiid],
                     'countofelement' => count($reportObject['listofelement'][$kpiid]),
-                    'currentyear' => date('Y')
+                    'currentyear' => $reportObject['currentyear']
                 ));
 
                 $mpdf->AddPage('A4-L');
@@ -3713,7 +3713,7 @@ class DashboradController extends Controller
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3759,7 +3759,7 @@ class DashboradController extends Controller
                 'avgscore' => $reportObject['avgscore'],
                 'ageofvessel' => $reportObject['ageofvessel'],
                 'kpimonthdata' => $reportObject['kpimonthdata'],
-                'currentyear' => date('Y')
+                'currentyear' => $reportObject['currentyear']
             ));
             $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
@@ -3770,7 +3770,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3791,7 +3791,7 @@ class DashboradController extends Controller
                 else
                 {
                     $graphObject = array(
-                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3834,7 +3834,7 @@ class DashboradController extends Controller
                     'elementRule' => $reportObject['elementRule'],
                     'listofelement' => $reportObject['listofelement'][$kpiid],
                     'countofelement' => count($reportObject['listofelement'][$kpiid]),
-                    'currentyear' => date('Y')
+                    'currentyear' => $reportObject['currentyear']
                 ));
 
                 $mpdf->AddPage('A4-L');
