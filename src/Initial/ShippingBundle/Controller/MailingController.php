@@ -290,22 +290,21 @@ class MailingController extends Controller
                 ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
                 ->where('b.username = :username')
                 ->setParameter('username',$username)
-                ->getQuery();
+                ->getQuery()
+                ->getResult();
+            if(count($query)!=0){
+                $companyid=$query[0]['id'];
+                $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+            }
+
         }
         else
         {
-            $query = $em->createQueryBuilder()
-                ->select('a.companyid')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
+            $newcompanyid=$user->getCompanyid();
         }
-        $companyid=$query->getSingleScalarResult();
 
         $groupname = $request->request->get('groupnameintextbox');
         $listofemail = $request->request->get('listofemail');
-        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
         $groupobject=new EmailGroup();
         $groupobject->setGroupname($groupname);
         $groupobject->setCompanyid($newcompanyid);
