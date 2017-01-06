@@ -261,9 +261,9 @@ class ScorecardReportController extends Controller
             $pdfObject = $this->container->get('tfox.mpdfport')->getMPdf();
             $pdfObject->defaultheaderline = 0;
             $pdfObject->defaultheaderfontstyle = 'B';
-            $waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+            /*$waterMarkImage = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
             $pdfObject->SetWatermarkImage($waterMarkImage);
-            $pdfObject->showWatermarkImage = true;
+            $pdfObject->showWatermarkImage = true;*/
 
             $graphObject = array(
                 'chart' => array('renderTo' => 'areaId', 'type' => "line"),
@@ -311,7 +311,7 @@ class ScorecardReportController extends Controller
                     'headerTitle' => 'Pioneer Scorecard Report'
                 ));
 
-            $pdfObject->AddPage('', 4, '', 'on');
+            $pdfObject->AddPage('A4-L');
             $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
             $pdfObject->WriteHTML($customerListDesign);
 
@@ -366,7 +366,7 @@ class ScorecardReportController extends Controller
                         'elementColorArray' => $elementColorArray
                     ));
 
-                $pdfObject->AddPage('', 4, '', 'on');
+                $pdfObject->AddPage('A4-L');
                 $pdfObject->SetFooter('|{DATE l jS F Y H:i}| Page No: {PAGENO}');
                 $pdfObject->WriteHTML($customerListDesign);
             }

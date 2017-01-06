@@ -1443,32 +1443,7 @@
 
 
     <section id="currentmonhthdetails">
-        {% if data_view == 'editable-view' %}
-            <div class="col-sm-3 views_kpi_form_list" id="overallshids">
-                <div class="views_kpi_name_total">
-                    <span id="shipcountwithtext">{{ 'dashboard.shipname'|trans }}({{ shipcount }})</span>
-                </div>
-                <div class="views_kpi_form_list_main" id="shiplistinui">
-                    <ui>
-                        {% set j=0 %}
-                        {% for vessel in listofships %}
-                            <li>
-                                <a class="linkclass" title="{{ vessel.shipName }}"
-                                   id="{{ vessel.id }}">{{ vessel.shipName }}</a>
-                                {% if ship_status[j]==1 %}
-                                    <img id="img_{{ vessel.id }}" src="{{ asset('images/tick_icon.png') }}">
-                                {% elseif ship_status[j]==2 %}
-                                    <img id="img_{{ vessel.id }}" style="width: 20px;height: 20px"
-                                         src="{{ asset('images/error.png') }}">
-                                {% endif %}
-                            </li>
-                            {% set j=j+1 %}
-                        {% endfor %}
-                    </ui>
-                </div>
-            </div>
-        {% endif %}
-        {% if data_view == 'summary-view' %}
+        {% if data_view == 'editable-view' or data_view == 'upload-view' or data_view == 'summary-view' %}
             <div class="col-sm-3 views_kpi_form_list" id="overallshids">
                 <div class="views_kpi_name_total">
                     <span id="shipcountwithtext">{{ 'dashboard.shipname'|trans }}({{ shipcount }})</span>
@@ -1628,7 +1603,7 @@
         </div>
         {% endif %}
 
-        {% if data_view == 'summary-view' %}
+        {% if data_view == 'summary-view' or data_view == 'upload-view' %}
         <div class="col-sm-12">
             <div class="add_new_kpi_form_screen">
                 <form id="kpiform" class="form-horizontal no-style">
@@ -1644,9 +1619,50 @@
                             </div>
                         </div>
                     </div>
+
                     <div id="elementformid" class="add_new_kpi_form_section">
-                        All vessels data are uploaded !
+                        {% if data_view == 'upload-view' %}
+                        All vessels data are updated !
+                            <div class="actions_submit">
+                                {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                    <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                            id="upload_btn_id" value="Submit">
+                                        {{ 'dataverification.upload'|trans }}
+                                    </button>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {% if data_view == 'summary-view' %}
+                            All vessels data are uploaded !
+                        {% endif %}
                     </div>
+                    <input type="hidden" name="shipid" id="shipid">
+                    <div id="allbuttondiv" class="actions_submit">
+
+                        {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                            <input type="submit" class="submit_btn addclasskpivalue" id="savebuttonid"
+                                   value="{{ 'dataverification.save'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="updatebuttonid"
+                                   value="{{ 'dataverification.update'|trans }}">
+                            <button class="cancel_btn" id="resetbuttonid"
+                                    value="Submit">{{ 'dataverification.reset'|trans }}</button>
+                        {% endif %}
+                        {% if  is_granted("ROLE_ADMIN") %}
+                            <input type="submit" class="submit_btn addclasskpivalue" id="adminbuttonid"
+                                   value="{{ 'dataverification.upload'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                   value="{{ 'dataverification.reject'|trans }}">
+                        {% endif %}
+
+                        {% if is_granted("ROLE_MANAGER") %}
+                            <input type="submit" class="submit_btn addclasskpivalue" id="verfiybuttonid"
+                                   value="{{ 'dataverification.verfiy'|trans }}">
+                            <input type="submit" class="submit_btn addclasskpivalue" id="reject_btn_id"
+                                   value="{{ 'dataverification.reject'|trans }}">
+                        {% endif %}
+                    </div>
+
                 </form>
             </div>
         </div>
