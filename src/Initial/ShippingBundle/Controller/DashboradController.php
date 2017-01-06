@@ -3132,16 +3132,16 @@ class DashboradController extends Controller
                 ->getQuery()
                 ->getResult();
             if ($year == ' ') {
-                for ($m = 1; $m <= count($statusFieldQuery); $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
-                    array_push($oneyear_montharray, $month);
+                for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                    $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                    array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                 }
                 $currentyear = date('Y');
             }
             if ($year != ' ') {
-                for ($m = 1; $m <= count($statusFieldQuery); $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
-                    array_push($oneyear_montharray, $month);
+                for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                    $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                    array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                 }
                 $currentyear = date($year);
             }
@@ -3155,7 +3155,7 @@ class DashboradController extends Controller
             $initial = 0;
             $statusVerified = 0;
             $currentRequestYear = date('Y');
-            if ($currentRequestYear == $year) {
+     /*       if ($currentRequestYear == $year) {
                 $currentMonth = date('n');
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth - 1]);
                 $new_monthdetail_date->modify('last day of this month');
@@ -3209,7 +3209,7 @@ class DashboradController extends Controller
                         }
                     }
                 }
-            }
+            }*/
 
             $monthlyKpiValue = array();
             $newcategories = array();
