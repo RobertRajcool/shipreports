@@ -59,7 +59,7 @@
                     <th class="kpi_name">Element Name</th>
                     {% set countmonth1= countmonth-1 %}
                     {% for x in 0..countmonth1 %}
-                        <th  class="month">{{ montharray[x] }}</th>
+                        <th colspan="2" class="month">{{ montharray[x] }}</th>
                     {% endfor %}
 
                 </tr>
@@ -70,41 +70,29 @@
                 {% set i=0 %}
                 {% for element in listofelement %}
                     <tr>
-                        <td  rowspan="2" class="element_name_title">{{ element.elementName }}{#<a  style="color: #2b542c"
-                                                       href="{{ path('listelementforkpi', { 'kpiid': element.id,'kpiname':element.id,'TB_iframe':true}) }}?keepThis=true&TB_iframe=true"
-                                                       class="thickbox" title="{{ element.elementName }}"> {{ element.elementName }}</a>#}</td>
-                        {#<td>{{ elementweightage[i] }}%</td>#}
-
+                        <td class="element_name_title">{{ element.elementName }}
                         {% for j in 0..countmonth1 %}
-                            {#{% for k in 0..elementcountvalue %}#}
-                            {#{% set newcolorarray = newcolorarray|merge({('_'~akj):(kpicolorarray[j][i])}) %}#}
-
-                              {#  {% if monthlydata[j][0]!= NULL %}
-
-                                    <td>
-
-                                        {{ monthlydata[j][i]  }}
-                                    </td>
-
-
-                                {% else %}
-                                    <td></td>
-                                {% endif %}#}
                             <td>
 
                                 {{ monthlydata[j][i]  }}
                             </td>
-
-                            {# {% set akj=akj+1 %}#}
-                            {#{% endfor %}#}
-
+                        {% if elementcolorarray[j][0] == "" %}
+                            <td></td>
+                        {% endif %}
+                        {% if elementcolorarray[j][0] != "" %}
+                            <td>
+                                {% if elementcolorarray[j][i]=="Green" %}
+                                    <img class="img-icon" src="/images/02.large.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Red" %}
+                                    <img class="img-icon" src="/images/03.large.png" alt="Loader Image"/>
+                                {% elseif elementcolorarray[j][i]=="Yellow" %}
+                                    <img class="img-icon" src="/images/01.large.png" alt="Loader Image"/>
+                                {% endif %}
+                            </td>
+                        {% endif %}
                         {% endfor %}
-
-                    </tr>
-
-                    <tr>
-                        {% for m in 0..countmonth1 %}
-                       {# {% for bc in 0..elementcountvalue %}#}
+                        {#{% for m in 0..countmonth1 %}
+                            #}{# {% for bc in 0..elementcountvalue %}#}{#
                             {% if elementcolorarray[m][0] == "" %}
                                 <td></td>
                             {% endif %}
@@ -120,9 +108,32 @@
                                 </td>
                             {% endif %}
 
-                          {#  {% endfor %}#}
-                        {% endfor %}
+                            #}{#  {% endfor %}#}{#
+                        {% endfor %}#}
+
                     </tr>
+
+                   {# <tr>
+                        {% for m in 0..countmonth1 %}
+                       #}{# {% for bc in 0..elementcountvalue %}#}{#
+                            {% if elementcolorarray[m][0] == "" %}
+                                <td></td>
+                            {% endif %}
+                            {% if elementcolorarray[m][0] != "" %}
+                                <td>
+                                    {% if elementcolorarray[m][i]=="Green" %}
+                                        <img class="img-icon" src="/images/02.large.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[m][i]=="Red" %}
+                                        <img class="img-icon" src="/images/03.large.png" alt="Loader Image"/>
+                                    {% elseif elementcolorarray[m][i]=="Yellow" %}
+                                        <img class="img-icon" src="/images/01.large.png" alt="Loader Image"/>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+
+                          #}{#  {% endfor %}#}{#
+                        {% endfor %}
+                    </tr>#}
                     {% set i=i+1 %}
                 {% endfor %}
                 <tr>
@@ -135,6 +146,7 @@
                         <td><strong></strong></td>
                     {% endif %}#}
                         <td><strong>{{ avg }}</strong></td>
+                        <td></td>
 
 
                     {% endfor %}
@@ -153,7 +165,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td><img src="/phantomjs/listofgraph/{{ link }}" alt="Loader Image"/></td>
+                    <td><img src="phantomjs/listofgraph/{{ link }}" alt="Loader Image"/></td>
                 </tr>
                 </tbody>
             </table>

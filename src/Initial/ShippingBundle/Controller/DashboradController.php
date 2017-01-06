@@ -3713,7 +3713,7 @@ class DashboradController extends Controller
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>230),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3770,7 +3770,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>325),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
