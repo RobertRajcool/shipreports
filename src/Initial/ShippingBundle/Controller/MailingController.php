@@ -25,7 +25,7 @@ class MailingController extends Controller
      *
      * @Route("/creategroup", name="creategroup")
      */
-    public function creatgroupAction()
+    public function creatgroupAction(Request $request,$reuseMode="")
     {
         $em = $this->getDoctrine()->getManager();
         //Finding Company for Login user Starts Here//
@@ -35,27 +35,26 @@ class MailingController extends Controller
         $userId = $user->getId();
         $username = $user->getUsername();
 
-        if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
-        {
-            $query = $em->createQueryBuilder()
-                ->select('a.id')
-                ->from('InitialShippingBundle:CompanyDetails','a')
-                ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
-                ->where('b.username = :username')
-                ->setParameter('username',$username)
-                ->getQuery();
-        }
-        else
-        {
-            $query = $em->createQueryBuilder()
-                ->select('identity(a.companyid)')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
-        }
+            if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
+            {
+                $query = $em->createQueryBuilder()
+                    ->select('a.id')
+                    ->from('InitialShippingBundle:CompanyDetails','a')
+                    ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
+                    ->where('b.username = :username')
+                    ->setParameter('username',$username)
+                    ->getQuery()
+                    ->getResult();
+                if(count($query)!=0){
+                    $companyid=$query[0]['id'];
+                    $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+                }
 
-        $companyid=$query->getSingleScalarResult();
+            }
+            else
+            {
+                $newcompanyid=$user->getCompanyid();
+            }
 
         $listofuser = $em->createQueryBuilder()
             ->select('c.groupname','c.id','b.useremailid')
@@ -64,12 +63,15 @@ class MailingController extends Controller
             ->where('c.companyid = :companyid')
             ->andwhere('c.groupstatus = :groupstatus')
             ->groupby('c.groupname')
-            ->setParameter('companyid',$companyid)
+            ->setParameter('companyid',$newcompanyid)
             ->setParameter('groupstatus',1)
             ->getQuery()
             ->getResult();
 
         //Finding Company for Login user Ends Here//
+            if($reuseMode!=""){
+                return array('listofuser'=>$listofuser,'usercount'=>count($listofuser));
+            }
         return $this->render('InitialShippingBundle:Mailing:creategroup.html.twig',
             array('listofuser'=>$listofuser,'usercount'=>count($listofuser)));
 
@@ -91,7 +93,6 @@ class MailingController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
-
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -100,26 +101,24 @@ class MailingController extends Controller
                 ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
                 ->where('b.username = :username')
                 ->setParameter('username',$username)
-                ->getQuery();
+                ->getQuery()
+                ->getResult();
+            if(count($query)!=0){
+                $companyid=$query[0]['id'];
+                $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+            }
+
         }
         else
         {
-            $query = $em->createQueryBuilder()
-                ->select('a.companyid')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
+            $newcompanyid=$user->getCompanyid();
         }
-
-        $companyid=$query->getSingleScalarResult();
         $emailgroupid = $request->request->get('emailgroupid');
         $grouobject = $em->getRepository('InitialShippingBundle:EmailGroup')->findOneBy(array('id'=>$emailgroupid));
         $groupname=$grouobject->getGroupname();
-        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
 
         $groupofemaild = $em->createQueryBuilder()
-            ->select('b.useremailid')
+            ->select('b.useremailid,c.groupstatus')
             ->from('InitialShippingBundle:EmailGroup','c')
             ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = c.id')
             ->where('c.id = :id')
@@ -144,7 +143,6 @@ class MailingController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
-
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -153,23 +151,21 @@ class MailingController extends Controller
                 ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
                 ->where('b.username = :username')
                 ->setParameter('username',$username)
-                ->getQuery();
+                ->getQuery()
+                ->getResult();
+            if(count($query)!=0){
+                $companyid=$query[0]['id'];
+                $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+            }
+
         }
         else
         {
-            $query = $em->createQueryBuilder()
-                ->select('a.companyid')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
+            $newcompanyid=$user->getCompanyid();
         }
-
-        $companyid=$query->getSingleScalarResult();
         $listofemail = $request->request->get('listofemail');
         $groupname = $request->request->get('groupnameintextbox');
         $viewgroupid = $request->request->get('viewgroupid');
-        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
        //Finding List of user for particular group starts Here...
         $groupuserid = $em->createQueryBuilder()
             ->select('c.useremailid')
@@ -233,7 +229,6 @@ class MailingController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
-
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -242,29 +237,55 @@ class MailingController extends Controller
                 ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
                 ->where('b.username = :username')
                 ->setParameter('username',$username)
-                ->getQuery();
+                ->getQuery()
+                ->getResult();
+            if(count($query)!=0){
+                $companyid=$query[0]['id'];
+                $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+            }
+
         }
         else
         {
-            $query = $em->createQueryBuilder()
-                ->select('a.companyid')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
+            $newcompanyid=$user->getCompanyid();
         }
-
-        $companyid=$query->getSingleScalarResult();
         $groupid = $request->request->get('groupid');
-
-        $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
         $entity = $em->getRepository('InitialShippingBundle:EmailGroup')->find($groupid);
-        $entity->setGroupstatus(0);
-        $em->flush();
-
-
+        $resMsg="";
+        if($entity->getGroupstatus()==0){
+            $entity->setGroupstatus(1);
+            $em->flush();
+            $resMsg="Group Active Sucessfully..";
+            $listofusergroup = $em->createQueryBuilder()
+                ->select('c.groupname','c.id','b.useremailid')
+                ->from('InitialShippingBundle:EmailGroup','c')
+                ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = c.id')
+                ->where('c.companyid = :companyid')
+                ->andwhere('c.groupstatus = :groupstatus')
+                ->groupby('c.groupname')
+                ->setParameter('companyid',$newcompanyid)
+                ->setParameter('groupstatus',0)
+                ->getQuery()
+                ->getResult();
+        }
+        else{
+            $entity->setGroupstatus(0);
+            $em->flush();
+            $resMsg="Group Archive Sucessfully..";
+            $listofusergroup = $em->createQueryBuilder()
+                ->select('c.groupname','c.id','b.useremailid')
+                ->from('InitialShippingBundle:EmailGroup','c')
+                ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = c.id')
+                ->where('c.companyid = :companyid')
+                ->andwhere('c.groupstatus = :groupstatus')
+                ->groupby('c.groupname')
+                ->setParameter('companyid',$newcompanyid)
+                ->setParameter('groupstatus',1)
+                ->getQuery()
+                ->getResult();
+        }
         $response = new JsonResponse();
-        $response->setData(array('archivemsg'=>"Group Archive Sucessfully.."));
+        $response->setData(array('archivemsg'=>$resMsg,'listofusergrop'=>$listofusergroup,'listofuserCount'=>count($listofusergroup)));
         return $response;
     }
     /**
@@ -323,9 +344,11 @@ class MailingController extends Controller
         }
 
         //Insertion Prcess Ends Here//
+        $listofgroups=$this->creatgroupAction($request,"getusergroup");
+
 
         $response = new JsonResponse();
-        $response->setData(array('savemsg'=>"Group Detail Saved"));
+        $response->setData(array('savemsg'=>"Group Detail Saved",'listofusergrop'=>$listofgroups['listofuser'],'listofuserCount'=>count($listofgroups['listofuser'])));
         return $response;
 
     }
@@ -343,7 +366,6 @@ class MailingController extends Controller
         $user = $this->getUser();
         $userId = $user->getId();
         $username = $user->getUsername();
-
         if($this->container->get('security.context')->isGranted('ROLE_ADMIN'))
         {
             $query = $em->createQueryBuilder()
@@ -352,19 +374,18 @@ class MailingController extends Controller
                 ->join('InitialShippingBundle:User','b', 'WITH', 'b.username = a.adminName')
                 ->where('b.username = :username')
                 ->setParameter('username',$username)
-                ->getQuery();
+                ->getQuery()
+                ->getResult();
+            if(count($query)!=0){
+                $companyid=$query[0]['id'];
+                $newcompanyid = $em->getRepository('InitialShippingBundle:CompanyDetails')->findOneBy(array('id'=>$companyid));
+            }
+
         }
         else
         {
-            $query = $em->createQueryBuilder()
-                ->select('a.companyid')
-                ->from('InitialShippingBundle:User','a')
-                ->where('a.id = :userId')
-                ->setParameter('userId',$userId)
-                ->getQuery();
+            $newcompanyid=$user->getCompanyid();
         }
-        $companyid=$query->getSingleScalarResult();
-
         $checkboxvalue = $request->request->get('checkboxvalue');
         if(count($checkboxvalue)==2)
         {
@@ -374,7 +395,7 @@ class MailingController extends Controller
                 ->join('InitialShippingBundle:EmailUsers','b', 'WITH', 'b.groupid = c.id')
                 ->where('c.companyid = :companyid')
                 ->groupby('c.groupname')
-                ->setParameter('companyid',$companyid)
+                ->setParameter('companyid',$newcompanyid)
                 ->getQuery()
                 ->getResult();
         }
@@ -387,7 +408,7 @@ class MailingController extends Controller
                 ->where('c.companyid = :companyid')
                 ->andwhere('c.groupstatus = :groupstatus')
                 ->groupby('c.groupname')
-                ->setParameter('companyid',$companyid)
+                ->setParameter('companyid',$newcompanyid)
                 ->setParameter('groupstatus',$checkboxvalue[0])
                 ->getQuery()
                 ->getResult();
