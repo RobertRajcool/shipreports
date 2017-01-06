@@ -431,17 +431,31 @@ class ArchivedReportController extends Controller
             $oneyear_montharray = array();
             $rankingKpiWeightarray = array();
             $scorecardElementRules = array();
+            $lastdayofYear='01-12-'.$year;
+            $lastMonthdateObject=new \DateTime($lastdayofYear);
+            $lastMonthdateObject->modify('last day of this month');
+            $statusFieldQuery = $em->createQueryBuilder()
+                ->select('b.dataofmonth,b.status')
+                ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                ->where('b.shipid = :shipId and b.status = :monthStatus')
+                ->andwhere('b.dataofmonth <= :activeDate')
+                ->setParameter('activeDate', $lastMonthdateObject)
+                ->setParameter('monthStatus', 4)
+                ->setParameter('shipId', $vesselId)
+                ->groupby('b.dataofmonth')
+                ->getQuery()
+                ->getResult();
             if ($year == ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
-                    array_push($oneyear_montharray, $month);
+                for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                    $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                    array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                 }
                 $currentyear = date('Y');
             }
             if ($year != ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
-                    array_push($oneyear_montharray, $month);
+                for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                    $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                    array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                 }
                 $currentyear = date($year);
             }
@@ -454,7 +468,7 @@ class ArchivedReportController extends Controller
                 ->getResult();
             $initial = 0;
             $statusVerified = 0;
-            $currentRequestYear = date('Y');
+          /*  $currentRequestYear = date('Y');
             if ($currentRequestYear == $year) {
                 $currentMonth = date('n');
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth - 1]);
@@ -507,7 +521,7 @@ class ArchivedReportController extends Controller
                         }
                     }
                 }
-            }
+            }*/
 
             $monthlyKpiValue = array();
             $newcategories = array();
@@ -519,7 +533,7 @@ class ArchivedReportController extends Controller
             $NewMonthlyAvgTotal = array();
             $vesseldata=array();
             $NewMonthColor = array();
-            for ($d = $initial; $d < $statusVerified; $d++) {
+            for ($d = 0; $d < count($oneyear_montharray); $d++) {
                 $time2 = strtotime($oneyear_montharray[$d]);
                 $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
@@ -730,7 +744,7 @@ class ArchivedReportController extends Controller
                 $New_Month_Avg_Total = array();
                 $New_Month_Element_Value = array();
                 $New_Month_Element_Color = array();
-                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < $statusVerified; $New_FindKpivalueCount++) {
+                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < count($oneyear_montharray); $New_FindKpivalueCount++) {
                     $New_Month_Avg_Total[$New_FindKpivalueCount] = $NewMonthlyAvgTotal[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Value[$New_FindKpivalueCount] = $NewMonthlyKPIValue[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Color[$New_FindKpivalueCount] = $NewMonthColor[$New_FindKpivalueCount][$rankingKpiId];
@@ -774,12 +788,11 @@ class ArchivedReportController extends Controller
                 $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
                 $mpdf->defaultheaderline = 0;
                 $mpdf->defaultheaderfontstyle = 'B';
-                $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+               /* $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
                 $mpdf->SetWatermarkImage($WateMarkImagePath);
-                $mpdf->showWatermarkImage = true;
-
+                $mpdf->showWatermarkImage = true;*/
                 $graphObject = array(
-                    'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
+                    'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=>1065),
                     'exporting' => array('enabled' => false),
                     'credits'=>array('enabled' => false),
                     'plotOptions' => array('series' => array(
@@ -828,9 +841,9 @@ class ArchivedReportController extends Controller
                     'avgscore' => $monthlyKpiAverageScore,
                     'ageofvessel' => $yearcount,
                     'kpimonthdata' => $monthlyKpiValue,
-                    'currentyear' => date('Y')
+                    'currentyear' => $year
                 ));
-                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
 
@@ -840,7 +853,7 @@ class ArchivedReportController extends Controller
                     $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                     if ($kpiName != 'Vessel age') {
                         $graphObject = array(
-                            'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                            'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=>1065),
                             'exporting' => array('enabled' => false),
                             'credits'=>array('enabled' => false),
                             'plotOptions' => array('series' => array(
@@ -861,7 +874,7 @@ class ArchivedReportController extends Controller
                     else
                     {
                         $graphObject = array(
-                            'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                            'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=>1065),
                             'exporting' => array('enabled' => false),
                             'credits'=>array('enabled' => false),
                             'plotOptions' => array('series' => array(
@@ -904,10 +917,10 @@ class ArchivedReportController extends Controller
                         'elementRule' => $scorecardElementRules,
                         'listofelement' => $ElementName_Weightage[$kpiid],
                         'countofelement' => count($ElementName_Weightage[$kpiid]),
-                        'currentyear' => date('Y')
+                        'currentyear' => $year
                     ));
 
-                    $mpdf->AddPage('', 4, '', 'on');
+                    $mpdf->AddPage('A4-L');
                     $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                     $mpdf->WriteHTML($customerListDesign);
                 }
