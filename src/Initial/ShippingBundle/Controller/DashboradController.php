@@ -3120,13 +3120,17 @@ class DashboradController extends Controller
             $lastdayofYear='01-12-'.$year;
             $lastMonthdateObject=new \DateTime($lastdayofYear);
             $lastMonthdateObject->modify('last day of this month');
+            $firstdayofYear='01-01-'.$year;
+            $fistMonthdateObject=new \DateTime($firstdayofYear);
+            $fistMonthdateObject->modify('last day of this month');
             $statusFieldQuery = $em->createQueryBuilder()
                 ->select('b.dataofmonth,b.status')
                 ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                ->where('b.shipid = :shipId and b.status = :monthStatus')
+                ->where('b.shipid = :shipId and b.status = 4')
                 ->andwhere('b.dataofmonth <= :activeDate')
+                ->andwhere('b.dataofmonth >= :startDate')
+                ->setParameter('startDate', $fistMonthdateObject)
                 ->setParameter('activeDate', $lastMonthdateObject)
-                ->setParameter('monthStatus', 4)
                 ->setParameter('shipId', $shipid)
                 ->groupby('b.dataofmonth')
                 ->getQuery()
