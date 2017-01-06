@@ -3535,7 +3535,7 @@ class DashboradController extends Controller
             //$mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
             $mpdf->showWatermarkImage = true;*/
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>220),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>230),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3609,7 +3609,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>330),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>325),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3630,7 +3630,7 @@ class DashboradController extends Controller
                 else
                 {
                     $graphObject = array(
-                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>400),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>420),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
