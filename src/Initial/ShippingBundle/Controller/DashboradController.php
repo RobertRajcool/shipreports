@@ -33,7 +33,6 @@ class DashboradController extends Controller
     public function indexAction(Request $request, $mode = '', $dataofmonth = '', $modeYear = 0)
     {
         $em = $this->getDoctrine()->getManager();
-        $userManager = $this->container->get('fos_user.user_manager');
         $user = $this->getUser();
         if ($user != null) {
             $userId = $user->getId();
@@ -141,7 +140,7 @@ class DashboradController extends Controller
                             ->groupby('b.dataofmonth')
                             ->getQuery()
                             ->getResult();
-                        if ($year == ' ') {
+                        /*if ($year == ' ') {
                             for ($m = 0; $m < count($statusFieldQuery); $m++) {
                                 $currentDate=$statusFieldQuery[$m]['dataofmonth'];
                                 array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
@@ -154,6 +153,10 @@ class DashboradController extends Controller
                                 array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                             }
                             $currentyear = date($year);
+                        }*/
+                        for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                            $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                            array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                         }
 /*
                         if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
@@ -363,8 +366,11 @@ class DashboradController extends Controller
                         if(count($oneyear_montharray) > 0 ) {
                             $overallShipDetailArray[$shipCount]['y'] = (array_sum($monthlyKpiAverageScore)/(count($oneyear_montharray)));
                         }
+                        else{
+                            $overallShipDetailArray[$shipCount]['y']=0;
+                        }
                         //$yearChange = $lastMonthDetail->format('Y');
-                        $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
+                        $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $year . '/listallkpiforship_ranking';
 
                     }
                     //This Ranking Dashboard Highcharts Starts Here//
