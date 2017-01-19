@@ -386,6 +386,11 @@ class DashboradController extends Controller
                     $ob->exporting->enabled(false);
                     //This Ranking Dashboard Highcharts Starts Here//
                 }
+                if ($mode == 'overallreports_ranking') {
+                    return array(
+                        'data' => $overallShipDetailArray
+                    );
+                }
 
                 if ($mode == 'overallreports_ranking') {
                     return array(
@@ -717,11 +722,11 @@ class DashboradController extends Controller
     /**
      * Ajax Call For change of monthdata of Rankinng Chart
      *
-     * @Route("/{dataofmonth}/monthchangeofrankingkpi", name="monthchangeofrankingkpi")
+     * @Route("/monthchangeofrankingkpi", name="monthchangeofrankingkpi")
      */
-    public function monthchangeofrankingkpiAction(Request $request, $dataofmonth)
+    public function monthchangeofrankingkpiAction(Request $request)
     {
-        $chartobject = $this->indexAction($request, 'getnextmonthchart', $dataofmonth);
+        $chartobject = $this->indexAction($request, 'getnextmonthchart');
         $response = new JsonResponse();
 
         $response->setData(array('changechartdata' => $chartobject['data']));
