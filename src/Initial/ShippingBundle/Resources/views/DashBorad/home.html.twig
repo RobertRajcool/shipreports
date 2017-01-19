@@ -139,7 +139,7 @@
                         $.ajax({
                             success: function (data) {
                                 areaId.highcharts().series[0].setData(data.changechartdata);
-                                areaId.highcharts().series[0].update({name: month + '-' + year});
+                                areaId.highcharts().series[0].update({name: year});
                                 $('#currentid').text(month + '-' + year);
                                 $('#dataofmonth').val(currentdate)
                                 $('#resultLoading .bg').height('100%');
@@ -181,7 +181,7 @@
                             $.ajax({
                                 success: function (data) {
                                     areaId.highcharts().series[0].setData(data.changechartdata);
-                                    areaId.highcharts().series[0].update({name: month + '-' + year});
+                                    areaId.highcharts().series[0].update({name:  year});
                                     $('#currentid').text(month + '-' + year)
                                     $('#dataofmonth').val(currentdate)
                                 },
