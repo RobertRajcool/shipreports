@@ -60,8 +60,7 @@ class DashboradController extends Controller
                 $listAllShipForCompany = $query->getResult();
                 if ($modeYear == 0) {
                     if ($dataofmonth == '') {
-                        $monthInString = '01-May-2016';
-                        $lastMonthDetail = new \DateTime($monthInString);
+                        $lastMonthDetail = new \DateTime();
                         $lastMonthDetail->modify('last day of this month');
                     }
                     if ($dataofmonth != '') {
@@ -106,6 +105,18 @@ class DashboradController extends Controller
                             ->where('b.shipid = :shipId and b.dataofmonth = :monthDetail')
                             ->setParameter('shipId', $rankingShipId)
                             ->setParameter('monthDetail', $new_monthdetail_date)
+                            ->getQuery()
+                            ->getResult();
+                        $statusFieldQuery = $em->createQueryBuilder()
+                            ->select('b.dataofmonth,b.status')
+                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                            ->where('b.shipid = :shipId and b.status = 4')
+                            ->andwhere('b.dataofmonth <= :activeDate')
+                            ->andwhere('b.dataofmonth >= :startDate')
+                            ->setParameter('startDate', $fistMonthdateObject)
+                            ->setParameter('activeDate', $lastMonthdateObject)
+                            ->setParameter('shipId', $shipid)
+                            ->groupby('b.dataofmonth')
                             ->getQuery()
                             ->getResult();
 
