@@ -386,7 +386,7 @@ class DashboradController extends Controller
                     $ob->exporting->enabled(false);
                     //This Ranking Dashboard Highcharts Starts Here//
                 }
-                if ($mode == 'overallreports_ranking') {
+                if ($mode == 'getnextmonthchart') {
                     return array(
                         'data' => $overallShipDetailArray
                     );
@@ -728,7 +728,6 @@ class DashboradController extends Controller
     {
         $chartobject = $this->indexAction($request, 'getnextmonthchart');
         $response = new JsonResponse();
-
         $response->setData(array('changechartdata' => $chartobject['data']));
         return $response;
 
