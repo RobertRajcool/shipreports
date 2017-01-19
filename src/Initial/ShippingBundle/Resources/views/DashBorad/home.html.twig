@@ -116,7 +116,7 @@
                     $('#proviousmonth').click(function ($e) {
                         $e.preventDefault();
                         var currentdate = new Date($('#dataofmonth').val());
-                        currentdate.setMonth(currentdate.getMonth() - 1);
+                        currentdate.setFullYear(currentdate.getFullYear() - 1);
                         currentdate, locale = "en-us",
                                 month = currentdate.toLocaleString(locale, {month: "long"}),
                                 year = currentdate.getFullYear();
@@ -158,7 +158,7 @@
                         $e.preventDefault();
                         var currentdate = new Date($('#dataofmonth').val());
                         var nowdate = new Date();
-                        currentdate.setMonth(currentdate.getMonth() + 1);
+                        currentdate.setFullYear(currentdate.getFullYear() + 1);
                         currentdate, locale = "en-us",
                                 month = currentdate.toLocaleString(locale, {month: "long"}),
                                 year = currentdate.getFullYear();
