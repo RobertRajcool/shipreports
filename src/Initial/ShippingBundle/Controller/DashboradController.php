@@ -107,7 +107,7 @@ class DashboradController extends Controller
                             ->setParameter('monthDetail', $new_monthdetail_date)
                             ->getQuery()
                             ->getResult();
-                        $statusFieldQuery = $em->createQueryBuilder()
+                        /*$statusFieldQuery = $em->createQueryBuilder()
                             ->select('b.dataofmonth,b.status')
                             ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
                             ->where('b.shipid = :shipId and b.status = 4')
@@ -118,7 +118,7 @@ class DashboradController extends Controller
                             ->setParameter('shipId', $shipid)
                             ->groupby('b.dataofmonth')
                             ->getQuery()
-                            ->getResult();
+                            ->getResult();*/
 
                         if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
                         {
