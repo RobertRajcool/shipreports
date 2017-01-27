@@ -1684,6 +1684,16 @@ class DataVerficationController extends Controller
                                     ->setParameter('dataofmonth', $new_date)
                                     ->getQuery()
                                     ->getResult();
+                            } else {
+                                $query = $em->createQueryBuilder()
+                                    ->select('b.value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                    ->where('b.shipDetailsId = :shipdetailsid')
+                                    ->andWhere('b.monthdetail =:dataofmonth')
+                                    ->setParameter('shipdetailsid', $shipid)
+                                    ->setParameter('dataofmonth', $new_date)
+                                    ->getQuery()
+                                    ->getResult();
                             }
                         } else {
                             $query = $em->createQueryBuilder()
