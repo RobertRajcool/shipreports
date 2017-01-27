@@ -1436,6 +1436,8 @@
                                             $('#addkpiformid').text('All vessels data saved !');
                                             $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                         }
+                                    } else if(role == 'ROLE_ADMIN') {
+                                        $('#addkpiformid').text('All vessels data uploaded from Admin !');
                                     }
                                 }
 

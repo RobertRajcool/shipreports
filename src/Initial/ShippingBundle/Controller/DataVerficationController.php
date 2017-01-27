@@ -833,16 +833,16 @@ class DataVerficationController extends Controller
                         $local_status = 3;
                     }
 
+                    $TotalShipsInserted = $em->createQueryBuilder()
+                        ->select('a.shipid')
+                        ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
+                        ->where('a.dataofmonth = :dateOfMonth and a.status=:statusValue')
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->setParameter('statusValue', $local_status)
+                        ->getQuery()
+                        ->getResult();
 
                     if(!$pre_rejections[0]['rejectionsStatus']) {
-                        $TotalShipsInserted = $em->createQueryBuilder()
-                            ->select('a.shipid')
-                            ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
-                            ->where('a.dataofmonth = :dateOfMonth and a.status=:statusValue')
-                            ->setParameter('dateOfMonth', $new_date)
-                            ->setParameter('statusValue', $local_status)
-                            ->getQuery()
-                            ->getResult();
                         if (count($TotalShipsInserted) != 0) {
                             $updated_ship_id_array = explode(',',$TotalShipsInserted[0]['shipid']);
                             $shipids = array();
@@ -855,6 +855,23 @@ class DataVerficationController extends Controller
                             $shipids = implode(',', $shipids);
                         } else {
                             $shipids = $shipid;
+                        }
+                        $newlookupstatus->setShipid($shipids);
+                    } else {
+                        if (count($TotalShipsInserted) != 0) {
+                            $updated_ship_id_array = explode(',',$TotalShipsInserted[0]['shipid']);
+                            $shipids = array();
+                            for ($findshipidcount = 0; $findshipidcount < count($updated_ship_id_array); $findshipidcount++) {
+                                array_push($shipids, $updated_ship_id_array[$findshipidcount]);
+                            }
+                            $temp = json_decode($pre_rejections[0]['rejections']);
+                            $temp = json_decode($pre_rejections[0]['rejections'], true);
+                            if (!in_array($shipid, $shipids)) {
+                                if(!in_array($shipid, $temp)) {
+                                    array_push($shipids, $shipid);
+                                }
+                            }
+                            $shipids = implode(',', $shipids);
                         }
                         $newlookupstatus->setShipid($shipids);
                     }
@@ -888,7 +905,7 @@ class DataVerficationController extends Controller
                     $local_status = 2;
 
                     if (count($pre_rejections) > 0) {
-                        if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null" && $pre_rejections[0]['rejectionsStatus']) {
+                        if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                             $temp = json_decode($pre_rejections[0]['rejections']);
                             $temp = json_decode($pre_rejections[0]['rejections'], true);
                             if (array_key_exists($shipid, $temp)) {
@@ -1497,14 +1514,51 @@ class DataVerficationController extends Controller
                     } else {
                         $data_view = 'summary-view';
                     }
-//                    $data_view = 'editable-view';
-                    foreach ($shipDetails as $ship_list) {
+
+                    if(count($rejections)>0) {
+                        if($rejections!=null && $rejections!='null') {
+                            foreach ($shipDetails as $ship_list) {
+                                if(array_key_exists($ship_list['id'], $rejections)) {
+                                    $nextshipid = $ship_list['id'];
+                                    $nextshipname = $ship_list['shipName'];
+
+                                    $next_month_values = $em->createQueryBuilder()
+                                        ->select('b.value')
+                                        ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                        ->where('b.shipDetailsId = :shipdetailsid')
+                                        ->andWhere('b.monthdetail =:dataofmonth')
+                                        ->setParameter('shipdetailsid', $nextshipid)
+                                        ->setParameter('dataofmonth', $new_date)
+                                        ->getQuery()
+                                        ->getResult();
+                                    $element_values_array[0] = array();
+                                    foreach($next_month_values as $values) {
+                                        array_push($element_values_array[0], $values['value']);
+                                    }
+
+                                    break;
+
+                                }
+                            }
+                        }
+                    } else {
+                        foreach ($shipDetails as $ship_list) {
+                            if (!in_array($ship_list['id'], $updated_vessels)) {
+                                $nextshipid = $ship_list['id'];
+                                $nextshipname = $ship_list['shipName'];
+                                break;
+                            }
+                        }
+                    }
+
+                    /*foreach ($shipDetails as $ship_list) {
                         if (!in_array($ship_list['id'], $updated_vessels)) {
                             $nextshipid = $ship_list['id'];
                             $nextshipname = $ship_list['shipName'];
                             break;
                         }
-                    }
+                    }*/
+
                     if(count($updated_vessels)>0 && count($rejections)>0 && $rejections != 'null') {
                         foreach ($shipDetails as $vessel) {
                             if(in_array($vessel['id'], $updated_vessels)) {
@@ -1528,6 +1582,7 @@ class DataVerficationController extends Controller
                 foreach ($shipDetails as $vessel) {
                     array_push($ship_status_array, 0);
                 }
+
                 foreach ($shipDetails as $ship_list) {
                     if (!in_array($ship_list['id'], $updated_vessels)) {
                         $nextshipid = $ship_list['id'];
