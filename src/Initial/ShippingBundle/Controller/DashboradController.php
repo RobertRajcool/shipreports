@@ -33,7 +33,6 @@ class DashboradController extends Controller
     public function indexAction(Request $request, $mode = '', $dataofmonth = '', $modeYear = 0)
     {
         $em = $this->getDoctrine()->getManager();
-        $userManager = $this->container->get('fos_user.user_manager');
         $user = $this->getUser();
         if ($user != null) {
             $userId = $user->getId();
@@ -60,8 +59,7 @@ class DashboradController extends Controller
                 $listAllShipForCompany = $query->getResult();
                 if ($modeYear == 0) {
                     if ($dataofmonth == '') {
-                        $monthInString = '01-May-2016';
-                        $lastMonthDetail = new \DateTime($monthInString);
+                        $lastMonthDetail = new \DateTime();
                         $lastMonthDetail->modify('last day of this month');
                     }
                     if ($dataofmonth != '') {
@@ -99,6 +97,7 @@ class DashboradController extends Controller
                         }
                         $new_monthdetail_date = new \DateTime($currentMonth);
                         $new_monthdetail_date->modify('last day of this month');
+                        /*
                         $currentyear=date_format($new_monthdetail_date, 'Y');
                         $monthlyShipDataStatus = $em->createQueryBuilder()
                             ->select('b.status')
@@ -108,7 +107,58 @@ class DashboradController extends Controller
                             ->setParameter('monthDetail', $new_monthdetail_date)
                             ->getQuery()
                             ->getResult();
-
+                        $statusFieldQuery = $em->createQueryBuilder()
+                            ->select('b.dataofmonth,b.status')
+                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                            ->where('b.shipid = :shipId and b.status = 4')
+                            ->andwhere('b.dataofmonth <= :activeDate')
+                            ->andwhere('b.dataofmonth >= :startDate')
+                            ->setParameter('startDate', $fistMonthdateObject)
+                            ->setParameter('activeDate', $lastMonthdateObject)
+                            ->setParameter('shipId', $shipid)
+                            ->groupby('b.dataofmonth')
+                            ->getQuery()
+                            ->getResult();*/
+                        $year = $request->request->get('year');
+                        if($year==null){
+                            $year=date('Y');
+                        }
+                        $lastdayofYear='01-12-'.$year;
+                        $lastMonthdateObject=new \DateTime($lastdayofYear);
+                        $lastMonthdateObject->modify('last day of this month');
+                        $firstdayofYear='01-01-'.$year;
+                        $fistMonthdateObject=new \DateTime($firstdayofYear);
+                        $fistMonthdateObject->modify('last day of this month');
+                        $statusFieldQuery = $em->createQueryBuilder()
+                            ->select('b.dataofmonth,b.status')
+                            ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
+                            ->where('b.status = 4')
+                            ->andwhere('b.dataofmonth <= :activeDate')
+                            ->andwhere('b.dataofmonth >= :startDate')
+                            ->setParameter('startDate', $fistMonthdateObject)
+                            ->setParameter('activeDate', $lastMonthdateObject)
+                            ->groupby('b.dataofmonth')
+                            ->getQuery()
+                            ->getResult();
+                        /*if ($year == ' ') {
+                            for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                                $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                                array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
+                            }
+                            $currentyear = date('Y');
+                        }
+                        if ($year != ' ') {
+                            for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                                $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                                array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
+                            }
+                            $currentyear = date($year);
+                        }*/
+                        for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                            $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                            array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
+                        }
+/*
                         if (count($monthlyShipDataStatus) != 0 && $monthlyShipDataStatus[0]['status'] == 4)
                         {
                             $currentMonthinter = date('n');
@@ -120,13 +170,7 @@ class DashboradController extends Controller
                             }
                         }
                         else
-                        {/*
-                $currentMonthinter = date('n');
-                $limit=(int)$currentMonthinter;
-                for ($m = 1; $m <=$limit; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($currentyear)));
-                    array_push($oneyear_montharray, $month);
-                }*/
+                        {
                             $statusFieldQuery = $em->createQueryBuilder()
                                 ->select('b.dataofmonth,b.status')
                                 ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
@@ -146,7 +190,7 @@ class DashboradController extends Controller
                             }
 
 
-                        }
+                        }*/
                         $rankingKpiList = $em->createQueryBuilder()
                             ->select('b.kpiName', 'b.id', 'b.weightage')
                             ->from('InitialShippingBundle:RankingKpiDetails', 'b')
@@ -322,8 +366,11 @@ class DashboradController extends Controller
                         if(count($oneyear_montharray) > 0 ) {
                             $overallShipDetailArray[$shipCount]['y'] = (array_sum($monthlyKpiAverageScore)/(count($oneyear_montharray)));
                         }
+                        else{
+                            $overallShipDetailArray[$shipCount]['y']=0;
+                        }
                         //$yearChange = $lastMonthDetail->format('Y');
-                        $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $yearChange . '/listallkpiforship_ranking';
+                        $overallShipDetailArray[$shipCount]['url'] = '/dashboard/' . $rankingShipId . '/' . $year . '/listallkpiforship_ranking';
 
                     }
                     //This Ranking Dashboard Highcharts Starts Here//
@@ -344,6 +391,11 @@ class DashboradController extends Controller
                     $ob->series(array(array('showInLegend' => false, 'colorByPoint' => true, 'name' => $yearChange, 'color' => 'rgb(124, 181, 236)', "data" => $overallShipDetailArray)));
                     $ob->exporting->enabled(false);
                     //This Ranking Dashboard Highcharts Starts Here//
+                }
+                if ($mode == 'getnextmonthchart') {
+                    return array(
+                        'data' => $overallShipDetailArray
+                    );
                 }
 
                 if ($mode == 'overallreports_ranking') {
@@ -676,13 +728,12 @@ class DashboradController extends Controller
     /**
      * Ajax Call For change of monthdata of Rankinng Chart
      *
-     * @Route("/{dataofmonth}/monthchangeofrankingkpi", name="monthchangeofrankingkpi")
+     * @Route("/monthchangeofrankingkpi", name="monthchangeofrankingkpi")
      */
-    public function monthchangeofrankingkpiAction(Request $request, $dataofmonth)
+    public function monthchangeofrankingkpiAction(Request $request)
     {
-        $chartobject = $this->indexAction($request, 'getnextmonthchart', $dataofmonth);
+        $chartobject = $this->indexAction($request, 'getnextmonthchart');
         $response = new JsonResponse();
-
         $response->setData(array('changechartdata' => $chartobject['data']));
         return $response;
 
@@ -835,7 +886,6 @@ class DashboradController extends Controller
                 $findingcolorarray = array();
 
                 for ($element = 0; $element < count($listallkpi); $element++) {
-
                     $kpiidvalue = $listallkpi[$element]['id'];
                     $kpiweightage = $listallkpi[$element]['weightage'];
                     $kpiname = $listallkpi[$element]['kpiName'];
@@ -3118,26 +3168,35 @@ class DashboradController extends Controller
             $oneyear_montharray = array();
             $rankingKpiWeightarray = array();
             $scorecardElementRules = array();
+            $lastdayofYear='01-12-'.$year;
+            $lastMonthdateObject=new \DateTime($lastdayofYear);
+            $lastMonthdateObject->modify('last day of this month');
+            $firstdayofYear='01-01-'.$year;
+            $fistMonthdateObject=new \DateTime($firstdayofYear);
+            $fistMonthdateObject->modify('last day of this month');
             $statusFieldQuery = $em->createQueryBuilder()
                 ->select('b.dataofmonth,b.status')
                 ->from('InitialShippingBundle:Ranking_LookupStatus', 'b')
-                ->where('b.shipid = :shipId and b.status = :monthStatus')
-                ->setParameter('monthStatus', 4)
+                ->where('b.shipid = :shipId and b.status = 4')
+                ->andwhere('b.dataofmonth <= :activeDate')
+                ->andwhere('b.dataofmonth >= :startDate')
+                ->setParameter('startDate', $fistMonthdateObject)
+                ->setParameter('activeDate', $lastMonthdateObject)
                 ->setParameter('shipId', $shipid)
                 ->groupby('b.dataofmonth')
                 ->getQuery()
                 ->getResult();
             if ($year == ' ') {
-                for ($m = 1; $m <= count($statusFieldQuery); $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date('Y')));
-                    array_push($oneyear_montharray, $month);
+                for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                    $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                    array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                 }
                 $currentyear = date('Y');
             }
             if ($year != ' ') {
-                for ($m = 1; $m <= 12; $m++) {
-                    $month = date('Y-m-d', mktime(0, 0, 0, $m, 1, date($year)));
-                    array_push($oneyear_montharray, $month);
+                for ($m = 0; $m < count($statusFieldQuery); $m++) {
+                    $currentDate=$statusFieldQuery[$m]['dataofmonth'];
+                    array_push($oneyear_montharray, $currentDate->format('Y-m-d'));
                 }
                 $currentyear = date($year);
             }
@@ -3151,7 +3210,7 @@ class DashboradController extends Controller
             $initial = 0;
             $statusVerified = 0;
             $currentRequestYear = date('Y');
-            if ($currentRequestYear == $year) {
+     /*       if ($currentRequestYear == $year) {
                 $currentMonth = date('n');
                 $new_monthdetail_date = new \DateTime($oneyear_montharray[$currentMonth - 1]);
                 $new_monthdetail_date->modify('last day of this month');
@@ -3205,7 +3264,7 @@ class DashboradController extends Controller
                         }
                     }
                 }
-            }
+            }*/
 
             $monthlyKpiValue = array();
             $newcategories = array();
@@ -3217,7 +3276,7 @@ class DashboradController extends Controller
             $NewMonthlyAvgTotal = array();
             $vesseldata=array();
             $NewMonthColor = array();
-            for ($d = $initial; $d < $statusVerified; $d++) {
+            for ($d = 0; $d < count($oneyear_montharray); $d++) {
                 $time2 = strtotime($oneyear_montharray[$d]);
                 $monthinletter = date('M', $time2);
                 array_push($newcategories, $monthinletter);
@@ -3309,7 +3368,6 @@ class DashboradController extends Controller
                             } else if ($elementResultColor == 'Red') {
                                 $elementColorValue = 0;
                             }
-
                             array_push($scorecardElementRules, $rankingElementRulesArray);
                             array_push($scorecardElementValueArray, (($rankingElementResult[0]['elementdata'])*$rankingKpiWeight)/100);
                             $elementValueWithWeight = $elementColorValue;
@@ -3430,7 +3488,7 @@ class DashboradController extends Controller
                 $New_Month_Avg_Total = array();
                 $New_Month_Element_Value = array();
                 $New_Month_Element_Color = array();
-                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < $statusVerified; $New_FindKpivalueCount++) {
+                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < count($oneyear_montharray); $New_FindKpivalueCount++) {
                     $New_Month_Avg_Total[$New_FindKpivalueCount] = $NewMonthlyAvgTotal[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Value[$New_FindKpivalueCount] = $NewMonthlyKPIValue[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Color[$New_FindKpivalueCount] = $NewMonthColor[$New_FindKpivalueCount][$rankingKpiId];
@@ -3453,7 +3511,6 @@ class DashboradController extends Controller
                 $diff = $d2->diff($d1);
                 $yearcount = $diff->y + 1;
             }
-
             if ($sendReport == 'sendReport') {
                 return array(
                     'listofkpi' => $rankingKpiList,
@@ -3528,12 +3585,12 @@ class DashboradController extends Controller
             $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
-            $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
-            $mpdf->SetWatermarkImage($WateMarkImagePath);
+            /*//$WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
+           // $mpdf->SetWatermarkImage($WateMarkImagePath);
             //$mpdf->SetProtection(array('print', 'copy'), 'robert', 'Star123');
-            $mpdf->showWatermarkImage = true;
+            $mpdf->showWatermarkImage = true;*/
             $graphObject = array(
-                'chart' => array('plotBackgroundImage'=>$WateMarkImagePath,'renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>230),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3562,8 +3619,8 @@ class DashboradController extends Controller
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
 
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
-            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
-            $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
+            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
+            $ImageGeneration = 'phantomjs  ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
             /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
@@ -3586,7 +3643,7 @@ class DashboradController extends Controller
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
                 'userName' => '',
-                'date' => date('Y-m-d'),
+                'date' => $reportObject['currentyear'],
                 'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
                 'listofkpi' => $reportObject['listofkpi'],
                 'kpiweightage' => $reportObject['kpiweightage'],
@@ -3596,9 +3653,9 @@ class DashboradController extends Controller
                 'avgscore' => $reportObject['avgscore'],
                 'ageofvessel' => $reportObject['ageofvessel'],
                 'kpimonthdata' => $reportObject['kpimonthdata'],
-                'currentyear' => date('Y')
+                'currentyear' =>$reportObject['currentyear']
             ));
-            $mpdf->AddPage('', 4, '', 'on');
+            $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
             for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
@@ -3607,7 +3664,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>325),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3628,7 +3685,7 @@ class DashboradController extends Controller
                 else
                 {
                     $graphObject = array(
-                        'chart' => array('plotBackgroundImage' => $WateMarkImagePath, 'renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array( 'renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>420),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3651,11 +3708,10 @@ class DashboradController extends Controller
                 file_put_contents($pdffilenamefullpath, $jsondata);
                 $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
                 $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid.'_'.$currentdateitme. '.png';
-                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
                 $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
-
                 $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
                     'kpiid' => $kpiid,
                     'screenName' => 'Ranking Report',
@@ -3671,10 +3727,10 @@ class DashboradController extends Controller
                     'elementRule' => $reportObject['elementRule'],
                     'listofelement' => $reportObject['listofelement'][$kpiid],
                     'countofelement' => count($reportObject['listofelement'][$kpiid]),
-                    'currentyear' => date('Y')
+                    'currentyear' => $reportObject['currentyear']
                 ));
 
-                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
             }
@@ -3711,11 +3767,8 @@ class DashboradController extends Controller
             $mpdf = $this->container->get('tfox.mpdfport')->getMPdf();
             $mpdf->defaultheaderline = 0;
             $mpdf->defaultheaderfontstyle = 'B';
-            $WateMarkImagePath = $this->container->getParameter('kernel.root_dir') . '/../web/images/pioneer_logo_02.png';
-            $mpdf->SetWatermarkImage($WateMarkImagePath);
-            $mpdf->showWatermarkImage = true;
             $graphObject = array(
-                'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>230),
                 'exporting' => array('enabled' => false),
                 'credits'=>array('enabled' => false),
                 'plotOptions' => array('series' => array(
@@ -3743,7 +3796,7 @@ class DashboradController extends Controller
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
-            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+            $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
@@ -3751,7 +3804,7 @@ class DashboradController extends Controller
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
                 'userName' => '',
-                'date' => date('Y-m-d'),
+                'date' => $reportObject['currentyear'],
                 'link' => 'shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png',
                 'listofkpi' => $reportObject['listofkpi'],
                 'kpiweightage' => $reportObject['kpiweightage'],
@@ -3761,9 +3814,9 @@ class DashboradController extends Controller
                 'avgscore' => $reportObject['avgscore'],
                 'ageofvessel' => $reportObject['ageofvessel'],
                 'kpimonthdata' => $reportObject['kpimonthdata'],
-                'currentyear' => date('Y')
+                'currentyear' => $reportObject['currentyear']
             ));
-            $mpdf->AddPage('', 4, '', 'on');
+            $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
             for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
@@ -3772,7 +3825,7 @@ class DashboradController extends Controller
                 $weightage = $rankingKpiList[$KpiPdfcount]['weightage'];
                 if ($kpiName != 'Vessel age') {
                     $graphObject = array(
-                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065,'height'=>325),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3793,7 +3846,7 @@ class DashboradController extends Controller
                 else
                 {
                     $graphObject = array(
-                        'chart' => array('renderTo' => 'areaId', 'type' => "line"),
+                        'chart' => array('renderTo' => 'areaId', 'type' => "line",'width'=> 1065),
                         'exporting' => array('enabled' => false),
                         'credits'=>array('enabled' => false),
                         'plotOptions' => array('series' => array(
@@ -3816,7 +3869,7 @@ class DashboradController extends Controller
                 file_put_contents($pdffilenamefullpath, $jsondata);
                 $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
                 $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid .'_'.$currentdateitme. '.png';
-                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid .'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+                $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid .'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
                 $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
                 $handle = popen($ImageGeneration, 'r');
                 $charamee = fread($handle, 2096);
@@ -3836,10 +3889,10 @@ class DashboradController extends Controller
                     'elementRule' => $reportObject['elementRule'],
                     'listofelement' => $reportObject['listofelement'][$kpiid],
                     'countofelement' => count($reportObject['listofelement'][$kpiid]),
-                    'currentyear' => date('Y')
+                    'currentyear' => $reportObject['currentyear']
                 ));
 
-                $mpdf->AddPage('', 4, '', 'on');
+                $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
             }
@@ -4180,7 +4233,7 @@ class DashboradController extends Controller
             file_put_contents($pdffilenamefullpath, $jsondata);
             $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship_'.$currentdateitme.'.png';
-            $JsonFileDirectroy = $pdffilenamefullpath . ' -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+            $JsonFileDirectroy = $pdffilenamefullpath . ' -outfile ' . $outfile . ' -scale 2.5 -width 2065';
             $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
             $charamee = fread($handle, 2096);
@@ -4245,7 +4298,7 @@ class DashboradController extends Controller
         file_put_contents($pdffilenamefullpath, $jsondata);
         $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
         $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/overall_ship_'.$currentdateitme.'.png';
-        $JsonFileDirectroy = $pdffilenamefullpath . ' -outfile ' . $outfile . ' -scale 2.5 -width 1065';
+        $JsonFileDirectroy = $pdffilenamefullpath . ' -outfile ' . $outfile . ' -scale 2.5 -width 2065';
         $ImageGeneration = 'phantomjs ' . $Highchartconvertjs . $JsonFileDirectroy;
         $handle = popen($ImageGeneration, 'r');
         $charamee = fread($handle, 2096);

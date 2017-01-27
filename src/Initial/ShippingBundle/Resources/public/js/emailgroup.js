@@ -24,8 +24,22 @@ $(document).ready(function()
             $('#savegroupid').show();
             $('#registercontentid').show();
 
-        }
-    );
+        });
+    $('#cancelbuttonId').click(function($e)
+    {
+        $e.preventDefault();
+        $('#nogroupselected').hide();
+        $('#addgroupidhtml').val('');
+        $('#emailid').val('');
+        $('#tabledata').html('');
+        $('#inputforemailid').text('');
+        $('#tabledata').text('');
+        $('#viewcontentid').hide();
+        $('#updatebuttonid').hide();
+        $('#savegroupid').show();
+        $('#registercontentid').show();
+
+    });
 //Script For Add email group
     $('#addemailid').click(function($e)
         {
@@ -95,15 +109,20 @@ $(document).ready(function()
             }
             if(gname!="" && numItems>0)
             {
-
-
                 $.ajax({
                     type: "post",
                     data: form.serialize(),
                     url: Routing.generate('emailgroup'),
                     success: function(data)
                     {
-                        $('#registercontentid').hide();
+                        $('#registercontentid').show();
+                        $('#smalltest').text((data.listofuserCount));
+                        $('#listgroupcontent').html('');
+                        $.each(data.listofusergrop, function (indexvalue) {
+                            $('<div title="'+data.listofusergrop[indexvalue]['groupname']+'" style="cursor: pointer" class="users_list_grid"> <span class="user_image"><img src="/images/new_icon.png">' +
+                                '</span> <span  class="users_name_row"> <span  id="userlistid_'+data.listofusergrop[indexvalue]['id']+'" class="name">'+data.listofusergrop[indexvalue]['groupname']+'</span><span class="text">&nbsp;</span>' +
+                                '</span></div>').appendTo('#listgroupcontent');
+                        });
                         $('#viewcontentid').hide();
                         $('#viewtabledata').text('');
                         $('#tabledata').text('');
@@ -140,9 +159,10 @@ $(document).ready(function()
             $.ajax({
                 type: "post",
                 data: datavalue,
-                url: "/mailing/ajaxviewemailgroup",
+                url: Routing.generate('ajaxviewemailgroup'),
                 success: function(data)
                 {
+
                     $('#viewtabledata').text('');
                     $('#tabledata').text('');
                     $('#groupname').text('');
@@ -157,6 +177,13 @@ $(document).ready(function()
 
                     $.each(data.groupofemailid, function(i, groupemailid)
                     {
+                        var groupStatus=data.groupofemailid[0]['groupstatus'];
+                        if(groupStatus==0){
+                            $('#archivebuttonid').text('Active');
+                        }
+                        else {
+                            $('#archivebuttonid').text('Archive');
+                        }
                         var tablerowcount=$("#viewmailtable > tbody > tr").length;
                         $('<tr><td>'+groupemailid.useremailid+'</td></tr>').appendTo('#viewtabledata');
 
@@ -220,7 +247,7 @@ $(document).ready(function()
                     data: form.serialize(),
                     url: "/mailing/updatemailgroup",
                     success: function (data) {
-                        $('#registercontentid').hide();
+                        $('#registercontentid').show();
                         $('#viewcontentid').hide();
                         $('#viewtabledata').text('');
                         $('#tabledata').text('');
@@ -249,9 +276,16 @@ $(document).ready(function()
             $.ajax({
                 type: "post",
                 data: sendingdata,
-                url: "/mailing/archivegroup",
+                url:  Routing.generate('archivegroup'),
                 success: function (data) {
-                    $('#registercontentid').hide();
+                    $('#registercontentid').show();
+                    $('#smalltest').text((data.listofuserCount));
+                    $('#listgroupcontent').html('');
+                    $.each(data.listofusergrop, function (indexvalue) {
+                        $('<div title="'+data.listofusergrop[indexvalue]['groupname']+'" style="cursor: pointer" class="users_list_grid"> <span class="user_image"><img src="/images/new_icon.png">' +
+                            '</span> <span  class="users_name_row"> <span  id="userlistid_'+data.listofusergrop[indexvalue]['id']+'" class="name">'+data.listofusergrop[indexvalue]['groupname']+'</span><span class="text">&nbsp;</span>' +
+                            '</span></div>').appendTo('#listgroupcontent');
+                    });
                     $('#viewcontentid').hide();
                     $('#viewtabledata').text('');
                     $('#tabledata').text('');

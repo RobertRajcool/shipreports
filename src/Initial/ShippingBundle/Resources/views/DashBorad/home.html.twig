@@ -75,9 +75,9 @@
                         }
                     },
                     plotOptions: {
-                        candlestick: {
+                        /*candlestick: {
                             lineColor: '#404048'
-                        }
+                        }*/
                     },
 
 
@@ -113,18 +113,22 @@
 
 
                     var areaId = $('#area');
-                    $('#proviousmonth1').click(function ($e) {
+                    $('#proviousmonth').click(function ($e) {
                         $e.preventDefault();
                         var currentdate = new Date($('#dataofmonth').val());
-                        currentdate.setMonth(currentdate.getMonth() - 1);
+                        currentdate.setFullYear(currentdate.getFullYear() - 1);
                         currentdate, locale = "en-us",
                                 month = currentdate.toLocaleString(locale, {month: "long"}),
                                 year = currentdate.getFullYear();
+                        var data = {
+                            year: year
+                        };
 
                         $.ajaxSetup({
                             global: false,
                             type: "post",
-                            'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth': month + '-' + year}),
+                            data:data,
+                            'url': Routing.generate('monthchangeofrankingkpi'),
                             beforeSend: function () {
                                 var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                             },
@@ -135,8 +139,8 @@
                         $.ajax({
                             success: function (data) {
                                 areaId.highcharts().series[0].setData(data.changechartdata);
-                                areaId.highcharts().series[0].update({name: month + '-' + year});
-                                $('#currentid').text(month + '-' + year);
+                                areaId.highcharts().series[0].update({name: year});
+                                $('#currentid').text(year);
                                 $('#dataofmonth').val(currentdate)
                                 $('#resultLoading .bg').height('100%');
                                 $('#resultLoading').fadeOut(300);
@@ -150,19 +154,23 @@
                         });
                     });
 
-                    $('#nextmonth1').click(function ($e) {
+                    $('#nextmonth').click(function ($e) {
                         $e.preventDefault();
                         var currentdate = new Date($('#dataofmonth').val());
                         var nowdate = new Date();
-                        currentdate.setMonth(currentdate.getMonth() + 1);
+                        currentdate.setFullYear(currentdate.getFullYear() + 1);
                         currentdate, locale = "en-us",
                                 month = currentdate.toLocaleString(locale, {month: "long"}),
                                 year = currentdate.getFullYear();
                         if (currentdate <= nowdate) {
+                            var data = {
+                                year: year
+                            };
                             $.ajaxSetup({
                                 global: false,
                                 type: "post",
-                                'url': Routing.generate('monthchangeofrankingkpi', {'dataofmonth': month + '-' + year}),
+                                data:data,
+                                'url': Routing.generate('monthchangeofrankingkpi'),
                                 beforeSend: function () {
                                     var setAjaxBeforeSend = setAjaxBeforeSendFunction();
                                 },
@@ -173,8 +181,8 @@
                             $.ajax({
                                 success: function (data) {
                                     areaId.highcharts().series[0].setData(data.changechartdata);
-                                    areaId.highcharts().series[0].update({name: month + '-' + year});
-                                    $('#currentid').text(month + '-' + year)
+                                    areaId.highcharts().series[0].update({name:  year});
+                                    $('#currentid').text(year)
                                     $('#dataofmonth').val(currentdate)
                                 },
                                 error: function (XMLHttpRequest, textStatus, errorThrown)
@@ -842,10 +850,10 @@
                                 <div class="x-panel-header-text">{{ 'dashboard.main.content'|trans }}</div>
                                 <span id="spantext" class="errormsg">March-2016</span>
                                 <div class="toolbar-title">
-                                    <a id="proviousmonth" class="left-arrow ss-navigateleft">&nbsp;</a>
+                                    <a id="proviousmonth" style="cursor: pointer" class="left-arrow ss-navigateleft">&nbsp;</a>
                                     <span id="currentid" class="item">{{ currentYear }}</span>
                                     <input type="hidden" id="dataofmonth" name="dataofmonth">
-                                    <a id="nextmonth" class="right-arrow ss-navigateright">&nbsp;</a>
+                                    <a id="nextmonth" style="cursor: pointer" class="right-arrow ss-navigateright">&nbsp;</a>
                                 </div>
                             </div>
                             <div id="area" class="chart large_chart">

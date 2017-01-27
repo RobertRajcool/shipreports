@@ -335,7 +335,7 @@
                         ,
                         error: function(XMLHttpRequest, textStatus, errorThrown)
                         {
-                           window.location.href = base_url+'/login';
+                           //window.location.href = base_url+'/login';
 
                         }
                     });
@@ -496,17 +496,13 @@
 
             });
         </script>
-
-
-
-
     {% endblock %}
 
     <section>
         <div id="formcontentid" class="col-sm-12">
-            <div class="actions_report_vessel_top">
+           {# <div class="actions_report_vessel_top">
                 <a class="actions_report_btn" href="{{ path('allships_ranking_reports') }}"  >{{ 'ranking_report.vessel_reports'|trans }}</a>
-            </div>
+            </div>#}
             <div class="add_kpi_views_screen report_top">
 
                 <form id="reportform" class="form-horizontal no-style"  method="post">
