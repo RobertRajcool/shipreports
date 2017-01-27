@@ -1298,7 +1298,9 @@
                                 } else {
                                     status = 0;
                                 }
-                                if(data.returnmsg == 'rejection_error') {
+                                if(data.verify_status == 'false') {
+                                    jAlert("V-Ships verification not yet completed !");
+                                } else if(data.returnmsg == 'rejection_error') {
                                     $('#addkpiformid').text('Please check rejected vessels and update it !');
                                     jAlert("Please check rejected vessels and update it!");
                                     {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}

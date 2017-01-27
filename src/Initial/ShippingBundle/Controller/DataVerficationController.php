@@ -697,6 +697,7 @@ class DataVerficationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $role = $user->getRoles();
         $userid = $user->getId();
         $userId = $user->getId();
         $username = $user->getUsername();
@@ -797,6 +798,20 @@ class DataVerficationController extends Controller
                         ->getResult();
 
                     if (count($pre_rejections) > 0) {
+
+                        if($pre_rejections[0]['temp_rejections'] != null && $pre_rejections[0]['temp_rejections'] != "null") {
+                            $verify_obj = json_decode($pre_rejections[0]['temp_rejections']);
+                            $verify_obj = json_decode($pre_rejections[0]['temp_rejections'], true);
+
+                            if (array_key_exists($shipid, $verify_obj)) {
+                                $response = new JsonResponse();
+                                $response->setData(array(
+                                    'verify_status' => 'false',
+                                ));
+                                return $response;
+                            }
+                        }
+
                         if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                             $temp = json_decode($pre_rejections[0]['rejections']);
                             $temp = json_decode($pre_rejections[0]['rejections'], true);
@@ -905,6 +920,20 @@ class DataVerficationController extends Controller
                     $local_status = 2;
 
                     if (count($pre_rejections) > 0) {
+
+                        if($pre_rejections[0]['temp_rejections'] != null && $pre_rejections[0]['temp_rejections'] != "null") {
+                            $verify_obj = json_decode($pre_rejections[0]['temp_rejections']);
+                            $verify_obj = json_decode($pre_rejections[0]['temp_rejections'], true);
+
+                            if (array_key_exists($shipid, $verify_obj)) {
+                                $response = new JsonResponse();
+                                $response->setData(array(
+                                    'verify_status' => 'false',
+                                ));
+                                return $response;
+                            }
+                        }
+
                         if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                             $temp = json_decode($pre_rejections[0]['rejections']);
                             $temp = json_decode($pre_rejections[0]['rejections'], true);
@@ -1239,12 +1268,13 @@ class DataVerficationController extends Controller
 
         if ($buttonid == 'reject_btn_id') {
             $pre_rejections = $em->createQueryBuilder()
-                ->select('a.rejections, a.shipid')
+                ->select('a.rejections, a.shipid, a.status')
                 ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
                 ->where('a.dataofmonth = :dataofmonth')
                 ->setParameter('dataofmonth', $new_date)
                 ->getQuery()
                 ->getResult();
+            $st = $pre_rejections[0]['status'];
             $reject_id_string = null;
             if ($reject_id_array != null) {
                 $reject_id_string = implode(",", $reject_id_array);
@@ -1255,6 +1285,7 @@ class DataVerficationController extends Controller
             $pre_rejections_vessels = array();
 
             if (count($pre_rejections) > 0) {
+
                 if ($pre_rejections[0]['rejections'] != null && $pre_rejections[0]['rejections'] != "null") {
                     $temp = json_decode($pre_rejections[0]['rejections']);
                     if ($reject_id_string == 'ALL') {
@@ -1270,7 +1301,31 @@ class DataVerficationController extends Controller
                         $temp = json_encode(array($shipid => explode(',', $reject_id_string)));
                     }
                 }
-                $pre_rejections_vessels = explode(',',$pre_rejections[0]['shipid']);
+
+                $spl_array = array();
+                if ($role[0] == 'ROLE_ADMIN') {
+                    if($pre_rejections[0]['status'] == 2) {
+                        $st = 3;
+                        array_push($spl_array, $shipid);
+                        $spl_str = implode(",", $spl_array);
+                        $pre_rejections_vessels = explode(',',$spl_str);
+                    } else {
+                        $pre_rejections_vessels = explode(',',$pre_rejections[0]['shipid']);
+                    }
+
+                }
+
+                if ($role[0] == 'ROLE_MANAGER') {
+                    if($pre_rejections[0]['status'] == 5) {
+                        $st = 2;
+                        array_push($spl_array, $shipid);
+                        $spl_str = implode(",", $spl_array);
+                        $pre_rejections_vessels = explode(',',$spl_str);
+                    } else {
+                        $pre_rejections_vessels = explode(',',$pre_rejections[0]['shipid']);
+                    }
+                }
+
 
             } else {
                 if ($reject_id_string == 'ALL') {
@@ -1294,7 +1349,7 @@ class DataVerficationController extends Controller
             if (count($lookstatus) != 0) {
                 $newlookupstatus = $lookstatus[0];
 
-//                $newlookupstatus->setStatus(1);
+                $newlookupstatus->setStatus($st);
                 $newlookupstatus->setShipid($pre_rejections_vessels_str);
                 $newlookupstatus->setRejections($temp);
                 $newlookupstatus->setTempRejections($temp);
@@ -1314,8 +1369,6 @@ class DataVerficationController extends Controller
         }
         $nextshipid = 0;
         $nextshipname = '';
-        $user = $this->getUser();
-        $role = $user->getRoles();
 
         $StatusQuery = $em->createQueryBuilder()
             ->select('a.shipid, a.status, a.rejectionsStatus, a.rejections, a.temp_rejections')
@@ -1425,7 +1478,7 @@ class DataVerficationController extends Controller
                         if($rejections != 'null' && $rejections != null) {
                             $data_view = 'editable-view';
                         } else {
-                            if($data_status == 5) {
+                            if($data_status == 5 || $data_status == 2) {
                                 $data_view = 'editable-view';
                             } else {
                                 $data_view = 'summary-view';
@@ -1609,7 +1662,7 @@ class DataVerficationController extends Controller
             'currentshipid' => $nextshipid, 'currentshipname' => $nextshipname,
             'statuscount' => count($updated_vessels), 'currentdatetime' => $dataofmonth,
             'data_view' => $data_view, 'ship_status' => $ship_status_array, 'ship_btn_status' => ' ',
-            'statusQueryResult' => $StatusQuery
+            'statusQueryResult' => $StatusQuery, 'verify_status' => 'true'
         ));
 
         return $response;
