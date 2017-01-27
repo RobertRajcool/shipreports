@@ -233,14 +233,25 @@
                         var ship_id = data.listofships[i]['id'];
                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + ship_id + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
                         if (role == 'ROLE_ADMIN') {
-                            if (status == 2 || status == 3) {
+                            if (status == 2 || status == 4 || status == 3) {
                                 if (!$.isEmptyObject(rejections) && rejection_status) {
                                     if (ship_id in rejections) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                         delete rejections[ship_id];
+                                        shipstatus++;
+                                        if(rejections) {
+                                            if (ship_id in rejections) {
+                                                $('#allbuttondiv').hide();
+                                            }
+                                        }
+                                    } else if(status == 4 || status == 3) {
+                                        if (updated_ships.indexOf(String(ship_id)) != -1) {
+                                            $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
+                                            shipstatus++;
+                                        }
                                     }
                                 } else if(updated_ships.indexOf(String(ship_id)) != -1)  {
-                                    if (status == 3) {
+                                    if (status == 4 || status == 3) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                         shipstatus++;
                                     }
@@ -249,7 +260,7 @@
                         }
                         else if (role == 'ROLE_MANAGER') {
 
-                            if (status == 5 || status == 2) {
+                            if (status == 5 || status == 4 || status == 2 || status == 3 ) {
                                 if (!$.isEmptyObject(temp_rejections)) {
                                     if (ship_id in temp_rejections) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
@@ -260,7 +271,7 @@
                                                 $('#allbuttondiv').hide();
                                             }
                                         }
-                                    } else if(status == 2) {
+                                    } else if(status == 2 || status == 4 || status == 3) {
                                         if (updated_ships.indexOf(String(ship_id)) != -1) {
                                             $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                             shipstatus++;
@@ -271,11 +282,14 @@
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                         shipstatus++;
                                     }
+                                } else if(status == 4 || status == 3) {
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
+                                    shipstatus++;
                                 }
                             }
                         }
                         else if (role == 'ROLE_KPI_INFO_PROVIDER') {
-                            if (status == 1 || status == 2 || status == 3 || status == 5) {
+                            if (status == 1 || status == 2 || status == 3 || status == 5 || status == 4) {
                                 if (!$.isEmptyObject(rejections) && rejection_status) {
                                     if (ship_id in rejections) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
@@ -286,6 +300,9 @@
                                         shipstatus++;
                                     }
                                 } else if (updated_ships.indexOf(String(ship_id)) != -1) {
+                                    $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
+                                    shipstatus++;
+                                } else if(status == 4 || status == 3 || status == 2) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                     shipstatus++;
                                 }
@@ -325,7 +342,7 @@
                                 }
 
                                 if (role == 'ROLE_MANAGER') {
-                                    if (status == 5 || status == 2) {
+                                    if (status == 5 || status == 3 || status == 4 || status == 2) {
                                         if (!$.isEmptyObject(rejections)) {
                                             if (ship_id in rejections) {
                                                 if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
@@ -343,13 +360,17 @@
                                         $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                     }
                                 } else if (role == 'ROLE_KPI_INFO_PROVIDER') {
-                                    if (status == 1 || status == 2 || status == 3 || status == 5) {
+                                    if (status == 1 || status == 2 || status == 3 || status == 5 || status == 4) {
                                         if (!$.isEmptyObject(rejections) && rejection_status) {
                                             if (ship_id in rejections) {
-                                                if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
+                                                if(rejections[ship_id] == 'ALL') {
                                                     $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                 } else {
-                                                    $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                    if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
+                                                        $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                    } else {
+                                                        $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
+                                                    }
                                                 }
                                             } else {
                                                 $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
@@ -1407,7 +1428,7 @@
                                     if (role == 'ROLE_MANAGER') {
                                         $('#addkpiformid').text('All vessels data verified !');
                                     } else if(role == 'ROLE_KPI_INFO_PROVIDER') {
-                                        if(status == 5) {
+                                        if(status == 5 || status == 4 || status == 3 || status == 2) {
                                             $('#addkpiformid').text('All vessels data uploaded !');
                                         } else if(status == 1) {
                                             $('#addkpiformid').text('All vessels data saved !');
@@ -1471,6 +1492,7 @@
     </section>
 
     <section id="kpiformforship">
+
         {% if data_view == 'editable-view' %}
             <div class="col-sm-12">
             <div class="add_new_kpi_form_screen">
@@ -1493,19 +1515,61 @@
                         {% if elementkpiarray|length <= 0 %}
                             No Kpi Found
                         {% endif %}
+
+                        {% set h_status = 'empty' %}
+
                         {% if elementkpiarray|length > 0 %}
                         <div id="addkpiformid" class="table-responsive">
-                            {% if j==statuscount %}
-                                <span>All vessels data saved !</span>
-                                <div class="actions_submit">
-                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
-                                                id="upload_btn_id" value="Submit">
-                                            {{ 'dataverification.upload'|trans }}
-                                        </button>
+
+                            {% if  is_granted("ROLE_ADMIN") %}
+                                {% if  data_status == 4 or data_status == 3 %}
+                                    {% if j==statuscount %}
+                                        <span>All vessels data uploaded from Admin !</span>
+                                    {% else %}
+                                        {% set h_status = 'editable' %}
                                     {% endif %}
-                                </div>
-                            {% else %}
+                                {% else %}
+                                    {% set h_status = 'editable' %}
+                                {% endif %}
+                            {% endif %}
+
+                            {% if  is_granted("ROLE_MANAGER") %}
+                                {% if  data_status == 4 or data_status == 3 or data_status == 2 %}
+                                    {% if j==statuscount %}
+                                        <span>All vessels data verified from Manager !</span>
+                                    {% else %}
+                                        {% set h_status = 'editable' %}
+                                    {% endif %}
+                                {% else %}
+                                    {% set h_status = 'editable' %}
+                                {% endif %}
+                            {% endif %}
+
+                            {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                {% if  data_status == 4 or data_status == 3 or data_status == 2 or data_status == 5 %}
+                                    {% if j==statuscount %}
+                                        <span>All vessels data uploaded from V-Ships !</span>
+                                    {% else %}
+                                        {% set h_status = 'editable' %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if  data_status == 1 %}
+                                        {% if j==statuscount %}
+                                            <span>All vessels data saved from V-Ships !</span>
+                                            <div class="actions_submit">
+                                                <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                                        id="upload_btn_id" value="Submit">
+                                                    {{ 'dataverification.upload'|trans }}
+                                                </button>
+                                            </div>
+                                        {% else %}
+                                            {% set h_status = 'editable' %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endif %}
+
+                            {% if  h_status == 'editable' %}
                                 {% set i=0 %}
                                 {% set kpi_count=0 %}
                                 {% for key, value in elementkpiarray %}
@@ -1569,6 +1633,7 @@
                                     {% set kpi_count=kpi_count+1 %}
                                 {% endfor %}
                             {% endif %}
+
                         </div>
                     </div>
                 <input type="hidden" name="shipid" id="shipid">
@@ -1621,21 +1686,23 @@
                     </div>
 
                     <div id="elementformid" class="add_new_kpi_form_section">
-                        {% if data_view == 'upload-view' %}
-                        All vessels data are updated !
-                            <div class="actions_submit">
-                                {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
-                                    <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
-                                            id="upload_btn_id" value="Submit">
-                                        {{ 'dataverification.upload'|trans }}
-                                    </button>
-                                {% endif %}
-                            </div>
-                        {% endif %}
+                        <div id="addkpiformid" class="table-responsive">
+                            {% if data_view == 'upload-view' %}
+                                All vessels data are saved !
+                                <div class="actions_submit">
+                                    {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
+                                        <button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue"
+                                                id="upload_btn_id" value="Submit">
+                                            {{ 'dataverification.upload'|trans }}
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
 
-                        {% if data_view == 'summary-view' %}
-                            All vessels data are uploaded !
-                        {% endif %}
+                            {% if data_view == 'summary-view' %}
+                                All vessels data are uploaded !
+                            {% endif %}
+                        </div>
                     </div>
                     <input type="hidden" name="shipid" id="shipid">
                     <div id="allbuttondiv" class="actions_submit">
@@ -1667,6 +1734,7 @@
             </div>
         </div>
         {% endif %}
+
     </section>
 
     <section id="previousmonthdata">
