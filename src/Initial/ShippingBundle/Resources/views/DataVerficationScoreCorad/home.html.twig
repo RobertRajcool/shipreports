@@ -234,13 +234,13 @@
                         $('<li><a class="linkclass" title="' + data.listofships[i]['shipName'] + '" id="' + ship_id + '" >' + data.listofships[i]['shipName'] + '</a></li>').appendTo('#addshipids');
                         if (role == 'ROLE_ADMIN') {
                             if (status == 2 || status == 4 || status == 3) {
-                                if (!$.isEmptyObject(rejections) && rejection_status) {
-                                    if (ship_id in rejections) {
+                                if (!$.isEmptyObject(temp_rejections)) {
+                                    if (ship_id in temp_rejections) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
-                                        delete rejections[ship_id];
+                                        delete temp_rejections[ship_id];
                                         shipstatus++;
-                                        if(rejections) {
-                                            if (ship_id in rejections) {
+                                        if(temp_rejections) {
+                                            if (ship_id in temp_rejections) {
                                                 $('#allbuttondiv').hide();
                                             }
                                         }
