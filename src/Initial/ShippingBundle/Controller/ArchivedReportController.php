@@ -730,7 +730,7 @@ class ArchivedReportController extends Controller
                 $New_Month_Avg_Total = array();
                 $New_Month_Element_Value = array();
                 $New_Month_Element_Color = array();
-                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < $statusVerified; $New_FindKpivalueCount++) {
+                for ($New_FindKpivalueCount = 0; $New_FindKpivalueCount < count($NewMonthlyAvgTotal); $New_FindKpivalueCount++) {
                     $New_Month_Avg_Total[$New_FindKpivalueCount] = $NewMonthlyAvgTotal[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Value[$New_FindKpivalueCount] = $NewMonthlyKPIValue[$New_FindKpivalueCount][$rankingKpiId];
                     $New_Month_Element_Color[$New_FindKpivalueCount] = $NewMonthColor[$New_FindKpivalueCount][$rankingKpiId];
