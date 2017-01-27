@@ -818,14 +818,19 @@ class DataVerficationController extends Controller
                         }
 
                         if($pre_rejections[0]['status']==4 || $pre_rejections[0]['status']==3 || $pre_rejections[0]['status'] == 2) {
-                            $local_status = $pre_rejections[0]['status'];
+                            if($pre_rejections[0]['status']!=2) {
+                                $local_status = $pre_rejections[0]['status'];
+                            } else {
+                                $local_status = 3;
+                            }
+
                         } else {
-                            $local_status = 2;
+                            $local_status = 3;
                         }
                     } else {
                         $rejection_obj = null;
                         $reject_status = 'empty';
-                        $local_status = 2;
+                        $local_status = 3;
                     }
 
 
