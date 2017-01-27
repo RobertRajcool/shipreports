@@ -833,7 +833,35 @@
         </script>
 
     {% endblock %}
-
+    <section id="previousmonthdata">
+        <div class="col-sm-12">
+            <div class="verfication_ranking_form_screen">
+                <form class="form-horizontal no-style">
+                    <div class="add_new_kpi_top_title">
+                        <div class="title_month_2">
+                            <label class="title">&nbsp;</label>
+                            {#<label class="toolbar-title">
+                                <a id="proviousmonth_data" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
+                                <span id="currentid_data" class="item">March-2016</span>
+                                <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
+                                <a id="nextmonth_data" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
+                            </label>#}
+                            <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
+                            <div class="col-lg-3" style="float: right; margin-right: 20px">
+                                <div class="form-group">
+                                    <input type='text' placeholder="-- Choose Month & Year --" class="form-control datetimepicker">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="verfication_ranking_form_section">
+                        <div id="prvieoustablecontent" class="">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
     <section id="currentmonhthdetails">
         <div class="col-sm-3 views_kpi_form_list" id="overallshids">
             <div class="views_kpi_name_total" id="shipcountwithtext"><span>{{ 'dashboard.shipname'|trans }} ({{ shipcount }})</span></div>
@@ -1052,35 +1080,7 @@
             </div>
         </div>
     </section>
-    <section id="previousmonthdata">
-        <div class="col-sm-12">
-            <div class="verfication_ranking_form_screen">
-                <form class="form-horizontal no-style">
-                    <div class="add_new_kpi_top_title">
-                        <div class="title_month_2">
-                            <label class="title">&nbsp;</label>
-                            {#<label class="toolbar-title">
-                                <a id="proviousmonth_data" class="left-arrow ss-navigateleft prevmonth">&nbsp;</a>
-                                <span id="currentid_data" class="item">March-2016</span>
-                                <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
-                                <a id="nextmonth_data" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
-                            </label>#}
-                            <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
-                            <div class="col-lg-3" style="float: right; margin-right: 20px">
-                                <div class="form-group">
-                                    <input type='text' placeholder="-- Choose Month & Year --" class="form-control datetimepicker">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="verfication_ranking_form_section">
-                        <div id="prvieoustablecontent" class="">
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
+
 
 
 {% endblock %}
