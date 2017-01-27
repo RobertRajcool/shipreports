@@ -381,12 +381,12 @@
                         </a>
                     </li>
                     {%  if is_granted("ROLE_MANAGER") or is_granted("ROLE_ADMIN") %}
-                    <li id="logs">
-                        <a href="{{ path('log_details', { 'page':  1}) }}" target="">
-                            <span class="menu-item-icon ss-view">&nbsp;</span>
-                            <span class="menu-item-text">Logs</span>
-                        </a>
-                    </li>
+                        <li id="logs">
+                            <a href="{{ path('log_details', { 'page':  1}) }}" target="">
+                                <span class="menu-item-icon ss-view">&nbsp;</span>
+                                <span class="menu-item-text">Logs</span>
+                            </a>
+                        </li>
                     {% endif %}
                     <li id="backuplist">
                         {#<a href="{{ path('database_export') }}" target="">#}
@@ -418,7 +418,7 @@
             <img id="baseimageid" src="/uploads/userimages/{{ app.user.imagepath }}">
         {% endif %}
     </span>
-    <span class="x-btn-inner">
+                            <span class="x-btn-inner">
     <div class="user-name">{{app.user.username }}</div>
     <div class="company">
         {% if app.user.roles[0]=='ROLE_ADMIN' %}
@@ -438,9 +438,6 @@
                 </div>
 
             </div>
-
-
-
             <div  class="dashboard_screen_views dashboard_right_ship">
                 <section id="wholecontent">
                     {% block body %}
