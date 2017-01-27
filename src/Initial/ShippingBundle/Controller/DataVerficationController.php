@@ -925,15 +925,16 @@ class DataVerficationController extends Controller
                     }
 
 
+                    $TotalShipsInserted = $em->createQueryBuilder()
+                        ->select('a.shipid')
+                        ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
+                        ->where('a.dataofmonth = :dateOfMonth and a.status=:statusValue')
+                        ->setParameter('dateOfMonth', $new_date)
+                        ->setParameter('statusValue', $local_status)
+                        ->getQuery()
+                        ->getResult();
                     if(!$pre_rejections[0]['rejectionsStatus']) {
-                        $TotalShipsInserted = $em->createQueryBuilder()
-                            ->select('a.shipid')
-                            ->from('InitialShippingBundle:Scorecard_LookupStatus', 'a')
-                            ->where('a.dataofmonth = :dateOfMonth and a.status=:statusValue')
-                            ->setParameter('dateOfMonth', $new_date)
-                            ->setParameter('statusValue', $local_status)
-                            ->getQuery()
-                            ->getResult();
+
                         if (count($TotalShipsInserted) != 0) {
                             $updated_ship_id_array = explode(',',$TotalShipsInserted[0]['shipid']);
                             $shipids = array();
@@ -944,6 +945,25 @@ class DataVerficationController extends Controller
                                 array_push($shipids, $shipid);
                             }
                             $shipids = implode(',', $shipids);
+                        } else {
+                            $shipids = $shipid;
+                        }
+                        $newlookupstatus->setShipid($shipids);
+                    } else {
+                        if (count($TotalShipsInserted) != 0) {
+                            $updated_ship_id_array = explode(',',$TotalShipsInserted[0]['shipid']);
+                            $shipids = array();
+                            for ($findshipidcount = 0; $findshipidcount < count($updated_ship_id_array); $findshipidcount++) {
+                                array_push($shipids, $updated_ship_id_array[$findshipidcount]);
+                            }
+                            if (!in_array($shipid, $shipids)) {
+                                $temp = json_decode($pre_rejections[0]['rejections']);
+                                $temp = json_decode($pre_rejections[0]['rejections'], true);
+                                if(!in_array($shipid, $temp)) {
+                                    array_push($shipids, $shipid);
+                                }
+                                $shipids = implode(',', $shipids);
+                            }
                         } else {
                             $shipids = $shipid;
                         }
