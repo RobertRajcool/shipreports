@@ -267,11 +267,11 @@
                                         delete temp_rejections[ship_id];
                                         shipstatus++;
                                         if(rejections) {
-                                            if (ship_id in rejections) {
-                                                $('#allbuttondiv').hide();
+                                            /*if (ship_id in rejections) {
+                                                $('').hide();
                                             } else {
                                                 $('#allbuttondiv').show();
-                                            }
+                                            }*/
                                         }
                                     } else if(status == 2 || status == 4 || status == 3) {
                                         if (updated_ships.indexOf(String(ship_id)) != -1) {
