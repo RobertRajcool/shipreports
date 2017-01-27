@@ -1375,7 +1375,7 @@ class DataVerficationController extends Controller
                         ->from('InitialShippingBundle:ReadingKpiValues', 'b')
                         ->where('b.shipDetailsId = :shipdetailsid')
                         ->andWhere('b.monthdetail =:dataofmonth')
-                        ->setParameter('shipdetailsid', $shipid)
+                        ->setParameter('shipdetailsid', $nextshipid)
                         ->setParameter('dataofmonth', $new_date)
                         ->getQuery()
                         ->getResult();
@@ -1517,7 +1517,40 @@ class DataVerficationController extends Controller
         $role = $user->getRoles();
         $status = 0;
         $resularray = array();
-        $query = array();
+        $query = '';
+
+        $user = $this->getUser();
+        $username = $user->getUsername();
+        $userId = $user->getId();
+
+        $dateObject = new \DateTime();
+        $dateObject->modify('last day of this month');
+
+        if ($this->container->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $ship_query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->join('InitialShippingBundle:CompanyDetails', 'b', 'WITH', 'b.id = a.companyDetailsId')
+                ->where('b.adminName = :username')
+                ->andWhere('a.dateTime <= :activeDate')
+                ->setParameter('activeDate', $dateObject)
+                ->groupBy('a.id')
+                ->setParameter('username', $username)
+                ->getQuery();
+        } else {
+            $ship_query = $em->createQueryBuilder()
+                ->select('a.shipName', 'a.id')
+                ->from('InitialShippingBundle:ShipDetails', 'a')
+                ->leftjoin('InitialShippingBundle:User', 'b', 'WITH', 'b.companyid = a.companyDetailsId')
+                ->where('a.dateTime <= :activeDate')
+                ->setParameter('activeDate', $dateObject)
+                ->andwhere('b.id = :userId')
+                ->setParameter('userId', $userId)
+                ->groupBy('a.id')
+                ->getQuery();
+        }
+
+        $shipDetails = $ship_query->getResult();
 
         $lookup_status = $em->createQueryBuilder()
             ->select('a.shipid, a.status, a.rejections')
@@ -1541,18 +1574,8 @@ class DataVerficationController extends Controller
                 $updated_ships = explode(',',$lookup_status[0]['shipid']);
                 $status = $lookup_status[0]['status'];
                 if($status == 2 || $status == 3 || $status == 4) {
-                    if(in_array($shipid,$updated_ships )) {
-                        $query = $em->createQueryBuilder()
-                            ->select('b.value')
-                            ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                            ->where('b.shipDetailsId = :shipdetailsid')
-                            ->andWhere('b.monthdetail =:dataofmonth')
-                            ->setParameter('shipdetailsid', $shipid)
-                            ->setParameter('dataofmonth', $new_date)
-                            ->getQuery()
-                            ->getResult();
-                    } else {
-                        if($status != 2) {
+                    if($status == 2) {
+                        if(count($shipDetails) == count($updated_ships)) {
                             $query = $em->createQueryBuilder()
                                 ->select('b.value')
                                 ->from('InitialShippingBundle:ReadingKpiValues', 'b')
@@ -1562,6 +1585,30 @@ class DataVerficationController extends Controller
                                 ->setParameter('dataofmonth', $new_date)
                                 ->getQuery()
                                 ->getResult();
+                        }
+                    } else {
+                        if(in_array($shipid,$updated_ships )) {
+                            $query = $em->createQueryBuilder()
+                                ->select('b.value')
+                                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                ->where('b.shipDetailsId = :shipdetailsid')
+                                ->andWhere('b.monthdetail =:dataofmonth')
+                                ->setParameter('shipdetailsid', $shipid)
+                                ->setParameter('dataofmonth', $new_date)
+                                ->getQuery()
+                                ->getResult();
+                        } else {
+                            if($status != 2) {
+                                $query = $em->createQueryBuilder()
+                                    ->select('b.value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                    ->where('b.shipDetailsId = :shipdetailsid')
+                                    ->andWhere('b.monthdetail =:dataofmonth')
+                                    ->setParameter('shipdetailsid', $shipid)
+                                    ->setParameter('dataofmonth', $new_date)
+                                    ->getQuery()
+                                    ->getResult();
+                            }
                         }
                     }
                 }
@@ -1758,9 +1805,12 @@ class DataVerficationController extends Controller
 
         }
         $elementvalues = array();
-        for ($kkk = 0; $kkk < count($resularray); $kkk++) {
-            array_push($elementvalues, $resularray[$kkk]['value']);
+        if($resularray != "") {
+            for ($kkk = 0; $kkk < count($resularray); $kkk++) {
+                array_push($elementvalues, $resularray[$kkk]['value']);
+            }
         }
+
         if ($mode == 'listkpielement') {
             return array('returnarray' => $returnarray, 'elementindicationValue' => $elementindicationValue, 'symbolIndication' => $symbolIndication, 'elementweightage' => $elementweightage, 'elementcount' => $maxelementcount, 'elementvalues' => $elementvalues, 'kpi_details' => $ids);
         }
@@ -4610,6 +4660,7 @@ class DataVerficationController extends Controller
                 ->groupBy('a.id')
                 ->getQuery();
         }
+
         $listallshipforcompany = $query->getResult();
 
         $statusQueryResult = $em->createQueryBuilder()
@@ -4827,47 +4878,51 @@ class DataVerficationController extends Controller
                 }
 
             } else {
-                /*$resultarray = $em->createQueryBuilder()
-                    ->select('b.value')
-                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                    ->where('b.shipDetailsId = :shipdetailsid')
-                    ->andWhere('b.monthdetail =:dataofmonth')
-                    ->setParameter('shipdetailsid', $listallshipforcompany[0]['id'])
-                    ->setParameter('dataofmonth', $dateObject)
-                    ->getQuery()
-                    ->getResult();
-
-                $tempshipValueArray = array();
-
-                for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
-                    array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
-                }
-                array_push($elementValues, $tempshipValueArray);
-
-                $shipOverallStatus = "no";*/
 
                 $shipOverallStatus = "no";
 
                 $temp_status = $statusQueryResult[0]['status'];
                 if ($role[0] == 'ROLE_ADMIN') {
                     if($temp_status == 2 ||$temp_status == 3 || $temp_status == 4) {
-                        for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
-                            $resultarray = $em->createQueryBuilder()
-                                ->select('b.value')
-                                ->from('InitialShippingBundle:ReadingKpiValues', 'b')
-                                ->where('b.shipDetailsId = :shipdetailsid')
-                                ->andWhere('b.monthdetail =:dataofmonth')
-                                ->setParameter('shipdetailsid', $listallshipforcompany[$shipCount]['id'])
-                                ->setParameter('dataofmonth', $dateObject)
-                                ->getQuery()
-                                ->getResult();
 
-                            $tempshipValueArray = array();
+                        if($temp_status == 2 && count($listallshipforcompany) == count($shipidinArray)) {
+                            for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
+                                $resultarray = $em->createQueryBuilder()
+                                    ->select('b.value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                    ->where('b.shipDetailsId = :shipdetailsid')
+                                    ->andWhere('b.monthdetail =:dataofmonth')
+                                    ->setParameter('shipdetailsid', $listallshipforcompany[$shipCount]['id'])
+                                    ->setParameter('dataofmonth', $dateObject)
+                                    ->getQuery()
+                                    ->getResult();
 
-                            for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
-                                array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
+                                $tempshipValueArray = array();
+
+                                for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
+                                    array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
+                                }
+                                array_push($elementValues, $tempshipValueArray);
                             }
-                            array_push($elementValues, $tempshipValueArray);
+                        } else if($temp_status == 3 || $temp_status == 4) {
+                            for ($shipCount = 0; $shipCount < count($listallshipforcompany); $shipCount++) {
+                                $resultarray = $em->createQueryBuilder()
+                                    ->select('b.value')
+                                    ->from('InitialShippingBundle:ReadingKpiValues', 'b')
+                                    ->where('b.shipDetailsId = :shipdetailsid')
+                                    ->andWhere('b.monthdetail =:dataofmonth')
+                                    ->setParameter('shipdetailsid', $listallshipforcompany[$shipCount]['id'])
+                                    ->setParameter('dataofmonth', $dateObject)
+                                    ->getQuery()
+                                    ->getResult();
+
+                                $tempshipValueArray = array();
+
+                                for ($valueCount = 0; $valueCount < count($resultarray); $valueCount++) {
+                                    array_push($tempshipValueArray, $resultarray[$valueCount]['value']);
+                                }
+                                array_push($elementValues, $tempshipValueArray);
+                            }
                         }
                     }
                     if($temp_status == 3 || $temp_status == 4) {
