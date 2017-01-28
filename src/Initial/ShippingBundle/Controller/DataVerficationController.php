@@ -186,7 +186,11 @@ class DataVerficationController extends Controller
                                             array_push($ship_status_array, 1);
                                         }
                                     } else {
-                                        array_push($ship_status_array, 1);
+                                        if($data_status == 5) {
+                                            array_push($ship_status_array, 0);
+                                        } else {
+                                            array_push($ship_status_array, 1);
+                                        }
                                     }
                                 } else {
                                     array_push($ship_status_array, 0);

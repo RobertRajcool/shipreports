@@ -32,12 +32,35 @@
                 var role = '{{ app.user.roles[0] }}';
                 var currentdatetime = '{{ currentdatetime }}';
                 var ship_btn_status = '{{ ship_btn_status }}';
+                var data_status = '{{ data_status }}';
 
                 if (statusofship == shipcount) {
-                    $('#allbuttondiv').hide();
-                    $('#upload_btn_id').show();
                     $('#shipid').val('');
                     $('#shipname').text('');
+                    if (role == 'ROLE_ADMIN') {
+                        if(data_status == 1 || data_status == 5 || data_status == 2) {
+                            $('#allbuttondiv').show();
+                            $('#shipname').text(shipname);
+                            $('#shipid').val(shipid);
+                        } else {
+                            $('#allbuttondiv').hide();
+                        }
+                    }
+
+                    if (role == 'ROLE_MANAGER') {
+                        if(data_status == 1 || data_status == 5) {
+                            $('#allbuttondiv').show();
+                            $('#shipname').text(shipname);
+                            $('#shipid').val(shipid);
+                        } else {
+                            $('#allbuttondiv').hide();
+                        }
+                    }
+
+                    if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                        $('#allbuttondiv').hide();
+                        $('#upload_btn_id').show();
+                    }
                 } else {
                     $('#' + shipid).addClass('active');
                     $('#shipid').val(shipid);
@@ -1480,6 +1503,10 @@
                         {% set j=0 %}
                         {% for vessel in listofships %}
                             <li>
+                                {% if j==0 %}
+                                    <a class="linkclass active" title="{{ vessel.shipName }}"
+                                       id="{{ vessel.id }}">{{ vessel.shipName }}</a>
+                                {% endif %}
                                 <a class="linkclass" title="{{ vessel.shipName }}"
                                    id="{{ vessel.id }}">{{ vessel.shipName }}</a>
                                 {% if ship_status[j]==1 %}
