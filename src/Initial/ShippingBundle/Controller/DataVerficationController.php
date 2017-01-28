@@ -230,7 +230,7 @@ class DataVerficationController extends Controller
                             foreach ($vesselList as $vessel) {
                                 if(in_array($vessel['id'], $updated_ships)) {
                                     if($rejections) {
-                                        if(array_key_exists($vessel['id'], $rejections)  && $rejection_status) {
+                                        if(array_key_exists($vessel['id'], $rejections) && $rejection_status) {
                                             array_push($ship_status_array, 2);
                                         } else {
                                             array_push($ship_status_array, 1);
@@ -239,12 +239,16 @@ class DataVerficationController extends Controller
                                         array_push($ship_status_array, 1);
                                     }
                                 } else {
-                                    array_push($ship_status_array, 0);
+                                    if($data_status == 2 || $data_status == 3 || $data_status == 4 || $data_status == 5) {
+                                        array_push($ship_status_array, 1);
+                                    } else {
+                                        array_push($ship_status_array, 0);
+                                    }
                                 }
                             }
-                        } foreach ($vesselList as $vessel) {
+                        } /*foreach ($vesselList as $vessel) {
                             array_push($ship_status_array, 0);
-                        }
+                        }*/
                     } else {
                         $data_view = 'editable-view';
                         foreach ($vesselList as $vessel) {

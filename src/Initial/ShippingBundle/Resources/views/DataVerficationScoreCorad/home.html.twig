@@ -1506,9 +1506,10 @@
                                 {% if j==0 %}
                                     <a class="linkclass active" title="{{ vessel.shipName }}"
                                        id="{{ vessel.id }}">{{ vessel.shipName }}</a>
+                                {% else  %}
+                                    <a class="linkclass" title="{{ vessel.shipName }}"
+                                       id="{{ vessel.id }}">{{ vessel.shipName }}</a>
                                 {% endif %}
-                                <a class="linkclass" title="{{ vessel.shipName }}"
-                                   id="{{ vessel.id }}">{{ vessel.shipName }}</a>
                                 {% if ship_status[j]==1 %}
                                     <img id="img_{{ vessel.id }}" src="{{ asset('images/tick_icon.png') }}">
                                 {% elseif ship_status[j]==2 %}
