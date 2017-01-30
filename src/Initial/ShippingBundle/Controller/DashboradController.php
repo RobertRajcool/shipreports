@@ -1926,7 +1926,6 @@ class DashboradController extends Controller
                     ->where('b.shipid = :shipId and b.status = :monthStatus')
                     ->setParameter('monthStatus', 4)
                     ->setParameter('shipId', $shipid)
-                    ->groupby('b.dataofmonth')
                     ->getQuery()
                     ->getResult();
                 if (count($statusFieldQuery) != 0 && $statusFieldQuery[count($statusFieldQuery) - 1]['status'] == 4) {
