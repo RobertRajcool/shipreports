@@ -3615,7 +3615,7 @@ class DashboradController extends Controller
             }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
-            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/phantomjs/highcharts-convert.js -infile ';
 
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
             $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
@@ -3706,7 +3706,7 @@ class DashboradController extends Controller
                 $jsondata = json_encode($graphObject);
                 $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
-                $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+                $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/phantomjs/highcharts-convert.js -infile ';
                 $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid.'_'.$currentdateitme. '.png';
                 $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
                 $ImageGeneration = $phantomjsPath . $Highchartconvertjs . $JsonFileDirectroy;
@@ -3794,7 +3794,7 @@ class DashboradController extends Controller
             }
             $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json';
             file_put_contents($pdffilenamefullpath, $jsondata);
-            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+            $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/phantomjs/highcharts-convert.js -infile ';
             $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/shipimage_' . $reportObject['shipid'].'_'.$currentdateitme. '.png';
             $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/ship_' . $reportObject['shipid'].'_' .$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
             $phantomjsPath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/bin/phantomjs ';
@@ -3868,7 +3868,7 @@ class DashboradController extends Controller
                 $jsondata = json_encode($graphObject);
                 $pdffilenamefullpath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json';
                 file_put_contents($pdffilenamefullpath, $jsondata);
-                $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/highcharts-convert.js -infile ';
+                $Highchartconvertjs = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/phantomjs/highcharts-convert.js -infile ';
                 $outfile = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofgraph/kpiimage_' . $kpiid .'_'.$currentdateitme. '.png';
                 $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid .'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
                 $ImageGeneration =$phantomjsPath . $Highchartconvertjs . $JsonFileDirectroy;
