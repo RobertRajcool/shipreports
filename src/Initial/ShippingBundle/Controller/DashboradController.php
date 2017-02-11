@@ -3622,7 +3622,7 @@ class DashboradController extends Controller
             $phantomjsPath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/bin/phantomjs ';
             $ImageGeneration = $phantomjsPath . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
-            $charamee = fread($handle, 2096);
+            $resutofimagegenertion = fread($handle, 2096);
             /* return $this->render('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                   'shipid' => $reportObject['shipid'],
                   'screenName' => 'Ranking Report',
@@ -3658,6 +3658,12 @@ class DashboradController extends Controller
             $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
+            if (file_exists($pdffilenamefullpath)) {
+                unlink($pdffilenamefullpath);
+            }
+            if (file_exists($outfile)) {
+                unlink($outfile);
+            }
             for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
                 $kpiName = $rankingKpiList[$KpiPdfcount]['kpiName'];
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
@@ -3711,7 +3717,7 @@ class DashboradController extends Controller
                 $JsonFileDirectroy = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles/kpi_' . $kpiid.'_'.$currentdateitme. '.json -outfile ' . $outfile . ' -scale 2.5 -width 2065';
                 $ImageGeneration = $phantomjsPath . $Highchartconvertjs . $JsonFileDirectroy;
                 $handle = popen($ImageGeneration, 'r');
-                $charamee = fread($handle, 2096);
+                $resutofimagegenertion = fread($handle, 2096);
                 $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_kpi_template.html.twig', array(
                     'kpiid' => $kpiid,
                     'screenName' => 'Ranking Report',
@@ -3733,6 +3739,12 @@ class DashboradController extends Controller
                 $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
+                if (file_exists($pdffilenamefullpath)) {
+                    unlink($pdffilenamefullpath);
+                }
+                if (file_exists($outfile)) {
+                    unlink($outfile);
+                }
             }
             $content = $mpdf->Output('', 'S');
             $response = new Response();
@@ -3800,7 +3812,7 @@ class DashboradController extends Controller
             $phantomjsPath = $this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/bin/phantomjs ';
             $ImageGeneration = $phantomjsPath . $Highchartconvertjs . $JsonFileDirectroy;
             $handle = popen($ImageGeneration, 'r');
-            $charamee = fread($handle, 2096);
+            $imagegenerationresult = fread($handle, 2096);
             $customerListDesign = $this->renderView('InitialShippingBundle:DashBorad:overallranking_report_template.html.twig', array(
                 'shipid' => $reportObject['shipid'],
                 'screenName' => 'Ranking Report',
@@ -3820,6 +3832,12 @@ class DashboradController extends Controller
             $mpdf->AddPage('A4-L');
             $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
             $mpdf->WriteHTML($customerListDesign);
+            if (file_exists($pdffilenamefullpath)) {
+                unlink($pdffilenamefullpath);
+            }
+            if (file_exists($outfile)) {
+                unlink($outfile);
+            }
             for ($KpiPdfcount = 0; $KpiPdfcount < count($rankingKpiList); $KpiPdfcount++) {
                 $kpiName = $rankingKpiList[$KpiPdfcount]['kpiName'];
                 $kpiid = $rankingKpiList[$KpiPdfcount]['id'];
@@ -3896,6 +3914,12 @@ class DashboradController extends Controller
                 $mpdf->AddPage('A4-L');
                 $mpdf->SetFooter('|Date/Time: {DATE l jS F Y h:i}| Page No: {PAGENO}');
                 $mpdf->WriteHTML($customerListDesign);
+                if (file_exists($pdffilenamefullpath)) {
+                    unlink($pdffilenamefullpath);
+                }
+                if (file_exists($outfile)) {
+                    unlink($outfile);
+                }
             }
             $content = $mpdf->Output('', 'S');
             $fileName = $reportObject['shipname'] . date('Y-m-d H-i-s') . '.pdf';
@@ -3939,6 +3963,8 @@ class DashboradController extends Controller
             $rankinglookuptable = array('from_emailid' => $email, 'to_emailids' => $mailidarray, 'filename' => $fileName, 'comment' => $mailbox, 'subject' => $reportObject['shipname']);
             $gearman = $this->get('gearman');
             $gearman->doBackgroundJob('InitialShippingBundleserviceReadExcelWorker~common_mail_function', json_encode($rankinglookuptable));
+            rmdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/listofjsonfiles');
+            rmdir($this->container->getParameter('kernel.root_dir') . '/../web/phantomjs/lisofgraph');
             $response = new JsonResponse();
             $response->setData(array('updatemsg' => "Report has been send"));
             return $response;
