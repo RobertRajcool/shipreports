@@ -38,7 +38,7 @@
                     $('#shipid').val('');
                     $('#shipname').text('');
                     if (role == 'ROLE_ADMIN') {
-                        if(data_status == 1 || data_status == 5 || data_status == 2) {
+                        if (data_status == 1 || data_status == 5 || data_status == 2) {
                             $('#allbuttondiv').show();
                             $('#shipname').text(shipname);
                             $('#shipid').val(shipid);
@@ -48,7 +48,7 @@
                     }
 
                     if (role == 'ROLE_MANAGER') {
-                        if(data_status == 1 || data_status == 5) {
+                        if (data_status == 1 || data_status == 5) {
                             $('#allbuttondiv').show();
                             $('#shipname').text(shipname);
                             $('#shipid').val(shipid);
@@ -67,18 +67,18 @@
                     $('#shipname').text(shipname);
                     $('#allbuttondiv').show();
                     $('#upload_btn_id').hide();
-                    if(ship_btn_status == 'save') {
+                    if (ship_btn_status == 'save') {
                         $('#savebuttonid').show();
-                    } else if(ship_btn_status == 'update') {
+                    } else if (ship_btn_status == 'update') {
                         $('#updatebuttonid').show();
                     }
                 }
 
                 var on_month = '';
                 var nowdate = new Date(currentdatetime),
-                        locale = "en-us",
-                        month = nowdate.toLocaleString(locale, {month: "long"}),
-                        year = nowdate.getFullYear();
+                    locale = "en-us",
+                    month = nowdate.toLocaleString(locale, {month: "long"}),
+                    year = nowdate.getFullYear();
 
                 on_month = month + '-' + year;
 
@@ -127,7 +127,7 @@
                                     var listofSucessships;
                                     var lookStatus;
                                     var rejectionStatus;
-                                    if(statusQueryResult.length>0) {
+                                    if (statusQueryResult.length > 0) {
                                         listofSucessships = statusQueryResult[0]['shipid'];
                                         lookStatus = statusQueryResult[0]['status'];
                                         rejectionStatus = statusQueryResult[0]['rejectionsStatus'];
@@ -235,7 +235,7 @@
                     var temp_rejections;
                     var rejection_status;
                     var updated_ships;
-                    if(data.statusQueryResult.length>0) {
+                    if (data.statusQueryResult.length > 0) {
                         status = data.statusQueryResult[0]['status'];
                         rejections = JSON.parse(data.statusQueryResult[0]['temp_rejections']);
                         temp_rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
@@ -262,18 +262,18 @@
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                         delete temp_rejections[ship_id];
                                         shipstatus++;
-                                        if(temp_rejections) {
+                                        if (temp_rejections) {
                                             if (ship_id in temp_rejections) {
                                                 $('#allbuttondiv').hide();
                                             }
                                         }
-                                    } else if(status == 4 || status == 3) {
+                                    } else if (status == 4 || status == 3) {
                                         if (updated_ships.indexOf(String(ship_id)) != -1) {
                                             $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                             shipstatus++;
                                         }
                                     }
-                                } else if(updated_ships.indexOf(String(ship_id)) != -1)  {
+                                } else if (updated_ships.indexOf(String(ship_id)) != -1) {
                                     if (status == 4 || status == 3) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                         shipstatus++;
@@ -283,31 +283,31 @@
                         }
                         else if (role == 'ROLE_MANAGER') {
 
-                            if (status == 5 || status == 4 || status == 2 || status == 3 ) {
+                            if (status == 5 || status == 4 || status == 2 || status == 3) {
                                 if (!$.isEmptyObject(temp_rejections)) {
                                     if (ship_id in temp_rejections) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '" style="width: 20px;height: 20px"  src="{{ asset('images/error.png') }}">');
                                         delete temp_rejections[ship_id];
                                         shipstatus++;
-                                        if(rejections) {
+                                        if (rejections) {
                                             /*if (ship_id in rejections) {
                                              $('').hide();
                                              } else {
                                              $('#allbuttondiv').show();
                                              }*/
                                         }
-                                    } else if(status == 2 || status == 4 || status == 3) {
+                                    } else if (status == 2 || status == 4 || status == 3) {
                                         if (updated_ships.indexOf(String(ship_id)) != -1) {
                                             $('#' + ship_id).after('<img id="img_' + ship_id + '" src="{{ asset('images/tick_icon.png') }}">');
                                             shipstatus++;
                                         }
                                     }
-                                } else if(updated_ships.indexOf(String(ship_id)) != -1) {
+                                } else if (updated_ships.indexOf(String(ship_id)) != -1) {
                                     if (status == 2) {
                                         $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                         shipstatus++;
                                     }
-                                } else if(status == 4 || status == 3) {
+                                } else if (status == 4 || status == 3) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                     shipstatus++;
                                 }
@@ -327,7 +327,7 @@
                                 } else if (updated_ships.indexOf(String(ship_id)) != -1) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                     shipstatus++;
-                                } else if(status == 4 || status == 3 || status == 2) {
+                                } else if (status == 4 || status == 3 || status == 2) {
                                     $('#' + ship_id).after('<img id="img_' + ship_id + '"  src="{{ asset('images/tick_icon.png') }}">');
                                     shipstatus++;
                                 }
@@ -341,7 +341,7 @@
                     $('#currentid').text(month + '-' + year);
                     $('<div id="addkpiformid" class="table-responsive"></div>').appendTo('#elementformid');
 
-                    if (data.shipcount != shipstatus || JSON.parse(data.statusQueryResult[0]['rejections'])!=null) {
+                    if (data.shipcount != shipstatus || JSON.parse(data.statusQueryResult[0]['rejections']) != null) {
 
                         $('#shipid').val(data.currentshipid);
                         $('.linkclass').removeClass("active");
@@ -362,7 +362,7 @@
                                 {% endif %}
 
                                 var ship_id = data.listofships[0]['id'];
-                                if(data.statusQueryResult.length>0) {
+                                if (data.statusQueryResult.length > 0) {
                                     rejections = JSON.parse(data.statusQueryResult[0]['rejections']);
                                 }
 
@@ -370,7 +370,7 @@
                                     if (status == 5 || status == 3 || status == 4 || status == 2) {
                                         if (!$.isEmptyObject(rejections)) {
                                             if (ship_id in rejections) {
-                                                if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
+                                                if (rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id'])) != -1) {
                                                     $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                 } else {
                                                     $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
@@ -388,10 +388,10 @@
                                     if (status == 1 || status == 2 || status == 3 || status == 5 || status == 4) {
                                         if (!$.isEmptyObject(rejections) && rejection_status) {
                                             if (ship_id in rejections) {
-                                                if(rejections[ship_id] == 'ALL') {
+                                                if (rejections[ship_id] == 'ALL') {
                                                     $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                 } else {
-                                                    if(rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id']))!=-1) {
+                                                    if (rejections[ship_id].indexOf(String(data.kpi_details[j - 1]['id'])) != -1) {
                                                         $('<th style="color: red">' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
                                                     } else {
                                                         $('<th >' + i + '</th>').appendTo('#firstheader_tr_' + newtemp);
@@ -425,7 +425,7 @@
                                     $('<td>&nbsp;</td>').appendTo("#" + j + "tr_id_" + temp);
                                     {% endif %}
 
-                                    if(data.elementvalues.length>0) {
+                                    if (data.elementvalues.length > 0) {
                                         if (data.elementvalues[0].length > 0) {
 
                                             $('#updatebuttonid').show();
@@ -687,8 +687,8 @@
 
                     currentdate.setMonth(currentdate.getMonth() - 1);
                     currentdate, locale = "en-us",
-                            month = currentdate.toLocaleString(locale, {month: "long"}),
-                            year = currentdate.getFullYear();
+                        month = currentdate.toLocaleString(locale, {month: "long"}),
+                        year = currentdate.getFullYear();
 
                     var current = month + '-' + year;
                     var data = {
@@ -900,8 +900,8 @@
                     }
                     currentdate.setMonth(currentdate.getMonth() + 1);
                     currentdate, locale = "en-us",
-                            month = currentdate.toLocaleString(locale, {month: "long"}),
-                            year = currentdate.getFullYear();
+                        month = currentdate.toLocaleString(locale, {month: "long"}),
+                        year = currentdate.getFullYear();
                     var nowdate = new Date();
                     if (currentdate <= nowdate) {
                         var current = month + '-' + year;
@@ -1258,9 +1258,9 @@
                     var charCode = (evt.which) ? evt.which : event.keyCode
 
                     if (
-                            (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // Ã¢â‚¬Å“-Ã¢â‚¬Â CHECK MINUS, AND ONLY ONE.
-                            (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // Ã¢â‚¬Å“.Ã¢â‚¬Â CHECK DOT, AND ONLY ONE.
-                            (charCode < 48 || charCode > 57))
+                        (charCode != 45 || $(element).val().indexOf('-') != -1) &&      // Ã¢â‚¬Å“-Ã¢â‚¬Â CHECK MINUS, AND ONLY ONE.
+                        (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // Ã¢â‚¬Å“.Ã¢â‚¬Â CHECK DOT, AND ONLY ONE.
+                        (charCode < 48 || charCode > 57))
                         return false;
 
                     return true;
@@ -1316,14 +1316,14 @@
                         $.ajax({
                             success: function (data) {
                                 var status;
-                                if(data.statusQueryResult) {
+                                if (data.statusQueryResult) {
                                     status = data.statusQueryResult[0]['status'];
                                 } else {
                                     status = 0;
                                 }
-                                if(data.verify_status == 'false') {
+                                if (data.verify_status == 'false') {
                                     jAlert("V-Ships verification not yet completed !");
-                                } else if(data.returnmsg == 'rejection_error') {
+                                } else if (data.returnmsg == 'rejection_error') {
                                     $('#addkpiformid').text('Please check rejected vessels and update it !');
                                     jAlert("Please check rejected vessels and update it!");
                                     {% if  is_granted("ROLE_KPI_INFO_PROVIDER") %}
@@ -1333,7 +1333,7 @@
                                     $('#img_' + data.ship_id).remove();
                                     $('#' + data.ship_id).after('<img id="img_' + data.ship_id + '" style="width: 20px;height: 20px" src="/images/error.png">');
                                     $('#addkpiformid').text(data.return_msg);
-                                } else if(data.data_view == 'editable-view') {
+                                } else if (data.data_view == 'editable-view') {
                                     $('#datofmonthid').val(data.currentdatetime);
                                     $('#datofmonthid_data').val(data.currentdatetime);
                                     EditableView(data);
@@ -1445,7 +1445,7 @@
                                      $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
                                      }
                                      }*!/*/
-                                } else if(data.data_view == 'summary-view') {
+                                } else if (data.data_view == 'summary-view') {
                                     $('#allbuttondiv').hide();
                                     $('#datofmonthid').val(data.currentdatetime);
                                     $('#datofmonthid_data').val(data.currentdatetime);
@@ -1454,14 +1454,14 @@
                                     $('#' + preshipid).after('<img id="img_' + preshipid + '" src="/images/tick_icon.png">');
                                     if (role == 'ROLE_MANAGER') {
                                         $('#addkpiformid').text('All vessels data verified !');
-                                    } else if(role == 'ROLE_KPI_INFO_PROVIDER') {
-                                        if(status == 5 || status == 4 || status == 3 || status == 2) {
+                                    } else if (role == 'ROLE_KPI_INFO_PROVIDER') {
+                                        if (status == 5 || status == 4 || status == 3 || status == 2) {
                                             $('#addkpiformid').text('All vessels data uploaded !');
-                                        } else if(status == 1) {
+                                        } else if (status == 1) {
                                             $('#addkpiformid').text('All vessels data saved !');
                                             $('<div class="actions_submit"><button style="margin: 0px 0px 0px 600px" class="submit_btn addclasskpivalue" id="upload_btn_id" value="Submit">{{ 'dataverification.upload'|trans }}</button></div>').appendTo('#addkpiformid');
                                         }
-                                    } else if(role == 'ROLE_ADMIN') {
+                                    } else if (role == 'ROLE_ADMIN') {
                                         $('#addkpiformid').text('All vessels data uploaded from Admin !');
                                     }
                                 }
@@ -1481,7 +1481,7 @@
                     var choose_month = $('#datofmonthid').val();
                     var data = {
                         data_of_month: choose_month,
-                        edit_type:'scorecard'
+                        edit_type: 'scorecard'
                     };
                     $.ajaxSetup({
                         global: false,
@@ -1498,9 +1498,11 @@
                     $.ajax({
                         success: function (data) {
                             location.reload();
-                        }});
+                        }
+                    });
 
-            });
+                });
+            })
             /*-------------------------------------Text Box Validation Use Javascript Starts Here-------------------------------------------- */
 
             function isNumberKey(e) {
