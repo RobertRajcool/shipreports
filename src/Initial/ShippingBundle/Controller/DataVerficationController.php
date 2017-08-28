@@ -3420,6 +3420,7 @@ class DataVerficationController extends Controller
         if ($user == null) {
             return $this->redirectToRoute('fos_user_security_login');
         } else {
+            $file = $request->files->get('initial_shipping_bundle_add_excel_file');
             $userid = $user->getId();
             $vesselArray = $request->request->get('vessels');
             $vesselString = implode(',', $vesselArray);
@@ -6270,6 +6271,84 @@ class DataVerficationController extends Controller
                     'next_page' => $next_page,
                     'total_records' => $total_records
                 ));
+
+        }
+    }
+    /**
+     * Ajax Call edit permission both ranking and scorecard
+     *
+     * @Route("/admin_edit_option", name="admin_edit")
+     */
+    public function admin_edit_option(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $data_of_month = $request->request->get('data_of_month');
+        $edit_type = $request->request->get('edit_type');
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $date_object= new \DateTime($data_of_month);
+        $date_object->modify('last day of this month');
+        $respone = new JsonResponse();
+        if ($user == null) {
+            $respone->setData(array(
+                'res'>false
+            ));
+            return $respone;
+        } else {
+            $userId = $user->getId();
+            $username = $user->getUsername();
+            $role = $user->getRoles();
+            if($edit_type == 'ranking'){
+                $em->createQueryBuilder()
+                    ->update('InitialShippingBundle:Ranking_LookupStatus a')
+                    ->set('a.status', 2)
+                    ->where('a.dataofmonth = :data_of_month')
+                    ->setParameter('data_of_month', $date_object)
+                    ->getQuery()
+                    ->execute();
+
+                $em->createQueryBuilder()
+                    ->update('InitialShippingBundle:RankingMonthlyData md')
+                    ->set('md.status', 2)
+                    ->where('md.monthdetail = :month_detail')
+                    ->setParameter('month_detail', $date_object)
+                    ->getQuery()
+                    ->execute();
+                $em->createQueryBuilder()
+                    ->delete('InitialShippingBundle:Ranking_LookupData', 'd')
+                    ->where('d.monthdetail = :month_detail')
+                    ->setParameter('month_detail', $date_object)
+                    ->getQuery()
+                    ->getResult();
+            }
+            else{
+                $em->createQueryBuilder()
+                    ->update('InitialShippingBundle:Scorecard_LookupStatus a')
+                    ->set('a.status', 2)
+                    ->where('a.dataofmonth = :data_of_month')
+                    ->setParameter('data_of_month', $date_object)
+                    ->getQuery()
+                    ->execute();
+
+                $em->createQueryBuilder()
+                    ->update('InitialShippingBundle:ReadingKpiValues md')
+                    ->set('md.status', 2)
+                    ->where('md.monthdetail = :month_detail')
+                    ->setParameter('month_detail', $date_object)
+                    ->getQuery()
+                    ->execute();
+                $em->createQueryBuilder()
+                    ->delete('InitialShippingBundle:Scorecard_LookupData', 'd')
+                    ->where('d.monthdetail = :month_detail')
+                    ->setParameter('month_detail', $date_object)
+                    ->getQuery()
+                    ->getResult();
+            }
+            $respone->setData(array(
+                'res'>true
+            ));
+            return $respone;
 
         }
     }

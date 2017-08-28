@@ -821,6 +821,31 @@
                         });
                     }
                 });
+                $('#admin_edit_option').click(function ($e) {
+                    $e.preventDefault();
+                    var choose_month = $('#datofmonthid').val();
+                    var data = {
+                        data_of_month: choose_month,
+                        edit_type:'ranking'
+                    };
+                    $.ajaxSetup({
+                        global: false,
+                        type: "post",
+                        'url': Routing.generate('admin_edit'),
+                        data: data,
+                        beforeSend: function () {
+                            ajaxbefore_send();
+                        },
+                        complete: function () {
+                            ajax_complete();
+                        }
+                    });
+                    $.ajax({
+                        success: function (data) {
+                            location.reload();
+                        }});
+
+                })
             });
 
             /*........................... Allow Only Numeric Values.............................................................*/
@@ -847,6 +872,13 @@
                                 <a id="nextmonth_data" class="right-arrow ss-navigateright nextmonth">&nbsp;</a>
                             </label>#}
                             <input type="hidden" name="dataofmonth_data" id="datofmonthid_data">
+                            {% if  is_granted("ROLE_ADMIN") %}
+                                <div class="col-lg-3" style="float: right; margin-right: -120px">
+                                    <div class="form-group">
+                                        <input type='button' class="submit_btn" id="admin_edit_option" value="Edit">
+                                    </div>
+                                </div>
+                            {% endif %}
                             <div class="col-lg-3" style="float: right; margin-right: 20px">
                                 <div class="form-group">
                                     <input type='text' placeholder="-- Choose Month & Year --" class="form-control datetimepicker">
